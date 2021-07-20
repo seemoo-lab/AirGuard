@@ -19,9 +19,10 @@ Und letztendlich, wie gut wir Menschen durch unsere App davor schützen können.
 Im Fall einer Zustimmung sendet die App dann **anonyimisierte** Daten an unserer Server, welche später im Rahmen der Studie ausgewertet und veröffentlicht werden. Mit Hilfe dieser Daten ist es uns nicht möglich Teilnehmende der Studie zu identifizieren. 
 
 
+
 ## Erfasste Daten 
 Sofern Sie an der Studie nicht teilnehmen, werden alle erzeugten Daten nur auf ihrem Gerät gespeichert und können von uns **nicht eingesehen** werden. 
-Das umfasst folgende Daten: 
+Das umfasst folgende Typen von Daten: 
 
 * Standortdaten (wenn dem zugestimmt wird)
 * Gefundene Tracking Gerät (e.g AirTags)
@@ -46,23 +47,30 @@ Folgende Daten werden anonymisiert erfasst:
 * Optionales Feedback
   * Falls sie ein Gerät gefunden haben, welches Sie trackt können Sie uns mitteilen wo
 
+## Zugriff auf Daten 
+
+Die Standortdaten werden nur erfasst, wenn dies vorher erlaubt wurde. Anschließend werden diese über die Android Standort Schnittstelle erfasst und anschließend lokal auf Ihrem Ger¨at gespeichert. 
+
+Außerdem scannt die App die Umgebung nach Bluetooth Geräten. Die geschiet mit der entsprechenden Android API. Dabei verwenden wir einen Filter, so dass nur Daten angezeigt werden, die auch 
+
 ## Speicherung der Daten 
 
 Unsere Studiendaten speichern wir auf einem Server in der Technischen Universität Darmstadt. Zugriff darauf haben nur die beiden Verantwortlichen. 
 
 Die Daten auf Ihrem Gerät sind nicht für andere Apps einsehbar. 
 
-## Zweck der Speicherung 
+## Zweck und Verwendung der Daten
 
-Die Daten auf Ihrem Gerät sind notwendig, damit die App funktioniert. 
+Die Daten auf Ihrem Gerät sind notwendig, damit die App funktioniert. So wird erfasst, wann Ihre App welchen AirTag / Find My Gerät erfasst hat. 
+Anschließend kann die App daraus erfassen welche Geräte Ihnen möglicherweise folgen oder mit Ihnen reisen. Dabei werden auch Standortdaten verwendet, um das zu erfassen. 
 
-Die Daten auf dem Server sind nur für eine freiwillige teilnahme an unserer Studie. 
+Alle Daten die freiwillig an uns übermittelt werden, werden nur im Rahmen unserer Studie verwendet. Diese Daten werden auf einem Server der Technischen Universität Darmstadt erfasst und gespeichert. Zugriff auf diesen Server haben nur die beiden Verantwortlichen für dieses Projekt. 
 
 ## Dauer der Speicherung 
 
 Die Daten auf dem Gerät sind so lange vorhanden bis die App gelöscht wird. 
 
-Die Daten der Studie werden nach Abschluss veröffentlicht.
+Die Daten der Studie werden nach Abschluss veröffentlicht. Dabei ist es aber nicht möglich einzelne Nutzer zu identifizieren, da diese Daten anonymisiert sind.  
 
 ## Rechte der Nutzenden 
 

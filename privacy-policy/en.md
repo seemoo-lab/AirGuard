@@ -13,8 +13,8 @@ There is also the **voluntary** possibility to participate in a scientific study
 
 In case of consent, the app then sends anonymized data to our server, which is later analyzed and published as part of the study. With the help of this data, it is not possible for us to identify participants in the study.
 
-## Data collected
-Unless you participate in the study, all data generated is stored only on your device and cannot be viewed by us. This includes the following data:
+## Data collection
+Unless you participate in the study, all data generated is stored only on your device and cannot be viewed by us. This includes the following types of data:
 
 * Location data (if consented is given).
 * Found tracking device (e.g AirTags)
@@ -38,15 +38,25 @@ In case of voluntary participation in the study, only anonymized data is collect
 * Optional feedback
   * If you have found a device which tracks you you can tell us where
 
-## Data storage
+## Data access 
+
+The app accesses your location data (if consent is given) through the Android location services. 
+Furthermore, we use the Bluetooth Android API to scan for nearby devices. We filter our scans so we only find those Bluetooth devices that are sending AirTag / Find My messages. 
+
+## Data storage and usage 
 We store our study data on a server hosted at the Technical University of Darmstadt. Only the two responsible persons have access to it.
 
-The data on your device is not visible to other apps.
+The data on your device is not accessible to other apps.
 
 ## Purpose of usage
 The data on your device is necessary for the app to work.
 
 The data on the server is only for voluntary participation in our study.
+
+## Sharing of user data 
+Identifiable user data is not shared with ourselves and not with any thrid party. 
+
+Anonymized user data gathered during our study can be published in an aggregated form. This data does not allow to  identify any user. 
 
 ## Duration of storage 
 
