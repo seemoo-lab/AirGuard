@@ -47,6 +47,9 @@ Folgende Daten werden anonymisiert erfasst:
 * Optionales Feedback
   * Falls sie ein Gerät gefunden haben, welches Sie trackt können Sie uns mitteilen wo
 
+
+**Diese App beinhaltet keine Werbung, Ad Libraries oder Tracker. Ihre Daten werden niemals mit dritten geteilt**
+
 ## Zugriff auf Daten 
 
 Die Standortdaten werden nur erfasst, wenn dies vorher erlaubt wurde. Anschließend werden diese über die Android Standort Schnittstelle erfasst und anschließend lokal auf Ihrem Ger¨at gespeichert. 

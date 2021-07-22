@@ -1,7 +1,7 @@
 ## Privacy policy
 This project is part of a scientific thesis to earn the degree of Bachelor of Science. To protect private data, we have used the Minimal Data Usage principle and the Offline First principle. Accordingly, all personal data is stored only locally on the device. In addition, we do not collect any data that is not necessary for the use of the app.
 
-## Responsible
+## Responsiblility 
 Responsible for the development of the app and the our study server is *Niklas Bittner*, student of computer science at the Technical University of Darmstadt. The main supervisor of this work is *Alexander Heinrich, M.Sc* as a PhD student and research assistant at the Technical University of Darmstadt at the Secure Mobile Networking Lab.
 
 Address: Alexander Heinrich
@@ -37,6 +37,8 @@ In case of voluntary participation in the study, only anonymized data is collect
   * If the notification was classified as a false alarm
 * Optional feedback
   * If you have found a device which tracks you you can tell us where
+
+**This app does not include advertisements to users, ad libraries or tracking frameworks. Your data will never be shared with a third party**
 
 ## Data access 
 
