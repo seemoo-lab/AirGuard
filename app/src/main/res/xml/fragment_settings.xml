@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <SwitchPreferenceCompat
+        android:icon="@drawable/ic_baseline_analytics_24"
+        android:key="share_data"
+        android:summary="@string/settings_share_data_summary"
+        app:title="@string/settings_share_data_title" />
+
+    <SwitchPreferenceCompat
+        android:icon="@drawable/ic_baseline_location_on_24"
+        android:key="use_location"
+        android:summary="@string/settings_use_location_summary"
+        android:title="@string/settings_use_location_title" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_bluetooth_24"
+        android:key="use_low_power_ble"
+        android:summary="@string/settings_use_low_power_ble_summary"
+        android:title="@string/settings_use_low_power_ble_title" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_library_books_24"
+        android:key="third_party_libraries"
+        android:summary="@string/settings_third_party_libraries_summary"
+        android:title="@string/settings_third_party_libraries_title" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_library_books_24"
+        android:key="privacy_policy"
+        android:summary="@string/settings_privacy_policy_summary"
+        android:title="@string/settings_privacy_policy_title" />
+
+    <SwitchPreferenceCompat
+        app:isPreferenceVisible="@bool/debug"
+        android:key="show_onboarding"
+        android:summary="Will always show the app onboarding procedure"
+        android:title="Show Onboarding" />
+
+
+
+</PreferenceScreen>

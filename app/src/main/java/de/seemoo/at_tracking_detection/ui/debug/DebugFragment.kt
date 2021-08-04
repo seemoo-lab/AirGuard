@@ -1,0 +1,166 @@
+package de.seemoo.at_tracking_detection.ui.debug
+
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.*
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.statistics.api.Api
+import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class DebugFragment : Fragment() {
+
+    @Inject
+    lateinit var notificationService: NotificationService
+
+    @Inject
+    lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var api: Api
+
+    private val debugViewModel: DebugViewModel by viewModels()
+
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private lateinit var bluetoothLeScanner: BluetoothLeScanner
+    private val devicesList: ArrayList<BluetoothDevice> = ArrayList()
+    private val displayList: ArrayList<String> = ArrayList()
+    private lateinit var bluetoothList: ListView
+    private var scanning = false
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+        val root = inflater.inflate(R.layout.fragment_debug, container, false)
+        bluetoothList = root.findViewById(R.id.bluetoothList)
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<Button>(R.id.button)?.setOnClickListener {
+            devicesList.clear()
+            displayList.clear()
+            scanLeDevice()
+        }
+        view.findViewById<Button>(R.id.button2)?.setOnClickListener {
+            GlobalScope.launch { notificationService.sendTrackingNotification("Some device address") }
+        }
+        view.findViewById<ListView>(R.id.bluetoothList)
+            .setOnItemClickListener { _, _, position, _ ->
+                GlobalScope.launch {
+                    notificationService.sendTrackingNotification(devicesList[position].address)
+                }
+            }
+        view.findViewById<Button>(R.id.button3)?.setOnClickListener {
+            backgroundWorkScheduler.scheduleShareData()
+        }
+
+        view.findViewById<Button>(R.id.button4)?.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                val response = api.ping()
+                var text = "Success!"
+                if (!response.isSuccessful) {
+                    text = "Error: ${response.errorBody().toString()}"
+                }
+                Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun scanLeDevice() {
+        bluetoothLeScanner.let { scanner ->
+            if (!scanning) { // Stops scanning after a pre-defined scan period.
+                Handler(Looper.getMainLooper()).postDelayed({
+                    scanning = false
+                    scanner.stopScan(leScanCallback)
+                }, SCAN_PERIOD)
+                scanning = true
+                scanner.startScan(buildFilter(), buildSettings(), leScanCallback)
+            } else {
+                scanning = false
+                scanner.stopScan(leScanCallback)
+            }
+        }
+    }
+
+    private fun buildSettings() =
+        ScanSettings.Builder().setScanMode(getScanMode()).build()
+
+    private fun getScanMode(): Int {
+        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        return if (useLowPower) {
+            ScanSettings.SCAN_MODE_LOW_POWER
+        } else {
+            ScanSettings.SCAN_MODE_BALANCED
+        }
+    }
+
+    private fun buildFilter() =
+        mutableListOf<ScanFilter>(
+            ScanFilter.Builder()
+                .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
+                .build()
+        )
+
+    private val leScanCallback: ScanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            super.onScanResult(callbackType, result)
+
+            if (!devicesList.contains(result.device)) {
+                Timber.d("Found device ${result.device.address}")
+
+                result.isConnectable
+
+                devicesList.add(result.device)
+                displayList.add("Address: " + result.device.address + "\t\t Name: " + result.device.name)
+                Timber.d(String.format("Address: " + result.device.address + "\t\t Bond State: " + result.device.bondState))
+
+                val arrayAdapter: ArrayAdapter<*> = ArrayAdapter(
+                    requireView().context,
+                    android.R.layout.simple_list_item_1,
+                    displayList.toArray()
+                )
+                bluetoothList.adapter = arrayAdapter
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bluetoothLeScanner.stopScan(leScanCallback)
+    }
+
+    companion object {
+        private const val SCAN_PERIOD: Long = 100 * 1000 // 100s
+    }
+}

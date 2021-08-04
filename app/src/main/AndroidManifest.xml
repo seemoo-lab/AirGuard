@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="de.seemoo.at_tracking_detection">
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.bluetooth" />
+
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+
+    <application
+        android:name=".ATTrackingDetectionApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ATTrackingDetection"
+        android:allowBackup="false">
+        <activity
+            android:name=".ui.TrackingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
+
+        <receiver android:name=".notifications.NotificationActionReceiver">
+            <intent-filter>
+                <action android:name="de.seemoo.at_tracking_detection.FALSE_ALARM" />
+                <action android:name="de.seemoo.at_tracking_detection.IGNORE_DEVIE" />
+                <action android:name="de.seemoo.at_tracking_detection.EVENT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".util.ble.GattUpdateReceiver">
+            <intent-filter>
+                <action android:name="de.seemoo.at_tracking_detection.ACTION_GATT_CONNECTED" />
+                <action android:name="de.seemoo.at_tracking_detection.ACTION_GATT_DISCONNECTED" />
+                <action android:name="de.seemoo.at_tracking_detection.ACTION_EVENT_FAILED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.OnboardingActivity" />
+
+        <service
+            android:name=".util.ble.BluetoothLeService"
+            android:enabled="true" />
+    </application>
+
+</manifest>

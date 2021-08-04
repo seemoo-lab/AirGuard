@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.dashboard.DashboardViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/statistics_devices_monitored"
+                layout="@layout/include_dashboard_graph_tile"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:layout_margin="@dimen/card_margin"
+                bind:number="@{vm.currentlyMonitoredDevices}" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5">
+
+                <include
+                    android:id="@+id/statistics_number_beacons"
+                    layout="@layout/include_dashboard_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/card_margin"
+                    app:layout_constraintBottom_toTopOf="@id/statistics_number_alerts"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/statistics_number_devices"
+                    app:layout_constraintTop_toTopOf="parent"
+                    bind:change="@{vm.totalDeviceCountChange}"
+                    bind:clickable="@{true}"
+                    bind:number="@{vm.totalDeviceCount}"
+                    bind:title="@{@string/statistics_beacons}" />
+
+                <include
+                    android:id="@+id/statistics_number_devices"
+                    layout="@layout/include_dashboard_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/card_margin"
+                    app:layout_constraintBottom_toTopOf="@id/statistics_number_false_alarms"
+                    app:layout_constraintLeft_toRightOf="@id/statistics_number_beacons"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    bind:change="@{vm.totalLocationsCountChange}"
+                    bind:clickable="@{true}"
+                    bind:number="@{vm.totalLocationsTrackedCount}"
+                    bind:title="@{@string/statistics_devices}" />
+
+
+                <include
+                    android:id="@+id/statistics_number_alerts"
+                    layout="@layout/include_dashboard_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/card_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/statistics_number_false_alarms"
+                    app:layout_constraintTop_toBottomOf="@id/statistics_number_beacons"
+                    bind:change="@{vm.totalAlertCountChange}"
+                    bind:clickable="@{false}"
+                    bind:number="@{vm.totalAlertCount}"
+                    bind:title="@{@string/statistics_alerts}" />
+
+
+                <include
+                    android:id="@+id/statistics_number_false_alarms"
+                    layout="@layout/include_dashboard_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/card_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/statistics_number_alerts"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/statistics_number_devices"
+                    bind:change="@{vm.totalFalseAlarmCountChange}"
+                    bind:clickable="@{false}"
+                    bind:number="@{vm.totalFalseAlarmCount}"
+                    bind:title="@{@string/statistics_false_alarms}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

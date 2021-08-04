@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.ATTrackingDetection" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <color name="appintro_ripple_color">#1FFFFFFF</color>
+    <color name="appintro_background_color">@color/light_black</color>
+    <color name="appintro_title_color">@color/white</color>
+    <color name="appintro_desc_color">@color/white</color>
+    <color name="appintro_icon_tint">@color/white</color>
+
+    <color name="defaultTextColor">@color/white</color>
+</resources>

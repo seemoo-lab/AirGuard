@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">AirGuard</string>
+
+    <string name="title_ignored_devices">Ignored Devices</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_debug">Debug</string>
+    <string name="title_feedback">Feedback</string>
+    <string name="title_tracking">{deviceAddress} is following you!</string>
+    <string name="title_devices_tracking">Device {deviceAddress}</string>
+    <string name="title_device_map">All Devices</string>
+    <string name="title_devices">Devices</string>
+
+    <string name="map_empty_text">No devices have been found yet. Every time a device is discovered, a location on the map will be shown, where this happened. This does not mean that someone tracked you on every location. In most cases you will find devices from others in public transport or from one of your neighbors.</string>
+
+    <string name="mark_false_alarm">FALSE ALARM</string>
+    <string name="channel_name">Tracking Detection</string>
+    <string name="channel_description">Warns you about a possible tracking device</string>
+    <string name="statistics_beacons">Devices found</string>
+    <string name="statistics_devices">Locations</string>
+    <string name="statistics_alerts">Tracking Alerts sent</string>
+    <string name="statistics_false_alarms">False Alarms</string>
+    <string name="statistics_devices_monitored">Devices Currently Monitored</string>
+    <string name="settings_share_data_summary">Support the project by sharing some anonymized data</string>
+    <string name="settings_share_data_title">Participate in study</string>
+    <string name="device_item_first_discovery">"First Discovery:"</string>
+    <string name="beacons">Beacons</string>
+    <string name="devices_swipe">Swipe to remove</string>
+    <string name="devices_list_empty">Whenever the app detects an AirTag or another Find My device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
+    <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a know device (e.g. an AirTag you own) you can ignore them. Those ignored devices will appear here. Remember: An AirTag changes their Bluetooth address once a day. So a known AirTag becomes a new one after a day.</string>
+    <string name="settings_use_location_summary">If enabled more detailed tracking information can be provided when being tracked!</string>
+    <string name="settings_use_location_title">Use Location</string>
+    <string name="error_requesting_location_permission">Error requesting background location permission!</string>
+    <string name="tracking_locate_at_title">Play Sound</string>
+    <string name="tracking_locate_at_subtitle">Locate AirTag</string>
+    <string name="permissions_background_location_title">Background Location</string>
+    <string name="permission_background_location_message">By granting this permission more detailed tracking information can be provided when being tracked. This is an optional feature!</string>
+    <string name="ok_button">OK</string>
+    <string name="tracking_feedback_title">Feedback</string>
+    <string name="tracking_feedback_subtitle">Provide some insights</string>
+    <string name="tracking_ignore_device_title">Ignore Device</string>
+    <string name="tracking_ignore_device_subtitle">Mute notifications for this device</string>
+    <string name="tracking_false_alarm_title">False Alarm</string>
+    <string name="tracking_false_alarm_subtitle">Mark this notification as false alarm</string>
+    <string name="feedback_question1">Where was the FindMy device hidden?</string>
+    <string name="feedback_location_backpack">Backpack</string>
+    <string name="feedback_location_clothes">Clothes</string>
+    <string name="feedback_location_car">Car</string>
+    <string name="feedback_location_bike">Bike</string>
+    <string name="feedback_close">Close</string>
+    <string name="tracking_locate_at_playing_sound">Playing sound…</string>
+    <string name="permission_required">Permission required!</string>
+    <string name="permission_required_message">You need to give this permission in order to use this App!</string>
+    <string name="rssi">RSSI</string>
+    <string name="device_item_last_seen">Last seen:</string>
+    <string name="dashboard_tile_change">+%d</string>
+    <string name="onboarding_share_data_title">Participate in our study?</string>
+    <string name="onboarding_share_data_switch">Participate in study</string>
+    <string name="onboarding_share_data_description">
+        This app has been developed by researchers of the Technical University of Darmstadt, Germany. With our study we want to find out how many people are affected by malicious tracking attempts.
+        Whether Apple\'s Find My devices are actually used for tracking  people. And ultimately, how well we can protect people from this through our app. \n
+        <b>To join you need to 18 years or older!</b>
+        \n\n
+
+        • We will collect some information about the discovered devices like the <b>device type</b>, <b>rssi value</b> (signal strength) and the <b>date and time</b> of the discovery \n\n
+        • How many <b>notifications</b> have been sent to you, the <b>date and time</b> of the alert as well as the <b>feedback</b> which you can provide optionally\n\n
+
+        We will <b>NOT</b> share any location data or data which might let identify you! The participation is completely anonymous!</string>
+
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag or FindMy capable device is tracking you!</string>
+    <string name="location_permission_title">Location Permission</string>
+    <string name="location_permission_message">This app needs location permission to allow Bluetooth scanning for AirTags or other Find My devices even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
+
+    <string name="onboarding_ignore_battery_optimization_title">Battery Optimization</string>
+    <string name="onboarding_ignore_battery_optimization_description">In order to prevent the App from being killed in the Background we need to disable battery optimization!</string>
+    <string name="onboarding_ignore_battery_optimization">Ignore Battery Optimization</string>
+    <string name="onboarding_4_title">Background Location Permission</string>
+    <string name="onboarding_4_description">To get a more detailed location history in case you\'re being tracked, allow this app to use your location all the time. This lets us save the location of an AirTag or FindMy Device even when the App is closed! This Feature is optional!</string>
+    <string name="onboarding_5_title">All set!</string>
+    <string name="settings_theme_system_default">System Default</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_use_low_power_ble_summary">If enabled bluetooth low power scan will be used to discover nearby AirTags!<b>WARNING</b>: This could cause that some devices won\'t be discovered!</string>
+    <string name="settings_use_low_power_ble_title">Use Low Power Scan</string>
+    <string name="tracking_device_not_connectable">This device is not able to play a sound!</string>
+    <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information!</string>
+    <string name="info">Information</string>
+    <string name="settings_app_theme_title">App Theme</string>
+    <string name="settings_app_theme_summary">Choose a theme!</string>
+
+    <string name="settings_third_party_libraries_title">Third Party Libraries</string>
+    <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
+
+    <string name="settings_privacy_policy_title">Privacy Policy</string>
+    <string name="settings_privacy_policy_summary">View our short and simple privacy policy</string>
+
+    <string name="onboarding_share_data_no">No</string>
+    <string name="onboarding_share_data_yes">Yes</string>
+    <string name="onboarding_share_data_dialog">You have to decide whether you want to share some anonymized data or not!</string>
+    <string name="device_name_airtag">AirTag %s</string>
+    <string name="device_name_find_my_device">FindMy Device %s</string>
+    <string name="notification_text">Open the notification to get more info. A device has followed you for at least 30 minutes.</string>
+    <string name="notification_title">A tracker was discovered!</string>
+    <string name="alert_sent_icon">Alert sent icon</string>
+    <string name="airtag_icon">AirTag icon</string>
+    <string name="find_my_device_icon">Find My Device icon</string>
+    <string name="location_sample_image">Location sample image</string>
+    <string name="permissions_location_title">Background Location</string>
+    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag or FindMy device is tracking you. This permission is optional!</string>
+    <string name="onboarding_2_title">Location Permission</string>
+    <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding AirTags via Bluetooth Low Energy. You must grant this permission to use the app!</string>
+</resources>

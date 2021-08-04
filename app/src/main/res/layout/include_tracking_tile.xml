@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="clickable"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="drawable"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="imageDescription"
+            type="String" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="subtitle"
+            type="String" />
+
+        <variable
+            name="showLoader"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.tracking.TrackingViewModel" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:clickable="@{clickable}">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/tracking_guideline_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/tracking_guideline_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.80" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/tracking_guideline_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.35" />
+
+            <ImageView
+                android:id="@+id/tracking_tile_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@{imageDescription}"
+                android:scaleType="fitStart"
+                android:adjustViewBounds="true"
+                android:src="@{drawable}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tracking_guideline_left"
+                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{showLoader ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
+                app:layout_constraintLeft_toRightOf="@id/tracking_guideline_right"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/tracking_playing_sound_indicator"
+                    style="@style/SpinKitView.Wave"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:indeterminate="true"
+                    android:visibility="@{vm.soundPlaying ? View.VISIBLE : View.INVISIBLE}"
+                    app:SpinKit_Color="?colorPrimary" />
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/tracking_connecting_indicator"
+                    style="@style/SpinKitView.Circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:indeterminate="true"
+                    android:visibility="@{vm.connecting ? View.VISIBLE : View.INVISIBLE}"
+                    app:SpinKit_Color="?colorPrimary" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:contentDescription="@string/tracking_locate_at_playing_sound"
+                    android:scaleType="fitEnd"
+                    android:visibility="@{vm.error ? View.VISIBLE : View.INVISIBLE}"
+                    app:srcCompat="@drawable/ic_baseline_error_outline_24" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tracking_tile_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="13sp"
+                android:maxLines="1"
+                android:text="@{title}"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textSize="20sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tracking_guideline_horizontal" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:text="@{subtitle}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tracking_tile_title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

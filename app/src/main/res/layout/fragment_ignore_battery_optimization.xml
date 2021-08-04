@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data></data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/appintro_statusbar_height"
+        android:paddingBottom="@dimen/appintro2_bottombar_height">
+
+        <TextView
+            android:id="@+id/onboarding_ignore_battery_optimization_title"
+            style="@style/AppIntroDefaultHeading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@string/onboarding_ignore_battery_optimization_title"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_ignore_battery_optimization_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            app:layout_constraintVertical_weight="2" />
+
+        <ImageView
+            android:id="@+id/onboarding_ignore_battery_optimization_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/onboarding_ignore_battery_optimization"
+            android:src="@drawable/img_battery_optimization"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_ignore_battery_optimization_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_ignore_battery_optimization_title"
+            app:layout_constraintVertical_weight="4"
+            tools:srcCompat="@drawable/img_battery_optimization" />
+
+        <TextView
+            android:id="@+id/onboarding_ignore_battery_optimization_description"
+            style="@style/AppIntroDefaultText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/onboarding_ignore_battery_optimization_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_ignore_battery_optimization_image"
+            app:layout_constraintVertical_weight="2" />
+
+        <Button
+            android:id="@+id/onboarding_ignore_battery_optimization_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/onboarding_ignore_battery_optimization"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_ignore_battery_optimization_description"
+            app:layout_constraintVertical_weight="2"
+            app:icon="@drawable/ic_baseline_open_in_new_24"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
