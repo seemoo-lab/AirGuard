@@ -61,4 +61,4 @@
 # is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
--keep class de.seemoo.at_tracking_detection.statistics.api.models.** { *; }
+-keep class de.seemoo.at_tracking_detection.** { *; }
