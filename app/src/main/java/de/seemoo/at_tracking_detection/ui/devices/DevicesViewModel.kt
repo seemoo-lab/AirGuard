@@ -6,6 +6,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +20,10 @@ class DevicesViewModel @Inject constructor(
         deviceRepository.removeIgnoreFlag(deviceAddress)
     }
 
+    fun ignoreDevice(deviceAddress: String) = viewModelScope.launch {
+        deviceRepository.ignoreDevice(deviceAddress)
+    }
+
     fun getDeviceBeaconsCount(deviceAddress: String): String =
         beaconRepository.getDeviceBeaconsCount(deviceAddress).toString()
 
@@ -26,6 +31,10 @@ class DevicesViewModel @Inject constructor(
 
     fun getMarkerLocations(deviceAddress: String): List<Beacon> =
         beaconRepository.getDeviceBeacons(deviceAddress)
+
+    fun update(device: Device) = viewModelScope.launch {
+        deviceRepository.update(device)
+    }
 
     val deviceListEmpty = MutableLiveData<Boolean>()
 

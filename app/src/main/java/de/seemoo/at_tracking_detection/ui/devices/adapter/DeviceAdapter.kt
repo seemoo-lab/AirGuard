@@ -53,5 +53,4 @@ class DeviceAdapter constructor(
         override fun areItemsTheSame(oldItem: Device, newItem: Device): Boolean =
             oldItem.deviceId == newItem.deviceId
     }
-
 }

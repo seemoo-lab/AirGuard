@@ -97,4 +97,8 @@
     <string name="location_permission_message">Diese App benötigt die Berechtigung auf ihren Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und andere FindMy Geräte zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem können Sie der App optional erlauben einen Standort verlauf anzuzeigen, wenn Sie verfolgt werden.</string>
     <string name="permissions_background_location_title">Standort im Hintergrund</string>
     <string name="permission_background_location_message">Wenn Sie diese Erlaubnis erteilen, können detailliertere Tracking-Informationen zur Verfügung gestellt werden, wenn Sie getrackt werden. Dies ist eine optionale Funktion!</string>
+    <string name="devices_edit_title">Namen ändern</string>
+    <string name="cancel_button">Abbruch</string>
+    <string name="devices_alter_removed">"%s" wurde entfernt!</string>
+    <string name="undo_button">Rückgängig</string>
 </resources>

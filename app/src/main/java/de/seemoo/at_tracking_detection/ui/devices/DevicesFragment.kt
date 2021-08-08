@@ -1,11 +1,17 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
+import android.app.AlertDialog
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,12 +25,14 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.adapter.DeviceAdapter
 import timber.log.Timber
+
 
 @AndroidEntryPoint
 class DevicesFragment : Fragment() {
@@ -95,6 +103,9 @@ class DevicesFragment : Fragment() {
     private val swipeToDeleteCallback =
         object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            private val deleteBackground = ColorDrawable(Color.RED)
+            private val editBackground = ColorDrawable(Color.GRAY)
+
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -103,12 +114,108 @@ class DevicesFragment : Fragment() {
                 return false
             }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val deviceAddress =
-                    deviceAdapter.currentList[viewHolder.bindingAdapterPosition].address
-                devicesViewModel.removeDeviceIgnoreFlag(deviceAddress)
-                Timber.d("Removed device $deviceAddress from ignored list")
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+
+                val deleteIcon =
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_delete_24)
+                val editIcon =
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_edit_24)
+
+                var transitionX = dX
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    when {
+                        dX > 0 -> {
+                            val iconMargin = (itemView.height - deleteIcon!!.intrinsicHeight) / 2
+                            val iconTop =
+                                itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
+                            val iconBottom = itemView.bottom - deleteIcon.intrinsicHeight
+                            val iconLeft = itemView.left + iconMargin
+                            val iconRight = itemView.left + iconMargin + deleteIcon.intrinsicWidth
+                            deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            deleteBackground.setBounds(
+                                itemView.left,
+                                itemView.top,
+                                itemView.left + dX.toInt(),
+                                itemView.bottom
+                            )
+                            deleteBackground.draw(c)
+                            deleteIcon.draw(c)
+                        }
+                        dX < 0 -> {
+                            val iconMargin = (itemView.height - editIcon!!.intrinsicHeight) / 2
+                            val iconTop =
+                                itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
+                            val iconBottom = iconTop + editIcon.intrinsicHeight
+                            val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
+                            val iconRight = itemView.right - iconMargin
+                            editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            editBackground.setBounds(
+                                itemView.right + dX.toInt(),
+                                itemView.top,
+                                itemView.right,
+                                itemView.bottom
+                            )
+                            transitionX = (dX * (iconLeft / 4)) / itemView.width
+                            editBackground.draw(c)
+                            editIcon.draw(c)
+                        }
+                    }
+                }
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    transitionX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+
             }
 
+            private fun showRestoreDevice(device: Device) = Snackbar.make(
+                view!!, getString(
+                    R.string.devices_alter_removed, device.getDeviceName()
+                ), Snackbar.LENGTH_LONG
+            ).setAction(getString(R.string.undo_button)) {
+                Timber.d("Undo remove device!")
+                devicesViewModel.ignoreDevice(device.address)
+            }.show()
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val device =
+                    deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
+                if (direction == ItemTouchHelper.LEFT) {
+                    val editName = EditText(context)
+                    editName.setText(device.getDeviceName())
+                    AlertDialog.Builder(context).setIcon(R.drawable.ic_baseline_edit_24)
+                        .setTitle(getString(R.string.devices_edit_title)).setView(editName)
+                        .setNegativeButton(
+                            getString(R.string.cancel_button)
+                        ) { _, _ ->
+                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+                        }.setPositiveButton(R.string.ok_button) { _, _ ->
+                            device.name = editName.text.toString()
+                            devicesViewModel.update(device)
+                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+                            Timber.d("Renamed device to ${device.name}")
+                        }.show()
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    devicesViewModel.removeDeviceIgnoreFlag(device.address)
+                    showRestoreDevice(device)
+                    Timber.d("Removed device ${device.address} from ignored list")
+                }
+            }
         }
 }
