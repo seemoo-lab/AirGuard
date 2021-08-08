@@ -13,6 +13,7 @@ import kotlin.experimental.and
 data class Device(
     @PrimaryKey(autoGenerate = true) var deviceId: Int,
     @ColumnInfo(name = "address") var address: String,
+    @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
     @ColumnInfo(name = "connectable") val connectable: Boolean,
     @ColumnInfo(name = "payloadData") val payloadData: Byte?,
@@ -29,7 +30,18 @@ data class Device(
         payloadData: Byte?,
         firstDiscovery: LocalDateTime,
         lastSeen: LocalDateTime,
-    ) : this(0, address, ignore, connectable, payloadData, firstDiscovery, lastSeen, false, null)
+    ) : this(
+        0,
+        address,
+        null,
+        ignore,
+        connectable,
+        payloadData,
+        firstDiscovery,
+        lastSeen,
+        false,
+        null
+    )
 
     private fun getDateTimeFormatter(): DateTimeFormatter =
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -48,10 +60,11 @@ data class Device(
         val resources = ATTrackingDetectionApplication.getAppContext().resources
         val airtag = de.seemoo.at_tracking_detection.R.string.device_name_airtag
         val findMyDevice = de.seemoo.at_tracking_detection.R.string.device_name_find_my_device
-        return if (isAirTag()) {
-            resources.getString(airtag).format(deviceId)
-        } else {
-            resources.getString(findMyDevice).format(deviceId)
-        }
+        return name
+            ?: if (isAirTag()) {
+                resources.getString(airtag).format(deviceId)
+            } else {
+                resources.getString(findMyDevice).format(deviceId)
+            }
     }
 }

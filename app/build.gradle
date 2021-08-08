@@ -24,13 +24,19 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 9
-        versionName "1.0.0"
+        versionCode 10
+        versionName "1.0.2"
 
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {

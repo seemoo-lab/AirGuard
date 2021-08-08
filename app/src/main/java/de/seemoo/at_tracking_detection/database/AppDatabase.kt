@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -14,9 +15,9 @@ import de.seemoo.at_tracking_detection.database.tables.Notification
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 
 @Database(
+    version = 3,
     entities = [Device::class, Notification::class, Beacon::class, Feedback::class],
-    version = 2,
-    exportSchema = false
+    autoMigrations = [AutoMigration(from = 2, to = 3)]
 )
 @TypeConverters(DateTimeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
