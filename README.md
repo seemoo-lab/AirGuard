@@ -1,4 +1,12 @@
-# AirGuard - AirTag tracking protection 
+<h5 align="center"><img src="https://github.com/seemoo-lab/AirGuard/blob/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" width="300px"></h5>
+<h1 align="center">AirGuard - AirTag tracking protection</h1>
+
+<p align="center">
+  <img src="https://imgur.com/o3vOjmo.png" width=200px>
+  <img src="https://imgur.com/N7o6ZPr.png" width=200px>
+  <img src="https://imgur.com/G6Hc3HR.png" width=200px>
+  <img src="https://imgur.com/7UgadbH.png" width=200px>
+</p>
 
 **Protect yourself from Find My Tracking**
 
