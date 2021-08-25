@@ -51,13 +51,16 @@ class DevicesFragment : Fragment() {
         val binding: FragmentDevicesBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
         val deviceList: LiveData<List<Device>>
+        var swipeDirs: Int = ItemTouchHelper.LEFT
         if (safeArgs.showDevicesFound) {
             deviceList = devicesViewModel.devices
         } else {
             deviceList = devicesViewModel.ignoredDevices
-            val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-            itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
+            swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
+        itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
 
         sharedElementReturnTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
@@ -100,9 +103,9 @@ class DevicesFragment : Fragment() {
             findNavController().navigate(directions, extras)
         }
 
-    private val swipeToDeleteCallback =
+    private fun swipeToDeleteCallback(swipeDirs: Int) =
         object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            ItemTouchHelper.SimpleCallback(0, swipeDirs) {
             private val deleteBackground = ColorDrawable(Color.RED)
             private val editBackground = ColorDrawable(Color.GRAY)
 
@@ -165,7 +168,7 @@ class DevicesFragment : Fragment() {
                                 itemView.right,
                                 itemView.bottom
                             )
-                            transitionX = (dX * (iconLeft / 4)) / itemView.width
+                            transitionX /= 4
                             editBackground.draw(c)
                             editIcon.draw(c)
                         }
@@ -201,16 +204,16 @@ class DevicesFragment : Fragment() {
                     editName.setText(device.getDeviceName())
                     AlertDialog.Builder(context).setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)
-                        .setNegativeButton(
-                            getString(R.string.cancel_button)
-                        ) { _, _ ->
-                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
-                        }.setPositiveButton(R.string.ok_button) { _, _ ->
+                        .setNegativeButton(getString(R.string.cancel_button), null)
+                        .setPositiveButton(R.string.ok_button) { _, _ ->
                             device.name = editName.text.toString()
                             devicesViewModel.update(device)
-                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
                             Timber.d("Renamed device to ${device.name}")
-                        }.show()
+                        }
+                        .setOnDismissListener {
+                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+                        }
+                        .show()
                 } else if (direction == ItemTouchHelper.RIGHT) {
                     devicesViewModel.removeDeviceIgnoreFlag(device.address)
                     showRestoreDevice(device)
