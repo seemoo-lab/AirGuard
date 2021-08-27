@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/appintro_statusbar_height"
+        android:paddingBottom="@dimen/appintro2_bottombar_height">
+
+        <TextView
+            android:id="@+id/onboarding_location_title"
+            style="@style/AppIntroDefaultHeading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@string/onboarding_4_title"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_location_image_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            app:layout_constraintVertical_weight="2" />
+
+        <ImageView
+            android:id="@+id/onboarding_location_image_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/location_sample_image"
+            android:src="@drawable/img_tracking_map"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_location_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_location_title"
+            app:layout_constraintVertical_weight="4"
+            tools:srcCompat="@drawable/img_tracking_map" />
+
+        <TextView
+            android:id="@+id/onboarding_location_text"
+            style="@style/AppIntroDefaultText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="@string/onboarding_4_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_location_image_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

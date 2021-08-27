@@ -63,7 +63,7 @@
     <string name="onboarding_ignore_battery_optimization_description">Um zu verhindern, dass die App im Hintergrund beendet wird, müssen wir die Batterieoptimierung deaktivieren!</string>
     <string name="onboarding_ignore_battery_optimization">Batterie-Optimierung verhindern</string>
     <string name="onboarding_4_title">Berechtigung für den Standort im Hintergrund</string>
-    <string name="onboarding_4_description">Wenn Sie einen detaillierteren Standortverlauf sehen möchten, ist die Berechtigung, um im Hintergrund auf den Standort zuzugreifen, erforderlich. Dies ermöglicht der App konstant auf den Standort zuzugreifen, auch wenn diese gerade geschlossen ist! Diese Funktion ist optional!</string>
+    <string name="onboarding_4_description">"Wenn Sie einen detaillierteren Standortverlauf sehen möchten, ist die Berechtigung, um im Hintergrund auf den Standort zuzugreifen, erforderlich. Dies ermöglicht der App konstant auf den Standort zuzugreifen, auch wenn diese gerade geschlossen ist. Die Funktion ist optional und keine Stanortdaten verlassen ihr Gerät. "</string>
     <string name="onboarding_5_title">Fertig!</string>
     <string name="settings_theme_system_default">Systemstandard</string>
     <string name="settings_theme_dark">Dunkel</string>

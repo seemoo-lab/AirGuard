@@ -13,6 +13,7 @@ import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroFragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.ui.onboarding.BackgroundLocationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.IgnoreBatteryOptimizationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.LocationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.ShareDataFragment
@@ -77,13 +78,10 @@ class OnboardingActivity : AppIntro() {
             ), slideNumber = 2, required = true
         )
         addSlide(IgnoreBatteryOptimizationFragment.newInstance())
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             addSlide(
-                AppIntroFragment.newInstance(
-                    title = getString(R.string.onboarding_4_title),
-                    description = getString(R.string.onboarding_4_description),
-                    imageDrawable = R.drawable.img_tracking_map
-                )
+                BackgroundLocationFragment.newInstance()
             )
             askForPermissions(
                 permissions = arrayOf(
