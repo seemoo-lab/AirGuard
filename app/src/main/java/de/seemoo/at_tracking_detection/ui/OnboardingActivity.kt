@@ -1,13 +1,15 @@
 package de.seemoo.at_tracking_detection.ui
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroFragment
@@ -35,6 +37,14 @@ class OnboardingActivity : AppIntro() {
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {
+        val hasPermission =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            sharedPreferences.edit().putBoolean("use_location", true).apply()
+        }
         sharedPreferences.edit().putBoolean("onboarding_completed", true).apply()
         backgroundWorkScheduler.launch()
         finish()
@@ -44,11 +54,11 @@ class OnboardingActivity : AppIntro() {
     }
 
     override fun onUserDeniedPermission(permissionName: String) {
-        if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
-            sharedPreferences.edit().putBoolean("use_location", false).apply()
-        } else {
-            handleRequiredPermission()
-        }
+        handleRequiredPermission(permissionName)
+    }
+
+    override fun onUserDisabledPermission(permissionName: String) {
+        handleRequiredPermission(permissionName)
     }
 
     private fun buildSlides() {
@@ -87,11 +97,18 @@ class OnboardingActivity : AppIntro() {
         )
     }
 
-    private fun handleRequiredPermission() =
-        AlertDialog.Builder(applicationContext).setTitle(R.string.permission_required)
-            .setIcon(R.drawable.ic_baseline_error_outline_24)
-            .setMessage(R.string.permission_required_message)
-            .setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
-                finish()
-            }.create()
+    private fun handleRequiredPermission(permissionName: String) {
+        if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
+            sharedPreferences.edit().putBoolean("use_location", false).apply()
+        } else {
+            AlertDialog.Builder(this).setTitle(R.string.permission_required)
+                .setIcon(R.drawable.ic_baseline_error_outline_24)
+                .setMessage(R.string.permission_required_message)
+                .setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
+                    finish()
+                }
+                .create()
+                .show()
+        }
+    }
 }

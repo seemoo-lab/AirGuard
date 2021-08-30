@@ -75,7 +75,7 @@
     <string name="onboarding_ignore_battery_optimization_description">In order to prevent the App from being killed in the Background we need to disable battery optimization!</string>
     <string name="onboarding_ignore_battery_optimization">Ignore Battery Optimization</string>
     <string name="onboarding_4_title">Background Location Permission</string>
-    <string name="onboarding_4_description">To get a more detailed location history in case you\'re being tracked, allow this app to use your location all the time. This lets us save the location of an AirTag or FindMy Device even when the App is closed. This feature is optional and no location data will leave your device.</string>
+    <string name="onboarding_4_description">To get a more detailed location history in case you\'re being tracked, allow this app to use your location all the time. This app collects location data to enable us to save the location of an AirTag or FindMy Device even when the app is closed or not in use. This feature is optional and no location data will leave your device.</string>
     <string name="onboarding_5_title">All set!</string>
     <string name="settings_theme_system_default">System Default</string>
     <string name="settings_theme_dark">Dark</string>
