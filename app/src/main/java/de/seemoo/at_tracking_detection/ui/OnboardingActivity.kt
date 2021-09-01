@@ -71,22 +71,11 @@ class OnboardingActivity : AppIntro() {
 
         addSlide(LocationFragment.newInstance())
 
-        askForPermissions(
-            permissions = arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ), slideNumber = 2, required = true
-        )
         addSlide(IgnoreBatteryOptimizationFragment.newInstance())
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             addSlide(
                 BackgroundLocationFragment.newInstance()
-            )
-            askForPermissions(
-                permissions = arrayOf(
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ), slideNumber = 4
             )
         }
         addSlide(ShareDataFragment.newInstance())

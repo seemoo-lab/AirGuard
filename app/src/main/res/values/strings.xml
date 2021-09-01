@@ -113,4 +113,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="devices_alter_removed">"%s" removed!</string>
     <string name="undo_button">Undo</string>
+    <string name="grant_location_permission">Grant location permission</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="cancel">Cancel</string>
 </resources>
