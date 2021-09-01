@@ -116,4 +116,5 @@
     <string name="grant_location_permission">Grant location permission</string>
     <string name="grant_permission">Grant permission</string>
     <string name="cancel">Cancel</string>
+    <string name="no_button">No thanks</string>
 </resources>

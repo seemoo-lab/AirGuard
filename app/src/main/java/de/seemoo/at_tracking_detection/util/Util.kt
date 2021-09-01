@@ -1,8 +1,16 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -18,6 +26,28 @@ object Util {
 
     const val MAX_ZOOM_LEVEL = 19.5
 
+    private fun handlePermissions(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return
+        }
+        val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
+
+        builder.setMessage(R.string.onboarding_2_description)
+        builder.setTitle(R.string.onboarding_2_title)
+        builder.setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
+            ATTrackingDetectionApplication.getCurrentActivity().requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ), 0
+            )
+        }
+        builder.setNegativeButton(context.getString(R.string.no_button), null)
+
+        val dialog = builder.create()
+        dialog?.show()
+    }
+
+
     fun setGeoPointsFromList(
         beaconList: List<Beacon>,
         view: View,
@@ -29,6 +59,14 @@ object Util {
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
 
+        val permissionState =
+            ContextCompat.checkSelfPermission(
+                view.context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        if (!permissionState) {
+            handlePermissions(view.context)
+        }
         val bitmapPerson =
             BitmapFactory.decodeResource(view.resources, R.drawable.mylocation, options)
         locationOverlay.setPersonIcon(bitmapPerson)
