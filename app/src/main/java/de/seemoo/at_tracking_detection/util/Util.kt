@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.view.View
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -21,15 +22,14 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import androidx.fragment.app.Fragment
 
 object Util {
 
     const val MAX_ZOOM_LEVEL = 19.5
 
-    private fun handlePermissions(context: Context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return
-        }
+
+    fun handlePermissions(context: Context) {
         val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
 
         builder.setMessage(R.string.onboarding_2_description)
@@ -47,6 +47,26 @@ object Util {
         dialog?.show()
     }
 
+    fun checkForPermission(context: Context): Boolean {
+        when {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // You can use the API that requires the permission.
+                return true
+            }
+
+            shouldShowRequestPermissionRationale(ATTrackingDetectionApplication.getCurrentActivity(), Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                handlePermissions(context)
+                return false
+            }
+            else -> {
+                handlePermissions(context)
+                return false
+            }
+        }
+    }
 
     fun setGeoPointsFromList(
         beaconList: List<Beacon>,
@@ -59,14 +79,6 @@ object Util {
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
 
-        val permissionState =
-            ContextCompat.checkSelfPermission(
-                view.context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        if (!permissionState) {
-            handlePermissions(view.context)
-        }
         val bitmapPerson =
             BitmapFactory.decodeResource(view.resources, R.drawable.mylocation, options)
         locationOverlay.setPersonIcon(bitmapPerson)

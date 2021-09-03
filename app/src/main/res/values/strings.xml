@@ -108,7 +108,7 @@
     <string name="permissions_location_title">Background Location</string>
     <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag or FindMy device is tracking you. This permission is optional!</string>
     <string name="onboarding_2_title">Location Permission</string>
-    <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding AirTags via Bluetooth Low Energy. You must grant this permission to use the app!</string>
+    <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding AirTags via Bluetooth Low Energy. Without this permission the app does not work and will not find any tracking devices. Your location data is never leaving your device. </string>
     <string name="devices_edit_title">Edit device name</string>
     <string name="cancel_button">Cancel</string>
     <string name="devices_alter_removed">"%s" removed!</string>

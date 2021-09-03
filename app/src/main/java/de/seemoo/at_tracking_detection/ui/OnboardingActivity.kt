@@ -37,14 +37,26 @@ class OnboardingActivity : AppIntro() {
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {
-        val hasPermission =
+
+        //Checks which permissions have given to store the default value for location access
+        val locationPermissionState =
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        val backgroundPermissionState =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || ContextCompat.checkSelfPermission(
-                this,
+                applicationContext,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
-        if (hasPermission) {
+
+        if (locationPermissionState && backgroundPermissionState) {
             sharedPreferences.edit().putBoolean("use_location", true).apply()
+        }else {
+            sharedPreferences.edit().putBoolean("use_location", false).apply()
         }
+
         sharedPreferences.edit().putBoolean("onboarding_completed", true).apply()
         backgroundWorkScheduler.launch()
         finish()

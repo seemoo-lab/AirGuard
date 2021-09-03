@@ -67,7 +67,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    private val useLocation = sharedPreferences.getBoolean("use_location", true)
+    private val useLocation = sharedPreferences.getBoolean("use_location", false)
 
     private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
 

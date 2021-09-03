@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -31,6 +33,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.adapter.DeviceAdapter
+import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
 
 
@@ -90,6 +93,8 @@ class DevicesFragment : Fragment() {
             val textView = view.findViewById<TextView>(R.id.empty_list_text)
             textView?.setText(R.string.ignored_device_list_empty)
         }
+
+       Util.checkForPermission(requireContext())
     }
 
     private val deviceItemListener =

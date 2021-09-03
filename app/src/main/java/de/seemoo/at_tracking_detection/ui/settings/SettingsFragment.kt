@@ -16,6 +16,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
 import javax.inject.Inject
@@ -68,18 +69,40 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updatePermissionSettings() {
-        val permissionState =
+        val locationPermissionState =
+             ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        val backgroundPermissionState =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
-        sharedPreferences.edit().putBoolean("use_location", permissionState).apply()
+
+        if (locationPermissionState && backgroundPermissionState) {
+            sharedPreferences.edit().putBoolean("use_location", true).apply()
+        }else {
+            sharedPreferences.edit().putBoolean("use_location", false).apply()
+        }
     }
 
     private fun handlePermissions() {
+        val locationPermissionState =
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        if (!locationPermissionState) {
+            Util.checkForPermission(requireContext())
+        }
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             return
         }
+
         val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
 
         builder.setMessage(R.string.onboarding_4_description)
@@ -88,7 +111,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Timber.d("Request ACCESS BACKGROUND LOCATION PERMISSION permission!")
             requestPermissionLauncher.launch(
                 arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 )
             )
