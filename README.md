@@ -32,4 +32,14 @@ AirTag, FindMy and iOS are trademarks of Apple Inc.
 We are not working together with Apple Inc.
 
 ## Get the app 
-The app is availalble on [Google Play](https://play.google.com/store/apps/details?id=de.seemoo.at_tracking_detection.release) or download it here from the GitHub releases. 
+The app is availalble on [Google Play](https://play.google.com/store/apps/details?id=de.seemoo.at_tracking_detection.release), [F-Droid](https://f-droid.org/packages/de.seemoo.at_tracking_detection) or download it here from the GitHub releases.
+
+<a href='https://play.google.com/store/apps/details?id=de.seemoo.at_tracking_detection.release' target="_blank" rel="noopener noreferrer">
+  <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80"/>
+</a>
+<a href="https://f-droid.org/packages/de.seemoo.at_tracking_detection" target="_blank" rel="noopener noreferrer">
+    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">
+</a>
+
