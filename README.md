@@ -2,8 +2,15 @@
 <h1 align="center">AirGuard - AirTag tracking protection</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/github/release/seemoo-lab/AirGuard.svg?logo=github" /> 
-  <img src="https://img.shields.io/f-droid/v/de.seemoo.at_tracking_detection.svg" />
+  <a href="https://github.com/seemoo-lab/AirGuard/releases">
+    <img src="https://img.shields.io/github/release/seemoo-lab/AirGuard.svg?logo=github" />
+  </a>
+  <a href="https://f-droid.org/packages/de.seemoo.at_tracking_detection">
+    <img src="https://img.shields.io/f-droid/v/de.seemoo.at_tracking_detection.svg" />
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=de.seemoo.at_tracking_detection.release">
+    <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplayshields.herokuapp.com%2Fplay%3Fi%3Dde.seemoo.at_tracking_detection.release%26l%3DGoogle%2520Play%26m%3D%24version" />
+  </a>
   <img src="https://github.com/seemoo-lab/AirGuard/actions/workflows/android.yml/badge.svg" />
  </p>
 
