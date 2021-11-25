@@ -21,16 +21,16 @@
     <string name="device_item_first_discovery">Erste Entdeckung</string>
     <string name="devices_swipe">Zum Entfernen wischen</string>
     <string name="channel_name">Tracking-Erkennung</string>
-    <string name="channel_description">Warnt dich vor Geräten, die dich evtl. verfolgen</string>
-    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder ein anderes "FindMy"-Gerät in deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in deiner Umgebung waren und dich nicht verfolgen. Du erhälst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
-    <string name="ignored_device_list_empty">Immer wenn Sie eine Benachrichtigung erhalten, dass Sie von einem bekannten Gerät (z. B. einem AirTag, den Sie besitzen) verfolgt werden, können Sie diese ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denken Sie daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag. Ein bekannter AirTag wird also nach einem Tag als ein neuer angezeigt.</string>
-    <string name="settings_use_location_summary">Aktivieren, um  detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
+    <string name="channel_description">Warnt dich vor "Find My" Geräten, die dich evtl. verfolgen</string>
+    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder ein anderes "Find My"-Gerät in deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in deiner Umgebung waren und dich nicht verfolgen. Du erhälst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
+    <string name="ignored_device_list_empty">Immer wenn du eine Benachrichtigung erhalten hast, dass du von einem dir bekannten Gerät (z. B. einem AirTag, den Sie besitzen) verfolgt wirst, dann kannst du diese ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denken Sie daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag. Ein bekannter AirTag wird also nach einem Tag als ein neuer angezeigt.</string>
+    <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="error_requesting_location_permission">Fehler beim Anfragen der Berechtigung im Hintergrund auf den Gerätestandort zugreifen zu dürfen</string>
-    <string name="tracking_locate_at_title">Ton wiedergeben</string>
+    <string name="tracking_locate_at_title">Ton abspielen</string>
     <string name="tracking_locate_at_subtitle">AirTag lokalisieren</string>
     <string name="permissions_location_title">Standort im Hintergrund</string>
-    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "FindMy"-Gerät zu erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
+    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "Find My"-Gerät zu erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
@@ -38,7 +38,7 @@
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
     <string name="tracking_false_alarm_title">Fehlalarm</string>
     <string name="tracking_false_alarm_subtitle">Diese Benachrichtigung als Fehlalarm markieren</string>
-    <string name="feedback_question1">Wo war der AirTag oder das "FindMy"-Gerät versteckt?</string>
+    <string name="feedback_question1">Wo war das "Find My"-Gerät versteckt?</string>
     <string name="feedback_location_backpack">Rucksack</string>
     <string name="feedback_location_clothes">Kleidung</string>
     <string name="feedback_location_car">Auto</string>
@@ -46,17 +46,17 @@
     <string name="feedback_close">Schließen</string>
     <string name="tracking_locate_at_playing_sound">Ton wird abgespielt…</string>
     <string name="permission_required">Berechtigung erforderlich</string>
-    <string name="permission_required_message">Sie müssen diese Berechtigung erteilen, um die App nutzen zu können.</string>
+    <string name="permission_required_message">Die Berechtigung muss erteilt werden, damit man die App verwenden kann</string>
     <string name="rssi">RSSI</string>
     <string name="device_item_last_seen">Zuletzt gesehen</string>
     <string name="onboarding_share_data_title">Statistikdaten teilen</string>
     <string name="onboarding_share_data_switch">Teile Statistikdaten</string>
     <string name="onboarding_share_data_description">
-        Sie können uns helfen, AirGuard zu verbessern, indem Sie einige Statistikdaten teilen. Bei Zustimmung werden diese Daten täglich geteilt: <b>Gerätetyp</b>
+        Du kannst uns helfen, AirGuard zu verbessern, indem du einige Statistikdaten teilst. Bei Zustimmung werden diese Daten täglich geteilt: <b>Gerätetyp</b>
         - Wir werden einige Informationen über die entdeckten Geräte sammeln, wie den <b>Gerätetyp</b>, den <b>RSSI-Wert</b> (Signalstärke) und das <b>Datum und die Uhrzeit</b> der Entdeckung \n\n
         - Wie viele <b>Benachrichtigungen</b> angezeigt wurden, das <b>Datum und die Uhrzeit</b> der Benachrichtigung sowie das <b>Benutzerfeedback</b>, das gegeben werden kann \n\n
-        Wir werden <b>KEINE</b> Standorte oder Daten, die es uns ermöglichen könnten, Sie zu verfolgen, wie Geräteadressen etc. teilen.</string>
-    <string name="onboarding_1_description">AirGuard benachrichtigt Sie, falls Sie von einem Airtag oder "FindMy"-Gerät verfolgt werden.</string>
+        Wir werden <b>KEINE</b> Standorte oder Daten, die es uns ermöglichen könnten, dich zu identifizieren, wie Geräteadressen etc. teilen.</string>
+    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls du von einem Airtag oder "Find My"-Gerät verfolgt wirst.</string>
     <string name="onboarding_2_title">Standortberechtigung</string>
     <string name="onboarding_2_description">AirGuard benötigt die Berechtigung, auf Ihren Standort zuzugreifen, um über Bluetooth Low Energy (LE) nach umliegenden AirTags suchen zu dürfen. Sie müssen diese Berechtigung erteilen, um AirGuard zu verwenden.</string>
     <string name="onboarding_ignore_battery_optimization_title">Batterie-Optimierung</string>
@@ -71,7 +71,7 @@
     <string name="settings_use_low_power_ble_summary">Wenn aktiviert, wird nur Bluetooth Low Power Scan verwendet, um in der Nähe befindliche AirTags zu erkennen.<b>WARNUNG</b>: Dies kann dazu führen, dass einige Geräte nicht erkannt werden.</string>
     <string name="settings_use_low_power_ble_title">Low-Power-Scan verwenden</string>
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
-    <string name="tracking_info">Scannen Sie diesen AirTag mit Ihrem Telefon über NFC, um weitere Informationen zu erhalten.</string>
+    <string name="tracking_info">Scanne diesen AirTag mit deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
     <string name="info">Informationen</string>
     <string name="settings_app_theme_title">App-Design</string>
     <string name="settings_app_theme_summary">Wähle ein Design</string>
@@ -79,9 +79,9 @@
     <string name="settings_third_party_libraries_summary">Zeigt eine Liste aller verwendeten Bibliotheken von Drittanbietern und deren Lizenzen an</string>
     <string name="onboarding_share_data_no">Nein</string>
     <string name="onboarding_share_data_yes">Ja</string>
-    <string name="onboarding_share_data_dialog">Sie müssen entscheiden, ob Sie anonymisierte Daten teilen wollen oder nicht.</string>
-    <string name="device_name_find_my_device">"FindMy"-Gerät %s</string>
-    <string name="notification_text">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Ihnen für mindestens 30 Minuten gefolgt.</string>
+    <string name="onboarding_share_data_dialog">Du musst entscheiden, ob du anonymisierte Daten teilen willst oder nicht.</string>
+    <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
+    <string name="notification_text">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_title">Ein Tracker wurde entdeckt!</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand Sie an jedem Standort geortet hat. In den meisten Fällen werden Sie Geräte von anderen in öffentlichen Verkehrsmitteln oder von einem Ihrer Nachbarn finden.</string>
     <string name="beacons">Signale</string>
@@ -91,12 +91,12 @@
     <string name="settings_privacy_policy_summary">Unsere simple Datenschutzerklärung</string>
     <string name="alert_sent_icon">"Alarm wurde gesendet"-Icon</string>
     <string name="airtag_icon">AirTag-Icon</string>
-    <string name="find_my_device_icon">"FindMy"-Geräte-Icon</string>
+    <string name="find_my_device_icon">"Find My"-Geräte-Icon</string>
     <string name="location_sample_image">Standortbeispiel-Bild</string>
     <string name="location_permission_title">Standortzugriff</string>
-    <string name="location_permission_message">Diese App benötigt die Berechtigung auf ihren Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und andere FindMy Geräte zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem können Sie der App optional erlauben einen Standort verlauf anzuzeigen, wenn Sie verfolgt werden.</string>
+    <string name="location_permission_message">Diese App benötigt die Berechtigung auf deinen Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und andere "Find My" Geräte zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem kannst du der App optional erlauben einen Standort verlauf anzuzeigen, wenn du verfolgt werden solltest.</string>
     <string name="permissions_background_location_title">Standort im Hintergrund</string>
-    <string name="permission_background_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "FindMy"-Gerät zu erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
+    <string name="permission_background_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "Find My"-Gerät zu erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
     <string name="devices_edit_title">Namen ändern</string>
     <string name="cancel_button">Abbruch</string>
     <string name="devices_alter_removed">"%s" wurde entfernt</string>
