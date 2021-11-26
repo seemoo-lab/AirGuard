@@ -13,13 +13,14 @@ import javax.inject.Singleton
 
 
 @Singleton
-class LocationProvider @Inject constructor(private val locationManager: LocationManager) {
+class LocationProvider @Inject constructor(private val locationManager: LocationManager): LocationListener {
 
     private val handler: Handler = Handler(Looper.getMainLooper())
+    private var locationCallback: ((Location?)->Unit)? = null
 
     // TODO: Check for permission here. Suppress Lint should not be the option
     @SuppressLint("MissingPermission")
-    fun getCurrentLocation(): Location? {
+    fun getLastLocation(): Location? {
         Timber.d("Requesting Location...")
         val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val networkProviderEnabled =
@@ -30,7 +31,7 @@ class LocationProvider @Inject constructor(private val locationManager: Location
                 LocationManager.GPS_PROVIDER,
                 MIN_UPDATE_TIME_MS,
                 MIN_DISTANCE_METER,
-                DetectionLocationListener(),
+                this,
                 handler.looper
             )
             return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -39,7 +40,7 @@ class LocationProvider @Inject constructor(private val locationManager: Location
                 LocationManager.NETWORK_PROVIDER,
                 MIN_UPDATE_TIME_MS,
                 MIN_DISTANCE_METER,
-                DetectionLocationListener(),
+                this,
                 handler.looper
             )
             return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
@@ -47,24 +48,49 @@ class LocationProvider @Inject constructor(private val locationManager: Location
         return null
     }
 
-    class DetectionLocationListener : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            Timber.d("Location: ${location.latitude} ${location.longitude}")
-        }
+    @SuppressLint("MissingPermission")
+    fun getCurrentLocation(callback: (Location?) -> Unit) {
+        Timber.d("Requesting Location...")
+        val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val networkProviderEnabled =
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        this.locationCallback = callback
 
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        }
+        if (gpsProviderEnabled) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
 
-        // Android Phones with SDK < 30 need these methods
-        override fun onProviderEnabled(provider: String) {
-        }
-
-        override fun onProviderDisabled(provider: String) {
+        } else if (networkProviderEnabled) {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
         }
     }
 
+    override fun onLocationChanged(location: Location) {
+        Timber.d("Location updated: ${location.latitude} ${location.longitude}")
+        locationCallback?.let { it(location) }
+        locationManager.removeUpdates(this)
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+
+    // Android Phones with SDK < 30 need these methods
+    override fun onProviderEnabled(provider: String) {}
+
+    override fun onProviderDisabled(provider: String) {}
+
     companion object {
         const val MIN_UPDATE_TIME_MS = 100L
-        const val MIN_DISTANCE_METER = 100.0F
+        const val MIN_DISTANCE_METER = 10.0F
     }
 }
