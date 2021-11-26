@@ -18,9 +18,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
 
@@ -50,22 +48,49 @@ class ScanBluetoothWorker @AssistedInject constructor(
             return Result.retry()
         }
         sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
-        Timber.d("Start Scanning for bluetooth le devices...")
+
         scanResults = ArrayList()
+
+        val useLocation = sharedPreferences.getBoolean("use_location", false)
+        if (useLocation) {
+            val lastLocation = locationProvider.getLastLocation()
+            val maxMinutesSinceLastUpdate  = 5
+
+            location = lastLocation
+            Timber.d("Using last location for the tag detection")
+
+            //Getting the most accurate location here
+            locationProvider.getCurrentLocation { loc ->
+                this.location = loc
+                Timber.d("Updated to current location")
+            }
+        }
+
+        //Starting BLE Scan
+        Timber.d("Start Scanning for bluetooth le devices...")
         bluetoothAdapter.bluetoothLeScanner.startScan(
             buildFilter(),
             buildSettings(),
             leScanCallback
         )
-        val useLocation = sharedPreferences.getBoolean("use_location", false)
-        if (useLocation) {
-            location = locationProvider.getCurrentLocation()
-            Timber.d("Using location for beacons")
-        }
 
         delay(SCAN_DURATION)
-        Timber.d("Scanning for bluetooth le devices stopped!")
+        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResults.size} devices")
         bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
+
+        if (location == null) {
+            Timber.d("No location found")
+        }
+
+        //Adding all scan results to the database after the scan has finished
+        scanResults.forEach { scanResult ->
+            insertScanResult(
+                scanResult,
+                location?.latitude,
+                location?.longitude,
+                LocalDateTime.now() //TODO: Use scanResult.time here at some time
+            )
+        }
 
         return Result.success()
     }
@@ -73,22 +98,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
-            Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-
             //Checks if the device has been found already
             if (!scanResults.any { it.device.address == scanResult.device.address }) {
-                GlobalScope.launch {
-                    Timber.i(" from ${scanResult.device.address}")
-                    insertScanResult(
-                        scanResult,
-                        location?.latitude,
-                        location?.longitude,
-                        LocalDateTime.now()
-                    )
-                }
+                Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
                 scanResults.add(scanResult)
             }
-
         }
     }
 
@@ -100,7 +114,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
     ) {
         val payloadData = scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)
         var device = deviceRepository.getDevice(scanResult.device.address)
-        Timber.d("Device: $device")
         if (device == null) {
             device = Device(
                 scanResult.device.address,
@@ -117,6 +130,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             deviceRepository.update(device)
         }
 
+        Timber.d("Device: $device")
 
         val beacon = if (BuildConfig.DEBUG) {
             // Save the manufacturer data to the beacon
