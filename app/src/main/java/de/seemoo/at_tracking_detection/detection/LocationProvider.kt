@@ -1,12 +1,15 @@
 package de.seemoo.at_tracking_detection.detection
 
-import android.annotation.SuppressLint
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,9 +21,12 @@ class LocationProvider @Inject constructor(private val locationManager: Location
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var locationCallback: ((Location?)->Unit)? = null
 
-    // TODO: Check for permission here. Suppress Lint should not be the option
-    @SuppressLint("MissingPermission")
+
     fun getLastLocation(): Location? {
+        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null
+        }
+
         Timber.d("Requesting Location...")
         val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val networkProviderEnabled =
@@ -34,7 +40,7 @@ class LocationProvider @Inject constructor(private val locationManager: Location
                 this,
                 handler.looper
             )
-            return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            return getMostCurrentLocation()
         } else if (networkProviderEnabled) {
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
@@ -43,13 +49,43 @@ class LocationProvider @Inject constructor(private val locationManager: Location
                 this,
                 handler.looper
             )
-            return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            return getMostCurrentLocation()
         }
         return null
     }
 
-    @SuppressLint("MissingPermission")
+    /**
+     * Fetches the most recent location from network and gps and returns the one that has been recveived more recently
+     * @return the most recent location across multiple providers
+     */
+    private fun getMostCurrentLocation(): Location? {
+        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null
+        }
+
+        val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (gpsProviderEnabled) {
+            val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+
+            return if (gpsLocation?.time ?: 0 > networkLocation?.time ?: 0) {
+                gpsLocation
+            }else {
+                networkLocation
+            }
+        }
+
+        return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+    }
+
+    /**
+     * Get the current location with a callback
+     */
     fun getCurrentLocation(callback: (Location?) -> Unit) {
+        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
         Timber.d("Requesting Location...")
         val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val networkProviderEnabled =
@@ -57,8 +93,17 @@ class LocationProvider @Inject constructor(private val locationManager: Location
         this.locationCallback = callback
 
         if (gpsProviderEnabled) {
+            // Using GPS and Network provider, because the GPS provider does notwork indoors (it will never call the callback)
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
+
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
                 MIN_UPDATE_TIME_MS,
                 MIN_DISTANCE_METER,
                 this,
@@ -80,6 +125,7 @@ class LocationProvider @Inject constructor(private val locationManager: Location
         Timber.d("Location updated: ${location.latitude} ${location.longitude}")
         locationCallback?.let { it(location) }
         locationManager.removeUpdates(this)
+        locationCallback = null
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
@@ -93,4 +139,5 @@ class LocationProvider @Inject constructor(private val locationManager: Location
         const val MIN_UPDATE_TIME_MS = 100L
         const val MIN_DISTANCE_METER = 10.0F
     }
+
 }
