@@ -23,6 +23,7 @@ import timber.log.Timber
 import java.time.LocalDateTime
 
 @HiltWorker
+
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
@@ -35,7 +36,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private lateinit var bluetoothAdapter: BluetoothAdapter
 
-    private lateinit var scanResults: ArrayList<ScanResult>
+    private var scanResultDictionary: HashMap<String, DiscoveredDevice> = HashMap()
 
     private var location: Location? = null
 
@@ -49,12 +50,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
         sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
 
-        scanResults = ArrayList()
+        scanResultDictionary = HashMap()
 
         val useLocation = sharedPreferences.getBoolean("use_location", false)
         if (useLocation) {
             val lastLocation = locationProvider.getLastLocation()
-            val maxMinutesSinceLastUpdate  = 5
 
             location = lastLocation
             Timber.d("Using last location for the tag detection")
@@ -75,7 +75,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         )
 
         delay(SCAN_DURATION)
-        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResults.size} devices")
+        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
         bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
 
         if (location == null) {
@@ -83,15 +83,14 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
 
         //Adding all scan results to the database after the scan has finished
-        scanResults.forEach { scanResult ->
+        scanResultDictionary.forEach { (_, discoveredDevice) ->
             insertScanResult(
-                scanResult,
+                discoveredDevice.scanResult,
                 location?.latitude,
                 location?.longitude,
-                LocalDateTime.now() //TODO: Use scanResult.time here at some time
+                discoveredDevice.discoveryDate
             )
         }
-
         return Result.success()
     }
 
@@ -99,9 +98,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             //Checks if the device has been found already
-            if (!scanResults.any { it.device.address == scanResult.device.address }) {
+            if (!scanResultDictionary.containsKey(scanResult.device.address)) {
                 Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-                scanResults.add(scanResult)
+                scanResultDictionary[scanResult.device.address] = DiscoveredDevice(scanResult, LocalDateTime.now())
             }
         }
     }
@@ -170,4 +169,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
     companion object {
         const val SCAN_DURATION = 15000L
     }
+
+    class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime) {}
 }
