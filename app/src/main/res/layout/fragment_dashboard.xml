@@ -35,16 +35,17 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.75" />
 
-        <!--<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="@string/dashboard_scan_fab_description"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             android:text="@string/dashboard_scan_fab"
-            app:icon="@drawable/ic_radar_tracking" />-->
+            app:icon="@drawable/ic_radar_tracking"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,19 +1,18 @@
 package de.seemoo.at_tracking_detection.util
 
-import android.Manifest
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.os.Build
+import android.os.Bundle
 import android.view.View
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -22,47 +21,34 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
-import androidx.fragment.app.Fragment
 
 object Util {
 
     const val MAX_ZOOM_LEVEL = 19.5
 
-
-    fun handlePermissions(context: Context) {
-        val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
-
-        builder.setMessage(R.string.onboarding_2_description)
-        builder.setTitle(R.string.onboarding_2_title)
-        builder.setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
-            ATTrackingDetectionApplication.getCurrentActivity().requestPermissions(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ), 0
-            )
-        }
-        builder.setNegativeButton(context.getString(R.string.no_button), null)
-
-        val dialog = builder.create()
-        dialog?.show()
-    }
-
-    fun checkForPermission(context: Context): Boolean {
+    fun checkAndRequestPermission(permission: String): Boolean {
+        val context = ATTrackingDetectionApplication.getCurrentActivity()
         when {
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.ACCESS_FINE_LOCATION,
+                permission
             ) == PackageManager.PERMISSION_GRANTED -> {
-                // You can use the API that requires the permission.
                 return true
             }
-
-            shouldShowRequestPermissionRationale(ATTrackingDetectionApplication.getCurrentActivity(), Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                handlePermissions(context)
+            shouldShowRequestPermissionRationale(context, permission) -> {
+                val bundle = Bundle().apply { putString("permission", permission) }
+                val intent = Intent(context, OnboardingActivity::class.java).apply {
+                    putExtras(bundle)
+                }
+                context.startActivity(intent)
                 return false
             }
             else -> {
-                handlePermissions(context)
+                requestPermissions(
+                    context,
+                    arrayOf(permission),
+                    0
+                )
                 return false
             }
         }

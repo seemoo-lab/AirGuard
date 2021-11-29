@@ -88,6 +88,10 @@ class TrackingFragment : Fragment() {
         }
 
         playSoundCard.setOnClickListener {
+            if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+                return@setOnClickListener
+            }
+
             val device = trackingViewModel.device.value
             if (device != null && device.connectable) {
                 toggleSound()

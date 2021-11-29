@@ -1,15 +1,12 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.preference.Preference
@@ -45,8 +42,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "use_location" -> {
                     if (sharedPreferences.getBoolean("use_location", false)) {
                         Timber.d("Use location enabled!")
-                        sharedPreferences.edit().putBoolean("use_location", true).apply()
-                        handlePermissions()
+                        Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                     }
                 }
             }
@@ -70,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun updatePermissionSettings() {
         val locationPermissionState =
-             ContextCompat.checkSelfPermission(
+            ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
@@ -83,49 +79,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (locationPermissionState && backgroundPermissionState) {
             sharedPreferences.edit().putBoolean("use_location", true).apply()
-        }else {
+        } else {
             sharedPreferences.edit().putBoolean("use_location", false).apply()
         }
     }
-
-    private fun handlePermissions() {
-        val locationPermissionState =
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-        if (!locationPermissionState) {
-            Util.checkForPermission(requireContext())
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return
-        }
-
-        val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
-
-        builder.setMessage(R.string.onboarding_4_description)
-        builder.setTitle(R.string.onboarding_4_title)
-        builder.setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
-            Timber.d("Request ACCESS BACKGROUND LOCATION PERMISSION permission!")
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                )
-            )
-        }
-
-        val dialog = builder.create()
-        dialog?.show()
-    }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.map {
-                if (!it.value) {
-                    sharedPreferences.edit().putBoolean("use_location", false).apply()
-                }
-            }
-        }
 }
