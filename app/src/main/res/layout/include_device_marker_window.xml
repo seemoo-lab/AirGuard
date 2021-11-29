@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/device_marker_window_datetime"
@@ -71,7 +71,7 @@
                     android:gravity="center_horizontal"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     android:textSize="25sp" />
             </LinearLayout>
         </LinearLayout>

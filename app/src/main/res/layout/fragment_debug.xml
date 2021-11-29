@@ -28,7 +28,7 @@
 
             <Button
                 android:id="@+id/button"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="0.48"
@@ -41,7 +41,7 @@
 
             <Button
                 android:id="@+id/button2"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.48"
@@ -57,7 +57,7 @@
 
             <Button
                 android:id="@+id/button3"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="0.48"
@@ -70,7 +70,7 @@
 
             <Button
                 android:id="@+id/button4"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.48"

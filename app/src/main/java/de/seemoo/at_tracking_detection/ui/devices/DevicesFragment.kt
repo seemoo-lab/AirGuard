@@ -1,8 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -32,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
-import de.seemoo.at_tracking_detection.ui.devices.adapter.DeviceAdapter
 import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
 
@@ -198,7 +195,7 @@ class DevicesFragment : Fragment() {
                 ), Snackbar.LENGTH_LONG
             ).setAction(getString(R.string.undo_button)) {
                 Timber.d("Undo remove device!")
-                devicesViewModel.ignoreDevice(device.address)
+                devicesViewModel.setIgnoreFlag(device.address, false)
             }.show()
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -220,7 +217,7 @@ class DevicesFragment : Fragment() {
                         }
                         .show()
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    devicesViewModel.removeDeviceIgnoreFlag(device.address)
+                    devicesViewModel.setIgnoreFlag(device.address, false)
                     showRestoreDevice(device)
                     Timber.d("Removed device ${device.address} from ignored list")
                 }

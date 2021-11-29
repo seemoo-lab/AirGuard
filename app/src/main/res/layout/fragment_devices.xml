@@ -11,7 +11,7 @@
 
         <variable
             name="adapter"
-            type="de.seemoo.at_tracking_detection.ui.devices.adapter.DeviceAdapter" />
+            type="de.seemoo.at_tracking_detection.ui.devices.DeviceAdapter" />
 
 
         <import type="android.view.View" />

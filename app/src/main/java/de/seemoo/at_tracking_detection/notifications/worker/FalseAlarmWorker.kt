@@ -24,7 +24,7 @@ class FalseAlarmWorker @AssistedInject constructor(
             Timber.e("No notification id passed!")
             return Result.failure()
         }
-        notificationViewModel.markFalseAlarm(notificationId)
+        notificationViewModel.setFalseAlarm(notificationId, true)
         //TODO: cancel specific notification by calling cancel(notificationId) which somehow doesn't work...
         notificationManager.cancelAll()
         Timber.d("Marked notification $notificationId as false alarm!")

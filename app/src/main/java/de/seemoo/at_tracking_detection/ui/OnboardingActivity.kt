@@ -53,7 +53,7 @@ class OnboardingActivity : AppIntro() {
 
         if (locationPermissionState && backgroundPermissionState) {
             sharedPreferences.edit().putBoolean("use_location", true).apply()
-        }else {
+        } else {
             sharedPreferences.edit().putBoolean("use_location", false).apply()
         }
 
@@ -89,6 +89,20 @@ class OnboardingActivity : AppIntro() {
                 description = getString(R.string.onboarding_1_description),
                 imageDrawable = R.mipmap.ic_launcher
             )
+        )
+
+        addSlide(
+            AppIntroFragment.newInstance(
+                title = "Bluetooth Scanning",
+                description = "To scan your surrounding for tracking devices, we need the permission to scan for bluetooth devices!",
+                imageDrawable = R.drawable.ic_radar_tracking
+            )
+        )
+
+        askForPermissions(
+            permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+            slideNumber = 2,
+            required = true
         )
 
         addSlide(LocationFragment.newInstance())

@@ -46,12 +46,7 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     }
 
     @WorkerThread
-    suspend fun ignoreDevice(deviceAddress: String) {
-        deviceDao.ignore(deviceAddress)
-    }
-
-    @WorkerThread
-    suspend fun removeIgnoreFlag(deviceAddress: String) {
-        deviceDao.unIgnore(deviceAddress)
+    suspend fun setIgnoreFlag(deviceAddress: String, state: Boolean) {
+        deviceDao.setIgnoreFlag(deviceAddress, state)
     }
 }

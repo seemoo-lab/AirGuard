@@ -117,4 +117,6 @@
     <string name="grant_permission">Grant permission</string>
     <string name="cancel">Cancel</string>
     <string name="no_button">No thanks</string>
+    <string name="dashboard_scan_fab_description">Scan for devices!</string>
+    <string name="dashboard_scan_fab">Scan</string>
 </resources>

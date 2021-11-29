@@ -23,7 +23,7 @@ class NotificationBuilder @Inject constructor(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtras(bundle)
         }
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun pendingFalseAlarmIntent(bundle: Bundle): PendingIntent {
@@ -35,7 +35,7 @@ class NotificationBuilder @Inject constructor(
             context,
             NotificationConstants.FALSE_ALARM_CODE,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
@@ -48,7 +48,7 @@ class NotificationBuilder @Inject constructor(
             context,
             NotificationConstants.IGNORE_DEVICE_CODE,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 

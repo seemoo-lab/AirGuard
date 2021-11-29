@@ -4,23 +4,27 @@
 
     <item
         android:id="@+id/navigation_dashboard"
+        android:contentDescription="@string/title_dashboard"
         android:icon="@drawable/ic_baseline_dashboard_24"
         android:title="@string/title_dashboard" />
 
     <item
         android:id="@+id/navigation_ignored_devices"
+        android:contentDescription="@string/title_ignored_devices"
         android:icon="@drawable/ic_baseline_list_24"
         android:title="@string/title_ignored_devices" />
 
     <item
         android:id="@+id/navigation_settings"
+        android:contentDescription="@string/title_settings"
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/title_settings" />
 
     <item
-        android:visible="@bool/debug"
         android:id="@+id/navigation_debug"
+        android:contentDescription="@string/title_debug"
         android:icon="@drawable/ic_baseline_bug_report_24"
-        android:title="@string/title_debug" />
+        android:title="@string/title_debug"
+        android:visible="@bool/debug" />
 
 </menu>

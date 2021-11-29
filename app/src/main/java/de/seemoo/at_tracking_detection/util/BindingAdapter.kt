@@ -1,4 +1,4 @@
-package de.seemoo.at_tracking_detection.ui.devices.adapter
+package de.seemoo.at_tracking_detection.util
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView

@@ -53,6 +53,7 @@ class TrackingFragment : Fragment() {
         binding.vm = trackingViewModel
         trackingViewModel.notificationId.postValue(safeArgs.notificationId)
         trackingViewModel.deviceAddress.postValue(safeArgs.deviceAddress)
+        trackingViewModel.loadDevice(safeArgs.deviceAddress)
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
             notificationId = it
         }
@@ -87,7 +88,7 @@ class TrackingFragment : Fragment() {
         }
 
         playSoundCard.setOnClickListener {
-            val device = trackingViewModel.getDevice(safeArgs.deviceAddress)
+            val device = trackingViewModel.device.value
             if (device != null && device.connectable) {
                 toggleSound()
             } else {

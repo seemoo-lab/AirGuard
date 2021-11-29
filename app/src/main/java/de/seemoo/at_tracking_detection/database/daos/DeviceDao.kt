@@ -23,11 +23,8 @@ interface DeviceDao {
     @Query("DELETE FROM device WHERE address LIKE :address")
     suspend fun remove(address: String)
 
-    @Query("UPDATE device SET `ignore` = 1 WHERE address = :address")
-    suspend fun ignore(address: String)
-
-    @Query("UPDATE device SET `ignore` = 0 WHERE address = :address")
-    suspend fun unIgnore(address: String)
+    @Query("UPDATE device SET `ignore` = :state WHERE address = :address")
+    suspend fun setIgnoreFlag(address: String, state: Boolean)
 
     @Query("SELECT COUNT(*) FROM device")
     fun getTotalCount(): Flow<Int>

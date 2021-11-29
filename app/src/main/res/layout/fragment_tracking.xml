@@ -30,13 +30,13 @@
                 layout="@layout/include_map"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.55" />
+                android:layout_weight="0.5" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="8dp"
-                android:layout_weight="0.4">
+                android:layout_weight="0.45">
 
                 <include
                     android:id="@+id/tracking_play_sound"
@@ -81,12 +81,14 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="@dimen/card_margin"
-                    android:onClick="@{() -> vm.ignoreDevice()}"
+                    android:onClick="@{() -> vm.toggleIgnoreDevice()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/tracking_false_alarm"
                     app:layout_constraintTop_toBottomOf="@id/tracking_play_sound"
-                    bind:clickable="@{vm.ignoreDeviceClickable}"
+                    bind:checkable="@{true}"
+                    bind:checked="@{vm.deviceIgnored}"
+                    bind:clickable="@{true}"
                     bind:drawable="@{@drawable/ic_baseline_alarm_off_24}"
                     bind:imageDescription="@{@string/tracking_ignore_device_title}"
                     bind:subtitle="@{@string/tracking_ignore_device_subtitle}"
@@ -100,13 +102,15 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="@dimen/card_margin"
-                    android:onClick="@{() -> vm.markFalseAlarm()}"
+                    android:onClick="@{() -> vm.toggleFalseAlarm()}"
                     android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/tracking_ignore_device"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tracking_feedback"
-                    bind:clickable="@{vm.falseAlarmClickable}"
+                    bind:checkable="@{true}"
+                    bind:checked="@{vm.falseAlarm}"
+                    bind:clickable="@{true}"
                     bind:drawable="@{@drawable/ic_baseline_error_outline_24}"
                     bind:imageDescription="@{@string/tracking_false_alarm_title}"
                     bind:subtitle="@{@string/tracking_false_alarm_subtitle}"
