@@ -8,6 +8,7 @@ import de.seemoo.at_tracking_detection.database.repository.NotificationRepositor
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +25,8 @@ class TrackingViewModel @Inject constructor(
 
     val error = MutableLiveData(false)
 
-    val falseAlarmClickable = MutableLiveData(true)
-    val ignoreDeviceClickable = MutableLiveData(true)
+    val falseAlarm = MutableLiveData(false)
+    val deviceIgnored = MutableLiveData(false)
 
     val soundPlaying = MutableLiveData(false)
 
@@ -39,24 +40,32 @@ class TrackingViewModel @Inject constructor(
         beaconRepository.getDeviceBeacons(it)
     }
 
-    fun getDevice(address: String): Device? =
-        deviceRepository.getDevice(address).also { device.postValue(it) }
-
-    fun ignoreDevice() {
-        if (deviceAddress.value != null) {
-            viewModelScope.launch {
-                deviceRepository.ignoreDevice(deviceAddress.value!!)
+    fun loadDevice(address: String) =
+        deviceRepository.getDevice(address).also {
+            device.postValue(it)
+            if (it != null) {
+                deviceIgnored.postValue(it.ignore)
             }
-            ignoreDeviceClickable.postValue(false)
+        }
+
+    fun toggleIgnoreDevice() {
+        if (deviceAddress.value != null) {
+            val newState = !deviceIgnored.value!!
+            viewModelScope.launch {
+                deviceRepository.setIgnoreFlag(deviceAddress.value!!, newState)
+            }
+            deviceIgnored.postValue(newState)
+            Timber.d("Toggle ignore device - new State: $newState")
         }
     }
 
-    fun markFalseAlarm() {
+    fun toggleFalseAlarm() {
         if (notificationId.value != null) {
+            val newState = !falseAlarm.value!!
             viewModelScope.launch {
-                notificationRepository.markFalseAlarm(notificationId.value!!)
+                notificationRepository.setFalseAlarm(notificationId.value!!, newState)
             }
-            falseAlarmClickable.postValue(false)
+            falseAlarm.postValue(newState)
         }
     }
 }

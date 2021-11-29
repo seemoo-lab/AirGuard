@@ -21,8 +21,8 @@ class DeviceViewModel @Inject constructor(private val deviceRepository: DeviceRe
         deviceRepository.update(device)
     }
 
-    suspend fun ignoreDevice(deviceAddress: String) {
-        deviceRepository.ignoreDevice(deviceAddress)
+    suspend fun setIgnoreFlag(deviceAddress: String, state: Boolean) {
+        deviceRepository.setIgnoreFlag(deviceAddress, state)
     }
 
 }

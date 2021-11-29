@@ -1,4 +1,4 @@
-package de.seemoo.at_tracking_detection.ui.devices.adapter
+package de.seemoo.at_tracking_detection.ui.devices
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,6 @@ import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.IncludeDeviceItemBinding
-import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
 
 class DeviceAdapter constructor(
     private val devicesViewModel: DevicesViewModel,

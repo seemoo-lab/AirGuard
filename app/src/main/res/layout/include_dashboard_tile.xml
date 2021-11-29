@@ -24,6 +24,7 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/card_margin"
@@ -39,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{title}"
-                android:textAppearance="?attr/textAppearanceBody2"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@{String.valueOf(number)}"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textSize="@dimen/statistics_text_size_big"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@{@string/dashboard_tile_change(change)}"
-                android:textAppearance="?attr/textAppearanceBody2"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?colorPrimary"
                 android:visibility="@{change > 0 ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"

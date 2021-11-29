@@ -11,6 +11,14 @@
             type="java.lang.Boolean" />
 
         <variable
+            name="checkable"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="checked"
+            type="java.lang.Boolean" />
+
+        <variable
             name="drawable"
             type="android.graphics.drawable.Drawable" />
 
@@ -37,9 +45,12 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
+        android:checked="@{checked}"
+        android:checkable="@{checkable}"
         android:clickable="@{clickable}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,13 +83,13 @@
                 android:id="@+id/tracking_tile_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:adjustViewBounds="true"
                 android:contentDescription="@{imageDescription}"
                 android:scaleType="fitStart"
-                android:adjustViewBounds="true"
                 android:src="@{drawable}"
+                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tracking_guideline_left"
-                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
@@ -124,11 +135,11 @@
                 android:id="@+id/tracking_tile_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="13sp"
+                android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:text="@{title}"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

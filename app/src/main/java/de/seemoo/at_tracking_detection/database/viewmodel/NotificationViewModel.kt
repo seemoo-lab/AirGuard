@@ -13,7 +13,7 @@ class NotificationViewModel @Inject constructor(private val notificationReposito
         return notificationRepository.insert(notification).toInt()
     }
 
-    suspend fun markFalseAlarm(notificationId: Int) {
-        notificationRepository.markFalseAlarm(notificationId)
+    suspend fun setFalseAlarm(notificationId: Int, state: Boolean) {
+        notificationRepository.setFalseAlarm(notificationId, state)
     }
 }

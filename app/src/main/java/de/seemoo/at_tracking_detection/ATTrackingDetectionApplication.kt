@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
@@ -49,6 +50,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         Timber.plant(Timber.DebugTree())
         Timber.d("Tree planted")
+
+        DynamicColors.applyToActivitiesIfAvailable(this)
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
 

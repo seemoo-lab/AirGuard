@@ -20,6 +20,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/device_item_card"
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/devices_item_height"
         android:layout_margin="@dimen/card_margin"
@@ -56,13 +57,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="10dp"
+                android:contentDescription="@string/find_my_device_icon"
                 android:visibility="@{device.isAirTag ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_device_unknown_24"
-                android:contentDescription="@string/find_my_device_icon" />
+                app:srcCompat="@drawable/ic_baseline_device_unknown_24" />
 
 
             <ImageView
@@ -70,13 +71,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="10dp"
+                android:contentDescription="@string/airtag_icon"
                 android:visibility="@{device.isAirTag ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_airtag"
-                android:contentDescription="@string/airtag_icon" />
+                app:srcCompat="@drawable/ic_airtag" />
 
             <TextView
                 android:id="@+id/device_name"
@@ -85,7 +86,7 @@
                 android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:text="@{device.deviceName}"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="@{device.ignore ? @color/light_grey : @color/defaultTextColor}"
                 app:layout_constraintEnd_toStartOf="@+id/alert_icon"
                 app:layout_constraintLeft_toRightOf="@id/device_guideline_left"
@@ -169,7 +170,7 @@
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:text="@{deviceBeaconCount}"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textSize="25sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@id/device_guideline_middle"
@@ -192,13 +193,13 @@
                 android:id="@+id/alert_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="@string/alert_sent_icon"
                 android:visibility="@{device.notificationSent ? View.VISIBLE : View.INVISIBLE}"
-                app:tint="@color/slate_gray"
                 app:layout_constraintBottom_toTopOf="@+id/device_first_discovery"
                 app:layout_constraintEnd_toStartOf="@+id/device_guideline_middle"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_dialog_alert"
-                android:contentDescription="@string/alert_sent_icon" />
+                app:tint="@color/slate_gray" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

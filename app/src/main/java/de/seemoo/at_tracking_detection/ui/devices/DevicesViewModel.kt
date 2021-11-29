@@ -6,7 +6,6 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,12 +15,8 @@ class DevicesViewModel @Inject constructor(
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
 
-    fun removeDeviceIgnoreFlag(deviceAddress: String) = viewModelScope.launch {
-        deviceRepository.removeIgnoreFlag(deviceAddress)
-    }
-
-    fun ignoreDevice(deviceAddress: String) = viewModelScope.launch {
-        deviceRepository.ignoreDevice(deviceAddress)
+    fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
+        deviceRepository.setIgnoreFlag(deviceAddress, state)
     }
 
     fun getDeviceBeaconsCount(deviceAddress: String): String =

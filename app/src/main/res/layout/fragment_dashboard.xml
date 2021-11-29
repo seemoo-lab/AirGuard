@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.dashboard.DashboardViewModel" />
@@ -14,27 +16,35 @@
         android:layout_height="match_parent"
         tools:context=".ui.dashboard.DashboardFragment">
 
-
-        <LinearLayout
+        <include
+            android:id="@+id/statistics_layout"
+            layout="@layout/include_statistics"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="1dp">
+            android:layout_height="0dp"
+            android:layout_weight="0.65"
+            app:layout_constraintBottom_toTopOf="@id/dashboard_guideline"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:vm="@{vm}" />
 
-            <include
-                android:id="@+id/statistics_layout"
-                android:layout_height="0dp"
-                android:layout_width="match_parent"
-                android:layout_weight="0.65"
-                bind:vm="@{vm}"
-                layout="@layout/layout_statistics" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/dashboard_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.75" />
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.35" />
-
-        </LinearLayout>
+        <!--<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/dashboard_scan_fab_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/dashboard_scan_fab"
+            app:icon="@drawable/ic_radar_tracking" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
