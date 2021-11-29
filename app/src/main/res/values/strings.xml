@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AirGuard</string>
 
-    <string name="title_ignored_devices">Ignored Devices</string>
+    <string name="title_ignored_devices">Ignored</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_settings">Settings</string>
     <string name="title_debug">Debug</string>
@@ -118,5 +118,9 @@
     <string name="cancel">Cancel</string>
     <string name="no_button">No thanks</string>
     <string name="dashboard_scan_fab_description">Scan for devices!</string>
-    <string name="dashboard_scan_fab">Scan</string>
+    <string name="dashboard_scan_fab">Manual Scan</string>
+    <string name="onboarding_scan_title">Bluetooth Scanning</string>
+    <string name="onboarding_scan_description">To scan your surrounding for tracking devices, we need the permission to scan for bluetooth devices!</string>
+    <string name="onboarding_connect_title">Bluetooth Connect</string>
+    <string name="onboarding_connect_description">If a tracking device is found, AriGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device!</string>
 </resources>

@@ -2,13 +2,17 @@ package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.work.WorkInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import de.seemoo.at_tracking_detection.worker.WorkerConstants
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -19,7 +23,8 @@ class DashboardViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val notificationRepository: NotificationRepository,
     private val deviceRepository: DeviceRepository,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val backgroundWorkScheduler: BackgroundWorkScheduler
 ) : ViewModel() {
 
     private var lastScan: LocalDateTime
@@ -56,6 +61,11 @@ class DashboardViewModel @Inject constructor(
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
         Timber.d("last scan: $lastScan")
     }
+
+    val isScanning: LiveData<Boolean> =
+        Transformations.map(backgroundWorkScheduler.getState(WorkerConstants.PERIODIC_SCAN_WORKER)) {
+            it == WorkInfo.State.RUNNING
+        }
 
     val latestBeaconPerDevice: LiveData<List<Beacon>> =
         beaconRepository.latestBeaconPerDevice.asLiveData()

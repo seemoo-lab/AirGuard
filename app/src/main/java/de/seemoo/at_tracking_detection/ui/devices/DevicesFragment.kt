@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
+import android.Manifest
 import android.app.AlertDialog
 import android.graphics.Canvas
 import android.graphics.Color
@@ -91,7 +92,7 @@ class DevicesFragment : Fragment() {
             textView?.setText(R.string.ignored_device_list_empty)
         }
 
-       Util.checkForPermission(requireContext())
+        Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private val deviceItemListener =
@@ -204,7 +205,8 @@ class DevicesFragment : Fragment() {
                 if (direction == ItemTouchHelper.LEFT) {
                     val editName = EditText(context)
                     editName.setText(device.getDeviceName())
-                    AlertDialog.Builder(context).setIcon(R.drawable.ic_baseline_edit_24)
+                    AlertDialog.Builder(context)
+                        .setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)
                         .setNegativeButton(getString(R.string.cancel_button), null)
                         .setPositiveButton(R.string.ok_button) { _, _ ->

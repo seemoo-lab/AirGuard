@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -80,10 +81,23 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         false
     ) or sharedPreferences.getBoolean("show_onboarding", false)
 
-    private fun hasPermissions(): Boolean = ContextCompat.checkSelfPermission(
-        applicationContext,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
+    private fun hasPermissions(): Boolean {
+        val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+        }
+
+        for (permission in requiredPermissions) {
+            val granted = ContextCompat.checkSelfPermission(
+                applicationContext,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                return false
+            }
+        }
+        return true
+    }
 
     private fun startOnboarding() =
         startActivity(Intent(applicationContext, OnboardingActivity::class.java).apply {

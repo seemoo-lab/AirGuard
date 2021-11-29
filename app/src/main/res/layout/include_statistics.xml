@@ -26,6 +26,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.5"
                 android:layout_margin="@dimen/card_margin"
+                bind:loading="@{vm.isScanning}"
                 bind:number="@{vm.currentlyMonitoredDevices}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout

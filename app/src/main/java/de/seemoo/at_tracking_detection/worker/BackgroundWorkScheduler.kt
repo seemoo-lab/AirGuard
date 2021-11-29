@@ -1,9 +1,9 @@
 package de.seemoo.at_tracking_detection.worker
 
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.Operation
-import androidx.work.WorkManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.work.*
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,6 +25,9 @@ class BackgroundWorkScheduler @Inject constructor(
             operation.result.addListener({ scheduleTrackingDetector() }, { it.run() })
         }
     }
+
+    fun getState(uniqueWorkName: String): LiveData<WorkInfo.State?> =
+        workManager.getWorkInfosByTagLiveData(uniqueWorkName).map { it.lastOrNull()?.state }
 
     fun scheduleTrackingDetector() = workManager.enqueueUniqueWork(
         WorkerConstants.TRACKING_DETECTION_WORKER,

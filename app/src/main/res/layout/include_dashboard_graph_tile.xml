@@ -4,6 +4,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="loading"
+            type="java.lang.Boolean" />
+
         <variable
             name="number"
             type="Integer" />
@@ -27,6 +33,16 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.35" />
 
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/statistics_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="@{loading ? View.VISIBLE : View.GONE, default=gone}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/statistics_devices_monitored_title"
                 android:layout_width="match_parent"
@@ -37,7 +53,7 @@
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/statistics_loading" />
 
             <TextView
                 android:id="@+id/statistics_devices_monitored_number"
