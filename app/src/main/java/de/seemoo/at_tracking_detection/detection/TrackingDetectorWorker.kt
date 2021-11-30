@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
@@ -36,9 +37,15 @@ class TrackingDetectorWorker @AssistedInject constructor(
             !ignoredDevices.map { it.address }.contains(address)
         }
 
+        //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
             //Check that we found enough beacons
             if (mapEntry.value.size < MAX_BEACONS_BEFORE_ALARM) {
+                return@forEach
+            }
+
+            //Checks if the time difference between received beacons is large enough
+            if (!isTrackingForEnoughTime(mapEntry.value)) {
                 return@forEach
             }
 
@@ -53,7 +60,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             }
 
             //Check if the beacon have travelled far enough
-            if (!hasMinBeaconDistance(mapEntry.value)) {
+            if (useLocation && !hasMinBeaconDistance(mapEntry.value)) {
                 return@forEach
             }
 
@@ -68,44 +75,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
     }
 
     private val useLocation = sharedPreferences.getBoolean("use_location", false)
-
-    private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
-
-        // handle the case
-        // where the user decides to not use the location after a while
-        if (!useLocation) {
-            return true
-        }
-
-        var distanceReached = false
-
-        // Check first if any beacons meet the minimal distance requirement
-        beacons.forEach { first ->
-            beacons.forEach { second ->
-                if (
-                    first.latitude != null && first.longitude != null &&
-                    second.latitude != null && second.longitude != null
-                ) {
-                    val firstLocation = getLocation(first.latitude!!, first.longitude!!)
-                    val secondLocation = getLocation(second.latitude!!, second.longitude!!)
-
-                    // Return true if any beacon pair full fills the minimal distance requirement
-                    if (firstLocation.distanceTo(secondLocation) >= MIN_DISTANCE_BETWEEN_BEACONS) {
-                        distanceReached = true
-                    }
-                }
-            }
-        }
-
-        return distanceReached
-    }
-
-    private fun getLocation(latitude: Double, longitude: Double): Location {
-        val location = Location(LocationManager.GPS_PROVIDER)
-        location.latitude = latitude
-        location.longitude = longitude
-        return location
-    }
 
     private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
         val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
@@ -124,6 +93,68 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     companion object {
         const val MAX_BEACONS_BEFORE_ALARM = 3
+        /// Minimum tracking time
+        const val MIN_TRACKING_TIME_SECONDS = 30 * 60
         const val MIN_DISTANCE_BETWEEN_BEACONS = 400
+
+        //Moving some functions to the companion object to make them testable
+
+        /**
+         * Gets a list of beacons and checks if the user is beeing tracked for the minimum amount of
+         * time before a notification is sent.
+         * @param beacons
+         * @return
+         */
+        fun isTrackingForEnoughTime(beacons: List<Beacon>): Boolean {
+            if (beacons.isEmpty()) {
+                return false
+            }
+
+            //Sort the list by received at
+            //Last beacon received is last at the list
+            val beaconsSorted = beacons.sortedBy { it.receivedAt }
+
+            val firstBeacon = beaconsSorted.first()
+            val lastBeacon = beaconsSorted.last()
+            val timeDiff = ChronoUnit.SECONDS.between(firstBeacon.receivedAt, lastBeacon.receivedAt)
+
+            return timeDiff >= MIN_TRACKING_TIME_SECONDS
+        }
+
+        private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
+
+            var distanceReached = false
+
+            // Check first if any beacons meet the minimal distance requirement
+            beacons.forEach { first ->
+                beacons.forEach { second ->
+                    if (
+                        first.latitude != null && first.longitude != null &&
+                        second.latitude != null && second.longitude != null
+                    ) {
+                        val firstLocation = getLocation(first.latitude!!, first.longitude!!)
+                        val secondLocation = getLocation(second.latitude!!, second.longitude!!)
+
+                        // Return true if any beacon pair full fills the minimal distance requirement
+                        if (firstLocation.distanceTo(secondLocation) >= MIN_DISTANCE_BETWEEN_BEACONS) {
+                            distanceReached = true
+                        }
+                    }
+                }
+            }
+
+            return distanceReached
+        }
+
+
+
+        private fun getLocation(latitude: Double, longitude: Double): Location {
+            val location = Location(LocationManager.GPS_PROVIDER)
+            location.latitude = latitude
+            location.longitude = longitude
+            return location
+        }
+
     }
+
 }
