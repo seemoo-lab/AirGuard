@@ -42,7 +42,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "use_location" -> {
                     if (sharedPreferences.getBoolean("use_location", false)) {
                         Timber.d("Use location enabled!")
-                        Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        }
                     }
                 }
             }
@@ -58,6 +60,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html")
+                )
+                startActivity(intent)
+                return@OnPreferenceClickListener true
+            }
+
+        findPreference<Preference>("twitter")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://twitter.com/AirGuardAndroid")
                 )
                 startActivity(intent)
                 return@OnPreferenceClickListener true

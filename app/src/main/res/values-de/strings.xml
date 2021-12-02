@@ -104,5 +104,12 @@
     <string name="grant_location_permission">Standortberechtigung erteilen</string>
     <string name="grant_permission">Berechtigung erteilen</string>
     <string name="cancel">Abbrechen</string>
-    <string name="no_button">Nein danke</string>
-</resources>
+    <string name="no_button">Nein Danke</string>
+    <string name="dashboard_scan_fab_description">Nach Geräten scannen</string>
+    <string name="dashboard_scan_fab">Manueller scan</string>
+    <string name="onboarding_scan_title">Bluetooth scan</string>
+    <string name="onboarding_scan_description">Um nach Tracking Geräten in der Umgebung zu scannen brauchen wir die Berechtigung auf Bluetooth zuzugreifen</string>
+    <string name="onboarding_connect_title">Bluetooth Verbindung</string>
+    <string name="onboarding_connect_description">Wenn ein Tracking Gerät gefunden wird kannst du mit AirGuard das Gerät zum abspielen von einem Ton bringen. Dafür brauch die App Zugriff für eine Bluetooth Verbindung</string>
+    <string name="twitter_description">Sieh dir unser Twitter an</string>
+    <string name="twitter">Twitter</string>

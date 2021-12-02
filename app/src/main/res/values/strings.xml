@@ -123,4 +123,6 @@
     <string name="onboarding_scan_description">To scan your surrounding for tracking devices, we need the permission to scan for bluetooth devices!</string>
     <string name="onboarding_connect_title">Bluetooth Connect</string>
     <string name="onboarding_connect_description">If a tracking device is found, AriGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device!</string>
+    <string name="twitter_description">Check out our Twitter account</string>
+    <string name="twitter">Twitter</string>
 </resources>
