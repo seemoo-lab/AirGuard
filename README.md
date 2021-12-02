@@ -32,17 +32,7 @@ If a devices follows you, you will get a notification in less than an hour!
 
 With the app you can play a sound on AirTags and find it easily. Afterward, you can view at which locations the device has tracked you. 
 
-If no one is trying to track you, the app will never bother you. 
-
-###  Who are we? 
-We are part of the Technical University of Darmstadt in Germany. This project is part of a scientific research from the Secure Mobile Networking Lab. Our goal is to protect privacy and to find out how many people are opposed to tracking.
-In this app you can voluntarily participate in a research study that will share anonymized data with us. 
-
-This app will never get monetized by showing ads, in-app purchases or anything else. 
-
-### Disclaimer
-AirTag, FindMy and iOS are trademarks of Apple Inc. 
-We are not working together with Apple Inc.
+If no one is trying to track you, the app will never bother you.
 
 ## Get the app 
 The app is availalble on [Google Play](https://play.google.com/store/apps/details?id=de.seemoo.at_tracking_detection.release), [F-Droid](https://f-droid.org/packages/de.seemoo.at_tracking_detection) or download it here from the GitHub releases.
@@ -56,3 +46,23 @@ The app is availalble on [Google Play](https://play.google.com/store/apps/detail
     height="80">
 </a>
 
+## Details 
+
+###  Who are we?
+We are part of the Technical University of Darmstadt in Germany. This project is part of a scientific research from the Secure Mobile Networking Lab. Our goal is to protect privacy and to find out how many people are opposed to tracking.
+In this app you can voluntarily participate in a research study that will share anonymized data with us.
+
+This app will never get monetized by showing ads, in-app purchases or anything else.
+
+### How does it work? 
+
+AirGuard uses Bluetooth scans of your Android phone to find AirTags and Find My trackers. Every tracker that is found will be saved locally on your device. 
+Whenever a tracker gets detected multiple times the app will recognize this. It compares the locations where the tracker has been detected. 
+If a tracker is detected at least 3 times and the locations have changed (to make sure its not your neighbour) the app sends you a notification. 
+If this tracker is an AirTag you can play a sound to find it. 
+
+All this happens locally on your device and the private information, like location, tracker ids, etc will never leave your device. 
+
+### Disclaimer
+AirTag, FindMy and iOS are trademarks of Apple Inc.
+We are not working together with Apple Inc.
