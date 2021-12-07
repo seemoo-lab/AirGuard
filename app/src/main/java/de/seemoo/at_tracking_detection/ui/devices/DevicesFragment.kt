@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -53,9 +52,11 @@ class DevicesFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
         val deviceList: LiveData<List<Device>>
         var swipeDirs: Int = ItemTouchHelper.LEFT
+        var emptyListText = R.string.ignored_device_list_empty
         if (safeArgs.showDevicesFound) {
             deviceList = devicesViewModel.devices
         } else {
+            emptyListText = R.string.devices_list_empty
             deviceList = devicesViewModel.ignoredDevices
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         }
@@ -71,12 +72,11 @@ class DevicesFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.adapter = deviceAdapter
         binding.vm = devicesViewModel
+        binding.emptyListText = getString(emptyListText)
         deviceList.observe(viewLifecycleOwner, { devices ->
             deviceAdapter.submitList(devices)
             devicesViewModel.deviceListEmpty.postValue(devices.isEmpty())
         })
-
-
 
         return binding.root
     }
@@ -86,17 +86,13 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         view.findViewById<RecyclerView>(R.id.devices_recycler_view)
             .doOnPreDraw { startPostponedEnterTransition() }
-
-        if (!safeArgs.showDevicesFound) {
-            val textView = view.findViewById<TextView>(R.id.empty_list_text)
-            textView?.setText(R.string.ignored_device_list_empty)
-        }
-
-        Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private val deviceItemListener =
         DeviceAdapter.OnClickListener { device: Device, materialCardView: MaterialCardView ->
+            if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                return@OnClickListener
+            }
             val directions: NavDirections =
                 DevicesFragmentDirections.dashboardToDeviceDetailFragment(
                     device.address,
@@ -192,7 +188,7 @@ class DevicesFragment : Fragment() {
 
             private fun showRestoreDevice(device: Device) = Snackbar.make(
                 view!!, getString(
-                    R.string.devices_alter_removed, device.getDeviceName()
+                    R.string.devices_alter_removed, device.getDeviceNameWithId()
                 ), Snackbar.LENGTH_LONG
             ).setAction(getString(R.string.undo_button)) {
                 Timber.d("Undo remove device!")
@@ -204,7 +200,7 @@ class DevicesFragment : Fragment() {
                     deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
                 if (direction == ItemTouchHelper.LEFT) {
                     val editName = EditText(context)
-                    editName.setText(device.getDeviceName())
+                    editName.setText(device.getDeviceNameWithId())
                     AlertDialog.Builder(context)
                         .setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)

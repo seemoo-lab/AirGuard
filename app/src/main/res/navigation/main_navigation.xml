@@ -24,6 +24,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/dashboardToScanFragment"
+            app:destination="@id/scanFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -130,6 +137,11 @@
             android:name="notificationId"
             android:defaultValue="-1"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.scan.ScanFragment"
+        android:label="@string/scan_title" >
     </fragment>
 
 </navigation>

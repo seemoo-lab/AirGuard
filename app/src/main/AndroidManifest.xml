@@ -61,16 +61,6 @@
             <intent-filter>
                 <action android:name="de.seemoo.at_tracking_detection.FALSE_ALARM" />
                 <action android:name="de.seemoo.at_tracking_detection.IGNORE_DEVIE" />
-                <action android:name="de.seemoo.at_tracking_detection.EVENT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".util.ble.GattUpdateReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="de.seemoo.at_tracking_detection.ACTION_GATT_CONNECTED" />
-                <action android:name="de.seemoo.at_tracking_detection.ACTION_GATT_DISCONNECTED" />
-                <action android:name="de.seemoo.at_tracking_detection.ACTION_EVENT_FAILED" />
             </intent-filter>
         </receiver>
 

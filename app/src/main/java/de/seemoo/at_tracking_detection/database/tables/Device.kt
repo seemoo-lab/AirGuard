@@ -1,7 +1,10 @@
 package de.seemoo.at_tracking_detection.database.tables
 
+import android.bluetooth.le.ScanResult
 import androidx.room.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.DeviceType
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -43,6 +46,16 @@ data class Device(
         null
     )
 
+    constructor(scanResult: ScanResult) : this(
+        0,
+        scanResult.device.address,
+        scanResult.scanRecord?.deviceName,
+        false,
+        scanResult.isConnectable,
+        scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
+        LocalDateTime.now(), LocalDateTime.now(), false, null
+    )
+
     private fun getDateTimeFormatter(): DateTimeFormatter =
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
 
@@ -52,19 +65,44 @@ data class Device(
     fun getFormattedLastSeenDate(): String =
         lastSeen.format(getDateTimeFormatter())
 
+    fun getType(): Int {
+        return when {
+            payloadData == null -> {
+                DeviceType.UNKNOWN
+            }
+            payloadData.and(0x10).toInt() != 0 && connectable -> {
+                DeviceType.AIRTAG
+            }
+            else -> {
+                DeviceType.UNKNOWN
+            }
+        }
+    }
+
+    fun getImage(): Int {
+        return when (this.getType()) {
+            DeviceType.AIRTAG -> R.drawable.ic_airtag
+            DeviceType.UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
+            else -> R.drawable.ic_baseline_device_unknown_24
+        }
+    }
+
     fun isAirTag(): Boolean {
-        return payloadData != null && payloadData.and(0x10).toInt() != 0
+        return this.getType() == DeviceType.AIRTAG
     }
 
     fun getDeviceName(): String {
+        return when (this.getType()) {
+            DeviceType.AIRTAG -> "AirTag"
+            else -> "FindMy Device"
+        }
+    }
+
+    fun getDeviceNameWithId(): String {
         val resources = ATTrackingDetectionApplication.getAppContext().resources
-        val airtag = de.seemoo.at_tracking_detection.R.string.device_name_airtag
-        val findMyDevice = de.seemoo.at_tracking_detection.R.string.device_name_find_my_device
-        return name
-            ?: if (isAirTag()) {
-                resources.getString(airtag).format(deviceId)
-            } else {
-                resources.getString(findMyDevice).format(deviceId)
-            }
+        return when (this.getType()) {
+            DeviceType.AIRTAG -> resources.getString(R.string.device_name_airtag).format(deviceId)
+            else -> resources.getString(R.string.device_name_find_my_device).format(deviceId)
+        }
     }
 }

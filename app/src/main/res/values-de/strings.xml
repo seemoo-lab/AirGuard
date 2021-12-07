@@ -105,11 +105,16 @@
     <string name="grant_permission">Berechtigung erteilen</string>
     <string name="cancel">Abbrechen</string>
     <string name="no_button">Nein Danke</string>
-    <string name="dashboard_scan_fab_description">Nach Geräten scannen</string>
-    <string name="dashboard_scan_fab">Manueller scan</string>
-    <string name="onboarding_scan_title">Bluetooth scan</string>
-    <string name="onboarding_scan_description">Um nach Tracking Geräten in der Umgebung zu scannen brauchen wir die Berechtigung auf Bluetooth zuzugreifen</string>
-    <string name="onboarding_connect_title">Bluetooth Verbindung</string>
-    <string name="onboarding_connect_description">Wenn ein Tracking Gerät gefunden wird kannst du mit AirGuard das Gerät zum abspielen von einem Ton bringen. Dafür brauch die App Zugriff für eine Bluetooth Verbindung</string>
     <string name="twitter_description">Sieh dir unser Twitter an</string>
     <string name="twitter">Twitter</string>
+    <string name="dashboard_scan_fab_description">Suche nach Geräten!</string>
+    <string name="dashboard_scan_fab">Manueller Scan</string>
+    <string name="onboarding_scan_title">Bluetooth Suche</string>
+    <string name="onboarding_scan_description">Um die Umgebung nach Tracking-Geräten zu scannen, benötigen wir die Erlaubnis nach Bluetooth-Geräten zu suchen!</string>
+    <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
+    <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Ihnen die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
+    <string name="scan_title">Manueller Scan</string>
+    <string name="scan_result_item_image_description">"Scanergebnis Element "</string>
+    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Sie sind sicher!</string>
+    <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
+</resources>

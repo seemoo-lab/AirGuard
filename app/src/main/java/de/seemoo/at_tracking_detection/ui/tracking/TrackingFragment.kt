@@ -1,9 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
@@ -13,15 +10,18 @@ import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,8 +37,6 @@ class TrackingFragment : Fragment() {
 
     private var notificationId: Int = -1
 
-    private lateinit var gattServiceIntent: Intent
-
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -48,7 +46,6 @@ class TrackingFragment : Fragment() {
         val binding: FragmentTrackingBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tracking, container, false)
 
-        gattServiceIntent = Intent(context, BluetoothLeService::class.java)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
         trackingViewModel.notificationId.postValue(safeArgs.notificationId)
@@ -58,6 +55,19 @@ class TrackingFragment : Fragment() {
             notificationId = it
         }
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val activity = ATTrackingDetectionApplication.getCurrentActivity()
+        LocalBroadcastManager.getInstance(activity)
+            .registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
+        activity.registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        context?.unregisterReceiver(gattUpdateReceiver)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,6 +134,7 @@ class TrackingFragment : Fragment() {
         trackingViewModel.error.postValue(false)
         if (trackingViewModel.soundPlaying.value == false) {
             trackingViewModel.connecting.postValue(true)
+            val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
             applicationContext.bindService(
                 gattServiceIntent,
                 serviceConnection,
@@ -132,6 +143,31 @@ class TrackingFragment : Fragment() {
         } else {
             Timber.d("Sound already playing! Stopping sound...")
             trackingViewModel.soundPlaying.postValue(false)
+        }
+    }
+
+    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                BluetoothConstants.ACTION_GATT_CONNECTED -> {
+                    trackingViewModel.soundPlaying.postValue(
+                        true
+                    )
+                    trackingViewModel.connecting.postValue(false)
+                }
+                BluetoothConstants.ACTION_GATT_DISCONNECTED -> {
+                    trackingViewModel.soundPlaying.postValue(false)
+                    trackingViewModel.connecting.postValue(false)
+                }
+                BluetoothConstants.ACTION_EVENT_FAILED -> {
+                    trackingViewModel.error.postValue(true)
+                    trackingViewModel.connecting.postValue(false)
+                    trackingViewModel.soundPlaying.postValue(false)
+                }
+                BluetoothConstants.ACTION_EVENT_COMPLETED -> trackingViewModel.soundPlaying.postValue(
+                    false
+                )
+            }
         }
     }
 

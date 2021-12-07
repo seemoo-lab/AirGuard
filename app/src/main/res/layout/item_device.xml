@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:autoSizeTextType="uniform"
                 android:maxLines="1"
-                android:text="@{device.deviceName}"
+                android:text="@{device.deviceNameWithId}"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="@{device.ignore ? @color/light_grey : @color/defaultTextColor}"
                 app:layout_constraintEnd_toStartOf="@+id/alert_icon"

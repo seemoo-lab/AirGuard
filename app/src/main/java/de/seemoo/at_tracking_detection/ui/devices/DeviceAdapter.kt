@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
-import de.seemoo.at_tracking_detection.databinding.IncludeDeviceItemBinding
+import de.seemoo.at_tracking_detection.databinding.ItemDeviceBinding
 
 class DeviceAdapter constructor(
     private val devicesViewModel: DevicesViewModel,
@@ -16,7 +16,7 @@ class DeviceAdapter constructor(
 ) :
     ListAdapter<Device, DeviceAdapter.DeviceViewHolder>(Companion) {
 
-    class DeviceViewHolder(private val binding: IncludeDeviceItemBinding) :
+    class DeviceViewHolder(private val binding: ItemDeviceBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(device: Device, devicesViewModel: DevicesViewModel) {
@@ -28,8 +28,8 @@ class DeviceAdapter constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: IncludeDeviceItemBinding =
-            IncludeDeviceItemBinding.inflate(layoutInflater, parent, false)
+        val binding: ItemDeviceBinding =
+            ItemDeviceBinding.inflate(layoutInflater, parent, false)
         return DeviceViewHolder(binding)
     }
 

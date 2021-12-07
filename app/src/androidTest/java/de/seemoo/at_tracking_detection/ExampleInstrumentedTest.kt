@@ -1,24 +1,16 @@
 package de.seemoo.at_tracking_detection
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.work.Data
-import androidx.work.WorkerParameters
-import androidx.work.testing.TestListenableWorkerBuilder
-import androidx.work.testing.TestWorkerBuilder
+import androidx.test.platform.app.InstrumentationRegistry
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker
 import kotlinx.coroutines.runBlocking
-
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
 import java.time.LocalDateTime
-import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -47,7 +39,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun TrackingDetectionTimeDifferenceTest() {
+    fun trackingDetectionTimeDifferenceTest() {
 
 
         val validBeacons1 = listOf(

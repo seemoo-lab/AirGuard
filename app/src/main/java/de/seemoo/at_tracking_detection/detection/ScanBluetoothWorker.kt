@@ -1,8 +1,8 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
@@ -18,6 +18,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.util.Util
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -43,7 +44,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
         try {
-            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+            val bluetoothManager =
+                applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            bluetoothAdapter = bluetoothManager.adapter
         } catch (e: Throwable) {
             Timber.e("BluetoothAdapter not found!")
             return Result.retry()
@@ -69,8 +72,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
         bluetoothAdapter.bluetoothLeScanner.startScan(
-            buildFilter(),
-            buildSettings(),
+            Util.bleScanFilter,
+            Util.buildScanSettings(getScanMode()),
             leScanCallback
         )
 
@@ -148,9 +151,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
         beaconRepository.insert(beacon)
     }
 
-    private fun buildSettings() =
-        ScanSettings.Builder().setScanMode(getScanMode()).build()
-
     private fun getScanMode(): Int {
         val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
         return if (useLowPower) {
@@ -159,13 +159,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             ScanSettings.SCAN_MODE_BALANCED
         }
     }
-
-    private fun buildFilter() =
-        mutableListOf<ScanFilter>(
-            ScanFilter.Builder()
-                .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
-                .build()
-        )
 
     companion object {
         const val SCAN_DURATION = 15000L

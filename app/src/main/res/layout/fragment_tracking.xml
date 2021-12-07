@@ -20,113 +20,119 @@
         android:layout_height="match_parent"
         tools:context=".ui.tracking.TrackingFragment">
 
-        <LinearLayout
+        <include
+            android:id="@+id/tracking_map"
+            layout="@layout/include_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/tracking_tiles"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tracking_tiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toTopOf="@id/tracking_scan_airtag_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracking_map">
 
             <include
-                android:id="@+id/tracking_map"
-                layout="@layout/include_map"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="0.45">
-
-                <include
-                    android:id="@+id/tracking_play_sound"
-                    layout="@layout/include_tracking_tile"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/card_margin"
-                    app:layout_constraintBottom_toTopOf="@id/tracking_feedback"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/tracking_ignore_device"
-                    app:layout_constraintTop_toTopOf="parent"
-                    bind:clickable="@{!vm.soundPlaying}"
-                    bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
-                    bind:imageDescription="@{@string/tracking_locate_at_playing_sound}"
-                    bind:showLoader="@{true}"
-                    bind:subtitle="@{@string/tracking_locate_at_subtitle}"
-                    bind:title="@{@string/tracking_locate_at_title}"
-                    bind:vm="@{vm}" />
+                android:id="@+id/tracking_play_sound"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/tracking_tile_height"
+                android:layout_margin="@dimen/card_margin"
+                app:layout_constraintBottom_toTopOf="@id/tracking_feedback"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tracking_ignore_device"
+                app:layout_constraintTop_toTopOf="parent"
+                bind:clickable="@{!vm.soundPlaying}"
+                bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
+                bind:imageDescription="@{@string/tracking_locate_at_playing_sound}"
+                bind:showLoader="@{true}"
+                bind:subtitle="@{@string/tracking_locate_at_subtitle}"
+                bind:title="@{@string/tracking_locate_at_title}"
+                bind:vm="@{vm}" />
 
 
-                <include
-                    android:id="@+id/tracking_ignore_device"
-                    layout="@layout/include_tracking_tile"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/card_margin"
-                    android:onClick="@{() -> vm.toggleIgnoreDevice()}"
-                    app:layout_constraintBottom_toTopOf="@id/tracking_false_alarm"
-                    app:layout_constraintLeft_toRightOf="@id/tracking_play_sound"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    bind:checkable="@{true}"
-                    bind:checked="@{vm.deviceIgnored}"
-                    bind:clickable="@{true}"
-                    bind:drawable="@{@drawable/ic_baseline_alarm_off_24}"
-                    bind:imageDescription="@{@string/tracking_ignore_device_title}"
-                    bind:subtitle="@{@string/tracking_ignore_device_subtitle}"
-                    bind:title="@{@string/tracking_ignore_device_title}"
-                    bind:vm="@{vm}" />
+            <include
+                android:id="@+id/tracking_ignore_device"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/tracking_tile_height"
+                android:layout_margin="@dimen/card_margin"
+                android:onClick="@{() -> vm.toggleIgnoreDevice()}"
+                app:layout_constraintBottom_toTopOf="@id/tracking_false_alarm"
+                app:layout_constraintLeft_toRightOf="@id/tracking_play_sound"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                bind:checkable="@{true}"
+                bind:checked="@{vm.deviceIgnored}"
+                bind:clickable="@{true}"
+                bind:drawable="@{@drawable/ic_baseline_alarm_off_24}"
+                bind:imageDescription="@{@string/tracking_ignore_device_title}"
+                bind:subtitle="@{@string/tracking_ignore_device_subtitle}"
+                bind:title="@{@string/tracking_ignore_device_title}"
+                bind:vm="@{vm}" />
 
-                <include
-                    android:id="@+id/tracking_feedback"
-                    layout="@layout/include_tracking_tile"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/card_margin"
-                    android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/tracking_false_alarm"
-                    app:layout_constraintTop_toBottomOf="@id/tracking_play_sound"
-                    bind:clickable="@{true}"
-                    bind:drawable="@{@drawable/ic_baseline_feedback_24}"
-                    bind:imageDescription="@{@string/tracking_feedback_title}"
-                    bind:subtitle="@{@string/tracking_feedback_subtitle}"
-                    bind:title="@{@string/tracking_feedback_title}"
-                    bind:vm="@{vm}" />
+            <include
+                android:id="@+id/tracking_feedback"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/tracking_tile_height"
+                android:layout_margin="@dimen/card_margin"
+                android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tracking_false_alarm"
+                app:layout_constraintTop_toBottomOf="@id/tracking_play_sound"
+                bind:clickable="@{true}"
+                bind:drawable="@{@drawable/ic_baseline_feedback_24}"
+                bind:imageDescription="@{@string/tracking_feedback_title}"
+                bind:subtitle="@{@string/tracking_feedback_subtitle}"
+                bind:title="@{@string/tracking_feedback_title}"
+                bind:vm="@{vm}" />
 
 
-                <include
-                    android:id="@+id/tracking_false_alarm"
-                    layout="@layout/include_tracking_tile"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/card_margin"
-                    android:onClick="@{() -> vm.toggleFalseAlarm()}"
-                    android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/tracking_feedback"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tracking_ignore_device"
-                    bind:checkable="@{true}"
-                    bind:checked="@{vm.falseAlarm}"
-                    bind:clickable="@{true}"
-                    bind:drawable="@{@drawable/ic_baseline_error_outline_24}"
-                    bind:imageDescription="@{@string/tracking_false_alarm_title}"
-                    bind:subtitle="@{@string/tracking_false_alarm_subtitle}"
-                    bind:title="@{@string/tracking_false_alarm_title}"
-                    bind:vm="@{vm}" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/tracking_false_alarm"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/tracking_tile_height"
+                android:layout_margin="@dimen/card_margin"
+                android:onClick="@{() -> vm.toggleFalseAlarm()}"
+                android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/tracking_feedback"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tracking_ignore_device"
+                bind:checkable="@{true}"
+                bind:checked="@{vm.falseAlarm}"
+                bind:clickable="@{true}"
+                bind:drawable="@{@drawable/ic_baseline_error_outline_24}"
+                bind:imageDescription="@{@string/tracking_false_alarm_title}"
+                bind:subtitle="@{@string/tracking_false_alarm_subtitle}"
+                bind:title="@{@string/tracking_false_alarm_title}"
+                bind:vm="@{vm}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="0.05"
-                android:autoSizeTextType="uniform"
-                android:text="@string/tracking_info" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tracking_scan_airtag_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="0.05"
+            android:autoSizeTextType="uniform"
+            android:text="@string/tracking_info"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracking_tiles" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
