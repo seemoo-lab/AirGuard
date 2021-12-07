@@ -25,11 +25,11 @@
             layout="@layout/include_map"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            bind:loading="@{vm.isMapLoading}"
             app:layout_constraintBottom_toTopOf="@id/tracking_tiles"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            bind:loading="@{vm.isMapLoading}" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tracking_tiles"

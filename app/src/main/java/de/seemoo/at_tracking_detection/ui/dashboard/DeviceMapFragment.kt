@@ -10,17 +10,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Util
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
-import timber.log.Timber
 import java.time.LocalDateTime
 
 @AndroidEntryPoint
@@ -67,10 +64,6 @@ class DeviceMapFragment : Fragment() {
             }.invokeOnCompletion {
                 dashboardViewModel.isMapLoading.postValue(false)
             }
-        }
-
-        dashboardViewModel.isMapLoading.observe(viewLifecycleOwner) {
-            Timber.d("isMapLoading: $it")
         }
     }
 }

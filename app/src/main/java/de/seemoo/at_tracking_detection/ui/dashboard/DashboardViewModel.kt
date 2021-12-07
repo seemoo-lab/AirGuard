@@ -18,11 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-        private val beaconRepository: BeaconRepository,
-        notificationRepository: NotificationRepository,
-        deviceRepository: DeviceRepository,
-        private val sharedPreferences: SharedPreferences,
-        backgroundWorkScheduler: BackgroundWorkScheduler
+    private val beaconRepository: BeaconRepository,
+    notificationRepository: NotificationRepository,
+    deviceRepository: DeviceRepository,
+    private val sharedPreferences: SharedPreferences,
+    backgroundWorkScheduler: BackgroundWorkScheduler
 ) : ViewModel() {
 
     private var lastScan: LocalDateTime
@@ -32,29 +32,29 @@ class DashboardViewModel @Inject constructor(
     private var dateTime: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
 
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
-            SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                when (key) {
-                    "last_scan" -> lastScan = LocalDateTime.parse(
-                            sharedPreferences.getString(
-                                    "last_scan",
-                                    dateTime.minusMinutes(15).toString()
-                            )
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            when (key) {
+                "last_scan" -> lastScan = LocalDateTime.parse(
+                    sharedPreferences.getString(
+                        "last_scan",
+                        dateTime.minusMinutes(15).toString()
                     )
-                }
+                )
             }
+        }
 
     init {
         lastScan = LocalDateTime.parse(
-                sharedPreferences.getString(
-                        "last_scan",
-                        dateTime.minusMinutes(15).toString()
-                )
+            sharedPreferences.getString(
+                "last_scan",
+                dateTime.minusMinutes(15).toString()
+            )
         )
         lastTimeOpened = LocalDateTime.parse(
-                sharedPreferences.getString(
-                        "last_time_opened",
-                        dateTime.toString()
-                )
+            sharedPreferences.getString(
+                "last_time_opened",
+                dateTime.toString()
+            )
         )
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
         Timber.d("last scan: $lastScan")
@@ -63,34 +63,34 @@ class DashboardViewModel @Inject constructor(
     val isMapLoading = MutableLiveData(false)
 
     val isScanning: LiveData<Boolean> =
-            Transformations.map(backgroundWorkScheduler.getState(WorkerConstants.PERIODIC_SCAN_WORKER)) {
-                it == WorkInfo.State.RUNNING
-            }
+        Transformations.map(backgroundWorkScheduler.getState(WorkerConstants.PERIODIC_SCAN_WORKER)) {
+            it == WorkInfo.State.RUNNING
+        }
 
     val totalLocationsTrackedCount: LiveData<Int> = beaconRepository.locationCount.asLiveData()
 
     val totalLocationsCountChange: LiveData<Int> =
-            beaconRepository.totalLocationCountChange(lastTimeOpened).asLiveData()
+        beaconRepository.totalLocationCountChange(lastTimeOpened).asLiveData()
 
     val totalDeviceCount: LiveData<Int> = deviceRepository.totalCount.asLiveData()
     val totalDeviceCountChange: LiveData<Int> =
-            deviceRepository.totalDeviceCountChange(lastTimeOpened).asLiveData()
+        deviceRepository.totalDeviceCountChange(lastTimeOpened).asLiveData()
 
     val currentlyMonitoredDevices: LiveData<Int> =
-            deviceRepository.devicesCurrentlyMonitored(lastScan).asLiveData()
+        deviceRepository.devicesCurrentlyMonitored(lastScan).asLiveData()
 
     val hideMap: LiveData<Boolean> =
-            beaconRepository.totalCount.map { it == 0 }.asLiveData()
+        beaconRepository.totalCount.map { it == 0 }.asLiveData()
 
     val totalAlertCount: LiveData<Int> = notificationRepository.totalCount.asLiveData()
     val totalAlertCountChange: LiveData<Int> =
-            notificationRepository.totalCountChange(lastTimeOpened).asLiveData()
+        notificationRepository.totalCountChange(lastTimeOpened).asLiveData()
 
     val totalFalseAlarmCount: LiveData<Int> =
-            notificationRepository.totalFalseAlarmCount.asLiveData()
+        notificationRepository.totalFalseAlarmCount.asLiveData()
     val totalFalseAlarmCountChange: LiveData<Int> =
-            notificationRepository.totalFalseAlarmCountChange(lastTimeOpened).asLiveData()
+        notificationRepository.totalFalseAlarmCountChange(lastTimeOpened).asLiveData()
 
     fun getBeaconHistory(since: LocalDateTime): LiveData<List<Beacon>> =
-            beaconRepository.getBeaconsSince(since).asLiveData()
+        beaconRepository.getBeaconsSince(since).asLiveData()
 }

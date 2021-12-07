@@ -31,15 +31,15 @@ class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_dashboard,
-                container,
-                false
+            inflater,
+            R.layout.fragment_dashboard,
+            container,
+            false
         )
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = dashboardViewModel
@@ -53,40 +53,40 @@ class DashboardFragment : Fragment() {
 
         fabScan.setOnClickListener {
             val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
-                    .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             if (bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF) {
                 AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
-                        .setTitle(getString(R.string.scan_enable_bluetooth_title))
-                        .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                        .setPositiveButton(getString(R.string.yes_button)) { _, _ ->
-                            bluetoothManager.adapter.enable()
-                            showManualScan()
-                        }
-                        .setNegativeButton(R.string.no_button, null).create().show()
+                    .setTitle(getString(R.string.scan_enable_bluetooth_title))
+                    .setMessage(getString(R.string.scan_enable_bluetooth_message))
+                    .setPositiveButton(getString(R.string.yes_button)) { _, _ ->
+                        bluetoothManager.adapter.enable()
+                        showManualScan()
+                    }
+                    .setNegativeButton(R.string.no_button, null).create().show()
             } else {
                 showManualScan()
             }
         }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
-                .observe(viewLifecycleOwner) { beaconList ->
-                    Timber.d("beacon list size: ${beaconList.size}")
-                    val dataPoints = mutableListOf<DataPoint>()
-                    (0..HISTORY_LENGTH).forEach { counter ->
-                        val dayOfMonth = dateTime.minusDays(counter).dayOfMonth
-                        val amount =
-                                beaconList.filter { it.receivedAt.dayOfMonth == dayOfMonth }
-                                        .distinctBy { it.deviceAddress }.size
-                        dataPoints.add(counter.toInt(), DataPoint(amount.toFloat()))
-                    }
-                    lineGraphChart.addDataPoints(dataPoints.reversed())
-                    Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
+            .observe(viewLifecycleOwner) { beaconList ->
+                Timber.d("beacon list size: ${beaconList.size}")
+                val dataPoints = mutableListOf<DataPoint>()
+                (0..HISTORY_LENGTH).forEach { counter ->
+                    val dayOfMonth = dateTime.minusDays(counter).dayOfMonth
+                    val amount =
+                        beaconList.filter { it.receivedAt.dayOfMonth == dayOfMonth }
+                            .distinctBy { it.deviceAddress }.size
+                    dataPoints.add(counter.toInt(), DataPoint(amount.toFloat()))
                 }
+                lineGraphChart.addDataPoints(dataPoints.reversed())
+                Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
+            }
 
         view.findViewById<MaterialCardView>(R.id.statistics_number_beacons)
-                .setOnClickListener { showDeviceList() }
+            .setOnClickListener { showDeviceList() }
         view.findViewById<MaterialCardView>(R.id.statistics_number_devices)
-                .setOnClickListener { showDeviceMap() }
+            .setOnClickListener { showDeviceMap() }
     }
 
     private fun showManualScan() {

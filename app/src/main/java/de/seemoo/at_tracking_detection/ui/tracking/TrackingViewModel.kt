@@ -9,7 +9,6 @@ import de.seemoo.at_tracking_detection.database.tables.Device
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
