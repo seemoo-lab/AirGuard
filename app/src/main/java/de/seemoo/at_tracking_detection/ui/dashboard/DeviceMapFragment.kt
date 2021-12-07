@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -45,16 +44,6 @@ class DeviceMapFragment : Fragment() {
         ViewCompat.setTranslationZ(view, 100f)
 
         Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        dashboardViewModel.totalBeaconCount.observe(viewLifecycleOwner) { locationsTracked ->
-            if (locationsTracked == 0 || locationsTracked == null) {
-                view.findViewById<ConstraintLayout>(R.id.map_no_devices_found).visibility =
-                    View.VISIBLE
-            } else {
-                view.findViewById<ConstraintLayout>(R.id.map_no_devices_found).visibility =
-                    View.GONE
-            }
-        }
 
         dashboardViewModel.getBeaconHistory(LocalDateTime.MIN).observe(viewLifecycleOwner) { it ->
             Util.setGeoPointsFromList(it, view) { beacon ->

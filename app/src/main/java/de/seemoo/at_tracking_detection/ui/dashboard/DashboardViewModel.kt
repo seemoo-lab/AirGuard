@@ -13,6 +13,7 @@ import de.seemoo.at_tracking_detection.database.repository.NotificationRepositor
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.WorkerConstants
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -86,9 +87,8 @@ class DashboardViewModel @Inject constructor(
         deviceRepository.devicesCurrentlyMonitored(lastScan).asLiveData()
 
     val totalBeaconCount: LiveData<Int> = beaconRepository.totalCount.asLiveData()
-
-    val totalBeaconCountChange: LiveData<Int> =
-        beaconRepository.totalBeaconCountChange(lastTimeOpened).asLiveData()
+    val hideMap: LiveData<Boolean> =
+        beaconRepository.totalCount.map { it == 0 }.asLiveData()
 
     val totalAlertCount: LiveData<Int> = notificationRepository.totalCount.asLiveData()
     val totalAlertCountChange: LiveData<Int> =

@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardBinding
@@ -43,6 +45,12 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val lineGraphChart = view.findViewById<RallyLineGraphChart>(R.id.line_graph)
+        val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
+
+        fabScan.setOnClickListener {
+            val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
+            findNavController().navigate(directions)
+        }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
             .observe(viewLifecycleOwner) { beaconList ->

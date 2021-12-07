@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
-import android.content.Intent
 import androidx.lifecycle.*
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -12,7 +11,6 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val beaconRepository: BeaconRepository,
@@ -33,8 +31,6 @@ class TrackingViewModel @Inject constructor(
     val connecting = MutableLiveData(false)
 
     val device = MutableLiveData<Device>()
-
-    val gattServiceIntent = MutableLiveData<Intent>()
 
     fun getMarkerLocations(): LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
         beaconRepository.getDeviceBeacons(it)

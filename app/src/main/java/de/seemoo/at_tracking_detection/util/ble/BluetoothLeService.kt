@@ -4,9 +4,19 @@ import android.app.Service
 import android.bluetooth.*
 import android.bluetooth.BluetoothGatt.GATT_SUCCESS
 import android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8
+import android.bluetooth.le.*
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_COMPLETED
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_FAILED
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_GATT_CONNECTED
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_GATT_DISCONNECTED
 import timber.log.Timber
 import java.util.*
 
@@ -26,7 +36,9 @@ class BluetoothLeService : Service() {
     }
 
     fun init(): Boolean {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val bluetoothManager =
+            applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothAdapter = bluetoothManager.adapter
         return true
     }
 
@@ -110,7 +122,7 @@ class BluetoothLeService : Service() {
             characteristic: BluetoothGattCharacteristic?,
             status: Int
         ) {
-            if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
+            if (status == GATT_SUCCESS && characteristic != null) {
                 when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
                     AIR_TAG_EVENT_CALLBACK -> broadcastUpdate(ACTION_EVENT_COMPLETED)
                 }
@@ -119,21 +131,14 @@ class BluetoothLeService : Service() {
     }
 
     private fun broadcastUpdate(action: String) =
-        sendBroadcast(Intent(applicationContext, GattUpdateReceiver::class.java).apply {
-            setAction(action)
-        })
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(action))
 
     companion object {
-        const val ACTION_GATT_CONNECTED = "de.seemoo.at_tracking_detection.ACTION_GATT_CONNECTED"
-        const val ACTION_GATT_DISCONNECTED =
-            "de.seemoo.at_tracking_detection.ACTION_GATT_DISCONNECTED"
-        const val ACTION_EVENT_COMPLETED = "de.seemoo.at_tracking_detection.EVENT_COMPLETED"
-        const val ACTION_EVENT_FAILED = "de.seemoo.at_tracking_detection.EVENT_FAILED"
-        private const val STATE_DISCONNECTED = 0
-        private const val STATE_CONNECTED = 2
         private val AIR_TAG_SOUND_SERVICE = UUID.fromString("7DFC9000-7D1C-4951-86AA-8D9728F8D66C")
         private val AIR_TAG_SOUND_CHARACTERISTIC =
             UUID.fromString("7DFC9001-7D1C-4951-86AA-8D9728F8D66C")
         private const val AIR_TAG_EVENT_CALLBACK = 0x302
+        private const val STATE_DISCONNECTED = 0
+        private const val STATE_CONNECTED = 2
     }
 }

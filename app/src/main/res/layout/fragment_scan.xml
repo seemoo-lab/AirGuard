@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
+
+        <variable
+            name="adapter"
+            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.scan.ScanFragment">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/scan_result_loading_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="@{!vm.isListEmpty ? View.VISIBLE : View.GONE, default=visible}"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scan_result_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
+            app:setAdapter="@{adapter}" />
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            style="@style/SpinKitView.Large.DoubleBounce"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="24dp"
+            android:visibility="@{(!vm.isListEmpty || vm.scanFinished) ? View.GONE : View.VISIBLE, default=visible}"
+            app:SpinKit_Color="?colorAccent" />
+
+
+        <include
+            android:id="@+id/include_scan_empty_explanation"
+            layout="@layout/include_empty_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="24dp"
+            android:visibility="@{(!vm.scanFinished || !vm.isListEmpty)  ? View.GONE : View.VISIBLE, default=gone}"
+            bind:drawable="@{@drawable/ic_security_on}"
+            bind:text="@{@string/scan_result_no_devices}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

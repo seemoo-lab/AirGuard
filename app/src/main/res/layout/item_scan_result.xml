@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="scanResult"
+            type="android.bluetooth.le.ScanResult" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/scan_result_item_card"
+        style="?attr/materialCardViewOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_margin="@dimen/card_margin">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/scan_result_guideline_left"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/scan_result_guideline_middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.60" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/scan_result_guideline_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.50" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/scan_result_guideline_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.85" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="12dp"
+                android:contentDescription="@string/scan_result_item_image_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_left"
+                app:layout_constraintTop_toTopOf="parent"
+                app:setDeviceDrawable="@{scanResult}"
+                tools:src="@drawable/ic_airtag" />
+
+            <TextView
+                android:id="@+id/scan_result_device_name"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="6dp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/scan_result_guideline_horizontal"
+                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_left"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:setDeviceName="@{scanResult}"
+                tools:text="@string/title_debug" />
+
+            <TextView
+                android:id="@+id/scan_result_device_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:text="@{scanResult.device.address}"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_left"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
+                app:layout_constraintTop_toBottomOf="@id/scan_result_guideline_horizontal"
+                tools:text="@string/title_debug" />
+
+            <ImageView
+                android:id="@+id/scan_result_location_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginVertical="16dp"
+                android:contentDescription="@string/scan_result_item_image_description"
+                android:src="@drawable/ic_baseline_location_on_45_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_middle"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_distance"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/scan_result_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/scan_result_location_image"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
+                app:layout_constraintTop_toTopOf="parent"
+                app:setDistance="@{scanResult}"
+                tools:text="@string/title_debug" />
+
+            <ImageView
+                android:id="@+id/scan_result_play_sound"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginVertical="12dp"
+                android:src="@{@drawable/ic_baseline_play_circle_outline_24}"
+                android:visibility="@{!scanResult.isConnectable() ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_right"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_baseline_play_circle_outline_24" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

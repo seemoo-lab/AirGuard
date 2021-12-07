@@ -1,6 +1,9 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanSettings
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -13,6 +16,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -49,7 +53,7 @@ object Util {
                     arrayOf(permission),
                     0
                 )
-                return false
+                return true
             }
         }
     }
@@ -130,5 +134,21 @@ object Util {
             return false
         }
         return true
+    }
+
+    fun buildScanSettings(scanMode: Int): ScanSettings =
+        ScanSettings.Builder().setScanMode(scanMode).build()
+
+    val bleScanFilter: MutableList<ScanFilter> = mutableListOf(
+        ScanFilter.Builder()
+            .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
+            .build()
+    )
+
+    val gattIntentFilter: IntentFilter = IntentFilter().apply {
+        addAction(BluetoothConstants.ACTION_GATT_CONNECTED)
+        addAction(BluetoothConstants.ACTION_GATT_DISCONNECTED)
+        addAction(BluetoothConstants.ACTION_EVENT_COMPLETED)
+        addAction(BluetoothConstants.ACTION_EVENT_FAILED)
     }
 }

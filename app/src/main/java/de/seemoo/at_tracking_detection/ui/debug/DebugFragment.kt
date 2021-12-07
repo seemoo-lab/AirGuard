@@ -2,7 +2,9 @@ package de.seemoo.at_tracking_detection.ui.debug
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
@@ -57,8 +60,10 @@ class DebugFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+        val bluetoothManager =
+            ATTrackingDetectionApplication.getAppContext()
+                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         bluetoothList = root.findViewById(R.id.bluetoothList)
         return root
