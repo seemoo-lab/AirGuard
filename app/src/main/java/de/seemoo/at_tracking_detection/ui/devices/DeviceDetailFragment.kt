@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,6 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceDetailBinding
 import de.seemoo.at_tracking_detection.util.Util
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import org.osmdroid.views.MapView
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -27,35 +32,38 @@ class DeviceDetailFragment : Fragment() {
     private val safeArgs: DeviceDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         val binding: FragmentDeviceDetailBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_device_detail, container, false)
+                DataBindingUtil.inflate(inflater, R.layout.fragment_device_detail, container, false)
         val device = devicesViewModel.getDevice(safeArgs.deviceAddress)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.deviceBeaconCount = devicesViewModel.getDeviceBeaconsCount(safeArgs.deviceAddress)
         binding.device = device
 
         sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-                .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
+                TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+                        .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
         postponeEnterTransition(100, TimeUnit.MILLISECONDS)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val map: MapView = view.findViewById(R.id.map)
         devicesViewModel.getMarkerLocations(safeArgs.deviceAddress).let {
-            Util.setGeoPointsFromList(it, view, true)
+            lifecycleScope.launch {
+                Util.setGeoPointsFromList(it, map, true)
+            }
         }
         val device = view.findViewById<MaterialCardView>(R.id.device_item)
         device.setOnClickListener {
             val directions: NavDirections =
-                DeviceDetailFragmentDirections.actionDeviceDetailToTrackingFragment(
-                    -1,
-                    safeArgs.deviceAddress
-                )
+                    DeviceDetailFragmentDirections.actionDeviceDetailToTrackingFragment(
+                            -1,
+                            safeArgs.deviceAddress
+                    )
             findNavController().navigate(directions)
         }
     }

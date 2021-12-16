@@ -32,6 +32,8 @@ class TrackingViewModel @Inject constructor(
 
     val device = MutableLiveData<Device>()
 
+    val isMapLoading = MutableLiveData(false)
+
     fun getMarkerLocations(): LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
         beaconRepository.getDeviceBeacons(it)
     }

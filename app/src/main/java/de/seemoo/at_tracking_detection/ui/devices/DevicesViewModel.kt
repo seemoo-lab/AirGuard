@@ -37,4 +37,6 @@ class DevicesViewModel @Inject constructor(
         deviceRepository.ignoredDevices.asLiveData()
 
     val devices: LiveData<List<Device>> = deviceRepository.devices.asLiveData()
+
+    val isMapLoading = MutableLiveData(false)
 }

@@ -27,7 +27,8 @@
                 android:id="@+id/include_beacon_map"
                 layout="@layout/include_map"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                bind:loading="@{vm.isMapLoading}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

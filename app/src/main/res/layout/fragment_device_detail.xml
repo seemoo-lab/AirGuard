@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -39,7 +40,8 @@
                 layout="@layout/include_map"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.8" />
+                android:layout_weight="0.8"
+                bind:loading="@{null}" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

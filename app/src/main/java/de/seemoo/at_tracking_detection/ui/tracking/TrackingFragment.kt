@@ -10,6 +10,8 @@ import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -23,6 +25,9 @@ import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import org.osmdroid.views.MapView
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,11 +45,11 @@ class TrackingFragment : Fragment() {
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         val binding: FragmentTrackingBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_tracking, container, false)
+                DataBindingUtil.inflate(inflater, R.layout.fragment_tracking, container, false)
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
@@ -61,7 +66,7 @@ class TrackingFragment : Fragment() {
         super.onResume()
         val activity = ATTrackingDetectionApplication.getCurrentActivity()
         LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
+                .registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
         activity.registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
     }
 
@@ -77,7 +82,7 @@ class TrackingFragment : Fragment() {
                 val intent = Intent(context, MainActivity::class.java)
                 intent.apply {
                     flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 startActivity(intent)
             } else {
@@ -90,10 +95,11 @@ class TrackingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
         val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
+        val map = view.findViewById<MapView>(R.id.map)
 
         feedbackButton.setOnClickListener {
             val directions: NavDirections =
-                TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
+                    TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
             findNavController().navigate(directions)
         }
 
@@ -107,15 +113,20 @@ class TrackingFragment : Fragment() {
                 toggleSound()
             } else {
                 Snackbar.make(
-                    view,
-                    getString(R.string.tracking_device_not_connectable),
-                    Snackbar.LENGTH_LONG
+                        view,
+                        getString(R.string.tracking_device_not_connectable),
+                        Snackbar.LENGTH_LONG
                 ).show()
             }
         }
 
         trackingViewModel.getMarkerLocations().observe(viewLifecycleOwner) {
-            Util.setGeoPointsFromList(it, view, true)
+            lifecycleScope.launch {
+                trackingViewModel.isMapLoading.postValue(true)
+                Util.setGeoPointsFromList(it, map, true)
+            }.invokeOnCompletion {
+                trackingViewModel.isMapLoading.postValue(false)
+            }
         }
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
             if (!it) {
@@ -136,9 +147,9 @@ class TrackingFragment : Fragment() {
             trackingViewModel.connecting.postValue(true)
             val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
             applicationContext.bindService(
-                gattServiceIntent,
-                serviceConnection,
-                Context.BIND_AUTO_CREATE
+                    gattServiceIntent,
+                    serviceConnection,
+                    Context.BIND_AUTO_CREATE
             )
         } else {
             Timber.d("Sound already playing! Stopping sound...")
@@ -151,7 +162,7 @@ class TrackingFragment : Fragment() {
             when (intent.action) {
                 BluetoothConstants.ACTION_GATT_CONNECTED -> {
                     trackingViewModel.soundPlaying.postValue(
-                        true
+                            true
                     )
                     trackingViewModel.connecting.postValue(false)
                 }
@@ -165,7 +176,7 @@ class TrackingFragment : Fragment() {
                     trackingViewModel.soundPlaying.postValue(false)
                 }
                 BluetoothConstants.ACTION_EVENT_COMPLETED -> trackingViewModel.soundPlaying.postValue(
-                    false
+                        false
                 )
             }
         }

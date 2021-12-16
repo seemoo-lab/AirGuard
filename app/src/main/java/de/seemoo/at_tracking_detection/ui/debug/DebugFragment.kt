@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui.debug
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
@@ -17,6 +16,7 @@ import android.widget.Button
 import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -26,7 +26,6 @@ import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,7 +47,6 @@ class DebugFragment : Fragment() {
 
     private val debugViewModel: DebugViewModel by viewModels()
 
-    private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var bluetoothLeScanner: BluetoothLeScanner
     private val devicesList: ArrayList<BluetoothDevice> = ArrayList()
     private val displayList: ArrayList<String> = ArrayList()
@@ -78,11 +76,11 @@ class DebugFragment : Fragment() {
             scanLeDevice()
         }
         view.findViewById<Button>(R.id.button2)?.setOnClickListener {
-            GlobalScope.launch { notificationService.sendTrackingNotification("Some device address") }
+            debugViewModel.viewModelScope.launch { notificationService.sendTrackingNotification("Some device address") }
         }
         view.findViewById<ListView>(R.id.bluetoothList)
             .setOnItemClickListener { _, _, position, _ ->
-                GlobalScope.launch {
+                debugViewModel.viewModelScope.launch {
                     notificationService.sendTrackingNotification(devicesList[position].address)
                 }
             }

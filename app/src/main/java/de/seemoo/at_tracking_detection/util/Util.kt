@@ -7,16 +7,16 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.view.View
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -58,23 +58,23 @@ object Util {
         }
     }
 
-    fun setGeoPointsFromList(
+    suspend fun setGeoPointsFromList(
         beaconList: List<Beacon>,
-        view: View,
+        map: MapView,
         connectWithPolyline: Boolean = false,
         onMarkerWindowClick: ((beacon: Beacon) -> Unit)? = null
     ): Boolean {
-
-        val map: MapView = view.findViewById(R.id.map)
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
+        val context = ATTrackingDetectionApplication.getAppContext()
 
         val bitmapPerson =
-            BitmapFactory.decodeResource(view.resources, R.drawable.mylocation, options)
+            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
         locationOverlay.setPersonIcon(bitmapPerson)
         locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
+        val markerList = ArrayList<Marker>()
 
         locationOverlay.enableMyLocation()
         map.setTileSource(TileSourceFactory.MAPNIK)
@@ -82,33 +82,36 @@ object Util {
         map.setMultiTouchControls(true)
         map.overlays.add(locationOverlay)
 
-        beaconList
-            .filter { it.latitude != null && it.longitude != null }
-            .map { beacon ->
-                val marker = Marker(map)
-                val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
-                marker.infoWindow = DeviceMarkerInfo(
-                    R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
-                )
-                marker.position = geoPoint
-                marker.icon = ResourcesCompat.getDrawable(
-                    view.resources,
-                    R.drawable.ic_baseline_location_on_45_black,
-                    null
-                )
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                geoPointList.add(geoPoint)
-                map.overlays.add(marker)
+        // Causes crashes when the view gets destoryed and markers are still added. Will get fixed in the next Version!
+        withContext(Dispatchers.Default) {
+            beaconList
+                .filter { it.latitude != null && it.longitude != null }
+                .map { beacon ->
+                    val marker = Marker(map)
+                    val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
+                    marker.infoWindow = DeviceMarkerInfo(
+                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
+                    )
+                    marker.position = geoPoint
+                    marker.icon = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_baseline_location_on_45_black
+                    )
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    geoPointList.add(geoPoint)
+                    markerList.add(marker)
 
-                marker.setOnMarkerClickListener { clickedMarker, _ ->
-                    if (clickedMarker.isInfoWindowShown) {
-                        clickedMarker.closeInfoWindow()
-                    } else {
-                        clickedMarker.showInfoWindow()
+                    marker.setOnMarkerClickListener { clickedMarker, _ ->
+                        if (clickedMarker.isInfoWindowShown) {
+                            clickedMarker.closeInfoWindow()
+                        } else {
+                            clickedMarker.showInfoWindow()
+                        }
+                        true
                     }
-                    true
                 }
-            }
+        }
+        map.overlays.addAll(markerList)
 
         Timber.d("Added ${geoPointList.size} markers to the map!")
 

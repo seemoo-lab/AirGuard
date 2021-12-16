@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/map"
+    <data class=".databinding.LiveDataBinding">
+
+        <import type="android.view.View" />
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <variable
+            name="loading"
+            type="LiveData&lt;Boolean&gt;" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.github.ybq.android.spinkit.SpinKitView
+            style="@style/SpinKitView.Circle"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="@{loading ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+            app:SpinKit_Color="?colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="@{loading ? 0.1F : 1F}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
