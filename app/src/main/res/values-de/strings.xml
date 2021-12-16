@@ -117,4 +117,7 @@
     <string name="scan_result_item_image_description">"Scanergebnis Element "</string>
     <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Sie sind sicher!</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
+    <string name="yes_button">Ja</string>
+    <string name="scan_enable_bluetooth_title">Bluetooth Suche</string>
+    <string name="scan_enable_bluetooth_message">Bluetooth muss eingeschaltet sein um nach Bluetooth Gräten suchen zu können! Möchtest du es jetzt einschalten?</string>
 </resources>

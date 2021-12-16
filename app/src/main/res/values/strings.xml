@@ -129,4 +129,7 @@
     <string name="scan_result_item_image_description">Scan Result Item</string>
     <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!</string>
     <string name="ble_service_connection_error">Failed to connect to device!</string>
+    <string name="yes_button">Yes</string>
+    <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices! Do you want to enable it?</string>
+    <string name="scan_enable_bluetooth_title">Bluetooth Scanning</string>
 </resources>

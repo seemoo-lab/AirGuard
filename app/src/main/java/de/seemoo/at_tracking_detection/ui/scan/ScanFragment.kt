@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
@@ -26,7 +27,9 @@ class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
 
-    private lateinit var bluetoothLeScanner: BluetoothLeScanner
+    private var bluetoothLeScanner: BluetoothLeScanner? = null
+
+    private var bluetoothManager: BluetoothManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,21 +66,26 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
-        val bluetoothManager =
+        bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val scanSettings = Util.buildScanSettings(ScanSettings.SCAN_MODE_LOW_LATENCY)
-
-        bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner
-        bluetoothLeScanner.startScan(Util.bleScanFilter, scanSettings, scanCallback)
+        bluetoothLeScanner = bluetoothManager?.adapter?.bluetoothLeScanner
+        bluetoothLeScanner?.startScan(Util.bleScanFilter, scanSettings, scanCallback)
 
         Handler(Looper.getMainLooper()).postDelayed({
             // Stop scanning if no device was detected
             if (scanViewModel.isListEmpty.value == true) {
                 scanViewModel.scanFinished.postValue(true)
-                bluetoothLeScanner.stopScan(scanCallback)
+                stopBluetoothScan()
             }
         }, SCAN_DURATION)
+    }
+
+    private fun stopBluetoothScan() {
+        if (bluetoothManager?.adapter?.state == BluetoothAdapter.STATE_ON) {
+            bluetoothLeScanner?.stopScan(scanCallback)
+        }
     }
 
     override fun onResume() {
@@ -87,12 +95,12 @@ class ScanFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        bluetoothLeScanner.stopScan(scanCallback)
+        stopBluetoothScan()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        bluetoothLeScanner.stopScan(scanCallback)
+        stopBluetoothScan()
     }
 
     companion object {

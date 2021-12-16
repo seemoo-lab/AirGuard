@@ -1,5 +1,9 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.app.AlertDialog
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +15,8 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardBinding
 import timber.log.Timber
@@ -27,15 +31,15 @@ class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_dashboard,
-            container,
-            false
+                inflater,
+                R.layout.fragment_dashboard,
+                container,
+                false
         )
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = dashboardViewModel
@@ -48,29 +52,46 @@ class DashboardFragment : Fragment() {
         val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
 
         fabScan.setOnClickListener {
-            val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
-            findNavController().navigate(directions)
+            val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
+                    .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            if (bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF) {
+                AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
+                        .setTitle(getString(R.string.scan_enable_bluetooth_title))
+                        .setMessage(getString(R.string.scan_enable_bluetooth_message))
+                        .setPositiveButton(getString(R.string.yes_button)) { _, _ ->
+                            bluetoothManager.adapter.enable()
+                            showManualScan()
+                        }
+                        .setNegativeButton(R.string.no_button, null).create().show()
+            } else {
+                showManualScan()
+            }
         }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
-            .observe(viewLifecycleOwner) { beaconList ->
-                Timber.d("beacon list size: ${beaconList.size}")
-                val dataPoints = mutableListOf<DataPoint>()
-                (0..HISTORY_LENGTH).forEach { counter ->
-                    val dayOfMonth = dateTime.minusDays(counter).dayOfMonth
-                    val amount =
-                        beaconList.filter { it.receivedAt.dayOfMonth == dayOfMonth }
-                            .distinctBy { it.deviceAddress }.size
-                    dataPoints.add(counter.toInt(), DataPoint(amount.toFloat()))
+                .observe(viewLifecycleOwner) { beaconList ->
+                    Timber.d("beacon list size: ${beaconList.size}")
+                    val dataPoints = mutableListOf<DataPoint>()
+                    (0..HISTORY_LENGTH).forEach { counter ->
+                        val dayOfMonth = dateTime.minusDays(counter).dayOfMonth
+                        val amount =
+                                beaconList.filter { it.receivedAt.dayOfMonth == dayOfMonth }
+                                        .distinctBy { it.deviceAddress }.size
+                        dataPoints.add(counter.toInt(), DataPoint(amount.toFloat()))
+                    }
+                    lineGraphChart.addDataPoints(dataPoints.reversed())
+                    Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
                 }
-                lineGraphChart.addDataPoints(dataPoints.reversed())
-                Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
-            }
 
         view.findViewById<MaterialCardView>(R.id.statistics_number_beacons)
-            .setOnClickListener { showDeviceList() }
+                .setOnClickListener { showDeviceList() }
         view.findViewById<MaterialCardView>(R.id.statistics_number_devices)
-            .setOnClickListener { showDeviceMap() }
+                .setOnClickListener { showDeviceMap() }
+    }
+
+    private fun showManualScan() {
+        val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
+        findNavController().navigate(directions)
     }
 
     private fun showDeviceList() {
