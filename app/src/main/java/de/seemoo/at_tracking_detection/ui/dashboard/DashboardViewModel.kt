@@ -47,7 +47,7 @@ class DashboardViewModel @Inject constructor(
         lastScan = LocalDateTime.parse(
             sharedPreferences.getString(
                 "last_scan",
-                dateTime.minusMinutes(15).toString()
+                dateTime.toString()
             )
         )
         lastTimeOpened = LocalDateTime.parse(

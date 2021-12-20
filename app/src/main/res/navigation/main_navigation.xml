@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="de.seemoo.at_tracking_detection.ui.dashboard.DashboardFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard">
+        tools:layout="@layout/fragment_dashboard_risk">
         <action
             android:id="@+id/dashboardToDevicesFragment"
             app:destination="@id/navigation_devices"

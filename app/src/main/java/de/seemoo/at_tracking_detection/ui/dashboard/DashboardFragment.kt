@@ -90,18 +90,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showManualScan() {
-        val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
+        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
         findNavController().navigate(directions)
     }
 
     private fun showDeviceList() {
-        val directions: NavDirections = DashboardFragmentDirections.dashboardToDevicesFragment(true)
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDevicesFragment(true)
+//        findNavController().navigate(directions)
     }
 
     private fun showDeviceMap() {
-        val directions: NavDirections = DashboardFragmentDirections.dashboardToDeviceMap()
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDeviceMap()
+//        findNavController().navigate(directions)
     }
 
     companion object {

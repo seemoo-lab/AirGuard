@@ -12,6 +12,9 @@ import javax.inject.Singleton
 class NotificationRepository @Inject constructor(private val notificationDao: NotificationDao) {
 
     val totalCount: Flow<Int> = notificationDao.getTotalCount()
+    fun notificationsSince(since: LocalDateTime): Flow<List<Notification>> =
+        notificationDao.getNotificationsSince(since)
+
     fun totalCountChange(since: LocalDateTime): Flow<Int> =
         notificationDao.getTotalCountChange(since)
 
@@ -22,6 +25,8 @@ class NotificationRepository @Inject constructor(private val notificationDao: No
         notificationDao.getFalseAlarmCountChange(since)
 
     val notifications: Flow<List<Notification>> = notificationDao.getAll()
+
+    val last_notification: Flow<List<Notification>> = notificationDao.getLastNotification()
 
     @WorkerThread
     suspend fun insert(notification: Notification): Long {
