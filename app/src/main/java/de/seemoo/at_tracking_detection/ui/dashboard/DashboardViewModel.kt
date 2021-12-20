@@ -22,10 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
-    private val notificationRepository: NotificationRepository,
-    private val deviceRepository: DeviceRepository,
+    notificationRepository: NotificationRepository,
+    deviceRepository: DeviceRepository,
     private val sharedPreferences: SharedPreferences,
-    private val backgroundWorkScheduler: BackgroundWorkScheduler
+    backgroundWorkScheduler: BackgroundWorkScheduler
 ) : ViewModel() {
 
     private var lastScan: LocalDateTime
@@ -50,7 +50,7 @@ class DashboardViewModel @Inject constructor(
         lastScan = LocalDateTime.parse(
             sharedPreferences.getString(
                 "last_scan",
-                dateTime.minusMinutes(15).toString()
+                dateTime.toString()
             )
         )
         lastTimeOpened = LocalDateTime.parse(

@@ -48,8 +48,8 @@ class DashboardFragment : Fragment() {
         val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
 
         fabScan.setOnClickListener {
-            val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
-            findNavController().navigate(directions)
+//            val directions: NavDirections = DashboardFragmentDirections.dashboardToScanFragment()
+//            findNavController().navigate(directions)
         }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
@@ -74,13 +74,13 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showDeviceList() {
-        val directions: NavDirections = DashboardFragmentDirections.dashboardToDevicesFragment(true)
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardFragmentDirections.dashboardToDevicesFragment(true)
+//        findNavController().navigate(directions)
     }
 
     private fun showDeviceMap() {
-        val directions: NavDirections = DashboardFragmentDirections.dashboardToDeviceMap()
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardFragmentDirections.dashboardToDeviceMap()
+//        findNavController().navigate(directions)
     }
 
     companion object {

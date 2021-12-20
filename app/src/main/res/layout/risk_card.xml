@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.dashboard.RiskCardViewModel" />
+
+        <import type="android.view.View" />
+        <import type="android.graphics.Color" />
+        <import type="de.seemoo.at_tracking_detection.ui.dashboard.RiskRowViewModel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/card_margin"
+        app:cardBackgroundColor="@{vm.riskColor}"
+        android:clickable="@{vm.clickable}"
+        tools:cardBackgroundColor="@color/risk_low"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/card_margin">
+
+            <TextView
+                android:id="@+id/dashboard_tile_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="@color/white"
+                android:text="@{vm.riskLevel}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="No risk"
+                />
+
+<!--            Arrow Tile icon -->
+            <ImageView
+                android:id="@+id/dashboard_tile_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:tint="@color/white"
+                android:visibility="@{vm.clickable ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_chevron_right_24" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dashboard_tile_title"
+                app:layout_constraintVertical_bias="0.0"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="10dp"
+                >
+
+                <include
+                    android:id="@+id/risk_level_row"
+                    layout="@layout/icon_text_row"
+                    bind:rowtext="@{vm.trackersFoundModel.text}"
+                    bind:icondrawable="@{vm.trackersFoundModel.image}"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/divider_line" />
+
+                <include
+                    android:id="@+id/last_detection_row"
+                    layout="@layout/icon_text_row"
+                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
+                    bind:rowtext="@{vm.lastDiscoveryModel.text}"
+                    bind:icondrawable="@{vm.lastDiscoveryModel.image}"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/divider_line"
+                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
+                    />
+
+                <include
+                    android:id="@+id/last_update_row"
+                    layout="@layout/icon_text_row"
+                    bind:rowtext="@{vm.lastUpdateModel.text}"
+                    bind:icondrawable="@{vm.lastUpdateModel.image}"
+                    />
+
+
+
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</layout>
