@@ -12,6 +12,8 @@ import javax.inject.Inject
 class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val devices: Flow<List<Device>> = deviceDao.getAll()
 
+    fun devicesSince(since: LocalDateTime) = deviceDao.getAllSince(since)
+
     val totalCount: Flow<Int> = deviceDao.getTotalCount()
 
     fun totalDeviceCountChange(since: LocalDateTime): Flow<Int> =

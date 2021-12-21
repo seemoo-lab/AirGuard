@@ -31,6 +31,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_riskDetailFragment"
+            app:destination="@id/riskDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim" />
     </fragment>
 
     <fragment
@@ -142,6 +149,30 @@
         android:id="@+id/scanFragment"
         android:name="de.seemoo.at_tracking_detection.ui.scan.ScanFragment"
         android:label="@string/scan_title" >
+    </fragment>
+    <fragment
+        android:id="@+id/riskDetailFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailFragment"
+        android:label="@string/title_risk_detail"
+        tools:layout="@layout/fragment_risk_detail" >
+        <action
+            android:id="@+id/action_riskDetailFragment_to_deviceMapFragment"
+            app:destination="@id/deviceMapFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_riskDetailFragment_to_navigation_devices"
+            app:destination="@id/navigation_devices"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            <argument
+                android:name="showDevicesFound"
+                android:defaultValue="true" />
+        </action>
     </fragment>
 
 </navigation>
