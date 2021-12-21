@@ -123,8 +123,8 @@
     <string name="risk_level_low">Kein Risiko</string>
     <string name="risk_level_medium">Mittleres Risiko</string>
     <string name="risk_level_high">Hohes Risiko</string>
-    <string name="no_trackers_found">Keine Tracker gefunden</string>
-    <string name="found_x_trackers">%i Tracker gefunden in den letzten 14 Tagen</string>
+    <string name="no_trackers_found">Keine Tracker gefunden in den letzten %d Tagen</string>
+    <string name="found_x_trackers">%d Tracker gefunden in den letzten %d Tagen</string>
     <string name="last_scan_info">Letzter Scan: %s</string>
     <string name="last_discovery">Letzter Tracker gefunden am %s</string>
     <string name="notification_help">

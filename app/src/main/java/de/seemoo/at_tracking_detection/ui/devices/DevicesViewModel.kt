@@ -6,7 +6,9 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.util.RiskLevelEvaluator
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +38,18 @@ class DevicesViewModel @Inject constructor(
     val ignoredDevices: LiveData<List<Device>> =
         deviceRepository.ignoredDevices.asLiveData()
 
-    val devices: LiveData<List<Device>> = deviceRepository.devices.asLiveData()
+    var devices: LiveData<List<Device>> = deviceRepository.devicesSince(
+        LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
+    ).asLiveData()
 
-    val isMapLoading = MutableLiveData(false)
+    fun showAll() {
+        devices = deviceRepository.devices.asLiveData()
+    }
+
+    fun showRelevant() {
+        //TODO: Only show devices that sent a notificaiton
+        devices = deviceRepository.devicesSince(
+            LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
+        ).asLiveData()
+    }
 }

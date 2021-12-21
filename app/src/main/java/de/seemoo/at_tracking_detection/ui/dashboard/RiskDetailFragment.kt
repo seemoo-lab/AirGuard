@@ -1,5 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,26 +10,23 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
-
+import de.seemoo.at_tracking_detection.databinding.FragmentRiskDetailBinding
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [DashboardRiskFragment.newInstance] factory method to
+ * Use the [RiskDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class DashboardRiskFragment : Fragment() {
-    private val riskViewModel: RiskCardViewModel by viewModels()
+class RiskDetailFragment : Fragment() {
+    private val riskDetailViewModel: RiskDetailViewModel by viewModels()
 
-    private lateinit var binding: FragmentDashboardRiskBinding
+    private lateinit var binding: FragmentRiskDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,31 +40,33 @@ class DashboardRiskFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_dashboard_risk,
+            R.layout.fragment_risk_detail,
             container,
             false
         )
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = riskViewModel
 
-        // Inflate the layout for this fragment
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = riskDetailViewModel
+
         return binding.root
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
 
-        fabScan.setOnClickListener {
-            val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
-            findNavController(it).navigate(directions)
-        }
+        //Not sure if we can link to Apple's content.
+//        val deactivateAirTagCard: MaterialCardView = view.findViewById(R.id.find_airtag_card)
 
-        val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
-        riskCard.setOnClickListener {
-            val directions: NavDirections = DashboardRiskFragmentDirections.actionNavigationDashboardToRiskDetailFragment()
+//        deactivateAirTagCard.setOnClickListener {
+//            val intent = Intent(
+//                Intent.ACTION_VIEW,
+//                Uri.parse("https://support.apple.com/en-us/HT212227")
+//            )
+//            startActivity(intent)
+//        }
+
+        view.findViewById<MaterialCardView>(R.id.card_trackers_found).setOnClickListener {
+            val directions: NavDirections = RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(true)
             findNavController().navigate(directions)
         }
     }

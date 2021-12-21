@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -86,6 +87,14 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         view.findViewById<RecyclerView>(R.id.devices_recycler_view)
             .doOnPreDraw { startPostponedEnterTransition() }
+
+        view.findViewById<SwitchCompat>(R.id.show_all_switch).setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                devicesViewModel.showAll()
+            }else {
+                devicesViewModel.showRelevant()
+            }
+        }
     }
 
     private val deviceItemListener =

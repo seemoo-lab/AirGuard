@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/find_airtag_card"
         style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin"
         app:cardBackgroundColor="@color/blue_card_background"
+        android:clickable="true"
         >
 
         <LinearLayout
@@ -22,35 +26,35 @@
             android:layout_margin="8dp"
             >
 
-        <TextView
-            android:id="@+id/dashboard_tile_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:textColor="@color/white"
-            android:text="@string/how_does_airguard_work"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="8dp"
-            />
-
-            <include
-                layout="@layout/icon_text_row"
-                app:rowtext="@{@string/airguard_scan_explanation}"
-                app:icondrawable="@{@drawable/ic_scan_icon}"
-             />
-
-            <include
-                layout="@layout/icon_text_row"
-                app:rowtext="@{@string/airguard_detection_explanation}"
-                app:icondrawable="@{@drawable/ic_baseline_location_on_24}"
+            <TextView
+                android:id="@+id/dashboard_tile_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textColor="@color/white"
+                android:text="@string/find_headline"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_margin="8dp"
                 />
 
             <include
                 layout="@layout/icon_text_row"
-                app:rowtext="@{@string/airguard_notification_explanation}"
-                app:icondrawable="@{@drawable/ic_notifications}"
+                app:rowtext="@{@string/find_sound}"
+                app:icondrawable="@{@drawable/ic_sound}"
+                />
+
+            <include
+                layout="@layout/icon_text_row"
+                app:rowtext="@{@string/find_manual_scan}"
+                app:icondrawable="@{@drawable/ic_scan_icon}"
+                />
+
+            <include
+                layout="@layout/icon_text_row"
+                app:rowtext="@{@string/find_battery}"
+                app:icondrawable="@{@drawable/ic_battery}"
                 />
 
 

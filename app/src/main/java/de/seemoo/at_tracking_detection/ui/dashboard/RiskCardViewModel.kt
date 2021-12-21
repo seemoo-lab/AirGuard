@@ -11,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.database.tables.Notification
+import de.seemoo.at_tracking_detection.util.RiskLevel
+import de.seemoo.at_tracking_detection.util.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.WorkerConstants
 import java.text.DateFormat
@@ -32,17 +34,12 @@ class RiskCardViewModel @Inject constructor(
 ) : androidx.lifecycle.AndroidViewModel(application) {
 
     var riskLevel: String = "No risk"
-    var riskColor: Int
+    var riskColor: Int = R.color.risk_low
     var showLastDetection: Boolean = false
     var clickable: Boolean = true
     var trackersFoundModel: RiskRowViewModel
     var lastUpdateModel: RiskRowViewModel
     var lastDiscoveryModel: RiskRowViewModel
-
-    val alertsLast14DaysCount: LiveData<Int> = notificationRepository.totalCountChange(LocalDateTime.now().minusDays(14)).asLiveData()
-    val lastNotification: LiveData<List<Notification>> = notificationRepository.last_notification.asLiveData()
-    val allNotificationsLast14Days: LiveData<List<Notification>> = notificationRepository.notificationsSince(LocalDateTime.now().minusDays(14)).asLiveData()
-
 
     private var dateTime: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
     private var lastScan: LocalDateTime
@@ -75,14 +72,10 @@ class RiskCardViewModel @Inject constructor(
         this.lastScan = lastScan
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
 
-        val totalAlerts = alertsLast14DaysCount.value ?: 0
-        val notifications = allNotificationsLast14Days.value ?: ArrayList()
         val dateFormat = DateFormat.getDateTimeInstance()
         val context = getApplication<Application>()
 
-        val lastDiscoveryDate = lastNotification.value?.let {
-            it.firstOrNull()?.let { Date.from(it.createdAt.atZone(ZoneId.systemDefault()).toInstant()) }
-        } ?: Date()
+        val lastDiscoveryDate = RiskLevelEvaluator.getLastTrackerDiscoveryDate(notificationRepository)
         val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
         val lastScanDate: Date = Date.from(lastScan.atZone(ZoneId.systemDefault()).toInstant())
         val lastScanString = dateFormat.format(lastScanDate)
@@ -94,13 +87,15 @@ class RiskCardViewModel @Inject constructor(
             AppCompatResources.getDrawable(context,R.drawable.ic_last_update)!!
         )
 
+        val risk = RiskLevelEvaluator.evaluateRiskLevel(notificationRepository)
+        val totalAlerts = RiskLevelEvaluator.getNumberRelevantTrackers(notificationRepository)
 
-        if (totalAlerts == 0) {
+        if (risk == RiskLevel.LOW) {
             riskLevel = context.getString(R.string.risk_level_low)
             riskColor = context.getColor(R.color.risk_low)
 
             trackersFoundModel = RiskRowViewModel(
-                context.getString(R.string.no_trackers_found),
+                context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_DAYS),
                 AppCompatResources.getDrawable(context,R.drawable.ic_baseline_location_on_24)!!
             )
             lastDiscoveryModel = RiskRowViewModel(
@@ -110,12 +105,12 @@ class RiskCardViewModel @Inject constructor(
 
             showLastDetection = false
 
-        } else if (totalAlerts == 1) {
+        } else if (risk == RiskLevel.MEDIUM) {
             riskLevel = context.getString(R.string.risk_level_medium)
             riskColor = context.getColor(R.color.risk_medium)
 
             trackersFoundModel = RiskRowViewModel(
-                context.getString(R.string.found_x_trackers, totalAlerts),
+                context.getString(R.string.found_x_trackers, totalAlerts, RiskLevelEvaluator.RELEVANT_DAYS),
                 AppCompatResources.getDrawable(context,R.drawable.ic_baseline_location_on_24)!!
             )
 
@@ -126,30 +121,24 @@ class RiskCardViewModel @Inject constructor(
 
 
         } else {
-            //Check if those notifications where on different days
-            val firstNotif = notifications.first()
-            val lastNotif = notifications.last()
+            //High risk
+            riskLevel = context.getString(R.string.risk_level_high)
+            riskColor = context.getColor(R.color.risk_high)
 
-            val daysDiff = firstNotif.createdAt.until(lastNotif.createdAt, ChronoUnit.DAYS)
-            if (daysDiff >= 1) {
-                //High risk
-                riskLevel = context.getString(R.string.risk_level_high)
-                riskColor = context.getColor(R.color.risk_high)
-            } else {
-                riskLevel = context.getString(R.string.risk_level_medium)
-                riskColor = context.getColor(R.color.risk_medium)
-            }
 
             trackersFoundModel = RiskRowViewModel(
-                context.getString(R.string.found_x_trackers, totalAlerts),
-                AppCompatResources.getDrawable(context,R.drawable.ic_baseline_location_on_24)!!
+                context.getString(
+                    R.string.found_x_trackers,
+                    totalAlerts,
+                    RiskLevelEvaluator.RELEVANT_DAYS
+                ),
+                AppCompatResources.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
             )
 
             lastDiscoveryModel = RiskRowViewModel(
                 context.getString(R.string.last_discovery, lastDiscoveryDateString),
-                AppCompatResources.getDrawable(context,R.drawable.ic_clock)!!
+                AppCompatResources.getDrawable(context, R.drawable.ic_clock)!!
             )
         }
-
     }
 }

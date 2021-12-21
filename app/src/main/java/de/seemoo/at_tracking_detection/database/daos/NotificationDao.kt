@@ -30,10 +30,13 @@ interface NotificationDao {
     fun getTotalCountChange(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT * FROM notification WHERE createdAt >= :since")
-    fun getNotificationsSince(since: LocalDateTime): Flow<List<Notification>>
+    fun getNotificationsSince(since: LocalDateTime): List<Notification>
+
+    @Query("SELECT COUNT(*) FROM notification WHERE createdAt >= :since")
+    fun getTotalCountSince(since: LocalDateTime): Int
 
     @Query("SELECT * FROM notification ORDER BY createdAt DESC LIMIT 1")
-    fun getLastNotification(): Flow<List<Notification>>
+    fun getLastNotification(): List<Notification>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns

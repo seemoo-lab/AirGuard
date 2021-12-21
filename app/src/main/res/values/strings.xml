@@ -135,8 +135,8 @@
     <string name="risk_level_low">No risk</string>
     <string name="risk_level_medium">Medium risk</string>
     <string name="risk_level_high">High risk</string>
-    <string name="no_trackers_found">No trackers found</string>
-    <string name="found_x_trackers">Detected %i tracker in the last 14 days</string>
+    <string name="no_trackers_found">No trackers found during the last %d days</string>
+    <string name="found_x_trackers">Detected %d tracker during the last %d days</string>
     <string name="last_scan_info">Last scan: %s</string>
     <string name="last_discovery">Last tracker discovered at %s</string>
     <string name="how_does_airguard_work">How does AirGuard work?</string>
@@ -153,5 +153,15 @@
         • If you receive multiple notifications at different days, make sure to use the Play sound feature
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
+    <string name="airguard_scan_explanation">AirGuard scans with Bluetooth for devices that follow you</string>
+    <string name="airguard_detection_explanation">If a device has been detected at multiple location AirGuard knows it.</string>
+    <string name="airguard_notification_explanation">You get a notification when you are at risk. Also the card above changes its color to orange or red</string>
+
+    <string name="find_sound">Play a sound and find it</string>
+    <string name="find_manual_scan">Perform a manual scan and locate it by distance</string>
+    <string name="find_battery">Remove the battery</string>
+    <string name="find_headline">Find and deactivate an AirTag</string>
+    <string name="title_risk_detail">Risk evaluation</string>
+    <string name="show_all">Show All</string>
 
 </resources>
