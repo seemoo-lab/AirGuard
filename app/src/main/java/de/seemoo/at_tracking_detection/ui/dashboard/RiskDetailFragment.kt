@@ -17,11 +17,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentRiskDetailBinding
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [RiskDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 @AndroidEntryPoint
 class RiskDetailFragment : Fragment() {
     private val riskDetailViewModel: RiskDetailViewModel by viewModels()
@@ -67,6 +63,11 @@ class RiskDetailFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.card_trackers_found).setOnClickListener {
             val directions: NavDirections = RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(true)
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.card_tracked_locations).setOnClickListener {
+            val directions = RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
             findNavController().navigate(directions)
         }
     }

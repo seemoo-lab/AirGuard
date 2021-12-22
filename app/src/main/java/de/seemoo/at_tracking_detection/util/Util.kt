@@ -124,15 +124,21 @@ object Util {
             return false
         }
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
-        try {
-            Timber.d("Zoom in to bounds -> $boundingBox")
-            map.zoomToBoundingBox(boundingBox, false, 50, MAX_ZOOM_LEVEL, null)
-        } catch (e: IllegalArgumentException) {
-            mapController.setCenter(geoPointList.random())
-            mapController.setZoom(MAX_ZOOM_LEVEL)
-            Timber.e("Failed to zoom to bounding box! ${e.message}")
-            return false
+        
+        map.post {
+            try {
+                Timber.d("Zoom in to bounds -> $boundingBox")
+                map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
+
+            } catch (e: IllegalArgumentException) {
+                mapController.setCenter(boundingBox.centerWithDateLine)
+                mapController.setZoom(10.0)
+                Timber.e("Failed to zoom to bounding box! ${e.message}")
+            }
         }
+
+//            map.zoomToBoundingBox(boundingBox, true)
+
         return true
     }
 

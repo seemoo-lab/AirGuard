@@ -21,9 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val beaconRepository: BeaconRepository,
+    val beaconRepository: BeaconRepository,
     notificationRepository: NotificationRepository,
-    deviceRepository: DeviceRepository,
+    val deviceRepository: DeviceRepository,
     private val sharedPreferences: SharedPreferences,
     backgroundWorkScheduler: BackgroundWorkScheduler
 ) : ViewModel() {

@@ -39,14 +39,14 @@ class DevicesViewModel @Inject constructor(
         deviceRepository.ignoredDevices.asLiveData()
 
 
-    var devices: LiveData<List<Device>> = deviceRepository.devicesSince(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)).asLiveData()
+    var devices: LiveData<List<Device>> = deviceRepository.trackingDevicesSinceFlow(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)).asLiveData()
 
     fun showAll() {
-       devices =  deviceRepository.devices.asLiveData()
+       devices = deviceRepository.devices.asLiveData()
     }
 
     fun showRelevant() {
         //TODO: Only show devices that sent a notificaiton
-        devices = deviceRepository.devicesSince(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)).asLiveData()
+        devices = deviceRepository.trackingDevicesSinceFlow(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)).asLiveData()
     }
 }
