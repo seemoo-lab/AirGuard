@@ -152,7 +152,7 @@
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
     <string name="airguard_scan_explanation">AirGuard scans with Bluetooth for devices that follow you</string>
-    <string name="airguard_detection_explanation">If a device has been detected at multiple location AirGuard knows it.</string>
+    <string name="airguard_detection_explanation">"If a device has followed you to multiple locations, AirGuard has recognized it. "</string>
     <string name="airguard_notification_explanation">You get a notification when you are at risk. Also the card above changes its color to orange or red</string>
 
     <string name="find_sound">Play a sound and find it</string>
@@ -161,5 +161,7 @@
     <string name="find_headline">Find and deactivate an AirTag</string>
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
+    <string name="tracker_detected">Tracker detected</string>
+    <string name="locations_tracked">Locations tracked</string>
 
 </resources>
