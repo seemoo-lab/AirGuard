@@ -127,7 +127,7 @@ object Util {
             return false
         }
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
-        
+
         map.post {
             try {
                 Timber.d("Zoom in to bounds -> $boundingBox")

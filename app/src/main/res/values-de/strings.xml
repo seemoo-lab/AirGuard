@@ -141,4 +141,15 @@
     </string>
     <string name="how_does_airguard_work">Wie funktioniert AirGuard?</string>
     <string name="i_cannot_find_the_tracker">Ich kann den Tracker nicht finden</string>
+    <string name="airguard_scan_explanation">AirGuard scannt mit Bluetooth nach Geräten, die dir folgen</string>
+    <string name="airguard_detection_explanation">"Falls ein Gerät dir über verschiedene Standorte gefolgt ist, hat AirGuard es bemerkt. "</string>
+    <string name="airguard_notification_explanation">Du bekommst eine Benachrichtigung, wenn dein Risiko erhöht ist. Auch die Farbe der Karte oben ändert sich in rot oder Orange.</string>
+    <string name="find_sound">Spiele einen Ton ab und finde es</string>
+    <string name="find_manual_scan">Scanne manuell und suche es über die Distanz</string>
+    <string name="find_battery">Entferne die Batterie</string>
+    <string name="find_headline">Find und deaktiviere einen AirTag</string>
+    <string name="title_risk_detail">Risiko Evaluation</string>
+    <string name="show_all">Alle anzeigen</string>
+    <string name="tracker_detected">Tracker erkannt</string>
+    <string name="locations_tracked">Verfolgte Standorte</string>
 </resources>
