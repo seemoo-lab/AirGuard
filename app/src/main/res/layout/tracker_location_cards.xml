@@ -40,7 +40,7 @@
                     android:id="@+id/trackers_found_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tracker detected"
+                    android:text="@string/tracker_detected"
                     android:textColor="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +54,8 @@
                     app:layout_constraintStart_toEndOf="@id/trackers_found_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_chevron_right_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -74,6 +75,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_tracked_locations"
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -98,7 +100,7 @@
                     android:id="@+id/locations_tracked_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Locations tracked"
+                    android:text="@string/locations_tracked"
                     android:textColor="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -111,7 +113,8 @@
                     app:layout_constraintStart_toEndOf="@id/locations_tracked_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_chevron_right_24"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"

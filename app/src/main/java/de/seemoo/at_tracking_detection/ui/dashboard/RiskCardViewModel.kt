@@ -9,6 +9,8 @@ import androidx.lifecycle.asLiveData
 import androidx.work.WorkInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.database.tables.Notification
 import de.seemoo.at_tracking_detection.util.RiskLevel
@@ -28,7 +30,8 @@ import kotlin.collections.ArrayList
 @HiltViewModel
 class RiskCardViewModel @Inject constructor(
     application: Application,
-    notificationRepository: NotificationRepository,
+    deviceRepository: DeviceRepository,
+    beaconRepository: BeaconRepository,
     private val sharedPreferences: SharedPreferences,
     backgroundWorkScheduler: BackgroundWorkScheduler,
 ) : androidx.lifecycle.AndroidViewModel(application) {
@@ -75,7 +78,7 @@ class RiskCardViewModel @Inject constructor(
         val dateFormat = DateFormat.getDateTimeInstance()
         val context = getApplication<Application>()
 
-        val lastDiscoveryDate = RiskLevelEvaluator.getLastTrackerDiscoveryDate(notificationRepository)
+        val lastDiscoveryDate = RiskLevelEvaluator.getLastTrackerDiscoveryDate(deviceRepository)
         val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
         val lastScanDate: Date = Date.from(lastScan.atZone(ZoneId.systemDefault()).toInstant())
         val lastScanString = dateFormat.format(lastScanDate)
@@ -87,8 +90,8 @@ class RiskCardViewModel @Inject constructor(
             AppCompatResources.getDrawable(context,R.drawable.ic_last_update)!!
         )
 
-        val risk = RiskLevelEvaluator.evaluateRiskLevel(notificationRepository)
-        val totalAlerts = RiskLevelEvaluator.getNumberRelevantTrackers(notificationRepository)
+        val risk = RiskLevelEvaluator.evaluateRiskLevel(deviceRepository, beaconRepository)
+        val totalAlerts = RiskLevelEvaluator.getNumberRelevantTrackers(deviceRepository)
 
         if (risk == RiskLevel.LOW) {
             riskLevel = context.getString(R.string.risk_level_low)

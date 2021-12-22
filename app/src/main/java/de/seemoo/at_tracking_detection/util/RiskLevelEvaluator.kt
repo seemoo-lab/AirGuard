@@ -1,41 +1,41 @@
 package de.seemoo.at_tracking_detection.util
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.tables.Notification
-import kotlinx.coroutines.flow.collect
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.tables.Device
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.collections.ArrayList
 
 class RiskLevelEvaluator {
 
     companion object  {
 
         const val RELEVANT_DAYS: Long = 14
+        fun relevantTrackingDate(): LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
 
         /**
          * Evaluates the risk that the user is at. For this all notifications sent (equals trackers discovered) for the last `RELEVANT_DAYS` are checked and a risk score is evaluated
          */
-        fun evaluateRiskLevel(notificationRepository: NotificationRepository): RiskLevel {
+        fun evaluateRiskLevel(deviceRepository: DeviceRepository, beaconRepository: BeaconRepository): RiskLevel {
             val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
-            val notifications: List<Notification> = notificationRepository.notificationsSince(relevantDate)
+            val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
 
-            val totalAlerts = notifications.count()
+            val totalAlerts = devices.count()
 
 
             if (totalAlerts == 0) {
                 return RiskLevel.LOW
-            }else if (totalAlerts == 1) {
-                return RiskLevel.MEDIUM
             }else {
-                val firstNotif = notifications.first()
-                val lastNotif = notifications.last()
+                val trackedLocations = devices.map {
+                    beaconRepository.getDeviceBeacons(it.address)
+                }.flatMap {it}
 
-                val daysDiff = firstNotif.createdAt.until(lastNotif.createdAt, ChronoUnit.DAYS)
+                val firstNotif = trackedLocations.first()
+                val lastNotif = trackedLocations.last()
+
+                val daysDiff = firstNotif.receivedAt.until(lastNotif.receivedAt, ChronoUnit.DAYS)
                 if (daysDiff >= 1) {
                     //High risk
                     return RiskLevel.HIGH
@@ -45,18 +45,20 @@ class RiskLevelEvaluator {
             }
         }
 
-        fun getLastTrackerDiscoveryDate(notificationRepository: NotificationRepository): Date {
-            val lastNotification: List<Notification> = notificationRepository.last_notification
-            val lastDiscoveryDate = lastNotification.firstOrNull()?.let { Date.from(it.createdAt.atZone(ZoneId.systemDefault()).toInstant()) } ?: Date()
+        fun getLastTrackerDiscoveryDate(deviceRepository: DeviceRepository): Date {
+            val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+            val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate).sortedByDescending { it.lastSeen }
+
+            val lastDiscoveryDate = devices.firstOrNull()?.let { Date.from(it.lastSeen.atZone(ZoneId.systemDefault()).toInstant()) } ?: Date()
 
             return lastDiscoveryDate
         }
 
-        fun getNumberRelevantTrackers(notificationRepository: NotificationRepository): Int {
-            val totalRelevantAlerts: Int = notificationRepository.totalCountSince(LocalDateTime.now().minusDays(
-                RELEVANT_DAYS))
+        fun getNumberRelevantTrackers(deviceRepository: DeviceRepository): Int {
+            val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+            val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
 
-            return totalRelevantAlerts
+            return devices.count()
         }
     }
 }

@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.database.repository
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.tables.Device
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -33,6 +34,12 @@ class BeaconRepository @Inject constructor(
 
     fun getDeviceBeacons(deviceAddress: String): List<Beacon> =
         beaconDao.getDeviceBeacons(deviceAddress)
+
+    fun getBeaconsForDevices(devices: List<Device>): List<Beacon> {
+        return devices.map {
+            beaconDao.getDeviceBeacons(it.address)
+        }.flatten()
+    }
 
     @WorkerThread
     suspend fun insert(beacon: Beacon): Long = beaconDao.insert(beacon)

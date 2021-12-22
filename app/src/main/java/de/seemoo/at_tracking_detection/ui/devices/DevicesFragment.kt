@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Switch
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -51,15 +52,13 @@ class DevicesFragment : Fragment() {
     ): View {
         val binding: FragmentDevicesBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
-        val deviceList: LiveData<List<Device>>
         var swipeDirs: Int = ItemTouchHelper.LEFT
         var emptyListText = R.string.ignored_device_list_empty
-        if (safeArgs.showDevicesFound) {
-            deviceList = devicesViewModel.devices
-        } else {
+
+        if (!safeArgs.showDevicesFound) {
             emptyListText = R.string.devices_list_empty
-            deviceList = devicesViewModel.ignoredDevices
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
@@ -74,12 +73,22 @@ class DevicesFragment : Fragment() {
         binding.adapter = deviceAdapter
         binding.vm = devicesViewModel
         binding.emptyListText = getString(emptyListText)
+        observeDevices()
+        return binding.root
+    }
+
+    fun observeDevices() {
+        val deviceList: LiveData<List<Device>>
+        if (safeArgs.showDevicesFound) {
+            deviceList = devicesViewModel.devices
+        }else {
+            deviceList = devicesViewModel.ignoredDevices
+        }
+
         deviceList.observe(viewLifecycleOwner, { devices ->
             deviceAdapter.submitList(devices)
             devicesViewModel.deviceListEmpty.postValue(devices.isEmpty())
         })
-
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,6 +103,11 @@ class DevicesFragment : Fragment() {
             }else {
                 devicesViewModel.showRelevant()
             }
+            this.observeDevices()
+        }
+
+        if (!safeArgs.showDevicesFound) {
+            view.findViewById<SwitchCompat>(R.id.show_all_switch).visibility = View.GONE
         }
     }
 

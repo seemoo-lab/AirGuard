@@ -38,7 +38,7 @@ class DevicesViewModel @Inject constructor(
     val ignoredDevices: LiveData<List<Device>> =
         deviceRepository.ignoredDevices.asLiveData()
 
-    var devices: LiveData<List<Device>> = deviceRepository.devicesSince(
+    var devices: LiveData<List<Device>> = deviceRepository.trackingDevicesSinceFlow(
         LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
     ).asLiveData()
 
@@ -47,8 +47,8 @@ class DevicesViewModel @Inject constructor(
     }
 
     fun showRelevant() {
-        //TODO: Only show devices that sent a notificaiton
-        devices = deviceRepository.devicesSince(
+        //TODO: Only show devices that sent a notification
+        devices = deviceRepository.trackingDevicesSinceFlow(
             LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
         ).asLiveData()
     }

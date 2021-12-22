@@ -11,8 +11,17 @@ interface DeviceDao {
     @Query("SELECT * FROM device ORDER BY lastSeen DESC")
     fun getAll(): Flow<List<Device>>
 
-    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since ORDER BY lastSeen DESC")
     fun getAllSince(since: LocalDateTime): Flow<List<Device>>
+
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    fun getAllNotificationSinceFlow(since: LocalDateTime): Flow<List<Device>>
+
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    fun getAllNotificationSince(since: LocalDateTime): List<Device>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
     fun getIgnored(): Flow<List<Device>>

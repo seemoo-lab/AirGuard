@@ -18,12 +18,11 @@ import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Util
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class DeviceMapFragment : Fragment() {
 
-    private val dashboardViewModel: DashboardViewModel by viewModels()
+    private val viewModel: RiskDetailViewModel by viewModels()
 
     private lateinit var binding: FragmentDeviceMapBinding
 
@@ -38,7 +37,6 @@ class DeviceMapFragment : Fragment() {
             container,
             false
         )
-        binding.vm = dashboardViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -49,21 +47,19 @@ class DeviceMapFragment : Fragment() {
         val map: MapView = view.findViewById(R.id.map)
 
         Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        dashboardViewModel.getBeaconHistory(LocalDateTime.MIN).observe(viewLifecycleOwner) {
-            dashboardViewModel.isMapLoading.postValue(true)
-            lifecycleScope.launch {
-                Util.setGeoPointsFromList(it, map) { beacon ->
-                    val directions: NavDirections =
-                        DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(
-                            -1,
-                            beacon.deviceAddress
-                        )
-                    findNavController().navigate(directions)
-                }
-            }.invokeOnCompletion {
-                dashboardViewModel.isMapLoading.postValue(false)
+        viewModel.isMapLoading.postValue(true)
+        lifecycleScope.launch {
+            Util.setGeoPointsFromList(viewModel.discoveredBeacons, map) { beacon ->
+                val directions: NavDirections =
+                    DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(
+                        -1,
+                        beacon.deviceAddress
+                    )
+                findNavController().navigate(directions)
             }
+        }.invokeOnCompletion {
+            viewModel.isMapLoading.postValue(false)
         }
     }
+
 }
