@@ -216,8 +216,8 @@ class OnboardingActivity : AppIntro() {
             AlertDialog.Builder(this).setTitle(R.string.permission_required)
                 .setIcon(R.drawable.ic_baseline_error_outline_24)
                 .setMessage(R.string.permission_required_message)
-                .setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
-                    finish()
+                .setPositiveButton(R.string.ok_button) { dialog, _ ->
+                    dialog.dismiss()
                 }
                 .create()
                 .show()
