@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.ui
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -31,6 +30,8 @@ class OnboardingActivity : AppIntro() {
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
 
     var permission: String? = null
+
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -212,14 +213,16 @@ class OnboardingActivity : AppIntro() {
     private fun handleRequiredPermission(permissionName: String) {
         if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
             sharedPreferences.edit().putBoolean("use_location", false).apply()
-        } else {
-            AlertDialog.Builder(this).setTitle(R.string.permission_required)
+        } else if (dialog?.isShowing != true) {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.permission_required)
                 .setIcon(R.drawable.ic_baseline_error_outline_24)
                 .setMessage(R.string.permission_required_message)
                 .setPositiveButton(R.string.ok_button) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .create()
+                .also { dialog = it }
                 .show()
         }
     }
