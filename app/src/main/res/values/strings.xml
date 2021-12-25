@@ -59,7 +59,7 @@
     <string name="onboarding_share_data_description">
         This app has been developed by researchers of the Technical University of Darmstadt, Germany. With our study, we want to find out how many people are affected by malicious tracking attempts.
         Whether Apple\'s Find My devices are actually used for tracking people. And ultimately, how well we can protect people from this through our app. \n
-        <b>To join you need to 18 years or older!</b>
+        <b>To join you need to be 18 years or older!</b>
         \n\n
 
         • We will collect some information about the discovered devices like the <b>device type</b>, <b>RSSI value</b> (signal strength) and the <b>date and time</b> of the discovery \n\n
