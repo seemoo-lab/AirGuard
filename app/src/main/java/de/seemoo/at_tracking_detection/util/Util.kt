@@ -21,6 +21,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -67,6 +68,7 @@ object Util {
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
         val context = ATTrackingDetectionApplication.getAppContext()
+        val copyrightOverlay = CopyrightOverlay(context)
 
         val bitmapPerson =
             BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
@@ -81,6 +83,7 @@ object Util {
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
         map.overlays.add(locationOverlay)
+        map.overlays.add(copyrightOverlay)
 
         // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
         withContext(Dispatchers.Default) {
