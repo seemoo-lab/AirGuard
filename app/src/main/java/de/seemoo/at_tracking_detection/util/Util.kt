@@ -21,6 +21,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -66,6 +67,9 @@ object Util {
     ): Boolean {
 
         val map: MapView = view.findViewById(R.id.map)
+        val context = ATTrackingDetectionApplication.getCurrentActivity()
+        val copyrightOverlay = CopyrightOverlay(context)
+        map.getOverlays().add(copyrightOverlay)
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
 
