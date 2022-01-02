@@ -4,6 +4,7 @@
         <item name="android:actionBarStyle">@style/ThemeActionBar</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/ThemeActionBar</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
     </style>
 
     <style name="ThemeActionBar"
