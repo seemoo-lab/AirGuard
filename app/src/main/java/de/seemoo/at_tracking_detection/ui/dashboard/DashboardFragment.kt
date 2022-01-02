@@ -1,9 +1,11 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.Manifest
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardBinding
+import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -54,12 +57,16 @@ class DashboardFragment : Fragment() {
         fabScan.setOnClickListener {
             val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            if (bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF) {
+            val hasScanPermission =
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
+                    Manifest.permission.BLUETOOTH_SCAN
+                )
+            val isBluetoothEnabled = bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF
+            if (isBluetoothEnabled && hasScanPermission) {
                 AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
                     .setTitle(getString(R.string.scan_enable_bluetooth_title))
                     .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                    .setPositiveButton(getString(R.string.yes_button)) { _, _ ->
-                        bluetoothManager.adapter.enable()
+                    .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
                         showManualScan()
                     }
                     .setNegativeButton(R.string.no_button, null).create().show()
