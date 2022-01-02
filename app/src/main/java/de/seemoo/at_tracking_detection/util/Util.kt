@@ -82,7 +82,7 @@ object Util {
         map.setMultiTouchControls(true)
         map.overlays.add(locationOverlay)
 
-        // Causes crashes when the view gets destoryed and markers are still added. Will get fixed in the next Version!
+        // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
         withContext(Dispatchers.Default) {
             beaconList
                 .filter { it.latitude != null && it.longitude != null }

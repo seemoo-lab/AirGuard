@@ -19,16 +19,16 @@
         <!--                    Here the two small cards are placed -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_trackers_found"
+            style="?attr/materialCardViewElevatedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/card_margin"
             android:clickable="true"
             app:cardBackgroundColor="@{viewModel.riskColor}"
-            style="?attr/materialCardViewElevatedStyle"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/card_tracked_locations"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.45"
             tools:cardBackgroundColor="@color/risk_high">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,6 +40,7 @@
                     android:id="@+id/trackers_found_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/card_margin"
                     android:text="@string/tracker_detected"
                     android:textColor="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
@@ -79,16 +80,12 @@
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@{viewModel.riskColor}"
+            android:layout_marginStart="@dimen/card_margin"
             android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@id/card_trackers_found"
+            app:cardBackgroundColor="@{viewModel.riskColor}"
+            app:layout_constraintLeft_toRightOf="@id/card_trackers_found"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.45"
             tools:cardBackgroundColor="@color/risk_high">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -129,9 +126,6 @@
                     tools:text="21" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

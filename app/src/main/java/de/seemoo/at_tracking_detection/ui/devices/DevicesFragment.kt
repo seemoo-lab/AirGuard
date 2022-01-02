@@ -11,15 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Switch
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -27,13 +25,19 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
+import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
+import de.seemoo.at_tracking_detection.util.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
+import java.time.LocalDate
 
 
 @AndroidEntryPoint
@@ -58,7 +62,10 @@ class DevicesFragment : Fragment() {
         if (!safeArgs.showDevicesFound) {
             emptyListText = R.string.devices_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-
+            devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
+        } else {
+            val relevantDays = LocalDate.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
+            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantDays))
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
@@ -73,22 +80,7 @@ class DevicesFragment : Fragment() {
         binding.adapter = deviceAdapter
         binding.vm = devicesViewModel
         binding.emptyListText = getString(emptyListText)
-        observeDevices()
         return binding.root
-    }
-
-    fun observeDevices() {
-        val deviceList: LiveData<List<Device>>
-        if (safeArgs.showDevicesFound) {
-            deviceList = devicesViewModel.devices
-        }else {
-            deviceList = devicesViewModel.ignoredDevices
-        }
-
-        deviceList.observe(viewLifecycleOwner, { devices ->
-            deviceAdapter.submitList(devices)
-            devicesViewModel.deviceListEmpty.postValue(devices.isEmpty())
-        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,18 +88,12 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         view.findViewById<RecyclerView>(R.id.devices_recycler_view)
             .doOnPreDraw { startPostponedEnterTransition() }
-
-        view.findViewById<SwitchCompat>(R.id.show_all_switch).setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                devicesViewModel.showAll()
-            }else {
-                devicesViewModel.showRelevant()
-            }
-            this.observeDevices()
+        val filterFab = view.findViewById<FloatingActionButton>(R.id.filter_fab)
+        filterFab.setOnClickListener {
+            FilterDialogFragment().show(childFragmentManager, DIALOG_TAG)
         }
-
-        if (!safeArgs.showDevicesFound) {
-            view.findViewById<SwitchCompat>(R.id.show_all_switch).visibility = View.GONE
+        devicesViewModel.devices.observe(viewLifecycleOwner) {
+            deviceAdapter.submitList(it)
         }
     }
 
@@ -244,4 +230,8 @@ class DevicesFragment : Fragment() {
                 }
             }
         }
+
+    companion object {
+        private const val DIALOG_TAG = "de.seemoo.at_tracking_detection.filter_dialog"
+    }
 }

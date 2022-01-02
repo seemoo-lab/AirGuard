@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="rowText"
+            type="String" />
+
+        <variable
+            name="iconDrawable"
+            type="android.graphics.drawable.Drawable" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:id="@+id/location_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:src="@{iconDrawable}"
+            app:layout_constraintBottom_toBottomOf="@id/risk_level_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/risk_level_text"
+            app:layout_constraintTop_toTopOf="@id/risk_level_text"
+            app:tint="@color/white"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_baseline_location_on_24" />
+
+        <TextView
+            android:id="@+id/risk_level_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@{rowText}"
+            android:textAlignment="textStart"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toRightOf="@id/location_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Some descriptive text added here" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,14 +1,15 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
+import androidx.core.util.Pair
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
-import de.seemoo.at_tracking_detection.util.RiskLevelEvaluator
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,23 +34,36 @@ class DevicesViewModel @Inject constructor(
         deviceRepository.update(device)
     }
 
-    val deviceListEmpty = MutableLiveData<Boolean>()
-
-    val ignoredDevices: LiveData<List<Device>> =
-        deviceRepository.ignoredDevices.asLiveData()
-
-    var devices: LiveData<List<Device>> = deviceRepository.trackingDevicesSinceFlow(
-        LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
-    ).asLiveData()
-
-    fun showAll() {
-        devices = deviceRepository.devices.asLiveData()
+    fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
+        val filterName = filter::class.toString()
+        if (remove) {
+            activeFilter.remove(filterName)
+        } else {
+            activeFilter[filterName] = filter
+        }
+        Timber.d("Active Filter: $activeFilter")
+        devices.addSource(deviceRepository.devices.asLiveData()) {
+            var filteredDevices = it
+            activeFilter.forEach { (_, filter) ->
+                filteredDevices = filter.apply(filteredDevices)
+            }
+            devices.value = filteredDevices
+        }
     }
 
-    fun showRelevant() {
-        //TODO: Only show devices that sent a notification
-        devices = deviceRepository.trackingDevicesSinceFlow(
-            LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
-        ).asLiveData()
+    val devices = MediatorLiveData<List<Device>>()
+
+    init {
+        devices.addSource(deviceRepository.devices.asLiveData()) {
+            if (activeFilter.isEmpty()) {
+                devices.value = it
+            }
+        }
     }
+
+    var selectedTimeRange: Pair<Long, Long>? = null
+
+    val activeFilter: MutableMap<String, Filter> = mutableMapOf()
+
+    val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
 }

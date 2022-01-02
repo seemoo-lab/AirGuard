@@ -165,5 +165,13 @@
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
     <string name="locations_tracked">Locations tracked</string>
+    <string name="dates_detected">Dates detected</string>
+    <string name="filter">Open Filter</string>
+    <string name="filter_ignored">ignored</string>
+    <string name="filter_notified">notified</string>
+    <string name="filter_title_device_attributes">Device Attributes</string>
+    <string name="filter_apply">Apply</string>
+    <string name="filter_from_until_text">%s until %s</string>
+    <string name="filter_date_range_picker_title">Last Seen</string>
 
 </resources>
