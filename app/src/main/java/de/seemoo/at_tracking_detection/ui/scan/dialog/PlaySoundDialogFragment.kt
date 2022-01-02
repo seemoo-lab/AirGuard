@@ -66,11 +66,6 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
                         )
                         BluetoothConstants.ACTION_EVENT_FAILED -> {
                             dialogViewModel.error.postValue(true)
-                            Toast.makeText(
-                                context,
-                                getString(R.string.ble_service_connection_error),
-                                Toast.LENGTH_LONG
-                            ).show()
                         }
                         BluetoothConstants.ACTION_EVENT_COMPLETED -> dialogViewModel.success.postValue(
                             true
