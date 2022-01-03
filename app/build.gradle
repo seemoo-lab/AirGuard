@@ -24,8 +24,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 18
-        versionName "1.0.6"
+        versionCode 19
+        versionName "1.1.0"
 
         multiDexEnabled true
 
