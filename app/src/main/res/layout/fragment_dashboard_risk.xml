@@ -28,6 +28,7 @@
                 android:orientation="vertical">
 
                 <include
+                    android:id="@+id/risk_card"
                     layout="@layout/include_risk_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,7 +62,7 @@
         </ScrollView>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/dashboard_scan_fab"
+            android:id="@+id/scan_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

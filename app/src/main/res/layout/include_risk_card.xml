@@ -11,10 +11,6 @@
             type="de.seemoo.at_tracking_detection.ui.dashboard.RiskCardViewModel" />
 
         <import type="android.view.View" />
-
-        <import type="android.graphics.Color" />
-
-        <import type="de.seemoo.at_tracking_detection.ui.dashboard.RiskRowViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

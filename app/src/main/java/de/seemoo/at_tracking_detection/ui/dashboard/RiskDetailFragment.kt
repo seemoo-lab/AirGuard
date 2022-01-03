@@ -1,13 +1,11 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -15,35 +13,34 @@ import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentRiskDetailBinding
-
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class RiskDetailFragment : Fragment() {
-    private val riskDetailViewModel: RiskDetailViewModel by viewModels()
 
-    private lateinit var binding: FragmentRiskDetailBinding
+    @Inject
+    lateinit var riskLevelEvaluator: RiskLevelEvaluator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val viewModel: RiskDetailViewModel by viewModels()
 
-    }
+    private var _binding: FragmentRiskDetailBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        binding = DataBindingUtil.inflate(
+        _binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_risk_detail,
             container,
             false
         )
-
+        binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = riskDetailViewModel
-
         return binding.root
     }
 
@@ -62,12 +59,14 @@ class RiskDetailFragment : Fragment() {
 //        }
 
         view.findViewById<MaterialCardView>(R.id.card_trackers_found).setOnClickListener {
-            val directions: NavDirections = RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(true)
+            val directions: NavDirections =
+                RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(true)
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.card_tracked_locations).setOnClickListener {
-            val directions = RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
+            val directions =
+                RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
             findNavController().navigate(directions)
         }
     }

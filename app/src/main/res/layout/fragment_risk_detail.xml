@@ -22,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
@@ -31,6 +30,7 @@
                 app:viewModel="@{viewModel}" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/risk_card"
                 style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
