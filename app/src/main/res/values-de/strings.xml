@@ -119,7 +119,7 @@
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="yes_button">Ja</string>
     <string name="scan_enable_bluetooth_title">Bluetooth Suche</string>
-    <string name="scan_enable_bluetooth_message">Bluetooth muss eingeschaltet sein um nach Bluetooth Gräten suchen zu können! Möchtest du es jetzt einschalten?</string>
+    <string name="scan_enable_bluetooth_message">Bluetooth muss eingeschaltet sein um nach Bluetooth Gräten suchen zu können!</string>
     <string name="risk_level_low">Kein Risiko</string>
     <string name="risk_level_medium">Mittleres Risiko</string>
     <string name="risk_level_high">Hohes Risiko</string>
@@ -128,8 +128,8 @@
     <string name="last_scan_info">Letzter Scan: %s</string>
     <string name="last_discovery">Letzter Tracker gefunden am %s</string>
     <string name="notification_help">
-        • Lassen den Tag/Tracker klingeln mit AirGuard \n<br />
-        • Deaktiviere den Tracker indem du die Batterie entfernst. \n<br />
+        • Suche den Tracker manuell und spiele anschließend ein Ton ab \n<br />
+        • Deaktiviere den Tracker indem du die Batterie entfernst \n<br />
         • Bringe das Gerät zur Polizei und erstatte Anzeige\n<br />
         • Stelle sicher, dass du dich nicht an einen anderen Ort begibst bevor du den Tracker gefunden hast\n<br />
     </string>
@@ -141,8 +141,8 @@
     </string>
     <string name="how_does_airguard_work">Wie funktioniert AirGuard?</string>
     <string name="i_cannot_find_the_tracker">Ich kann den Tracker nicht finden</string>
-    <string name="airguard_scan_explanation">AirGuard scannt mit Bluetooth nach Geräten, die dir folgen</string>
-    <string name="airguard_detection_explanation">"Falls ein Gerät dir über verschiedene Standorte gefolgt ist, hat AirGuard es bemerkt. "</string>
+    <string name="airguard_scan_explanation">AirGuard verwendet Bluetooth, um nach Geräten zu suchen, die dir folgen.</string>
+    <string name="airguard_detection_explanation">Mit Hilfe von Standortinformationen kann AirGuard erkennen, ob dich ein Tracker verfolgt!</string>
     <string name="airguard_notification_explanation">Du bekommst eine Benachrichtigung, wenn dein Risiko erhöht ist. Auch die Farbe der Karte oben ändert sich in rot oder Orange.</string>
     <string name="find_sound">Spiele einen Ton ab und finde es</string>
     <string name="find_manual_scan">Scanne manuell und suche es über die Distanz</string>

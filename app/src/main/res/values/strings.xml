@@ -141,21 +141,21 @@
     <string name="last_discovery">Last tracker discovered at %s</string>
     <string name="how_does_airguard_work">How does AirGuard work?</string>
     <string name="notification_help">
-        • Let the tracker ring/scan for the tracker manually.\n<br />
+        • Scan for the tracker manually and eventually trigger the sound.\n<br />
         • Deactivate the tracker by removing the battery.\n<br />
         • Go to the police with the tracker.\n<br />
-        • Make sure that you don’t move to a safe place before you deactivated it.\n<br />
+        • Make sure that you don’t move to a safe place before you have deactivated the tracker.\n<br />
     </string>
     <string name="i_got_a_notification_what_should_i_do">I got a notification, what should I do?</string>
 
     <string name="find_tracker_help">
-        • False alarms are possible. Because someone next to you might use an AirTag. Or someone in public transport\n<br />
-        • If you receive multiple notifications at different days, make sure to use the Play sound feature
+        • False alarms are possible. Because someone next to you might use an AirTag or someone in public transport\n<br />
+        • If you receive multiple notifications at different days, make sure to use the Play sound feature!
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
-    <string name="airguard_scan_explanation">AirGuard scans with Bluetooth for devices that follow you</string>
-    <string name="airguard_detection_explanation">"If a device has followed you to multiple locations, AirGuard has recognized it. "</string>
-    <string name="airguard_notification_explanation">You get a notification when you are at risk. Also the card above changes its color to orange or red</string>
+    <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that follow you.</string>
+    <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker is following you to multiple locations!</string>
+    <string name="airguard_notification_explanation">You get a notification when a potential tracking device is following you! The card above will then changes its color to orange or red.</string>
 
     <string name="find_sound">Play a sound and find it</string>
     <string name="find_manual_scan">Perform a manual scan and locate it by distance</string>
