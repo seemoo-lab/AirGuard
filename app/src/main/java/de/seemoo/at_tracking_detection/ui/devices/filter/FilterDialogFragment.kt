@@ -15,7 +15,6 @@ import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
-import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -44,9 +43,7 @@ class FilterDialogFragment :
             devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())
         binding.filterNotifiedChip.isChecked =
             devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())
-        devicesViewModel.selectedTimeRange?.let {
-            setDateRangeText(it)
-        }
+        getActiveTimeRange()?.let { setDateRangeText(it) }
 
         binding.filterIgnoreChip.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(
@@ -62,14 +59,13 @@ class FilterDialogFragment :
             var datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker()
                 .setTitleText(getString(R.string.filter_date_range_picker_title))
                 .setPositiveButtonText(getString(R.string.filter_apply))
-            devicesViewModel.selectedTimeRange?.let {
+            getActiveTimeRange()?.let {
                 datePickerBuilder = datePickerBuilder.setSelection(it)
             }
             val datePicker = datePickerBuilder.build()
             datePicker.show(activity?.supportFragmentManager!!, DATE_RANGE_PICKER_TAG)
             datePicker.addOnPositiveButtonClickListener {
                 setDateRangeText(it)
-                devicesViewModel.selectedTimeRange = it
                 devicesViewModel.addOrRemoveFilter(
                     TimeRangeFilter.build(
                         toLocalDate(it.first),
@@ -81,6 +77,18 @@ class FilterDialogFragment :
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
             devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(), true)
+        }
+    }
+
+    private fun getActiveTimeRange(): Pair<Long, Long>? {
+        val hasActiveTimeRangeFilter =
+            devicesViewModel.activeFilter.containsKey(TimeRangeFilter::class.toString())
+        return if (hasActiveTimeRangeFilter) {
+            val filter =
+                devicesViewModel.activeFilter[TimeRangeFilter::class.toString()] as TimeRangeFilter
+            filter.getTimeRangePair()
+        } else {
+            null
         }
     }
 

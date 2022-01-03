@@ -61,8 +61,6 @@ class DevicesViewModel @Inject constructor(
         }
     }
 
-    var selectedTimeRange: Pair<Long, Long>? = null
-
     val activeFilter: MutableMap<String, Filter> = mutableMapOf()
 
     val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }

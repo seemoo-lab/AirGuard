@@ -32,6 +32,7 @@ import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -64,7 +65,8 @@ class DevicesFragment : Fragment() {
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
         } else {
             val relevantDays = LocalDate.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
-            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantDays))
+            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantDays, LocalDate.now()))
+            devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
