@@ -16,8 +16,8 @@
 
 <p align="center">
   <img src="https://imgur.com/o3vOjmo.png" width=200px>
+  <img src="https://github.com/seemoo-lab/AirGuard/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" width=200px>
   <img src="https://imgur.com/N7o6ZPr.png" width=200px>
-  <img src="https://imgur.com/G6Hc3HR.png" width=200px>
   <img src="https://imgur.com/7UgadbH.png" width=200px>
 </p>
 
