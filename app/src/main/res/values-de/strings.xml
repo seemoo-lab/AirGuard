@@ -160,4 +160,9 @@
     <string name="filter_from_until_text">%s bis %s</string>
     <string name="filter_date_range_picker_title">Zuletzt gesehen</string>
     <string name="dates_detected">Entdeckt an Tagen</string>
+    <string name="app_theme_dark">Dunkel</string>
+    <string name="app_theme_light">Hell</string>
+    <string name="app_theme_system_default">System Standard</string>
+    <string name="settings_metric_title">Metrisches System</string>
+    <string name="settings_metric_summary">Das metrische system wird verwendet um distanzen anzuzeigen</string>
 </resources>

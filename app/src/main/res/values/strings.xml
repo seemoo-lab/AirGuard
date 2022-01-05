@@ -85,8 +85,6 @@
     <string name="tracking_device_not_connectable">This device is not able to play a sound!</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information!</string>
     <string name="info">Information</string>
-    <string name="settings_app_theme_title">App Theme</string>
-    <string name="settings_app_theme_summary">Choose a theme!</string>
 
     <string name="settings_third_party_libraries_title">Third Party Libraries</string>
     <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
@@ -173,5 +171,11 @@
     <string name="filter_apply">Apply</string>
     <string name="filter_from_until_text">%s until %s</string>
     <string name="filter_date_range_picker_title">Last Seen</string>
-
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_system_default">System Default</string>
+    <string name="settings_app_theme_title">App Theme</string>
+    <string name="settings_app_theme_summary">Choose a theme!</string>
+    <string name="settings_metric_title">Metric System</string>
+    <string name="settings_metric_summary">Use the metric system to display distances</string>
 </resources>

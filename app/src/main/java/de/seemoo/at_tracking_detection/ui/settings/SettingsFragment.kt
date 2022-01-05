@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -26,29 +27,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.fragment_settings, rootKey)
         updatePermissionSettings()
-        sharedPreferences.registerOnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences, s: String ->
-            when (s) {
-                "share_data" -> {
-                    if (sharedPreferences.getBoolean("share_data", false)) {
-                        Timber.d("Enabled background statistics sharing!")
-                        backgroundWorkScheduler.scheduleShareData()
-                    } else {
-                        backgroundWorkScheduler.removeShareData()
-                    }
-                }
-                "use_location" -> {
-                    if (sharedPreferences.getBoolean("use_location", false)) {
-                        Timber.d("Use location enabled!")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                        }
-                    }
-                }
-            }
-        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
         findPreference<Preference>("third_party_libraries")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view?.findNavController()?.navigate(R.id.action_settings_to_about_libs)
@@ -75,6 +58,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 return@OnPreferenceClickListener true
             }
     }
+
+    private val sharedPreferenceListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
+            when (preferenceKey) {
+                "share_data" -> {
+                    if (sharedPreferences.getBoolean("share_data", false)) {
+                        Timber.d("Enabled background statistics sharing!")
+                        backgroundWorkScheduler.scheduleShareData()
+                    } else {
+                        backgroundWorkScheduler.removeShareData()
+                    }
+                }
+                "use_location" -> {
+                    if (sharedPreferences.getBoolean("use_location", false)) {
+                        Timber.d("Use location enabled!")
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        }
+                    }
+                }
+                "app_theme" -> {
+                    Util.setSelectedTheme(sharedPreferences)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        ATTrackingDetectionApplication.getCurrentActivity().recreate()
+                    }
+                }
+            }
+        }
 
     private fun updatePermissionSettings() {
         val locationPermissionState =
