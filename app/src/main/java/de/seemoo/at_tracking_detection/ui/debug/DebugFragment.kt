@@ -47,7 +47,7 @@ class DebugFragment : Fragment() {
 
     private val debugViewModel: DebugViewModel by viewModels()
 
-    private lateinit var bluetoothLeScanner: BluetoothLeScanner
+    private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val devicesList: ArrayList<BluetoothDevice> = ArrayList()
     private val displayList: ArrayList<String> = ArrayList()
     private lateinit var bluetoothList: ListView
@@ -61,7 +61,7 @@ class DebugFragment : Fragment() {
         val bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner
+        bluetoothLeScanner = bluetoothManager.adapter?.bluetoothLeScanner
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         bluetoothList = root.findViewById(R.id.bluetoothList)
         return root
@@ -101,7 +101,7 @@ class DebugFragment : Fragment() {
     }
 
     private fun scanLeDevice() {
-        bluetoothLeScanner.let { scanner ->
+        bluetoothLeScanner?.let { scanner ->
             if (!scanning) { // Stops scanning after a pre-defined scan period.
                 Handler(Looper.getMainLooper()).postDelayed({
                     scanning = false
@@ -141,9 +141,6 @@ class DebugFragment : Fragment() {
 
             if (!devicesList.contains(result.device)) {
                 Timber.d("Found device ${result.device.address}")
-
-                result.isConnectable
-
                 devicesList.add(result.device)
                 displayList.add("Address: " + result.device.address + "\t\t Name: " + result.device.name)
                 Timber.d(String.format("Address: " + result.device.address + "\t\t Bond State: " + result.device.bondState))
@@ -160,7 +157,7 @@ class DebugFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        bluetoothLeScanner.stopScan(leScanCallback)
+        bluetoothLeScanner?.stopScan(leScanCallback)
     }
 
     companion object {
