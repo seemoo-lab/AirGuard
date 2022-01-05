@@ -4,9 +4,11 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
@@ -162,5 +164,13 @@ object Util {
         addAction(BluetoothConstants.ACTION_GATT_DISCONNECTED)
         addAction(BluetoothConstants.ACTION_EVENT_COMPLETED)
         addAction(BluetoothConstants.ACTION_EVENT_FAILED)
+    }
+
+    fun setSelectedTheme(sharedPreferences: SharedPreferences) {
+        when (sharedPreferences.getString("app_theme", "system_default")) {
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
     }
 }

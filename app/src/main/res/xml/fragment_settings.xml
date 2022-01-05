@@ -23,6 +23,22 @@
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_architecture_24"
+        android:key="use_metric"
+        android:summary="@string/settings_metric_summary"
+        android:title="@string/settings_metric_title" />
+
+    <ListPreference
+        android:defaultValue="system_default"
+        android:entries="@array/AppThemeName"
+        android:entryValues="@array/AppThemeValues"
+        android:icon="@drawable/ic_baseline_color_lens_24"
+        android:key="app_theme"
+        android:summary="@string/settings_app_theme_summary"
+        android:title="@string/settings_app_theme_title" />
+
     <Preference
         android:icon="@drawable/ic_baseline_library_books_24"
         android:key="third_party_libraries"
@@ -42,11 +58,9 @@
         android:title="@string/twitter" />
 
     <SwitchPreferenceCompat
-        app:isPreferenceVisible="@bool/debug"
         android:key="show_onboarding"
         android:summary="Will always show the app onboarding procedure"
-        android:title="Show Onboarding" />
-
-
+        android:title="Show Onboarding"
+        app:isPreferenceVisible="@bool/debug" />
 
 </PreferenceScreen>

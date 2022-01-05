@@ -5,13 +5,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.tables.Device
-import timber.log.Timber
 import java.util.*
 import kotlin.math.pow
-import kotlin.math.round
 
 @BindingAdapter("setAdapter")
 fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -23,12 +22,17 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
 
 @BindingAdapter("setDistance", requireAll = true)
 fun setDistance(textView: TextView, scanResult: ScanResult) {
+    val context = ATTrackingDetectionApplication.getAppContext()
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val useMetric = sharedPreferences.getBoolean("use_metric", Locale.getDefault() != Locale.US)
+
     var txPowerLevel = scanResult.scanRecord?.txPowerLevel
     if (txPowerLevel == null || txPowerLevel == Int.MIN_VALUE) {
         txPowerLevel = -69
     }
     val distance = 10F.pow(((txPowerLevel - scanResult.rssi) / (10 * 2)))
-    if (Locale.getDefault() == Locale.US) {
+
+    if (!useMetric) {
         textView.text = "%.1f FT".format(distance * 3.2808)
     } else {
         textView.text = "%.1f M".format(distance)

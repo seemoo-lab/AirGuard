@@ -16,6 +16,7 @@ import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
+import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -55,6 +56,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         DynamicColors.applyToActivitiesIfAvailable(this)
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+
+        Util.setSelectedTheme(sharedPreferences)
 
         if (showOnboarding() or !hasPermissions()) {
             startOnboarding()
