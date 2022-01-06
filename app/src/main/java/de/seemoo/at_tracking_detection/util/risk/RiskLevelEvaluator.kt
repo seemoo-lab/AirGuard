@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.abs
 
 class RiskLevelEvaluator(
     private val deviceRepository: DeviceRepository,
@@ -30,10 +31,10 @@ class RiskLevelEvaluator(
                 beaconRepository.getDeviceBeacons(it.address)
             }.flatten()
 
-            val firstNotIf = trackedLocations.first()
-            val lastNotIf = trackedLocations.last()
+            val firstBeacon = trackedLocations.first()
+            val lastBeacon = trackedLocations.last()
 
-            val daysDiff = firstNotIf.receivedAt.until(lastNotIf.receivedAt, ChronoUnit.DAYS)
+            val daysDiff = abs(firstBeacon.receivedAt.until(lastBeacon.receivedAt, ChronoUnit.DAYS))
             return if (daysDiff >= 1) {
                 //High risk
                 RiskLevel.HIGH
