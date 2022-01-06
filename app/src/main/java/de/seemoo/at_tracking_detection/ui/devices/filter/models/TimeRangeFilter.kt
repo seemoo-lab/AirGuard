@@ -7,9 +7,19 @@ import java.time.ZoneId
 
 class TimeRangeFilter : Filter() {
     override fun apply(devices: List<Device>): List<Device> {
-        return devices.filter {
-            untilDate?.atStartOfDay()?.isAfter(it.lastSeen) ?: true && fromDate?.atStartOfDay()
-                ?.isBefore(it.lastSeen) ?: true
+        return devices.filter { device ->
+            var untilMatch = true
+            val untilDate = untilDate
+            val fromDate = fromDate
+            if (untilDate != null) {
+                untilMatch = device.lastSeen.isBefore(untilDate.atTime(23,59))
+            }
+            var fromMatch = true
+            if (fromDate != null) {
+                fromMatch = device.lastSeen.isAfter(fromDate.atStartOfDay())
+            }
+
+            return@filter untilMatch && fromMatch
         }
     }
 

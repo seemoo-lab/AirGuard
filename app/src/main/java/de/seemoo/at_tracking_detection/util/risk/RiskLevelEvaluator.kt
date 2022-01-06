@@ -12,13 +12,12 @@ class RiskLevelEvaluator(
     private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository
 ) {
-    val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
 
     /**
      * Evaluates the risk that the user is at. For this all notifications sent (equals trackers discovered) for the last `RELEVANT_DAYS` are checked and a risk score is evaluated
      */
     fun evaluateRiskLevel(): RiskLevel {
-        val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+        val relevantDate = relevantTrackingDate
         val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
 
         val totalAlerts = devices.count()
@@ -45,7 +44,7 @@ class RiskLevelEvaluator(
     }
 
     fun getLastTrackerDiscoveryDate(): Date {
-        val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+        val relevantDate = relevantTrackingDate
         val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
             .sortedByDescending { it.lastSeen }
 
@@ -63,5 +62,6 @@ class RiskLevelEvaluator(
 
     companion object {
         const val RELEVANT_DAYS: Long = 14
+        val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
     }
 }

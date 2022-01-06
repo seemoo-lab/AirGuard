@@ -24,7 +24,7 @@ class RiskDetailViewModel @Inject constructor(
     beaconRepository: BeaconRepository
 ) : ViewModel() {
 
-    private val relevantDate = riskLevelEvaluator.relevantTrackingDate
+    private val relevantDate = RiskLevelEvaluator.relevantTrackingDate
     private val trackersFound: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
     private val lastSeenDates = trackersFound.map {
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.lastSeen)
