@@ -64,8 +64,8 @@ class DevicesFragment : Fragment() {
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
         } else {
-            val relevantDays = LocalDate.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS)
-            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantDays, LocalDate.now()))
+            val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDate.toLocalDate()
+            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantTrackingStartDate, LocalDate.now()))
             devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
         }
 

@@ -97,7 +97,7 @@ class FilterDialogFragment :
             getString(
                 R.string.filter_from_until_text,
                 toLocalDate(selectedRange.first),
-                toLocalDate(selectedRange.first)
+                toLocalDate(selectedRange.second)
             )
         )
     }
