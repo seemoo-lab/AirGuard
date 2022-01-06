@@ -64,13 +64,15 @@ class NotificationBuilder @Inject constructor(
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
+        val notifText = context.getString(R.string.notification_text)
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title))
-            .setContentText(context.getString(R.string.notification_text))
+            .setContentText(notifText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingNotificationIntent(bundle))
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notifText))
             .addAction(
                 R.drawable.ic_warning,
                 "FALSE ALARM",
@@ -80,5 +82,6 @@ class NotificationBuilder @Inject constructor(
                 "IGNORE DEVICE",
                 pendingIgnoreDeviceIntent(bundle)
             ).setAutoCancel(true).build()
+
     }
 }
