@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:maxLines="3"
+                android:maxLines="100"
                 android:text="@string/i_got_a_notification_what_should_i_do"
                 android:textAppearance="?attr/textAppearanceHeadlineSmall"
                 android:textColor="@color/white"
