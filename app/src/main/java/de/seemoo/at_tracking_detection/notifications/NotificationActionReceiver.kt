@@ -1,9 +1,9 @@
 package de.seemoo.at_tracking_detection.notifications
 
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
@@ -15,7 +15,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
 
     @Inject
-    lateinit var notificationManager: NotificationManager
+    lateinit var notificationManagerCompat: NotificationManagerCompat
 
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Intent received!")
@@ -28,7 +28,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 }
                 Timber.d("False Alarm intent for notification $notificationId received")
                 backgroundWorkScheduler.scheduleFalseAlarm(notificationId)
-                notificationManager.cancel(notificationId)
+                notificationManagerCompat.cancel(notificationId)
             }
             NotificationConstants.IGNORE_DEVICE_ACTION -> {
                 val notificationId = intent.getIntExtra("notificationId", -1)
@@ -39,7 +39,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 }
                 Timber.d("Ignore Device intent for device $deviceAddress received")
                 backgroundWorkScheduler.scheduleIgnoreDevice(deviceAddress, notificationId)
-                notificationManager.cancel(notificationId)
+                notificationManagerCompat.cancel(notificationId)
             }
         }
     }

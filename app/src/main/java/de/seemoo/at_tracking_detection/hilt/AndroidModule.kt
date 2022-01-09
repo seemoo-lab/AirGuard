@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.hilt
 
-import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.LocationManager
@@ -31,11 +30,6 @@ class AndroidModule {
     @Singleton
     fun notificationManagerCompat(@ApplicationContext context: Context): NotificationManagerCompat =
         NotificationManagerCompat.from(context)
-
-    @Provides
-    @Singleton
-    fun notificationManager(@ApplicationContext context: Context): NotificationManager =
-        context.getSystemService()!!
 
     @Provides
     @Singleton
