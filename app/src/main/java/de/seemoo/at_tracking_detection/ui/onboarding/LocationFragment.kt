@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.ui.onboarding
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,12 +13,9 @@ import androidx.fragment.app.Fragment
 import com.github.appintro.SlidePolicy
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LocationFragment : Fragment(R.layout.fragment_location_permission), SlidePolicy {
-    @Inject
-    lateinit var applicationContext: Context
 
     var canContinue = true
 

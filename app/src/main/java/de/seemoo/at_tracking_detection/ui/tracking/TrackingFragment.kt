@@ -35,9 +35,6 @@ class TrackingFragment : Fragment() {
     @Inject
     lateinit var trackingViewModel: TrackingViewModel
 
-    @Inject
-    lateinit var applicationContext: Context
-
     private var notificationId: Int = -1
 
     private val safeArgs: TrackingFragmentArgs by navArgs()
@@ -129,7 +126,7 @@ class TrackingFragment : Fragment() {
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
             if (!it) {
                 try {
-                    applicationContext.unbindService(serviceConnection)
+                    requireContext().unbindService(serviceConnection)
                 } catch (e: IllegalArgumentException) {
                     Timber.e("Tried to unbind an unbound service!")
                 } finally {
@@ -144,7 +141,7 @@ class TrackingFragment : Fragment() {
         if (trackingViewModel.soundPlaying.value == false) {
             trackingViewModel.connecting.postValue(true)
             val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
-            applicationContext.bindService(
+            requireContext().bindService(
                 gattServiceIntent,
                 serviceConnection,
                 Context.BIND_AUTO_CREATE
