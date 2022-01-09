@@ -49,11 +49,6 @@ class AndroidModule {
 
     @Provides
     @Singleton
-    fun applicationContext(@ApplicationContext context: Context): Context =
-        context
-
-    @Provides
-    @Singleton
     fun riskLevelEvaluator(
         deviceRepository: DeviceRepository,
         beaconRepository: BeaconRepository
