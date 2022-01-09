@@ -1,11 +1,7 @@
 package de.seemoo.at_tracking_detection.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.database.viewmodel.NotificationViewModel
 import timber.log.Timber
 import javax.inject.Inject
@@ -13,7 +9,6 @@ import javax.inject.Singleton
 
 @Singleton
 class NotificationService @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val notificationManagerCompat: NotificationManagerCompat,
     private val notificationBuilder: NotificationBuilder,
     private val notificationViewModel: NotificationViewModel
@@ -33,16 +28,14 @@ class NotificationService @Inject constructor(
     fun setup() {
         Timber.d("Setting up NotificationManager")
         // Register the channel with the system
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NotificationConstants.CHANNEL_ID,
-                NotificationConstants.NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannelCompat.Builder(
+            NotificationConstants.CHANNEL_ID,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT
+        )
+            .setName(NotificationConstants.NOTIFICATION_CHANNEL_NAME)
+            .build()
+
+        notificationManagerCompat.createNotificationChannel(channel)
     }
 
     companion object {

@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.notifications.worker
 
-import android.app.NotificationManager
 import android.content.Context
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -15,7 +15,7 @@ class FalseAlarmWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val notificationViewModel: NotificationViewModel,
-    private val notificationManager: NotificationManager
+    private val notificationManagerCompat: NotificationManagerCompat
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -26,7 +26,7 @@ class FalseAlarmWorker @AssistedInject constructor(
         }
         notificationViewModel.setFalseAlarm(notificationId, true)
         //TODO: cancel specific notification by calling cancel(notificationId) which somehow doesn't work...
-        notificationManager.cancelAll()
+        notificationManagerCompat.cancelAll()
         Timber.d("Marked notification $notificationId as false alarm!")
         return Result.success()
     }
