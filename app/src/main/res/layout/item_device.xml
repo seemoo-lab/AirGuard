@@ -11,7 +11,7 @@
 
         <variable
             name="device"
-            type="de.seemoo.at_tracking_detection.database.tables.Device" />
+            type="de.seemoo.at_tracking_detection.database.tables.device.Device" />
 
         <import type="android.view.View" />
 

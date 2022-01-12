@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.devices.filter.models
 
 import androidx.core.util.Pair
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import java.time.LocalDate
 import java.time.ZoneId
 

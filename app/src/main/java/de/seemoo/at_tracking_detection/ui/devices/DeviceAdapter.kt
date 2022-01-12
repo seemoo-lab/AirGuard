@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import de.seemoo.at_tracking_detection.databinding.ItemDeviceBinding
 
 class DeviceAdapter constructor(

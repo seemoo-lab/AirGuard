@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

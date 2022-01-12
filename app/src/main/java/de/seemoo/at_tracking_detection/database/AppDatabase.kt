@@ -9,7 +9,7 @@ import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.daos.FeedbackDao
 import de.seemoo.at_tracking_detection.database.daos.NotificationDao
 import de.seemoo.at_tracking_detection.database.tables.Beacon
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import de.seemoo.at_tracking_detection.database.tables.Feedback
 import de.seemoo.at_tracking_detection.database.tables.Notification
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter

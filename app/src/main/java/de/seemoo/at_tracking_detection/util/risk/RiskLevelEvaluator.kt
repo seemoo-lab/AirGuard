@@ -2,7 +2,7 @@ package de.seemoo.at_tracking_detection.util.risk
 
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit

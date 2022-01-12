@@ -30,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter

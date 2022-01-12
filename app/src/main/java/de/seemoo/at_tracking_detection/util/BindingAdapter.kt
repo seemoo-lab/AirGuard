@@ -8,7 +8,7 @@ import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.database.tables.device.Device
 import java.util.*
 import kotlin.math.pow
 
