@@ -115,17 +115,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         longitude: Double?,
         discoveryDate: LocalDateTime
     ) {
-        val payloadData = scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)
         var device = deviceRepository.getDevice(scanResult.device.address)
         if (device == null) {
-            device = Device(
-                scanResult.device.address,
-                false,
-                scanResult.isConnectable,
-                payloadData,
-                discoveryDate,
-                discoveryDate
-            )
+            device = Device(scanResult)
             deviceRepository.insert(device)
         } else {
             Timber.d("Device already in the database... Updating the last seen date!")

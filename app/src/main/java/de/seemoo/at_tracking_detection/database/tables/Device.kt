@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.database.tables
 
 import android.bluetooth.le.ScanResult
+import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -51,7 +52,13 @@ data class Device(
         scanResult.device.address,
         scanResult.scanRecord?.deviceName,
         false,
-        scanResult.isConnectable,
+        scanResult.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                scanResult.isConnectable
+            } else {
+                false
+            }
+        },
         scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
         LocalDateTime.now(), LocalDateTime.now(), false, null
     )
