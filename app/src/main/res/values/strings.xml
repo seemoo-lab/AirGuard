@@ -80,7 +80,7 @@
     <string name="settings_theme_system_default">System Default</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
-    <string name="settings_use_low_power_ble_summary">If enabled, Bluetooth Low Energy scanning will be used to discover nearby AirTags!<b>WARNING</b>: Without this option, some devices might not be discovered!</string>
+    <string name="settings_use_low_power_ble_summary">If enabled, Bluetooth Low Energy scanning will be used to discover nearby AirTags! <b>WARNING</b>: Without this option, some devices might not be discovered!</string>
     <string name="settings_use_low_power_ble_title">Use Low Energy Scan</string>
     <string name="tracking_device_not_connectable">This device is not able to play a sound!</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information!</string>
@@ -153,7 +153,7 @@
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
     <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that follow you.</string>
     <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker is following you to multiple locations!</string>
-    <string name="airguard_notification_explanation">You get a notification when a potential tracking device is following you! The card above will then changes its color to orange or red.</string>
+    <string name="airguard_notification_explanation">You get a notification when a potential tracking device is following you! The card above will then change its color to orange or red.</string>
 
     <string name="find_sound">Play a sound and find it</string>
     <string name="find_manual_scan">Perform a manual scan and locate it by distance</string>
