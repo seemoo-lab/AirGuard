@@ -166,7 +166,7 @@
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
-    <string name="filter_notified">notified</string>
+    <string name="filter_notified">tracking your location</string>
     <string name="filter_title_device_attributes">Device Attributes</string>
     <string name="filter_apply">Apply</string>
     <string name="filter_from_until_text">%s until %s</string>
