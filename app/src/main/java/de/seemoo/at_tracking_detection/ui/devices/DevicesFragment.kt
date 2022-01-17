@@ -10,7 +10,9 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -57,16 +59,19 @@ class DevicesFragment : Fragment() {
         val binding: FragmentDevicesBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
         var swipeDirs: Int = ItemTouchHelper.LEFT
-        var emptyListText = R.string.ignored_device_list_empty
+        val emptyListText: Int
+        var deviceInfoText = R.string.info_text_all_devices
 
         if (!safeArgs.showDevicesFound) {
-            emptyListText = R.string.devices_list_empty
+            emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
         } else {
             val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDate.toLocalDate()
             devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantTrackingStartDate, LocalDate.now()))
             devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
+            deviceInfoText = R.string.info_text_only_trackers
+            emptyListText = R.string.empty_list_trackers
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
@@ -76,11 +81,13 @@ class DevicesFragment : Fragment() {
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
                 .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
 
+        devicesViewModel.emptyListText.value = getString(emptyListText)
+        devicesViewModel.infoText.value = getString(deviceInfoText)
+
         deviceAdapter = DeviceAdapter(devicesViewModel, deviceItemListener)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.adapter = deviceAdapter
         binding.vm = devicesViewModel
-        binding.emptyListText = getString(emptyListText)
         return binding.root
     }
 
@@ -95,7 +102,14 @@ class DevicesFragment : Fragment() {
         }
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
+            updateTexts()
         }
+
+        val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
+        showAllButton.setOnClickListener {
+            devicesViewModel.addOrRemoveFilter(NotifiedFilter.build(), true)
+        }
+
     }
 
     private val deviceItemListener =
@@ -111,6 +125,20 @@ class DevicesFragment : Fragment() {
             val extras = FragmentNavigatorExtras(materialCardView to device.address)
             findNavController().navigate(directions, extras)
         }
+
+
+    private fun updateTexts() {
+        if (devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())) {
+            // Only shows trackers
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.tracker_detected)
+            devicesViewModel.infoText.value = getString(R.string.info_text_only_trackers)
+            devicesViewModel.emptyListText.value = getString(R.string.empty_list_trackers)
+        }else {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_devices)
+            devicesViewModel.infoText.value = getString(R.string.info_text_all_devices)
+            devicesViewModel.emptyListText.value = getString(R.string.empty_list_devices)
+        }
+    }
 
     private fun swipeToDeleteCallback(swipeDirs: Int) =
         object :

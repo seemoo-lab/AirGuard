@@ -165,4 +165,10 @@
     <string name="app_theme_system_default">System Standard</string>
     <string name="settings_metric_title">Metrisches System</string>
     <string name="settings_metric_summary">Das metrische System wird verwendet, um Distanzen anzuzeigen</string>
+    <string name="info_text_only_trackers">"Diese Liste zeigt Tracker an, die dir in den letzten 14 Tagen gefolgt sind. Um alle Geräte zu sehen, die von AirGuard gefunden wurden, kannst du den Filter mit dem Button unten rechts bearbeiten. "</string>
+    <string name="info_text_all_devices">"Diese Liste zeigt alle Geräte die von AirGuard in den letzten 14 Tagen gefunden wurden. Du kannst diese Geräte filtern mit dem Button unten rechts. "</string>
+    <string name="empty_list_devices">"Diese Diese Liste zeigt alle Geräte die von AirGuard in den letzten 14 Tagen gefunden wurden. Da sie leer ist, wurden keine Geräte gefunden. Denk dran Bluetooth aktiviert zu lassen, damit die App potentielle Tracker finden kann. "</string>
+    <string name="empty_list_trackers">"Diese Liste zeigt nur Geräte welche dir in den letzten 14 Tagen gefolgt sind. Da sie leer ist, gab es kein Gerät, dass versucht hat deinen Standort zu verfolgen. Immer, wenn ein Gerät dir folgt und deinen Standort übermittelt wirst du eine Benachrichtung bekommen. Denk dran, dass Bluetooth dafür aktiviert sein muss. Mit dem Button unten kannst du dir alle Geräte anzeigen lassen, auch die welche nicht als Tracker erkannt wurden. "</string>
+    <string name="show_all_button">Alle Geräte anzeigen</string>
+    <string name="empty_image_content_description">Bild zeigt leere Liste</string>
 </resources>

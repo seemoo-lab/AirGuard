@@ -64,4 +64,8 @@ class DevicesViewModel @Inject constructor(
     val activeFilter: MutableMap<String, Filter> = mutableMapOf()
 
     val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
+
+    var emptyListText: MutableLiveData<String> = MutableLiveData()
+    var infoText: MutableLiveData<String> = MutableLiveData()
+
 }
