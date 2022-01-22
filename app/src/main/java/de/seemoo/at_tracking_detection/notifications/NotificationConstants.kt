@@ -7,4 +7,5 @@ object NotificationConstants {
     const val FALSE_ALARM_CODE = 1
     const val IGNORE_DEVICE_CODE = 2
     const val NOTIFICATION_CHANNEL_NAME = "Tracking Alarm"
+    const val NOTIFICATION_CHANNEL_ERROR = "Error"
 }

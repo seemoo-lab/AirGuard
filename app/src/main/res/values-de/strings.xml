@@ -171,4 +171,5 @@
     <string name="empty_list_trackers">"Diese Liste zeigt nur Geräte welche dir in den letzten 14 Tagen gefolgt sind. Da sie leer ist, gab es kein Gerät, dass versucht hat deinen Standort zu verfolgen. Immer, wenn ein Gerät dir folgt und deinen Standort übermittelt wirst du eine Benachrichtung bekommen. Denk dran, dass Bluetooth dafür aktiviert sein muss. Mit dem Button unten kannst du dir alle Geräte anzeigen lassen, auch die welche nicht als Tracker erkannt wurden. "</string>
     <string name="show_all_button">Alle Geräte anzeigen</string>
     <string name="empty_image_content_description">Bild zeigt leere Liste</string>
+    <string name="notification_title_ble_error">BLE Scan fehlgeschlagen</string>
 </resources>

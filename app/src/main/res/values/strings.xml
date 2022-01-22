@@ -99,6 +99,7 @@
     <string name="device_name_find_my_device">Find My Device %s</string>
     <string name="notification_text">Open the notification to get more info. A device has followed you for at least 30 minutes.</string>
     <string name="notification_title">A tracker was discovered!</string>
+    <string name="notification_title_ble_error">BLE Scaning failed</string>
     <string name="alert_sent_icon">Alert sent icon</string>
     <string name="airtag_icon">AirTag icon</string>
     <string name="find_my_device_icon">Find My Device icon</string>

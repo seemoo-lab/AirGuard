@@ -50,12 +50,14 @@ class BluetoothLeService : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        bluetoothGatt?.let {
-            it.close()
-            bluetoothGatt = null
-        }
+        stopBLEService(bluetoothGatt)
         Timber.d("Unbinding BluetoothLeService")
         return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        this.stopBLEService(bluetoothGatt)
+        super.onDestroy()
     }
 
     fun connect(deviceAddress: String): Boolean {
@@ -73,6 +75,13 @@ class BluetoothLeService : Service() {
             return false
         }
     }
+
+    fun stopBLEService(gatt: BluetoothGatt?) {
+        gatt?.disconnect()
+        gatt?.close()
+//        stopSelf()
+    }
+
 
     private val bluetoothGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -122,7 +131,7 @@ class BluetoothLeService : Service() {
                     gatt.writeCharacteristic(it)
                     Timber.d("Playing sound on AirTag...")
                 }
-
+            broadcastUpdate(BluetoothConstants.ACTION_PLAYING)
         }
 
         fun playSoundOnFindMyDevice(gatt: BluetoothGatt) {
@@ -144,6 +153,7 @@ class BluetoothLeService : Service() {
                 gatt.writeCharacteristic(it)
                 Timber.d("Playing sound on Find My device with ${it.uuid}")
             }
+            broadcastUpdate(BluetoothConstants.ACTION_PLAYING)
         }
 
         fun stopSoundOnFindMyDevice(gatt: BluetoothGatt) {
@@ -167,11 +177,6 @@ class BluetoothLeService : Service() {
                 Timber.d("Stopping sound on Find My device with ${it.uuid}")
 
             }
-        }
-
-        fun stopBLEService(gatt: BluetoothGatt?) {
-            gatt?.disconnect()
-            stopSelf()
         }
 
         override fun onCharacteristicRead(
@@ -202,10 +207,12 @@ class BluetoothLeService : Service() {
 
                 if (characteristic?.value.contentEquals(FINDMY_STOP_SOUND_OPCODE)) {
                     stopBLEService(gatt)
+                    broadcastUpdate(ACTION_EVENT_COMPLETED)
                 }
 
                 if (characteristic?.uuid == AIR_TAG_SOUND_CHARACTERISTIC) {
                     stopBLEService(gatt)
+                    broadcastUpdate(ACTION_EVENT_COMPLETED)
                 }
 
             }else {

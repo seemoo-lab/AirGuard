@@ -25,6 +25,16 @@ class NotificationService @Inject constructor(
         }
     }
 
+    fun sendBLEErrorNotification() {
+        with(notificationManagerCompat) {
+            notify(
+                BLE_SCAN_ERROR_TAG,
+                -100,
+                notificationBuilder.buildBluetoothErrorNotification()
+            )
+        }
+    }
+
     fun setup() {
         Timber.d("Setting up NotificationManager")
         // Register the channel with the system
@@ -41,5 +51,7 @@ class NotificationService @Inject constructor(
     companion object {
         const val TRACKING_NOTIFICATION_TAG =
             "de.seemoo.at_tracking_detection.tracking_notification"
+        const val BLE_SCAN_ERROR_TAG =
+            "de.seemoo.at_tracking_detection.ble_scan_error_notification"
     }
 }

@@ -18,8 +18,11 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
+import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.Util
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
 
@@ -31,7 +34,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository,
     private val locationProvider: LocationProvider,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val notificationService: NotificationService,
 ) :
     CoroutineWorker(appContext, workerParams) {
 
@@ -71,15 +75,16 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
+        bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
         bluetoothAdapter.bluetoothLeScanner.startScan(
             Util.bleScanFilter,
             Util.buildScanSettings(getScanMode()),
             leScanCallback
         )
 
-        delay(SCAN_DURATION)
-        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
+        delay(getScanDuration())
         bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
+        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
         if (location == null) {
             Timber.d("No location found")
@@ -105,6 +110,16 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
                 scanResultDictionary[scanResult.device.address] =
                     DiscoveredDevice(scanResult, LocalDateTime.now())
+            }
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Timber.e("Bluetooth scan failed $errorCode")
+            if (BuildConfig.DEBUG) {
+                GlobalScope.launch {
+                    notificationService.sendBLEErrorNotification()
+                }
             }
         }
     }
@@ -148,7 +163,16 @@ class ScanBluetoothWorker @AssistedInject constructor(
         return if (useLowPower) {
             ScanSettings.SCAN_MODE_LOW_POWER
         } else {
-            ScanSettings.SCAN_MODE_BALANCED
+            ScanSettings.SCAN_MODE_LOW_LATENCY
+        }
+    }
+
+    private fun getScanDuration(): Long {
+        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        return if (useLowPower) {
+            15000L
+        } else {
+            4000L
         }
     }
 

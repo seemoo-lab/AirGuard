@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,7 +24,11 @@ class NotificationBuilder @Inject constructor(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtras(bundle)
         }
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getActivity(context, 0, intent, 0)
+        }
     }
 
     private fun pendingFalseAlarmIntent(bundle: Bundle): PendingIntent {
@@ -31,12 +36,21 @@ class NotificationBuilder @Inject constructor(
             action = NotificationConstants.FALSE_ALARM_ACTION
             putExtras(bundle)
         }
-        return PendingIntent.getBroadcast(
-            context,
-            NotificationConstants.FALSE_ALARM_CODE,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(
+                context,
+                NotificationConstants.FALSE_ALARM_CODE,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                context,
+                NotificationConstants.FALSE_ALARM_CODE,
+                intent,
+                0
+            )
+        }
     }
 
     private fun pendingIgnoreDeviceIntent(bundle: Bundle): PendingIntent {
@@ -44,12 +58,21 @@ class NotificationBuilder @Inject constructor(
             action = NotificationConstants.IGNORE_DEVICE_ACTION
             putExtras(bundle)
         }
-        return PendingIntent.getBroadcast(
-            context,
-            NotificationConstants.IGNORE_DEVICE_CODE,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(
+                context,
+                NotificationConstants.FALSE_ALARM_CODE,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                context,
+                NotificationConstants.FALSE_ALARM_CODE,
+                intent,
+                0
+            )
+        }
     }
 
 
@@ -83,5 +106,18 @@ class NotificationBuilder @Inject constructor(
                 pendingIgnoreDeviceIntent(bundle)
             ).setAutoCancel(true).build()
 
+    }
+
+    fun buildBluetoothErrorNotification(): Notification {
+        val notificationId = -100
+        val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.notification_title_ble_error))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingNotificationIntent(bundle))
+            .setCategory(Notification.CATEGORY_ERROR)
+            .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
     }
 }

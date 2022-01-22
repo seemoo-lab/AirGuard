@@ -6,21 +6,30 @@ import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
@@ -63,6 +72,12 @@ class ScanFragment : Fragment() {
                 scanViewModel.addScanResult(it)
             }
         }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Timber.e("BLE Scan failed. $errorCode")
+            view?.let { Snackbar.make(it, R.string.ble_service_connection_error, Snackbar.LENGTH_LONG) }
+        }
     }
 
     private fun startBluetoothScan() {
@@ -71,6 +86,8 @@ class ScanFragment : Fragment() {
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val scanSettings = Util.buildScanSettings(ScanSettings.SCAN_MODE_LOW_LATENCY)
         bluetoothLeScanner = bluetoothManager?.adapter?.bluetoothLeScanner
+        bluetoothLeScanner?.stopScan(scanCallback)
+
         bluetoothLeScanner?.startScan(Util.bleScanFilter, scanSettings, scanCallback)
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -86,6 +103,39 @@ class ScanFragment : Fragment() {
         if (bluetoothManager?.adapter?.state == BluetoothAdapter.STATE_ON) {
             bluetoothLeScanner?.stopScan(scanCallback)
         }
+    }
+
+
+
+    private fun resetBluetooth() {
+        // Do not use in production. If Bluetooth hangs this will turn off Bluetooth and turn it back on again.
+        // This cannot be used because all active Bluetooth connections will be killed
+        bluetoothManager?.adapter?.disable()
+
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        val receiver = object: BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent?) {
+                val action = intent?.action
+                if (action != null && action == BluetoothAdapter.ACTION_STATE_CHANGED) {
+                    when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
+                        BluetoothAdapter.STATE_ON -> {
+                            if (bluetoothManager?.adapter?.isEnabled == true) {
+                                //perform your task here
+                                startBluetoothScan()
+                            }
+                        }
+                        BluetoothAdapter.STATE_OFF -> {
+                            Handler(Looper.getMainLooper())
+                                .postDelayed({
+                                    bluetoothManager?.adapter?.enable()
+                                }, 500)
+                        }
+                    }
+                }
+            }
+        }
+
+        context?.registerReceiver(receiver, filter)
     }
 
     override fun onResume() {

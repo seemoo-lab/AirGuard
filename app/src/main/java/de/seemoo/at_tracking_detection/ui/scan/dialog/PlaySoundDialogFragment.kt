@@ -54,23 +54,22 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothConstants.ACTION_GATT_CONNECTED -> {
+                    dialogViewModel.connecting.postValue(false)
+                }
+                BluetoothConstants.ACTION_PLAYING -> {
                     dialogViewModel.playing.postValue(true)
                     dialogViewModel.connecting.postValue(false)
                 }
-                else -> {
-                    dialogViewModel.playing.postValue(false)
+                BluetoothConstants.ACTION_EVENT_COMPLETED -> {
                     dismissWithDelay()
-                    when (intent.action) {
-                        BluetoothConstants.ACTION_GATT_DISCONNECTED -> dialogViewModel.success.postValue(
-                            true
-                        )
-                        BluetoothConstants.ACTION_EVENT_FAILED -> {
-                            dialogViewModel.error.postValue(true)
-                        }
-                        BluetoothConstants.ACTION_EVENT_COMPLETED -> dialogViewModel.success.postValue(
-                            true
-                        )
-                    }
+                }
+                BluetoothConstants.ACTION_EVENT_FAILED -> {
+                    dialogViewModel.error.postValue(true)
+                    dismissWithDelay()
+                }
+                else -> {
+                    dialogViewModel.error.postValue(true)
+                    dismissWithDelay()
                 }
             }
         }
@@ -104,6 +103,6 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     }
 
     companion object {
-        private const val DIALOG_CLOSE_DELAY = 3000L
+        private const val DIALOG_CLOSE_DELAY = 1500L
     }
 }
