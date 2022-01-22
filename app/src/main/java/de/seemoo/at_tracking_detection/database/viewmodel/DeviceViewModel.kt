@@ -5,20 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DeviceViewModel @Inject constructor(private val deviceRepository: DeviceRepository) :
     ViewModel() {
-    val devices: LiveData<List<Device>> = deviceRepository.devices.asLiveData()
+    val devices: LiveData<List<BaseDevice>> = deviceRepository.devices.asLiveData()
 
-    fun insert(device: Device) = viewModelScope.launch {
-        deviceRepository.insert(device)
+    fun insert(baseDevice: BaseDevice) = viewModelScope.launch {
+        deviceRepository.insert(baseDevice)
     }
 
-    fun update(device: Device) = viewModelScope.launch {
-        deviceRepository.update(device)
+    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
+        deviceRepository.update(baseDevice)
     }
 
     suspend fun setIgnoreFlag(deviceAddress: String, state: Boolean) {

@@ -23,6 +23,7 @@
             android:layout_margin="48dp">
 
             <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/spinner_connecting"
                 style="@style/SpinKitView.Circle"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -33,10 +34,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/spinner_playing"
                 style="@style/SpinKitView.Wave"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:visibility="@{vm.playing ? View.VISIBLE : View.GONE}"
+                android:visibility="@{View.GONE}"
                 app:SpinKit_Color="?colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -48,7 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@{@drawable/ic_baseline_error_outline_24}"
-                android:visibility="@{vm.error ? View.VISIBLE : View.GONE, default=gone}"
+                android:visibility="@{View.GONE}"
                 app:layout_constraintBottom_toTopOf="@+id/error_text"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -57,22 +59,23 @@
 
             <TextView
                 android:id="@+id/error_text"
-                style="@style/TextAppearance.Material3.TitleMedium"
+                style="@style/TextAppearance.Material3.TitleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ble_service_connection_error"
-                android:visibility="@{vm.error ? View.VISIBLE : View.GONE, default=gone}"
+                android:visibility="@{View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/image_error" />
+                app:layout_constraintTop_toBottomOf="@id/image_error"
+                tools:text="@string/ble_service_connection_error" />
 
 
             <ImageView
+                android:id="@+id/image_success"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:src="@{@drawable/ic_baseline_check_256_green}"
-                android:visibility="@{vm.success ? View.VISIBLE : View.GONE}"
+                android:visibility="@{View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

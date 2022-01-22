@@ -4,8 +4,8 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Beacon
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,13 +24,13 @@ class DevicesViewModel @Inject constructor(
     fun getDeviceBeaconsCount(deviceAddress: String): String =
         beaconRepository.getDeviceBeaconsCount(deviceAddress).toString()
 
-    fun getDevice(deviceAddress: String): Device = deviceRepository.getDevice(deviceAddress)!!
+    fun getDevice(deviceAddress: String): BaseDevice = deviceRepository.getDevice(deviceAddress)!!
 
     fun getMarkerLocations(deviceAddress: String): List<Beacon> =
         beaconRepository.getDeviceBeacons(deviceAddress)
 
-    fun update(device: Device) = viewModelScope.launch {
-        deviceRepository.update(device)
+    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
+        deviceRepository.update(baseDevice)
     }
 
     fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
@@ -50,7 +50,7 @@ class DevicesViewModel @Inject constructor(
         }
     }
 
-    val devices = MediatorLiveData<List<Device>>()
+    val devices = MediatorLiveData<List<BaseDevice>>()
 
     init {
         devices.addSource(deviceRepository.devices.asLiveData()) {

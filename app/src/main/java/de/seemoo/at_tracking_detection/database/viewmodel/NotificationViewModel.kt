@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.database.viewmodel
 
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.tables.Notification
+import de.seemoo.at_tracking_detection.database.models.Notification
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject

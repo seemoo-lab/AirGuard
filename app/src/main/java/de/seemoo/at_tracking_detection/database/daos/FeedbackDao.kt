@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.tables.Feedback
+import de.seemoo.at_tracking_detection.database.models.Feedback
 
 @Dao
 interface FeedbackDao {

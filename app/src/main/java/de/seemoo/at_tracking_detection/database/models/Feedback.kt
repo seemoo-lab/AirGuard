@@ -1,4 +1,4 @@
-package de.seemoo.at_tracking_detection.database.tables
+package de.seemoo.at_tracking_detection.database.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

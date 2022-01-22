@@ -1,17 +1,18 @@
 package de.seemoo.at_tracking_detection.ui.scan.dialog
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import timber.log.Timber
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class DialogViewModel : ViewModel() {
 
-    val error = MutableLiveData(false)
+    val playSoundState = MutableStateFlow<ConnectionState>(ConnectionState.Connecting)
 
-    val playing = MutableLiveData(false)
-
-    val success = MutableLiveData(false)
-
-    val connecting = MutableLiveData(false)
+    sealed class ConnectionState {
+        object Success : ConnectionState()
+        data class Error(val message: String) : ConnectionState()
+        object Connecting : ConnectionState()
+        object Playing : ConnectionState()
+    }
 
 }

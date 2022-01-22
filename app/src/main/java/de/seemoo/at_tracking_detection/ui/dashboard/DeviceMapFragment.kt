@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.ui.devices.DevicesFragmentArgs
 import de.seemoo.at_tracking_detection.util.Util

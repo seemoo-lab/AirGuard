@@ -2,35 +2,35 @@ package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 @Dao
 interface DeviceDao {
     @Query("SELECT * FROM device ORDER BY lastSeen DESC")
-    fun getAll(): Flow<List<Device>>
+    fun getAll(): Flow<List<BaseDevice>>
 
     @Query("SELECT * FROM device WHERE lastSeen >= :since ORDER BY lastSeen DESC")
-    fun getAllSince(since: LocalDateTime): Flow<List<Device>>
+    fun getAllSince(since: LocalDateTime): Flow<List<BaseDevice>>
 
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
-    fun getAllNotificationSinceFlow(since: LocalDateTime): Flow<List<Device>>
+    fun getAllNotificationSinceFlow(since: LocalDateTime): Flow<List<BaseDevice>>
 
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
-    fun getAllNotificationSince(since: LocalDateTime): List<Device>
+    fun getAllNotificationSince(since: LocalDateTime): List<BaseDevice>
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
     fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
-    fun getIgnored(): Flow<List<Device>>
+    fun getIgnored(): Flow<List<BaseDevice>>
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
-    fun getIgnoredSync(): List<Device>
+    fun getIgnoredSync(): List<BaseDevice>
 
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
-    fun getByAddress(address: String): Device?
+    fun getByAddress(address: String): BaseDevice?
 
     @Query("DELETE FROM device WHERE address LIKE :address")
     suspend fun remove(address: String)
@@ -58,14 +58,14 @@ interface DeviceDao {
     suspend fun getDeviceBeacons(): List<DeviceBeaconNotification>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertAll(vararg devices: Device)
+    suspend fun insertAll(vararg baseDevices: BaseDevice)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(device: Device): Long
+    suspend fun insert(baseDevice: BaseDevice): Long
 
     @Update
-    suspend fun update(device: Device)
+    suspend fun update(baseDevice: BaseDevice)
 
     @Delete
-    suspend fun delete(device: Device)
+    suspend fun delete(baseDevice: BaseDevice)
 }

@@ -9,29 +9,33 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogPlaySoundBinding
-import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
 class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetDialogFragment() {
 
-    private val dialogViewModel: DialogViewModel by viewModels()
+    private val viewModel: DialogViewModel by viewModels()
+
+    private var _binding: DialogPlaySoundBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = DialogPlaySoundBinding.inflate(LayoutInflater.from(context))
-        binding.vm = dialogViewModel
+        _binding = DialogPlaySoundBinding.inflate(LayoutInflater.from(context))
+        binding.vm = viewModel
         return binding.root
     }
 
@@ -40,8 +44,34 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
         val activity = ATTrackingDetectionApplication.getCurrentActivity()
         LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
+            .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launchWhenStarted {
+            viewModel.playSoundState.collect {
+                if (it != DialogViewModel.ConnectionState.Connecting) {
+                    binding.spinnerPlaying.visibility = View.GONE
+                }
+                when (it) {
+                    is DialogViewModel.ConnectionState.Success -> {
+                        binding.imageSuccess.visibility = View.VISIBLE
+                    }
+                    is DialogViewModel.ConnectionState.Playing -> {
+                        binding.spinnerPlaying.visibility = View.VISIBLE
+                    }
+                    is DialogViewModel.ConnectionState.Error -> {
+                        binding.imageError.visibility = View.VISIBLE
+                        binding.errorText.text = it.message
+                    }
+                    is DialogViewModel.ConnectionState.Connecting -> {
+                        binding.spinnerPlaying.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
     }
 
     private fun dismissWithDelay() {
@@ -54,21 +84,17 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothConstants.ACTION_GATT_CONNECTED -> {
-                    dialogViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_PLAYING -> {
-                    dialogViewModel.playing.postValue(true)
-                    dialogViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_COMPLETED -> {
-                    dismissWithDelay()
-                }
-                BluetoothConstants.ACTION_EVENT_FAILED -> {
-                    dialogViewModel.error.postValue(true)
-                    dismissWithDelay()
+                    viewModel.playSoundState.value = DialogViewModel.ConnectionState.Playing
                 }
                 else -> {
-                    dialogViewModel.error.postValue(true)
+                    when (intent.action) {
+                        BluetoothConstants.ACTION_GATT_DISCONNECTED -> viewModel.playSoundState.value =
+                            DialogViewModel.ConnectionState.Success
+                        BluetoothConstants.ACTION_EVENT_FAILED -> viewModel.playSoundState.value =
+                            DialogViewModel.ConnectionState.Error("Failed to play Sound!")
+                        BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.playSoundState.value =
+                            DialogViewModel.ConnectionState.Success
+                    }
                     dismissWithDelay()
                 }
             }
@@ -79,16 +105,19 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
             if (!bluetoothService.init()) {
-                dialogViewModel.error.postValue(true)
+                viewModel.playSoundState.value =
+                    DialogViewModel.ConnectionState.Error("Could not connect to the Bluetooth Service!")
             } else {
-                dialogViewModel.connecting.postValue(true)
-                bluetoothService.connect(scanResult.device.address)
+                if (bluetoothService.connect(BaseDevice(scanResult))) {
+                    viewModel.playSoundState.value =
+                        DialogViewModel.ConnectionState.Playing
+                } else {
+                    DialogViewModel.ConnectionState.Error("Failed to connect to device!")
+                }
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            dialogViewModel.playing.postValue(false)
-            dialogViewModel.error.postValue(false)
         }
     }
 

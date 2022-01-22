@@ -2,7 +2,7 @@ package de.seemoo.at_tracking_detection.database.repository
 
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.FeedbackDao
-import de.seemoo.at_tracking_detection.database.tables.Feedback
+import de.seemoo.at_tracking_detection.database.models.Feedback
 import javax.inject.Inject
 import javax.inject.Singleton
 

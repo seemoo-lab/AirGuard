@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.util.ble
 
 import android.app.Service
 import android.bluetooth.*
-import android.bluetooth.BluetoothGatt.GATT
 import android.bluetooth.BluetoothGatt.GATT_SUCCESS
 import android.bluetooth.BluetoothGattCharacteristic.*
 import android.bluetooth.le.*
@@ -12,10 +11,9 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_COMPLETED
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_FAILED
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_GATT_CONNECTED
@@ -55,16 +53,16 @@ class BluetoothLeService : Service() {
         return super.onUnbind(intent)
     }
 
-    override fun onDestroy() {
-        this.stopBLEService(bluetoothGatt)
-        super.onDestroy()
-    }
-
-    fun connect(deviceAddress: String): Boolean {
+    fun connect(baseDevice: BaseDevice): Boolean {
+        if (baseDevice.device !is Connectable) {
+            Timber.d("Device type is ${baseDevice.deviceType} and therefore not able to play a sound!")
+            return false
+        }
         bluetoothAdapter?.let {
             return try {
-                val device = it.getRemoteDevice(deviceAddress)
-                bluetoothGatt = device.connectGatt(this, false, bluetoothGattCallback)
+                val device = it.getRemoteDevice(baseDevice.address)
+                bluetoothGatt =
+                    device.connectGatt(this, false, baseDevice.device.bluetoothGattCallback)
                 true
             } catch (e: IllegalArgumentException) {
                 Timber.e("Failed to connect to device!")
@@ -137,8 +135,11 @@ class BluetoothLeService : Service() {
         fun playSoundOnFindMyDevice(gatt: BluetoothGatt) {
             val uuids = gatt.services.map { it.uuid.toString() }
             Timber.d("Found UUIDS $uuids")
-            val service = gatt.services.firstOrNull { it.uuid.toString().lowercase().contains(
-                FINDMY_SOUND_SERVICE.lowercase()) }
+            val service = gatt.services.firstOrNull {
+                it.uuid.toString().lowercase().contains(
+                    FINDMY_SOUND_SERVICE.lowercase()
+                )
+            }
 
             if (service == null) {
                 Timber.e("Playing sound service not found!")
@@ -215,7 +216,7 @@ class BluetoothLeService : Service() {
                     broadcastUpdate(ACTION_EVENT_COMPLETED)
                 }
 
-            }else {
+            } else {
                 Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
                 stopBLEService(gatt)
             }
@@ -248,9 +249,10 @@ class BluetoothLeService : Service() {
         private const val STATE_CONNECTED = 2
 
         private const val FINDMY_SOUND_SERVICE = "fd44"
-        private val FINDMY_SOUND_CHARACTERISTIC = UUID.fromString("4F860003-943B-49EF-BED4-2F730304427A")
-        private val FINDMY_START_SOUND_OPCODE = byteArrayOf(0x01,0x00,0x03)
-        private val FINDMY_STOP_SOUND_OPCODE = byteArrayOf(0x01,0x01,0x03)
+        private val FINDMY_SOUND_CHARACTERISTIC =
+            UUID.fromString("4F860003-943B-49EF-BED4-2F730304427A")
+        internal val FINDMY_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
+        private val FINDMY_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
         private var writtenValue = 0
     }
 }

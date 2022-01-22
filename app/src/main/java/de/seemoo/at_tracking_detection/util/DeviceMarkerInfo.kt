@@ -3,7 +3,7 @@ package de.seemoo.at_tracking_detection.util
 import android.widget.TextView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import timber.log.Timber

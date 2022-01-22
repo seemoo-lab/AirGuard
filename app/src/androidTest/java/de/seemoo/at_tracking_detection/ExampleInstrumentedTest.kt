@@ -3,7 +3,7 @@ package de.seemoo.at_tracking_detection
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*

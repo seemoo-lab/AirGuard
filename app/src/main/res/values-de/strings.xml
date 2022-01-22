@@ -90,8 +90,7 @@
     <string name="settings_privacy_policy_title">Datenschutzerklärung</string>
     <string name="settings_privacy_policy_summary">Unsere simple Datenschutzerklärung</string>
     <string name="alert_sent_icon">"Alarm wurde gesendet"-Icon</string>
-    <string name="airtag_icon">AirTag-Icon</string>
-    <string name="find_my_device_icon">"Find My"-Geräte-Icon</string>
+    <string name="device_icon">Geräte-Icon</string>
     <string name="location_sample_image">Standortbeispiel-Bild</string>
     <string name="location_permission_title">Standortzugriff</string>
     <string name="location_permission_message">Diese App benötigt die Berechtigung, auf Deinen Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und andere "Find My"-Geräte zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem kannst Du der App optional erlauben, einen Standortverlauf anzuzeigen, wenn Du verfolgt werden solltest.</string>
@@ -175,4 +174,5 @@
     <string name="beacon_locations">Beacon Standorte</string>
     <string name="other_devices_found">Andere Geräte</string>
     <string name="info_text_all_locations">"Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben. "</string>
+    <string name="device_name_tile">Tile %s</string>
 </resources>

@@ -2,7 +2,7 @@ package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.relations.NotificationFeedback
-import de.seemoo.at_tracking_detection.database.tables.Notification
+import de.seemoo.at_tracking_detection.database.models.Notification
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 

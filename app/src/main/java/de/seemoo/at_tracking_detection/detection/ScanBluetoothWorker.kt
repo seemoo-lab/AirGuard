@@ -15,12 +15,12 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.BuildConfig
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.notifications.NotificationService
-import de.seemoo.at_tracking_detection.database.tables.device.Device
-import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -78,10 +78,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
-        bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
+        val scanSettings =
+            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
         bluetoothAdapter.bluetoothLeScanner.startScan(
-            Util.bleScanFilter,
-            Util.buildScanSettings(getScanMode()),
+            DeviceManager.scanFilter,
+            scanSettings,
             leScanCallback
         )
 
@@ -145,7 +146,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     ) {
         var device = deviceRepository.getDevice(scanResult.device.address)
         if (device == null) {
-            device = Device(scanResult)
+            device = BaseDevice(scanResult)
             deviceRepository.insert(device)
         } else {
             Timber.d("Device already in the database... Updating the last seen date!")
@@ -187,10 +188,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
         } else {
             4000L
         }
-    }
-
-    companion object {
-        const val SCAN_DURATION = 15000L
     }
 
     class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime) {}

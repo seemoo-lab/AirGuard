@@ -10,8 +10,8 @@
             type="String" />
 
         <variable
-            name="device"
-            type="de.seemoo.at_tracking_detection.database.tables.device.Device" />
+            name="baseDevice"
+            type="de.seemoo.at_tracking_detection.database.models.device.BaseDevice" />
 
         <import type="android.view.View" />
 
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/devices_item_height"
         android:layout_margin="@dimen/card_margin"
-        android:transitionName="@{device.address}">
+        android:transitionName="@{baseDevice.address}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -57,27 +57,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="10dp"
-                android:contentDescription="@string/find_my_device_icon"
-                android:visibility="@{device.isAirTag ? View.GONE : View.VISIBLE}"
+                android:contentDescription="@string/device_icon"
+                android:src="@{baseDevice.device.drawable}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_device_unknown_24" />
-
-
-            <ImageView
-                android:id="@+id/imageAirTag"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginVertical="10dp"
-                android:contentDescription="@string/airtag_icon"
-                android:visibility="@{device.isAirTag ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_airtag" />
+                tools:src="@drawable/ic_baseline_device_unknown_24" />
 
             <TextView
                 android:id="@+id/device_name"
@@ -85,9 +71,9 @@
                 android:layout_height="wrap_content"
                 android:autoSizeTextType="uniform"
                 android:maxLines="1"
-                android:text="@{device.deviceNameWithId}"
+                android:text="@{baseDevice.deviceNameWithID}"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
-                android:textColor="@{device.ignore ? @color/light_grey : @color/defaultTextColor}"
+                android:textColor="@{baseDevice.ignore ? @color/light_grey : @color/defaultTextColor}"
                 app:layout_constraintEnd_toStartOf="@+id/alert_icon"
                 app:layout_constraintLeft_toRightOf="@id/device_guideline_left"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_middle"
@@ -118,7 +104,7 @@
                     android:layout_height="match_parent"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:text="@{device.formattedDiscoveryDate}" />
+                    android:text="@{baseDevice.formattedDiscoveryDate}" />
 
             </LinearLayout>
 
@@ -144,7 +130,7 @@
                     android:layout_height="match_parent"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:text="@{device.formattedLastSeenDate}" />
+                    android:text="@{baseDevice.formattedLastSeenDate}" />
 
             </LinearLayout>
 
@@ -194,7 +180,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:contentDescription="@string/alert_sent_icon"
-                android:visibility="@{device.notificationSent ? View.VISIBLE : View.INVISIBLE}"
+                android:visibility="@{baseDevice.notificationSent ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toTopOf="@+id/device_first_discovery"
                 app:layout_constraintEnd_toStartOf="@+id/device_guideline_middle"
                 app:layout_constraintTop_toTopOf="parent"

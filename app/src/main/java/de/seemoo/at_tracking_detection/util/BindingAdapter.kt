@@ -3,12 +3,12 @@ package de.seemoo.at_tracking_detection.util
 import android.bluetooth.le.ScanResult
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import java.util.*
 import kotlin.math.pow
 
@@ -42,18 +42,16 @@ fun setDistance(textView: TextView, scanResult: ScanResult) {
 
 @BindingAdapter("setDeviceDrawable", requireAll = true)
 fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
-    val device = Device(scanResult)
-    val context = ATTrackingDetectionApplication.getAppContext()
-    val drawable = ContextCompat.getDrawable(context, device.getImage())
-    imageView.setImageDrawable(drawable)
+    val device = BaseDevice(scanResult).device
+    imageView.setImageDrawable(device.getDrawable())
 }
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName(textView: TextView, scanResult: ScanResult) {
-    val device = Device(scanResult)
+    val device = BaseDevice(scanResult).device
     var deviceName = scanResult.scanRecord?.deviceName
     if (deviceName.isNullOrEmpty()) {
-        deviceName = device.getDeviceName()
+        deviceName = device.defaultDeviceName
     }
     textView.text = deviceName
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.repository.FeedbackRepository
-import de.seemoo.at_tracking_detection.database.tables.Feedback
+import de.seemoo.at_tracking_detection.database.models.Feedback
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject

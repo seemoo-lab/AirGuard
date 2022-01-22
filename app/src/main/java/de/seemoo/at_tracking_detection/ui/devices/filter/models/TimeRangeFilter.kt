@@ -1,13 +1,13 @@
 package de.seemoo.at_tracking_detection.ui.devices.filter.models
 
 import androidx.core.util.Pair
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import java.time.LocalDate
 import java.time.ZoneId
 
 class TimeRangeFilter : Filter() {
-    override fun apply(devices: List<Device>): List<Device> {
-        return devices.filter { device ->
+    override fun apply(baseDevices: List<BaseDevice>): List<BaseDevice> {
+        return baseDevices.filter { device ->
             var untilMatch = true
             val untilDate = untilDate
             val fromDate = fromDate

@@ -12,11 +12,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.Period
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 

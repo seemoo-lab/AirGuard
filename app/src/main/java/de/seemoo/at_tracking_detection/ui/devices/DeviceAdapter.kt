@@ -7,21 +7,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.databinding.ItemDeviceBinding
 
 class DeviceAdapter constructor(
     private val devicesViewModel: DevicesViewModel,
     private val onClickListener: OnClickListener
 ) :
-    ListAdapter<Device, DeviceAdapter.DeviceViewHolder>(Companion) {
+    ListAdapter<BaseDevice, DeviceAdapter.DeviceViewHolder>(Companion) {
 
     class DeviceViewHolder(private val binding: ItemDeviceBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(device: Device, devicesViewModel: DevicesViewModel) {
-            binding.deviceBeaconCount = devicesViewModel.getDeviceBeaconsCount(device.address)
-            binding.device = device
+        fun bind(baseDevice: BaseDevice, devicesViewModel: DevicesViewModel) {
+            binding.deviceBeaconCount = devicesViewModel.getDeviceBeaconsCount(baseDevice.address)
+            binding.baseDevice = baseDevice
             binding.executePendingBindings()
         }
     }
@@ -34,22 +34,23 @@ class DeviceAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
-        val device: Device = getItem(position)
-        holder.bind(device, devicesViewModel)
-        holder.itemView.transitionName = device.address
+        val baseDevice: BaseDevice = getItem(position)
+        holder.bind(baseDevice, devicesViewModel)
+        holder.itemView.transitionName = baseDevice.address
         val cardView = holder.itemView.findViewById<MaterialCardView>(R.id.device_item_card)
-        holder.itemView.setOnClickListener { onClickListener.onClick(device, cardView) }
+        holder.itemView.setOnClickListener { onClickListener.onClick(baseDevice, cardView) }
     }
 
-    class OnClickListener(val clickListener: (Device, MaterialCardView) -> Unit) {
-        fun onClick(device: Device, cardView: MaterialCardView) = clickListener(device, cardView)
+    class OnClickListener(val clickListener: (BaseDevice, MaterialCardView) -> Unit) {
+        fun onClick(baseDevice: BaseDevice, cardView: MaterialCardView) =
+            clickListener(baseDevice, cardView)
     }
 
-    companion object : DiffUtil.ItemCallback<Device>() {
-        override fun areContentsTheSame(oldItem: Device, newItem: Device): Boolean =
+    companion object : DiffUtil.ItemCallback<BaseDevice>() {
+        override fun areContentsTheSame(oldItem: BaseDevice, newItem: BaseDevice): Boolean =
             oldItem == newItem
 
-        override fun areItemsTheSame(oldItem: Device, newItem: Device): Boolean =
+        override fun areItemsTheSame(oldItem: BaseDevice, newItem: BaseDevice): Boolean =
             oldItem.deviceId == newItem.deviceId
     }
 }

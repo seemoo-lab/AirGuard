@@ -1,9 +1,7 @@
 package de.seemoo.at_tracking_detection.util
 
 import android.bluetooth.le.ScanFilter
-import android.bluetooth.le.ScanSettings
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -14,9 +12,8 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -150,21 +147,11 @@ object Util {
         return true
     }
 
-    fun buildScanSettings(scanMode: Int): ScanSettings =
-        ScanSettings.Builder().setScanMode(scanMode).build()
-
     val bleScanFilter: MutableList<ScanFilter> = mutableListOf(
         ScanFilter.Builder()
             .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
             .build()
     )
-
-    val gattIntentFilter: IntentFilter = IntentFilter().apply {
-        addAction(BluetoothConstants.ACTION_GATT_CONNECTED)
-        addAction(BluetoothConstants.ACTION_GATT_DISCONNECTED)
-        addAction(BluetoothConstants.ACTION_EVENT_COMPLETED)
-        addAction(BluetoothConstants.ACTION_EVENT_FAILED)
-    }
 
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {

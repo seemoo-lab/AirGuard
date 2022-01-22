@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.database.relations
 
 import androidx.room.Relation
-import de.seemoo.at_tracking_detection.database.tables.Feedback
+import de.seemoo.at_tracking_detection.database.models.Feedback
 import java.time.LocalDateTime
 
 

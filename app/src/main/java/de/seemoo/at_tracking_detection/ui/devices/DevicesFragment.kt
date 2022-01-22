@@ -30,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
@@ -142,16 +142,16 @@ class DevicesFragment : Fragment() {
     }
 
     private val deviceItemListener =
-        DeviceAdapter.OnClickListener { device: Device, materialCardView: MaterialCardView ->
+        DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
             if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 return@OnClickListener
             }
             val directions: NavDirections =
                 DevicesFragmentDirections.dashboardToDeviceDetailFragment(
-                    device.address,
-                    device.getFormattedDiscoveryDate()
+                    baseDevice.address,
+                    baseDevice.getFormattedDiscoveryDate()
                 )
-            val extras = FragmentNavigatorExtras(materialCardView to device.address)
+            val extras = FragmentNavigatorExtras(materialCardView to baseDevice.address)
             findNavController().navigate(directions, extras)
         }
 
@@ -159,11 +159,13 @@ class DevicesFragment : Fragment() {
     private fun updateTexts() {
         if (devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())) {
             // Only shows trackers
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.tracker_detected)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.tracker_detected)
             devicesViewModel.infoText.value = getString(R.string.info_text_only_trackers)
             devicesViewModel.emptyListText.value = getString(R.string.empty_list_trackers)
-        }else {
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_devices)
+        } else {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.title_devices)
             devicesViewModel.infoText.value = getString(R.string.info_text_all_devices)
             devicesViewModel.emptyListText.value = getString(R.string.empty_list_devices)
         }
@@ -253,13 +255,13 @@ class DevicesFragment : Fragment() {
 
             }
 
-            private fun showRestoreDevice(device: Device) = Snackbar.make(
+            private fun showRestoreDevice(baseDevice: BaseDevice) = Snackbar.make(
                 view!!, getString(
-                    R.string.devices_alter_removed, device.getDeviceNameWithId()
+                    R.string.devices_alter_removed, baseDevice.getDeviceNameWithID()
                 ), Snackbar.LENGTH_LONG
             ).setAction(getString(R.string.undo_button)) {
                 Timber.d("Undo remove device!")
-                devicesViewModel.setIgnoreFlag(device.address, false)
+                devicesViewModel.setIgnoreFlag(baseDevice.address, false)
             }.show()
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -267,7 +269,7 @@ class DevicesFragment : Fragment() {
                     deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
                 if (direction == ItemTouchHelper.LEFT) {
                     val editName = EditText(context)
-                    editName.setText(device.getDeviceNameWithId())
+                    editName.setText(device.getDeviceNameWithID())
                     AlertDialog.Builder(context)
                         .setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)

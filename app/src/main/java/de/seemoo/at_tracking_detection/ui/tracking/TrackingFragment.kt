@@ -19,6 +19,8 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Util
@@ -61,8 +63,8 @@ class TrackingFragment : Fragment() {
         super.onResume()
         val activity = ATTrackingDetectionApplication.getCurrentActivity()
         LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
-        activity.registerReceiver(gattUpdateReceiver, Util.gattIntentFilter)
+            .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
+        activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
     }
 
     override fun onPause() {
@@ -103,8 +105,8 @@ class TrackingFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val device = trackingViewModel.device.value
-            if (device != null && device.connectable) {
+            val baseDevice = trackingViewModel.device.value
+            if (baseDevice != null && baseDevice.device is Connectable) {
                 toggleSound()
             } else {
                 Snackbar.make(
@@ -187,8 +189,8 @@ class TrackingFragment : Fragment() {
                     trackingViewModel.error.postValue(true)
                 } else {
                     Timber.d("Device is ready to connect!")
-                    trackingViewModel.deviceAddress.observe(viewLifecycleOwner) { address ->
-                        it.connect(address)
+                    trackingViewModel.device.observe(viewLifecycleOwner) { baseDevice ->
+                        it.connect(baseDevice)
                     }
                 }
             }

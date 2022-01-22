@@ -4,8 +4,8 @@ import androidx.lifecycle.*
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.tables.Beacon
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,7 +29,7 @@ class TrackingViewModel @Inject constructor(
 
     val connecting = MutableLiveData(false)
 
-    val device = MutableLiveData<Device>()
+    val device = MutableLiveData<BaseDevice>()
 
     val isMapLoading = MutableLiveData(false)
 

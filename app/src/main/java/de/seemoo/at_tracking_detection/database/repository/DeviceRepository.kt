@@ -3,14 +3,14 @@ package de.seemoo.at_tracking_detection.database.repository
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @WorkerThread
 class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
-    val devices: Flow<List<Device>> = deviceDao.getAll()
+    val devices: Flow<List<BaseDevice>> = deviceDao.getAll()
 
     fun trackingDevicesSince(since: LocalDateTime) = deviceDao.getAllNotificationSince(since)
 
@@ -29,11 +29,11 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun deviceCountSince(since: LocalDateTime): Flow<Int> =
         deviceDao.getCurrentlyMonitored(since)
 
-    val ignoredDevices: Flow<List<Device>> = deviceDao.getIgnored()
+    val ignoredDevices: Flow<List<BaseDevice>> = deviceDao.getIgnored()
 
-    val ignoredDevicesSync: List<Device> = deviceDao.getIgnoredSync()
+    val ignoredDevicesSync: List<BaseDevice> = deviceDao.getIgnoredSync()
 
-    fun getDevice(deviceAddress: String): Device? = deviceDao.getByAddress(deviceAddress)
+    fun getDevice(deviceAddress: String): BaseDevice? = deviceDao.getByAddress(deviceAddress)
 
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
@@ -45,13 +45,13 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     }
 
     @WorkerThread
-    suspend fun insert(device: Device) {
-        deviceDao.insert(device)
+    suspend fun insert(baseDevice: BaseDevice) {
+        deviceDao.insert(baseDevice)
     }
 
     @WorkerThread
-    suspend fun update(device: Device) {
-        deviceDao.update(device)
+    suspend fun update(baseDevice: BaseDevice) {
+        deviceDao.update(baseDevice)
     }
 
     @WorkerThread

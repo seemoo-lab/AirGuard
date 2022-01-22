@@ -2,7 +2,7 @@
 buildscript {
     ext.kotlin_version = '1.6.10'
     ext.hilt_version = '2.40.5'
-    ext.room_version = '2.4.0'
+    ext.room_version = '2.4.1'
     ext.nav_version = "2.3.5"
     repositories {
         google()

@@ -10,8 +10,8 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.Beacon
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +28,7 @@ class RiskDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val relevantDate = RiskLevelEvaluator.relevantTrackingDate
-    private val trackersFound: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
+    private val trackersFound: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
     private val lastSeenDates = trackersFound.map {
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.lastSeen)
     }

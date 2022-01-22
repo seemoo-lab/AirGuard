@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.tables.Beacon
+import de.seemoo.at_tracking_detection.database.models.Beacon
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 

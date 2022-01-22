@@ -11,8 +11,8 @@
             type="String" />
 
         <variable
-            name="device"
-            type="de.seemoo.at_tracking_detection.database.tables.device.Device" />
+            name="baseDevice"
+            type="de.seemoo.at_tracking_detection.database.models.device.BaseDevice" />
 
     </data>
 
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/devices_item_height"
                 android:layout_margin="@dimen/card_margin"
-                app:device="@{device}"
+                app:baseDevice="@{baseDevice}"
                 app:deviceBeaconCount="@{deviceBeaconCount}" />
 
             <include

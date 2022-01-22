@@ -2,7 +2,7 @@ package de.seemoo.at_tracking_detection.util.risk
 
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.tables.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -19,14 +19,14 @@ class RiskLevelEvaluator(
      */
     fun evaluateRiskLevel(): RiskLevel {
         val relevantDate = relevantTrackingDate
-        val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
 
-        val totalTrackers = devices.count()
+        val totalTrackers = baseDevices.count()
 
         if (totalTrackers == 0) {
             return RiskLevel.LOW
         } else {
-            val trackedLocations = devices.map {
+            val trackedLocations = baseDevices.map {
                 beaconRepository.getDeviceBeacons(it.address)
             }.flatten()
 
@@ -45,19 +45,19 @@ class RiskLevelEvaluator(
 
     fun getLastTrackerDiscoveryDate(): Date {
         val relevantDate = relevantTrackingDate
-        val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
             .sortedByDescending { it.lastSeen }
 
-        return devices.firstOrNull()
+        return baseDevices.firstOrNull()
             ?.let { Date.from(it.lastSeen.atZone(ZoneId.systemDefault()).toInstant()) }
             ?: Date()
     }
 
     fun getNumberRelevantTrackers(): Int {
         val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
-        val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
 
-        return devices.count()
+        return baseDevices.count()
     }
 
     companion object {
