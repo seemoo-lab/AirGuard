@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -24,10 +25,12 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import fr.bipi.tressence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -97,6 +100,16 @@ class DebugFragment : Fragment() {
                 }
                 Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
             }
+        }
+
+        val trees = Timber.forest()
+        val fileLogTree: FileLoggerTree = trees.firstOrNull { it is FileLoggerTree } as FileLoggerTree
+        val filename = fileLogTree.getFileName(0)
+        val file = File(filename)
+        if (file.exists()) {
+            view.findViewById<TextView>(R.id.log_text_view).text = file.readText()
+        }else {
+            view.findViewById<TextView>(R.id.log_text_view).text = "No log file found"
         }
     }
 

@@ -71,6 +71,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation 'com.github.bastienpaulfr:Treessence:1.0.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
@@ -102,6 +103,7 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     implementation 'com.mikepenz:aboutlibraries:8.9.3'
+
 
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     kapt 'androidx.hilt:hilt-compiler:1.0.0'

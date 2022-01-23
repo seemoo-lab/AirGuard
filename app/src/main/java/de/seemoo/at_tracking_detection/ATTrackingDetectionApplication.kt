@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -18,10 +19,13 @@ import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
-import timber.log.Timber
+import fr.bipi.tressence.file.FileLoggerTree
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import timber.log.Timber
+import java.io.File
+
 
 @HiltAndroidApp
 class ATTrackingDetectionApplication : Application(), Configuration.Provider {
@@ -42,7 +46,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .setMinimumLoggingLevel(Log.DEBUG)
             .setWorkerFactory(workerFactory)
             .build()
 
@@ -52,6 +56,18 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         Timber.plant(Timber.DebugTree())
         Timber.d("Tree planted")
+
+        if (BuildConfig.DEBUG) {
+            // We use this to access our logs from a file for on device debugging
+            val t: Timber.Tree = FileLoggerTree.Builder()
+                .withSizeLimit(2_000_000)
+                .withDir(filesDir)
+                .withMinPriority(Log.VERBOSE)
+                .build()
+
+            Timber.plant(t)
+            Timber.v("File tree planted")
+        }
 
         DynamicColors.applyToActivitiesIfAvailable(this)
 

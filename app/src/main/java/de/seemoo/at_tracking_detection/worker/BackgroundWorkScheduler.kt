@@ -18,7 +18,7 @@ class BackgroundWorkScheduler @Inject constructor(
         Timber.d("Work scheduler started!")
         workManager.enqueueUniquePeriodicWork(
             WorkerConstants.PERIODIC_SCAN_WORKER,
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE,
             backgroundWorkBuilder.buildScanWorker()
         ).also { operation ->
             operation.logOperationSchedule(WorkerConstants.PERIODIC_SCAN_WORKER)
