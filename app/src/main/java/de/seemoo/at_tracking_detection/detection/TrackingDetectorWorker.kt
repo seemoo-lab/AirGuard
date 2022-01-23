@@ -75,6 +75,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             notificaitonsSent += 1
         }
 
+        Timber.d("Tracking detector worker finished. Sent $notificaitonsSent notifications")
         return Result.success(
             Data.Builder()
                 .putInt("sentNotifications", notificaitonsSent)
