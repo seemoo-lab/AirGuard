@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -36,6 +37,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
         val cleanedBeaconsPerDevice = getLatestBeaconsPerDevice().filterKeys { address ->
             !ignoredDevices.map { it.address }.contains(address)
         }
+
+        var notificaitonsSent = 0
 
         //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
@@ -69,9 +72,14 @@ class TrackingDetectorWorker @AssistedInject constructor(
             device?.notificationSent = true
             device?.lastNotificationSent = LocalDateTime.now()
             device?.let { d -> deviceRepository.update(d) }
+            notificaitonsSent += 1
         }
 
-        return Result.success()
+        return Result.success(
+            Data.Builder()
+                .putInt("sentNotifications", notificaitonsSent)
+                .build()
+        )
     }
 
     private val useLocation = sharedPreferences.getBoolean("use_location", false)

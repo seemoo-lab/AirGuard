@@ -10,6 +10,7 @@ import android.content.SharedPreferences
 import android.location.Location
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -20,6 +21,7 @@ import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private val locationProvider: LocationProvider,
     private val sharedPreferences: SharedPreferences,
     private val notificationService: NotificationService,
+    var backgroundWorkScheduler: BackgroundWorkScheduler
 ) :
     CoroutineWorker(appContext, workerParams) {
 
@@ -99,7 +102,17 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 discoveredDevice.discoveryDate
             )
         }
-        return Result.success()
+
+        Timber.d("Scheduling tracking detector worker")
+        backgroundWorkScheduler.scheduleTrackingDetector()
+
+        return Result.success(
+            Data.Builder()
+                .putLong("duration", getScanDuration())
+                .putInt("mode", getScanMode())
+                .putInt("devicesFound", scanResultDictionary.size)
+                .build()
+        )
     }
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
