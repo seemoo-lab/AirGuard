@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogPlaySoundBinding
@@ -35,7 +36,6 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogPlaySoundBinding.inflate(LayoutInflater.from(context))
-        binding.vm = viewModel
         return binding.root
     }
 
@@ -52,22 +52,30 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launchWhenStarted {
             viewModel.playSoundState.collect {
-                if (it != DialogViewModel.ConnectionState.Connecting) {
-                    binding.spinnerPlaying.visibility = View.GONE
-                }
                 when (it) {
-                    is DialogViewModel.ConnectionState.Success -> {
-                        binding.imageSuccess.visibility = View.VISIBLE
-                    }
                     is DialogViewModel.ConnectionState.Playing -> {
+                        binding.spinnerConnecting.visibility = View.INVISIBLE
                         binding.spinnerPlaying.visibility = View.VISIBLE
-                    }
-                    is DialogViewModel.ConnectionState.Error -> {
-                        binding.imageError.visibility = View.VISIBLE
-                        binding.errorText.text = it.message
                     }
                     is DialogViewModel.ConnectionState.Connecting -> {
-                        binding.spinnerPlaying.visibility = View.VISIBLE
+                        binding.spinnerConnecting.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.spinnerConnecting.visibility = View.INVISIBLE
+                        binding.spinnerPlaying.visibility = View.INVISIBLE
+                        when (it) {
+                            is DialogViewModel.ConnectionState.Error -> {
+                                binding.imageError.visibility = View.VISIBLE
+                                binding.errorText.visibility = View.VISIBLE
+                                binding.errorText.text = it.message
+                            }
+                            is DialogViewModel.ConnectionState.Success -> {
+                                binding.imageSuccess.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                Timber.d("Reached unknown state $it!")
+                            }
+                        }
                     }
                 }
             }
@@ -83,15 +91,17 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                BluetoothConstants.ACTION_GATT_CONNECTED -> {
-                    viewModel.playSoundState.value = DialogViewModel.ConnectionState.Playing
+                BluetoothConstants.ACTION_GATT_CONNECTING -> {
+                    viewModel.playSoundState.value = DialogViewModel.ConnectionState.Connecting
                 }
+                BluetoothConstants.ACTION_EVENT_RUNNING -> viewModel.playSoundState.value =
+                    DialogViewModel.ConnectionState.Playing
                 else -> {
                     when (intent.action) {
                         BluetoothConstants.ACTION_GATT_DISCONNECTED -> viewModel.playSoundState.value =
                             DialogViewModel.ConnectionState.Success
                         BluetoothConstants.ACTION_EVENT_FAILED -> viewModel.playSoundState.value =
-                            DialogViewModel.ConnectionState.Error("Failed to play Sound!")
+                            DialogViewModel.ConnectionState.Error(getString(R.string.play_sound_error_fail))
                         BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.playSoundState.value =
                             DialogViewModel.ConnectionState.Success
                     }
@@ -106,18 +116,17 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
             val bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
             if (!bluetoothService.init()) {
                 viewModel.playSoundState.value =
-                    DialogViewModel.ConnectionState.Error("Could not connect to the Bluetooth Service!")
+                    DialogViewModel.ConnectionState.Error(getString(R.string.play_sound_error_init))
             } else {
-                if (bluetoothService.connect(BaseDevice(scanResult))) {
-                    viewModel.playSoundState.value =
-                        DialogViewModel.ConnectionState.Playing
-                } else {
-                    DialogViewModel.ConnectionState.Error("Failed to connect to device!")
+                viewModel.playSoundState.value =
+                    DialogViewModel.ConnectionState.Connecting
+                if (!bluetoothService.connect(BaseDevice(scanResult))) {
+                    DialogViewModel.ConnectionState.Error(getString(R.string.play_sound_error_connect))
                 }
             }
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
+        override fun onServiceDisconnected(p0: ComponentName?) {
         }
     }
 

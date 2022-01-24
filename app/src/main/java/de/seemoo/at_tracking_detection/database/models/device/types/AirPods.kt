@@ -41,7 +41,6 @@ class AirPods(val id: Int) : Device(), Connectable {
                             BluetoothProfile.STATE_CONNECTED -> {
                                 Timber.d("Connected to gatt device!")
                                 gatt.discoverServices()
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_CONNECTED)
                             }
                             BluetoothProfile.STATE_DISCONNECTED -> {
                                 broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
@@ -134,9 +133,6 @@ class AirPods(val id: Int) : Device(), Connectable {
             get() = ScanFilter.Builder()
                 .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
                 .build()
-
-        override val serviceFilter: ArrayList<UUID>
-            get() = arrayListOf()
 
         override val deviceType: DeviceType
             get() = DeviceType.AIRPODS

@@ -16,7 +16,6 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_COMPLETED
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_EVENT_FAILED
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_GATT_CONNECTED
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants.ACTION_GATT_DISCONNECTED
 import timber.log.Timber
 import java.util.*
@@ -25,8 +24,6 @@ class BluetoothLeService : Service() {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
     private var bluetoothGatt: BluetoothGatt? = null
-
-    private var connectionState = STATE_DISCONNECTED
 
     private val binder = LocalBinder()
 
@@ -58,6 +55,7 @@ class BluetoothLeService : Service() {
             Timber.d("Device type is ${baseDevice.deviceType} and therefore not able to play a sound!")
             return false
         }
+        broadcastUpdate(BluetoothConstants.ACTION_GATT_CONNECTING)
         bluetoothAdapter?.let {
             return try {
                 val device = it.getRemoteDevice(baseDevice.address)
@@ -83,22 +81,19 @@ class BluetoothLeService : Service() {
 
     private val bluetoothGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            when (status) {
+            when (newState) {
                 GATT_SUCCESS -> {
                     when (newState) {
                         BluetoothProfile.STATE_CONNECTED -> {
-                            connectionState = STATE_CONNECTED
                             Timber.d("Connected to gatt device!")
                             gatt.discoverServices()
-                            broadcastUpdate(ACTION_GATT_CONNECTED)
                         }
                         BluetoothProfile.STATE_DISCONNECTED -> {
-                            connectionState = STATE_DISCONNECTED
                             broadcastUpdate(ACTION_GATT_DISCONNECTED)
                             Timber.d("Disconnected from gatt device!")
                         }
                         else -> {
-                            Timber.d("Connection state changed to $connectionState")
+                            Timber.d("Connection state changed to $status")
                         }
                     }
                 }
@@ -129,7 +124,7 @@ class BluetoothLeService : Service() {
                     gatt.writeCharacteristic(it)
                     Timber.d("Playing sound on AirTag...")
                 }
-            broadcastUpdate(BluetoothConstants.ACTION_PLAYING)
+            broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
         }
 
         fun playSoundOnFindMyDevice(gatt: BluetoothGatt) {
@@ -154,7 +149,7 @@ class BluetoothLeService : Service() {
                 gatt.writeCharacteristic(it)
                 Timber.d("Playing sound on Find My device with ${it.uuid}")
             }
-            broadcastUpdate(BluetoothConstants.ACTION_PLAYING)
+            broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
         }
 
         fun stopSoundOnFindMyDevice(gatt: BluetoothGatt) {
@@ -245,8 +240,6 @@ class BluetoothLeService : Service() {
             UUID.fromString("7DFC9001-7D1C-4951-86AA-8D9728F8D66C")
         private const val AIR_TAG_START_SOUND_OPCODE = 175
         private const val AIR_TAG_EVENT_CALLBACK = 0x302
-        private const val STATE_DISCONNECTED = 0
-        private const val STATE_CONNECTED = 2
 
         private const val FINDMY_SOUND_SERVICE = "fd44"
         private val FINDMY_SOUND_CHARACTERISTIC =

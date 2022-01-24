@@ -5,7 +5,5 @@ import android.bluetooth.le.ScanFilter
 interface DeviceContext {
     val bluetoothFilter: ScanFilter
 
-    val bleDeviceFilter: BleDeviceFilter
-
     val deviceType: DeviceType
 }

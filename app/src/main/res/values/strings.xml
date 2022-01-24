@@ -95,8 +95,8 @@
     <string name="onboarding_share_data_no">No</string>
     <string name="onboarding_share_data_yes">Yes</string>
     <string name="onboarding_share_data_dialog">You have to decide whether you want to share some anonymized data or not!</string>
-    <string name="device_name_airtag">AirTag %s</string>
-    <string name="device_name_find_my_device">Find My Device %s</string>
+    <string name="device_name_airtag" translatable="false">AirTag %s</string>
+    <string name="device_name_find_my_device" translatable="false">Find My Device %s</string>
     <string name="notification_text">Open the notification to get more info. A device has followed you for at least 30 minutes.</string>
     <string name="notification_title">A tracker was discovered!</string>
     <string name="notification_title_ble_error">BLE Scaning failed</string>
@@ -187,6 +187,10 @@
     <string name="empty_image_content_description">Image showing an empty list</string>
     <string name="beacon_locations">Beacon locations</string>
     <string name="other_devices_found">Other devices found</string>
-    <string name="device_name_tile">Tile %s</string>
-    <string name="device_name_airpods">AirPods %s</string>
+    <string name="device_name_tile" translatable="false">Tile %s</string>
+    <string name="device_name_airpods" translatable="false">AirPods %s</string>
+    <string name="play_sound_error_fail">Failed to play sound! Please try again!</string>
+    <string name="play_sound_error_init">Could not connect to the Bluetooth Service!</string>
+    <string name="play_sound_error_connect">Failed to connect to device!</string>
+>>>>>>> 2de4e82 (fix play sound dialog states)
 </resources>

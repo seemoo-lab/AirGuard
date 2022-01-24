@@ -65,9 +65,6 @@ class Tile(val id: Int) : Device(), Connectable {
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder().setDeviceAddress("FF:FF:FF:FF:FF:FF") .build()
 
-        override val serviceFilter: ArrayList<UUID>
-            get() = arrayListOf()
-
         override val deviceType: DeviceType
             get() = DeviceType.TILE
     }

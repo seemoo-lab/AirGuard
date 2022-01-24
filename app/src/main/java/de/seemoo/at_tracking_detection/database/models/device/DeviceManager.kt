@@ -23,7 +23,7 @@ object DeviceManager {
     val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }
 
     val gattIntentFilter: IntentFilter = IntentFilter().apply {
-        addAction(BluetoothConstants.ACTION_GATT_CONNECTED)
+        addAction(BluetoothConstants.ACTION_EVENT_RUNNING)
         addAction(BluetoothConstants.ACTION_GATT_DISCONNECTED)
         addAction(BluetoothConstants.ACTION_EVENT_COMPLETED)
         addAction(BluetoothConstants.ACTION_EVENT_FAILED)

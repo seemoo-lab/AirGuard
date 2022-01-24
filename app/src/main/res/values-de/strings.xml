@@ -86,7 +86,6 @@
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
-    <string name="device_name_airtag">AirTag %s</string>
     <string name="settings_privacy_policy_title">Datenschutzerklärung</string>
     <string name="settings_privacy_policy_summary">Unsere simple Datenschutzerklärung</string>
     <string name="alert_sent_icon">"Alarm wurde gesendet"-Icon</string>
@@ -174,5 +173,4 @@
     <string name="beacon_locations">Beacon Standorte</string>
     <string name="other_devices_found">Andere Geräte</string>
     <string name="info_text_all_locations">"Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben. "</string>
-    <string name="device_name_tile">Tile %s</string>
 </resources>

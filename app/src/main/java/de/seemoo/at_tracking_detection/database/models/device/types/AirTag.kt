@@ -32,15 +32,10 @@ class AirTag(val id: Int) : Device(), Connectable {
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
                         when (newState) {
-                            BluetoothProfile.STATE_CONNECTED -> {
-                                Timber.d("Connected to gatt device!")
-                                gatt.discoverServices()
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_CONNECTED)
-                            }
-                            BluetoothProfile.STATE_DISCONNECTED -> {
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
-                                Timber.d("Disconnected from gatt device!")
-                            }
+                            BluetoothProfile.STATE_CONNECTED -> gatt.discoverServices()
+                            BluetoothProfile.STATE_DISCONNECTED -> broadcastUpdate(
+                                BluetoothConstants.ACTION_GATT_DISCONNECTED
+                            )
                             else -> {
                                 Timber.d("Connection state changed to $newState")
                             }
@@ -49,22 +44,20 @@ class AirTag(val id: Int) : Device(), Connectable {
                     19 -> {
                         broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
                     }
-                    else -> {
-                        Timber.e("Failed to connect to bluetooth device! Status: $status")
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
-                    }
+                    else -> broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
                 }
             }
 
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 val service = gatt.getService(AIR_TAG_SOUND_SERVICE)
                 if (service == null) {
-                    Timber.e("Airtag sound service not found!")
+                    Timber.e("AirTag sound service not found!")
                 } else {
                     service.getCharacteristic(AIR_TAG_SOUND_CHARACTERISTIC)
                         .let {
                             it.setValue(175, BluetoothGattCharacteristic.FORMAT_UINT8, 0)
                             gatt.writeCharacteristic(it)
+                            broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
                             Timber.d("Playing sound...")
                         }
                 }
@@ -100,10 +93,6 @@ class AirTag(val id: Int) : Device(), Connectable {
                     byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x24).toByte())
                 )
                 .build()
-
-        override val bleDeviceFilter: BleDeviceFilter
-            get() = BleDeviceFilter.Builder().setService(AIR_TAG_SOUND_SERVICE).build()
-
 
         override val deviceType: DeviceType
             get() = DeviceType.AIRTAG

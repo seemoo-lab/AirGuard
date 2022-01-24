@@ -157,7 +157,7 @@ class TrackingFragment : Fragment() {
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                BluetoothConstants.ACTION_GATT_CONNECTED -> {
+                BluetoothConstants.ACTION_EVENT_RUNNING -> {
                     trackingViewModel.soundPlaying.postValue(
                         true
                     )

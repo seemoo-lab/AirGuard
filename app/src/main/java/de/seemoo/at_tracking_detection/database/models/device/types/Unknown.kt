@@ -16,7 +16,7 @@ class Unknown(val id: Int) : Device() {
         get() = R.drawable.ic_baseline_device_unknown_24
 
     override val defaultDeviceName: String
-        get() = "FindMy"
+        get() = "FindMy Device"
 
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device)
@@ -26,9 +26,6 @@ class Unknown(val id: Int) : Device() {
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte())).build()
-
-        override val serviceFilter: ArrayList<UUID>
-            get() = arrayListOf()
 
         override val deviceType: DeviceType
             get() = DeviceType.UNKNOWN

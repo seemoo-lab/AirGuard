@@ -87,7 +87,7 @@ class ScanFragment : Fragment() {
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val scanSettings =
-            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED).build()
+            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
         bluetoothLeScanner = bluetoothManager?.adapter?.bluetoothLeScanner
         bluetoothLeScanner?.stopScan(scanCallback)
 

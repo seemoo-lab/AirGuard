@@ -5,10 +5,6 @@
 
     <data>
 
-        <variable
-            name="vm"
-            type="de.seemoo.at_tracking_detection.ui.scan.dialog.DialogViewModel" />
-
         <import type="android.view.View" />
     </data>
 
