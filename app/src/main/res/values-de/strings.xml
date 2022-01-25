@@ -173,4 +173,7 @@
     <string name="beacon_locations">Beacon Standorte</string>
     <string name="other_devices_found">Andere Geräte</string>
     <string name="info_text_all_locations">"Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben. "</string>
+    <string name="play_sound_error_fail">Ton konnte nicht abgespielt werden! Versuche es erneut!</string>
+    <string name="play_sound_error_init">Es konnte keine Verbindung zum Bluetooth Service hergestellt werden!</string>
+    <string name="play_sound_error_connect">Verbindung zum Gerät fehlgeschlagen!</string>
 </resources>
