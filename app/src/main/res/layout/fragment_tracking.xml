@@ -41,17 +41,45 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tracking_map">
 
+
+            <include
+                android:id="@+id/device_item"
+                layout="@layout/item_device"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/devices_item_height"
+                android:layout_margin="@dimen/card_margin"
+                app:baseDevice="@{vm.device}"
+                app:deviceBeaconCount="@{vm.amountBeacons}"
+                app:isClickable="@{false}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/location_missing_hint"
+                layout="@layout/item_icon_text_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin"
+                android:visibility="@{vm.beaconsHaveMissingLocation ? View.VISIBLE : View.GONE, default=gone}"
+                app:iconDrawable="@{@drawable/ic_baseline_info_24}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/device_item"
+                app:rowText="@{@string/tracking_missing_beacons_info}" />
+
             <include
                 android:id="@+id/tracking_play_sound"
                 layout="@layout/include_tracking_tile"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
+                android:visibility="@{vm.connectable ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toTopOf="@id/tracking_feedback"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tracking_ignore_device"
-                app:layout_constraintTop_toTopOf="parent"
-                bind:clickable="@{!vm.soundPlaying}"
+                app:layout_constraintTop_toBottomOf="@id/location_missing_hint"
+                bind:clickable="@{!vm.soundPlaying || !vm.connecting}"
                 bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
                 bind:imageDescription="@{@string/tracking_locate_at_playing_sound}"
                 bind:showLoader="@{true}"
@@ -70,7 +98,7 @@
                 app:layout_constraintBottom_toTopOf="@id/tracking_false_alarm"
                 app:layout_constraintLeft_toRightOf="@id/tracking_play_sound"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/location_missing_hint"
                 bind:checkable="@{true}"
                 bind:checked="@{vm.deviceIgnored}"
                 bind:clickable="@{true}"
@@ -90,7 +118,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tracking_false_alarm"
-                app:layout_constraintTop_toBottomOf="@id/tracking_play_sound"
+                app:layout_constraintTop_creator="@id/tracking_feedback"
                 bind:clickable="@{true}"
                 bind:drawable="@{@drawable/ic_baseline_feedback_24}"
                 bind:imageDescription="@{@string/tracking_feedback_title}"
@@ -131,6 +159,7 @@
             android:layout_weight="0.05"
             android:autoSizeTextType="uniform"
             android:text="@string/tracking_info"
+            android:visibility="@{vm.showNfcHint ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

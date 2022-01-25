@@ -41,24 +41,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_ignored_devices"
-        android:name="de.seemoo.at_tracking_detection.ui.devices.DevicesFragment"
-        android:label="@string/title_ignored_devices"
-        tools:layout="@layout/fragment_devices">
-        <argument
-            android:name="showDevicesFound"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <action
-            android:id="@+id/dashboardToDeviceDetailFragment"
-            app:destination="@id/device_detail"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim" />
-    </fragment>
-
-    <fragment
         android:id="@+id/navigation_settings"
         android:name="de.seemoo.at_tracking_detection.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
@@ -74,7 +56,7 @@
         android:id="@+id/navigation_debug"
         android:name="de.seemoo.at_tracking_detection.ui.debug.DebugFragment"
         android:label="@string/title_debug"
-        tools:layout="@layout/fragment_debug" >
+        tools:layout="@layout/fragment_debug">
         <action
             android:id="@+id/action_navigation_debug_to_debugLogFragment"
             app:destination="@id/debugLogFragment" />
@@ -85,46 +67,20 @@
         android:name="de.seemoo.at_tracking_detection.ui.devices.DevicesFragment"
         android:label="@string/title_devices"
         tools:layout="@layout/fragment_devices">
-        <action
-            android:id="@+id/dashboardToDeviceDetailFragment"
-            app:destination="@id/device_detail"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim" />
         <argument
             android:name="showDevicesFound"
             android:defaultValue="false"
             app:argType="boolean" />
         <argument
             android:name="showAllDevices"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_navigation_devices_to_trackingFragment"
+            app:destination="@id/trackingFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/device_detail"
-        android:name="de.seemoo.at_tracking_detection.ui.devices.DeviceDetailFragment"
-        android:label="@string/title_devices_tracking"
-        tools:layout="@layout/fragment_device_detail">
-        <argument
-            android:name="deviceAddress"
-            app:argType="string" />
-        <argument
-            android:name="discoveryDate"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_device_detail_to_trackingFragment"
-            app:destination="@id/trackingFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim">
-            <argument
-                android:name="notificationId"
-                android:defaultValue="-1" />
-        </action>
-    </fragment>
     <fragment
         android:id="@+id/deviceMapFragment"
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.DeviceMapFragment"
@@ -142,9 +98,10 @@
         </action>
         <argument
             android:name="showAllDevices"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
+
     <fragment
         android:id="@+id/trackingFragment"
         android:name="de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment"
@@ -157,16 +114,17 @@
             android:defaultValue="-1"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/scanFragment"
         android:name="de.seemoo.at_tracking_detection.ui.scan.ScanFragment"
-        android:label="@string/scan_title" >
-    </fragment>
+        android:label="@string/scan_title" />
+
     <fragment
         android:id="@+id/riskDetailFragment"
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailFragment"
         android:label="@string/title_risk_detail"
-        tools:layout="@layout/fragment_risk_detail" >
+        tools:layout="@layout/fragment_risk_detail">
         <action
             android:id="@+id/action_riskDetailFragment_to_deviceMapFragment"
             app:destination="@id/deviceMapFragment"
@@ -180,12 +138,13 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            app:popExitAnim="@anim/nav_default_pop_exit_anim">
             <argument
                 android:name="showDevicesFound"
                 android:defaultValue="true" />
         </action>
     </fragment>
+
     <fragment
         android:id="@+id/debugLogFragment"
         android:name="de.seemoo.at_tracking_detection.ui.debug.DebugLogFragment"

@@ -23,7 +23,7 @@
     <string name="statistics_devices_monitored">Devices Currently Monitored</string>
     <string name="settings_share_data_summary">Support the project by sharing some anonymized data</string>
     <string name="settings_share_data_title">Participate in study</string>
-    <string name="device_item_first_discovery">"First Discovery:"</string>
+    <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="devices_swipe">Swipe to remove</string>
     <string name="devices_list_empty">Whenever the app detects an AirTag or another Find My device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
@@ -42,6 +42,7 @@
     <string name="tracking_ignore_device_subtitle">Mute notifications for this device</string>
     <string name="tracking_false_alarm_title">False Alarm</string>
     <string name="tracking_false_alarm_subtitle">Mark this notification as false alarm</string>
+    <string name="tracking_missing_beacons_info">Some beacons were captured without any location data and are therefore not displayed!</string>
     <string name="feedback_question1">Where was the Find My device hidden?</string>
     <string name="feedback_location_backpack">Backpack</string>
     <string name="feedback_location_clothes">Clothes</string>

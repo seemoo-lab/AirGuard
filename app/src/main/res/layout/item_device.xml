@@ -10,6 +10,10 @@
             type="String" />
 
         <variable
+            name="isClickable"
+            type="Boolean" />
+
+        <variable
             name="baseDevice"
             type="de.seemoo.at_tracking_detection.database.models.device.BaseDevice" />
 
@@ -24,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/devices_item_height"
         android:layout_margin="@dimen/card_margin"
+        android:clickable="@{isClickable}"
         android:transitionName="@{baseDevice.address}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75" />
+                app:layout_constraintGuide_percent="0.80" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/device_guideline_right"
@@ -104,7 +109,8 @@
                     android:layout_height="match_parent"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:text="@{baseDevice.formattedDiscoveryDate}" />
+                    android:text="@{baseDevice.formattedDiscoveryDate}"
+                    tools:text="01/01/1337, 13:37" />
 
             </LinearLayout>
 
@@ -130,7 +136,8 @@
                     android:layout_height="match_parent"
                     android:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:text="@{baseDevice.formattedLastSeenDate}" />
+                    android:text="@{baseDevice.formattedLastSeenDate}"
+                    tools:text="03/01/1337, 13:37" />
 
             </LinearLayout>
 
@@ -161,13 +168,15 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@id/device_guideline_middle"
                 app:layout_constraintRight_toRightOf="@id/device_guideline_right"
-                app:layout_constraintTop_toBottomOf="@id/device_beacons" />
+                app:layout_constraintTop_toBottomOf="@id/device_beacons"
+                tools:text="8" />
 
 
             <ImageView
                 android:id="@+id/device_arrow"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:visibility="@{isClickable ? View.VISIBLE : View.GONE, default=visible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@id/device_guideline_right"
                 app:layout_constraintRight_toRightOf="parent"

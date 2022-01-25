@@ -1,11 +1,13 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import androidx.lifecycle.*
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,15 +28,27 @@ class TrackingViewModel @Inject constructor(
     val deviceIgnored = MutableLiveData(false)
 
     val soundPlaying = MutableLiveData(false)
-
     val connecting = MutableLiveData(false)
 
     val device = MutableLiveData<BaseDevice>()
+    val connectable = MutableLiveData<Boolean>(false)
+
+    val showNfcHint = MutableLiveData<Boolean>(false)
 
     val isMapLoading = MutableLiveData(false)
 
-    fun getMarkerLocations(): LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
+    val markerLocations: LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
         beaconRepository.getDeviceBeacons(it)
+    }
+
+    val beaconsHaveMissingLocation: LiveData<Boolean> = Transformations.map(markerLocations) {
+        it.any { beacon ->
+            beacon.latitude == null || beacon.longitude == null
+        }
+    }
+
+    val amountBeacons: LiveData<String> = Transformations.map(markerLocations) {
+        it.size.toString()
     }
 
     fun loadDevice(address: String) =
@@ -42,6 +56,8 @@ class TrackingViewModel @Inject constructor(
             device.postValue(it)
             if (it != null) {
                 deviceIgnored.postValue(it.ignore)
+                connectable.postValue(it.device is Connectable)
+                showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
             }
         }
 

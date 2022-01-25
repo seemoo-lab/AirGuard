@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.ui.tracking
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
@@ -29,6 +31,7 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,6 +59,12 @@ class TrackingFragment : Fragment() {
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
             notificationId = it
         }
+
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+                .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
+        postponeEnterTransition(100, TimeUnit.MILLISECONDS)
+
         return binding.root
     }
 
@@ -117,7 +126,7 @@ class TrackingFragment : Fragment() {
             }
         }
 
-        trackingViewModel.getMarkerLocations().observe(viewLifecycleOwner) {
+        trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
                 Util.setGeoPointsFromList(it, map, true)

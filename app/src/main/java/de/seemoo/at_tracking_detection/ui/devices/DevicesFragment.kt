@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
 import android.Manifest
-import android.app.AlertDialog
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -26,6 +25,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +65,7 @@ class DevicesFragment : Fragment() {
 
 
         if (!safeArgs.showDevicesFound) {
+            activity?.setTitle(R.string.title_ignored_devices)
             emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
@@ -91,12 +92,9 @@ class DevicesFragment : Fragment() {
         devicesViewModel.emptyListText.value = getString(emptyListText)
         devicesViewModel.infoText.value = getString(deviceInfoText)
 
-
         sharedElementReturnTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
                 .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
-
-
     }
 
     override fun onCreateView(
@@ -107,10 +105,8 @@ class DevicesFragment : Fragment() {
         val binding: FragmentDevicesBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
 
-
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
         itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
-
 
         deviceAdapter = DeviceAdapter(devicesViewModel, deviceItemListener)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -147,9 +143,8 @@ class DevicesFragment : Fragment() {
                 return@OnClickListener
             }
             val directions: NavDirections =
-                DevicesFragmentDirections.dashboardToDeviceDetailFragment(
-                    baseDevice.address,
-                    baseDevice.getFormattedDiscoveryDate()
+                DevicesFragmentDirections.actionNavigationDevicesToTrackingFragment(
+                    baseDevice.address
                 )
             val extras = FragmentNavigatorExtras(materialCardView to baseDevice.address)
             findNavController().navigate(directions, extras)
@@ -270,7 +265,7 @@ class DevicesFragment : Fragment() {
                 if (direction == ItemTouchHelper.LEFT) {
                     val editName = EditText(context)
                     editName.setText(device.getDeviceNameWithID())
-                    AlertDialog.Builder(context)
+                    MaterialAlertDialogBuilder(requireContext())
                         .setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)
                         .setNegativeButton(getString(R.string.cancel_button), null)
@@ -283,7 +278,7 @@ class DevicesFragment : Fragment() {
                             deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
                         }
                         .show()
-                } else if (direction == ItemTouchHelper.RIGHT) {
+                } else if (direction == ItemTouchHelper.RIGHT && device.ignore) {
                     devicesViewModel.setIgnoreFlag(device.address, false)
                     showRestoreDevice(device)
                     Timber.d("Removed device ${device.address} from ignored list")

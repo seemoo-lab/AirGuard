@@ -19,6 +19,7 @@ class DevicesViewModel @Inject constructor(
 
     fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
         deviceRepository.setIgnoreFlag(deviceAddress, state)
+        updateDeviceList()
     }
 
     fun getDeviceBeaconsCount(deviceAddress: String): String =
@@ -40,7 +41,11 @@ class DevicesViewModel @Inject constructor(
         } else {
             activeFilter[filterName] = filter
         }
+        updateDeviceList()
         Timber.d("Active Filter: $activeFilter")
+    }
+
+    private fun updateDeviceList() {
         devices.addSource(deviceRepository.devices.asLiveData()) {
             var filteredDevices = it
             activeFilter.forEach { (_, filter) ->

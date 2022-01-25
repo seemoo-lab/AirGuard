@@ -20,11 +20,11 @@ import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
+import timber.log.Timber
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import timber.log.Timber
-import java.io.File
 
 
 @HiltAndroidApp
@@ -58,13 +58,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         Timber.d("Tree planted")
 
         if (BuildConfig.DEBUG) {
-
-            val logFilePath = filesDir.path + "/logs.log"
-            val logFile = File(logFilePath).createNewFile()
-
             // We use this to access our logs from a file for on device debugging
-            val logFilePath = filesDir.path + "/logs.log"
-            val logFile = File(logFilePath).createNewFile()
+            File(filesDir.path + "/logs.log").createNewFile()
             val t: Timber.Tree = FileLoggerTree.Builder()
                 .withSizeLimit(2_000_000)
                 .withDir(filesDir)

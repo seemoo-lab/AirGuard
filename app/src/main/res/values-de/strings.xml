@@ -18,7 +18,7 @@
     <string name="statistics_devices_monitored">Derzeit beobachtete Geräte</string>
     <string name="settings_share_data_summary">Unterstütze AirGuard indem Du anonymisierte Statistikdaten teilst</string>
     <string name="settings_share_data_title">Statistikdaten teilen</string>
-    <string name="device_item_first_discovery">Erste Entdeckung</string>
+    <string name="device_item_first_discovery">Entdeckt:</string>
     <string name="devices_swipe">Zum Entfernen wischen</string>
     <string name="channel_name">Tracking-Erkennung</string>
     <string name="channel_description">Warnt dich vor "Find My"-Geräten, die dich evtl. verfolgen</string>
@@ -176,4 +176,5 @@
     <string name="play_sound_error_fail">Ton konnte nicht abgespielt werden! Versuche es erneut!</string>
     <string name="play_sound_error_init">Es konnte keine Verbindung zum Bluetooth Service hergestellt werden!</string>
     <string name="play_sound_error_connect">Verbindung zum Gerät fehlgeschlagen!</string>
+    <string name="tracking_missing_beacons_info">Manche Beacons wurden ohne Standortinformation gefunden und werden demnach nicht angezeigt!</string>
 </resources>

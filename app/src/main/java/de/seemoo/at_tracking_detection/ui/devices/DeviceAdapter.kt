@@ -22,6 +22,7 @@ class DeviceAdapter constructor(
         fun bind(baseDevice: BaseDevice, devicesViewModel: DevicesViewModel) {
             binding.deviceBeaconCount = devicesViewModel.getDeviceBeaconsCount(baseDevice.address)
             binding.baseDevice = baseDevice
+            binding.isClickable = true
             binding.executePendingBindings()
         }
     }

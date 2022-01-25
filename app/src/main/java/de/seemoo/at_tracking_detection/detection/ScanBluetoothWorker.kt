@@ -131,9 +131,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             super.onScanFailed(errorCode)
             Timber.e("Bluetooth scan failed $errorCode")
             if (BuildConfig.DEBUG) {
-                GlobalScope.launch {
-                    notificationService.sendBLEErrorNotification()
-                }
+                notificationService.sendBLEErrorNotification()
             }
         }
     }
