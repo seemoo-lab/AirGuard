@@ -51,16 +51,18 @@ class DevicesFragment : Fragment() {
 
     private lateinit var deviceAdapter: DeviceAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding: FragmentDevicesBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
-        var swipeDirs: Int = ItemTouchHelper.LEFT
+    private var swipeDirs: Int = ItemTouchHelper.LEFT
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Set up the view model here since this is only called when the Fragment gets created
+        // `onCreateView` is called every time the fragment is shown. Therefore it would not
+        // be good to handle the view model here. The View model should keep some state
+
         val emptyListText: Int
         var deviceInfoText = R.string.info_text_all_devices
+
 
         if (!safeArgs.showDevicesFound) {
             emptyListText = R.string.ignored_device_list_empty
@@ -68,21 +70,40 @@ class DevicesFragment : Fragment() {
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
         } else {
             val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDate.toLocalDate()
-            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(relevantTrackingStartDate, LocalDate.now()))
+            devicesViewModel.addOrRemoveFilter(
+                TimeRangeFilter.build(
+                    relevantTrackingStartDate,
+                    LocalDate.now()
+                )
+            )
             devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
             deviceInfoText = R.string.info_text_only_trackers
             emptyListText = R.string.empty_list_trackers
         }
 
-        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
-        itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
+        devicesViewModel.emptyListText.value = getString(emptyListText)
+        devicesViewModel.infoText.value = getString(deviceInfoText)
+
 
         sharedElementReturnTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
                 .setInterpolator(LinearOutSlowInInterpolator()).setDuration(500)
 
-        devicesViewModel.emptyListText.value = getString(emptyListText)
-        devicesViewModel.infoText.value = getString(deviceInfoText)
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding: FragmentDevicesBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_devices, container, false)
+
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
+        itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
+
 
         deviceAdapter = DeviceAdapter(devicesViewModel, deviceItemListener)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -108,6 +129,7 @@ class DevicesFragment : Fragment() {
         val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
         showAllButton.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(NotifiedFilter.build(), true)
+            devicesViewModel.addOrRemoveFilter(IgnoredFilter.build(), true)
         }
 
     }
