@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "841da950df08d9e675079ca9f38dc562",
+    "identityHash": "5c12f337a1c4d8cd74617f05416fde12",
     "entities": [
       {
         "tableName": "device",
@@ -96,7 +96,7 @@
       },
       {
         "tableName": "notification",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `deviceAddress` TEXT NOT NULL, `falseAlarm` INTEGER NOT NULL, `createdAt` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `deviceAddress` TEXT NOT NULL, `falseAlarm` INTEGER NOT NULL, `dismissed` INTEGER, `clicked` INTEGER, `createdAt` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "notificationId",
@@ -115,6 +115,18 @@
             "columnName": "falseAlarm",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "dismissed",
+            "columnName": "dismissed",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clicked",
+            "columnName": "clicked",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "createdAt",
@@ -224,7 +236,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '841da950df08d9e675079ca9f38dc562')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5c12f337a1c4d8cd74617f05416fde12')"
     ]
   }
 }

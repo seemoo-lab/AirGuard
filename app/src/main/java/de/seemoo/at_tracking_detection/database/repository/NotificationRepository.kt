@@ -50,4 +50,14 @@ class NotificationRepository @Inject constructor(private val notificationDao: No
     suspend fun setFalseAlarm(notificationId: Int, state: Boolean) {
         notificationDao.setFalseAlarm(notificationId, state)
     }
+
+    @WorkerThread
+    suspend fun setDismissed(notificationId: Int, state: Boolean) {
+        notificationDao.setDismissed(notificationId, state)
+    }
+
+    @WorkerThread
+    suspend fun setClicked(notificationId: Int, state: Boolean) {
+        notificationDao.setClicked(notificationId, state)
+    }
 }

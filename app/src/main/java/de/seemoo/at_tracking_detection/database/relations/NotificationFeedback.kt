@@ -8,6 +8,8 @@ import java.time.LocalDateTime
 data class NotificationFeedback(
     val notificationId: Int,
     val falseAlarm: Boolean,
+    val dismissed: Boolean,
+    val clicked: Boolean,
     val createdAt: LocalDateTime,
     @Relation(
         parentColumn = "notificationId",

@@ -22,57 +22,19 @@ class NotificationBuilder @Inject constructor(
     private fun pendingNotificationIntent(bundle: Bundle): PendingIntent {
         val intent = Intent(context, TrackingActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            action = NotificationConstants.CLICKED_ACTION
             putExtras(bundle)
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getActivity(context, 0, intent, 0)
-        }
-    }
-
-    private fun pendingFalseAlarmIntent(bundle: Bundle): PendingIntent {
-        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
-            action = NotificationConstants.FALSE_ALARM_ACTION
-            putExtras(bundle)
-        }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getBroadcast(
-                context,
-                NotificationConstants.FALSE_ALARM_CODE,
-                intent,
+        return PendingIntent.getActivity(
+            context,
+            NotificationConstants.CLICKED_CODE,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.FLAG_IMMUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                context,
-                NotificationConstants.FALSE_ALARM_CODE,
-                intent,
-                0
-            )
-        }
-    }
-
-    private fun pendingIgnoreDeviceIntent(bundle: Bundle): PendingIntent {
-        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
-            action = NotificationConstants.IGNORE_DEVICE_ACTION
-            putExtras(bundle)
-        }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getBroadcast(
-                context,
-                NotificationConstants.FALSE_ALARM_CODE,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                context,
-                NotificationConstants.FALSE_ALARM_CODE,
-                intent,
-                0
-            )
-        }
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+        )
     }
 
 
@@ -81,29 +43,64 @@ class NotificationBuilder @Inject constructor(
         putInt("notificationId", notificationId)
     }
 
+    private fun buildPendingIntent(
+        bundle: Bundle,
+        notificationAction: String,
+        code: Int
+    ): PendingIntent {
+        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
+            action = notificationAction
+            putExtras(bundle)
+        }
+        return PendingIntent.getActivity(
+            context,
+            code,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+        )
+    }
+
     fun buildTrackingNotification(
         deviceAddress: String,
         notificationId: Int
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val notifText = context.getString(R.string.notification_text)
+        val notifyText = context.getString(R.string.notification_text)
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title))
-            .setContentText(notifText)
+            .setContentText(notifyText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingNotificationIntent(bundle))
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(notifText))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
             .addAction(
                 R.drawable.ic_warning,
                 "FALSE ALARM",
-                pendingFalseAlarmIntent(bundle)
+                buildPendingIntent(
+                    bundle,
+                    NotificationConstants.FALSE_ALARM_ACTION,
+                    NotificationConstants.FALSE_ALARM_CODE
+                )
             ).addAction(
                 R.drawable.ic_warning,
                 "IGNORE DEVICE",
-                pendingIgnoreDeviceIntent(bundle)
+                buildPendingIntent(
+                    bundle,
+                    NotificationConstants.IGNORE_DEVICE_ACTION,
+                    NotificationConstants.IGNORE_DEVICE_CODE
+                )
+            ).setDeleteIntent(
+                buildPendingIntent(
+                    bundle,
+                    NotificationConstants.DISMISSED_ACTION,
+                    NotificationConstants.DISMISSED_CODE
+                )
             ).setAutoCancel(true).build()
 
     }

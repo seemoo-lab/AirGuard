@@ -13,11 +13,13 @@ data class Notification(
     @PrimaryKey(autoGenerate = true) val notificationId: Int,
     @ColumnInfo(name = "deviceAddress") var deviceAddress: String,
     @ColumnInfo(name = "falseAlarm") val falseAlarm: Boolean,
+    @ColumnInfo(name = "dismissed") val dismissed: Boolean?,
+    @ColumnInfo(name = "clicked") val clicked: Boolean?,
     @ColumnInfo(name = "createdAt") val createdAt: LocalDateTime
 ) {
     constructor(
         deviceAddress: String,
         falseAlarm: Boolean,
         createdAt: LocalDateTime
-    ) : this(0, deviceAddress, falseAlarm, createdAt)
+    ) : this(0, deviceAddress, falseAlarm, false, false, createdAt)
 }

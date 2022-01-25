@@ -1,8 +1,8 @@
 package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.relations.NotificationFeedback
 import de.seemoo.at_tracking_detection.database.models.Notification
+import de.seemoo.at_tracking_detection.database.relations.NotificationFeedback
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -13,6 +13,12 @@ interface NotificationDao {
 
     @Query("UPDATE notification SET falseAlarm = :state WHERE :id Like notificationId")
     suspend fun setFalseAlarm(id: Int, state: Boolean)
+
+    @Query("UPDATE notification SET dismissed = :state WHERE :id Like notificationId")
+    suspend fun setDismissed(id: Int, state: Boolean)
+
+    @Query("UPDATE notification SET clicked = :state WHERE :id Like notificationId")
+    suspend fun setClicked(id: Int, state: Boolean)
 
     @Query("SELECT COUNT(*) FROM notification WHERE falseAlarm = 1")
     fun getCountFalseAlarm(): Flow<Int>
