@@ -185,4 +185,6 @@
     <string name="empty_list_trackers">This list shows only devices that were tracking your location in the past 14 days. Since it is empty no device has attempted to follow you and track your location. Whenever a device is tracking your location, you will receive a notification. Remember to keep Bluetooth activated to find tracking devices. With the button below you can view all devices, even those which have not been classified as a tracker.</string>
     <string name="show_all_button">Show all devices</string>
     <string name="empty_image_content_description">Image showing an empty list</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

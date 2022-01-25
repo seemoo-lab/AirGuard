@@ -74,7 +74,11 @@
         android:id="@+id/navigation_debug"
         android:name="de.seemoo.at_tracking_detection.ui.debug.DebugFragment"
         android:label="@string/title_debug"
-        tools:layout="@layout/fragment_debug" />
+        tools:layout="@layout/fragment_debug" >
+        <action
+            android:id="@+id/action_navigation_debug_to_debugLogFragment"
+            app:destination="@id/debugLogFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_devices"
@@ -174,5 +178,10 @@
                 android:defaultValue="true" />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/debugLogFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.debug.DebugLogFragment"
+        android:label="Debug Logs"
+        tools:layout="@layout/fragment_debug_log" />
 
 </navigation>

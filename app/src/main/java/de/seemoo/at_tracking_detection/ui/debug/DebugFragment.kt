@@ -18,12 +18,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
+import de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragmentDirections
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
@@ -102,14 +105,10 @@ class DebugFragment : Fragment() {
             }
         }
 
-        val trees = Timber.forest()
-        val fileLogTree: FileLoggerTree = trees.firstOrNull { it is FileLoggerTree } as FileLoggerTree
-        val filename = fileLogTree.getFileName(0)
-        val file = File(filename)
-        if (file.exists()) {
-            view.findViewById<TextView>(R.id.log_text_view).text = file.readText()
-        }else {
-            view.findViewById<TextView>(R.id.log_text_view).text = "No log file found"
+        view.findViewById<Button>(R.id.button_debugLog).setOnClickListener {
+            val directions: NavDirections =
+                DebugFragmentDirections.actionNavigationDebugToDebugLogFragment()
+            findNavController().navigate(directions)
         }
     }
 

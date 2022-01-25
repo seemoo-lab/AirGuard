@@ -15,20 +15,17 @@
             android:id="@+id/bluetoothList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.35">
+            android:layout_weight="0.60">
 
         </ListView>
 
-        <ScrollView
+        <Button
+            android:id="@+id/button_debugLog"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.35"
-            >
-            <TextView
-                android:id="@+id/log_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
+            android:layout_weight="0.08"
+            android:text="Logs" />
 
         <LinearLayout
             android:layout_width="match_parent"

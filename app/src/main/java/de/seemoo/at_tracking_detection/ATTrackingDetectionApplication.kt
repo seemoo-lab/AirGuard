@@ -57,10 +57,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         Timber.plant(Timber.DebugTree())
         Timber.d("Tree planted")
 
-        val logFilePath = filesDir.path + "/logs.log"
-        val logFile = File(logFilePath).createNewFile()
-
         if (BuildConfig.DEBUG) {
+
+            val logFilePath = filesDir.path + "/logs.log"
+            val logFile = File(logFilePath).createNewFile()
+
             // We use this to access our logs from a file for on device debugging
             val t: Timber.Tree = FileLoggerTree.Builder()
                 .withSizeLimit(2_000_000)
