@@ -22,7 +22,7 @@
     <string name="devices_swipe">Zum Entfernen wischen</string>
     <string name="channel_name">Tracking-Erkennung</string>
     <string name="channel_description">Warnt dich vor "Find My" Geräten, die dich evtl. verfolgen</string>
-    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder ein anderes "Find My"-Gerät in deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in deiner Umgebung waren und dich nicht verfolgen. Du erhälst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
+    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder ein anderes "Find My"-Gerät in deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in deiner Umgebung waren und dich nicht verfolgen. Du erhältst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
     <string name="ignored_device_list_empty">Immer wenn du eine Benachrichtigung erhalten hast, dass du von einem dir bekannten Gerät (z. B. einem AirTag, den Sie besitzen) verfolgt wirst, dann kannst du diese ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denken Sie daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag. Ein bekannter AirTag wird also nach einem Tag als ein neuer angezeigt.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
