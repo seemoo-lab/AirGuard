@@ -9,12 +9,14 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 import kotlin.experimental.and
 
 @Entity(tableName = "device", indices = [Index(value = ["address"], unique = true)])
 @TypeConverters(DateTimeConverter::class)
 data class BaseDevice(
     @PrimaryKey(autoGenerate = true) var deviceId: Int,
+    @ColumnInfo(name = "uniqueId") val uniqueId: String?,
     @ColumnInfo(name = "address") var address: String,
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
@@ -37,6 +39,7 @@ data class BaseDevice(
         deviceType: DeviceType
     ) : this(
         0,
+        UUID.randomUUID().toString(),
         address,
         null,
         ignore,
@@ -51,6 +54,7 @@ data class BaseDevice(
 
     constructor(scanResult: ScanResult) : this(
         0,
+        UUID.randomUUID().toString(),
         scanResult.device.address,
         scanResult.scanRecord?.deviceName,
         false,

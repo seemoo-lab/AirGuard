@@ -1,8 +1,8 @@
 package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -49,7 +49,7 @@ interface DeviceDao {
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
-    @Query("SELECT * FROM device WHERE firstDiscovery >= :dateTime")
+    @Query("SELECT * FROM device JOIN beacon ON beacon.deviceAddress = deviceAddress WHERE beacon.receivedAt >= :dateTime")
     suspend fun getDeviceBeaconsSince(dateTime: LocalDateTime): List<DeviceBeaconNotification>
 
     @Transaction

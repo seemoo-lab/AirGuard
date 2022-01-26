@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.database.relations
 import androidx.room.Relation
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Notification
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import java.time.LocalDateTime
 
 
@@ -14,6 +15,7 @@ data class DeviceBeaconNotification(
     val payloadData: Byte?,
     val firstDiscovery: LocalDateTime,
     val lastSeen: LocalDateTime,
+    val deviceType: DeviceType,
     @Relation(parentColumn = "address", entityColumn = "deviceAddress")
     val beacons: List<Beacon>,
     @Relation(

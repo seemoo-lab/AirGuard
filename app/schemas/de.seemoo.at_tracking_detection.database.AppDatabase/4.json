@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "5c12f337a1c4d8cd74617f05416fde12",
+    "identityHash": "c90bd0d9628dc66d918725fd539ab962",
     "entities": [
       {
         "tableName": "device",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER NOT NULL, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER NOT NULL, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT)",
         "fields": [
           {
             "fieldPath": "deviceId",
             "columnName": "deviceId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "uniqueId",
+            "columnName": "uniqueId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "address",
@@ -236,7 +242,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5c12f337a1c4d8cd74617f05416fde12')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c90bd0d9628dc66d918725fd539ab962')"
     ]
   }
 }
