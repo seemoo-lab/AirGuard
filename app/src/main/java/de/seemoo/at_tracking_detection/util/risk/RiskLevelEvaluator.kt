@@ -21,10 +21,9 @@ class RiskLevelEvaluator(
         val relevantDate = relevantTrackingDate
         val devices: List<Device> = deviceRepository.trackingDevicesSince(relevantDate)
 
-        val totalAlerts = devices.count()
+        val totalTrackers = devices.count()
 
-
-        if (totalAlerts == 0) {
+        if (totalTrackers == 0) {
             return RiskLevel.LOW
         } else {
             val trackedLocations = devices.map {

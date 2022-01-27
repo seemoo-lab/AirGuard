@@ -29,6 +29,13 @@
                 layout="@layout/include_tracker_location_cards"
                 app:viewModel="@{viewModel}" />
 
+            <include
+                layout="@layout/include_devices_beacons_cards"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_marginTop="22dp"
+                app:viewModel="@{viewModel}" />
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/risk_card"
                 style="?attr/materialCardViewElevatedStyle"

@@ -18,17 +18,19 @@
 
         <!--                    Here the two small cards are placed -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_trackers_found"
+            android:id="@+id/card_devices_found"
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/card_margin"
             android:clickable="true"
             android:focusable="true"
             app:cardBackgroundColor="@{viewModel.riskColor}"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/card_tracked_locations"
+            app:layout_constraintRight_toLeftOf="@id/card_beacons_found"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48"
+            android:layout_marginEnd="8dp"
             tools:cardBackgroundColor="@color/risk_high">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,22 +39,23 @@
                 android:layout_margin="8dp">
 
                 <TextView
-                    android:id="@+id/trackers_found_text"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/devices_found_text"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/card_margin"
-                    android:text="@string/tracker_detected"
+                    android:text="@string/other_devices_found"
                     android:textColor="@color/white"
+                    app:layout_constraintEnd_toStartOf="@id/tile_devices"
+                    app:layout_constraintHorizontal_weight="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/dashboard_tile_icon"
+                    android:id="@+id/tile_devices"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@id/trackers_found_text"
+                    app:layout_constraintStart_toEndOf="@id/devices_found_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_chevron_right_24"
                     app:tint="@color/white"
@@ -61,14 +64,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{String.valueOf(viewModel.numberOfTrackersFound)}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
+                    android:text="@{String.valueOf(viewModel.totalNumberOfDevicesFound)}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                     android:textColor="@color/white"
+                    app:autoSizeMaxTextSize="100sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/trackers_found_text"
-                    tools:text="5" />
+                    app:layout_constraintTop_toBottomOf="@id/devices_found_text"
+                    tools:text="2000" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -76,39 +83,45 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_tracked_locations"
+            android:id="@+id/card_beacons_found"
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="@dimen/card_margin"
             android:clickable="true"
             android:focusable="true"
             app:cardBackgroundColor="@{viewModel.riskColor}"
-            app:layout_constraintLeft_toRightOf="@id/card_trackers_found"
+            app:layout_constraintLeft_toRightOf="@id/card_devices_found"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
             tools:cardBackgroundColor="@color/risk_high">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="8dp">
 
                 <TextView
-                    android:id="@+id/locations_tracked_text"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/beacons_found_text"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/locations_tracked"
+                    android:text="@string/beacon_locations"
                     android:textColor="@color/white"
+                    app:layout_constraintEnd_toStartOf="@id/tile_beacons"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
+
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
+                    android:id="@+id/tile_beacons"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@id/locations_tracked_text"
+                    app:layout_constraintStart_toEndOf="@id/beacons_found_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_chevron_right_24"
                     app:tint="@color/white"
@@ -117,13 +130,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{String.valueOf(viewModel.totalLocationsTrackedCount)}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
+                    android:text="@{String.valueOf(viewModel.totalNumberOfBeaconsFound)}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/locations_tracked_text"
+                    app:layout_constraintTop_toBottomOf="@id/beacons_found_text"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeMaxTextSize="100sp"
+                    app:autoSizeStepGranularity="2sp"
                     tools:text="21" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

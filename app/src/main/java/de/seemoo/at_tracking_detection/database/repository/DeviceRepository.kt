@@ -26,6 +26,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun devicesCurrentlyMonitored(since: LocalDateTime): Flow<Int> =
         deviceDao.getCurrentlyMonitored(since)
 
+    fun deviceCountSince(since: LocalDateTime): Flow<Int> =
+        deviceDao.getCurrentlyMonitored(since)
+
     val ignoredDevices: Flow<List<Device>> = deviceDao.getIgnored()
 
     val ignoredDevicesSync: List<Device> = deviceDao.getIgnoredSync()

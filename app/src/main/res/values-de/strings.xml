@@ -166,10 +166,13 @@
     <string name="settings_metric_title">Metrisches System</string>
     <string name="settings_metric_summary">Das metrische System wird verwendet, um Distanzen anzuzeigen</string>
     <string name="info_text_only_trackers">"Diese Liste zeigt Tracker an, die dir in den letzten 14 Tagen gefolgt sind. Um alle Geräte zu sehen, die von AirGuard gefunden wurden, kannst du den Filter mit dem Button unten rechts bearbeiten. "</string>
-    <string name="info_text_all_devices">"Diese Liste zeigt alle Geräte die von AirGuard in den letzten 14 Tagen gefunden wurden. Du kannst diese Geräte filtern mit dem Button unten rechts. "</string>
+    <string name="info_text_all_devices">"Diese Liste zeigt alle Geräte die von AirGuard in den letzten 14 Tagen gefunden wurden. Das beinhaltet Geräte, die dich nicht tracker. Tracker sind mit einem Ausrufezeichen markiert. Du kannst diese Geräte filtern mit dem Button unten rechts. "</string>
     <string name="empty_list_devices">"Diese Diese Liste zeigt alle Geräte die von AirGuard in den letzten 14 Tagen gefunden wurden. Da sie leer ist, wurden keine Geräte gefunden. Denk dran Bluetooth aktiviert zu lassen, damit die App potentielle Tracker finden kann. "</string>
     <string name="empty_list_trackers">"Diese Liste zeigt nur Geräte welche dir in den letzten 14 Tagen gefolgt sind. Da sie leer ist, gab es kein Gerät, dass versucht hat deinen Standort zu verfolgen. Immer, wenn ein Gerät dir folgt und deinen Standort übermittelt wirst du eine Benachrichtung bekommen. Denk dran, dass Bluetooth dafür aktiviert sein muss. Mit dem Button unten kannst du dir alle Geräte anzeigen lassen, auch die welche nicht als Tracker erkannt wurden. "</string>
     <string name="show_all_button">Alle Geräte anzeigen</string>
     <string name="empty_image_content_description">Bild zeigt leere Liste</string>
     <string name="notification_title_ble_error">BLE Scan fehlgeschlagen</string>
+    <string name="beacon_locations">Beacon Standorte</string>
+    <string name="other_devices_found">Andere Geräte</string>
+    <string name="info_text_all_locations">"Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben. "</string>
 </resources>

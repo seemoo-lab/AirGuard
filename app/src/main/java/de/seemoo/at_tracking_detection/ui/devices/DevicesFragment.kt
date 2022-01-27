@@ -76,9 +76,16 @@ class DevicesFragment : Fragment() {
                     LocalDate.now()
                 )
             )
-            devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
-            deviceInfoText = R.string.info_text_only_trackers
-            emptyListText = R.string.empty_list_trackers
+            // If we show all devices immediately, we set the correct strings here
+            if (safeArgs.showAllDevices) {
+                deviceInfoText = R.string.info_text_all_devices
+                emptyListText = R.string.empty_list_devices
+            }else {
+                // Only show tracker devices, for which a notification has been received
+                devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
+                deviceInfoText = R.string.info_text_only_trackers
+                emptyListText = R.string.empty_list_trackers
+            }
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)

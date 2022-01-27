@@ -180,11 +180,13 @@
     <string name="settings_metric_title">Metric System</string>
     <string name="settings_metric_summary">Use the metric system to display distances</string>
     <string name="info_text_only_trackers">This list only shows trackers that have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
-    <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard. You can filter the devices by using the button in the bottom-right corner</string>
+    <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard in the last 14 days. This includes devices that are not tracking you. Trackers are marked with a exclamation mark. You can filter the devices by using the button in the bottom-right corner</string>
+    <string name="info_text_all_locations">This view shows all locations at which a device has been found. This does include devices, which are not tracking your location.</string>
     <string name="empty_list_devices">This list shows all devices that have been found with AirGuard in the past 14 days. Since it is empty no devices have been found. Remember to keep Bluetooth activated, because the app can only find potential tracking devices by using Bluetooth</string>
     <string name="empty_list_trackers">This list shows only devices that were tracking your location in the past 14 days. Since it is empty no device has attempted to follow you and track your location. Whenever a device is tracking your location, you will receive a notification. Remember to keep Bluetooth activated to find tracking devices. With the button below you can view all devices, even those which have not been classified as a tracker.</string>
     <string name="show_all_button">Show all devices</string>
     <string name="empty_image_content_description">Image showing an empty list</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="beacon_locations">Beacon locations</string>
+    <string name="other_devices_found">Other devices found</string>
 </resources>

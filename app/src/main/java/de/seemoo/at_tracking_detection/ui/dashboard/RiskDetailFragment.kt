@@ -69,5 +69,16 @@ class RiskDetailFragment : Fragment() {
                 RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
             findNavController().navigate(directions)
         }
+
+        view.findViewById<MaterialCardView>(R.id.card_devices_found).setOnClickListener {
+            val directions = RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(showAllDevices = true, showDevicesFound = true)
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.card_beacons_found).setOnClickListener {
+            val directions =
+                RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
+            findNavController().navigate(directions)
+        }
     }
 }

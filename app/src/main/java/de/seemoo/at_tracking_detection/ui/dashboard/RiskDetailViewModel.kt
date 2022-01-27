@@ -1,8 +1,10 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -12,6 +14,7 @@ import de.seemoo.at_tracking_detection.database.tables.Beacon
 import de.seemoo.at_tracking_detection.database.tables.Device
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -21,7 +24,7 @@ import javax.inject.Inject
 class RiskDetailViewModel @Inject constructor(
     riskLevelEvaluator: RiskLevelEvaluator,
     deviceRepository: DeviceRepository,
-    beaconRepository: BeaconRepository
+    val beaconRepository: BeaconRepository
 ) : ViewModel() {
 
     private val relevantDate = RiskLevelEvaluator.relevantTrackingDate
@@ -36,9 +39,18 @@ class RiskDetailViewModel @Inject constructor(
         beaconRepository.getBeaconsForDevices(trackersFound).count()
     val discoveredBeacons: List<Beacon> = beaconRepository.getBeaconsForDevices(trackersFound)
 
+    //Total numbers
+    val totalNumberOfBeaconsFound: LiveData<Int> = beaconRepository.totalBeaconCountChange(relevantDate).asLiveData()
+    val totalNumberOfDevicesFound: LiveData<Int> = deviceRepository.deviceCountSince(relevantDate).asLiveData()
+
+
     val isMapLoading = MutableLiveData(false)
 
     val receivedNotificationDatesString: String = lastSeenDates.joinToString(separator = "\n")
+
+    fun allBeacons(): Flow<List<Beacon>> {
+        return beaconRepository.getBeaconsSince(relevantDate)
+    }
 
     init {
         val context = ATTrackingDetectionApplication.getAppContext()

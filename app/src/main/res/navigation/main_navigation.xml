@@ -96,6 +96,10 @@
             android:name="showDevicesFound"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="showAllDevices"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -136,6 +140,10 @@
                 android:name="notificationId"
                 android:defaultValue="-1" />
         </action>
+        <argument
+            android:name="showAllDevices"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/trackingFragment"
