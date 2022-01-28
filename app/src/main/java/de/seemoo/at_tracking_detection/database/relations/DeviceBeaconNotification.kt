@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 
 data class DeviceBeaconNotification(
     var deviceId: Int,
+    val uniqueId: String,
     var address: String,
     val ignore: Boolean,
     val connectable: Boolean,
