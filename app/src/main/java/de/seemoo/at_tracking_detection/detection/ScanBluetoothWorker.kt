@@ -191,7 +191,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         return if (useLowPower) {
             15000L
         } else {
-            4000L
+            8000L
         }
     }
 
