@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
@@ -28,6 +29,8 @@ class AirTag(val id: Int) : Device(), Connectable {
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
+            @SuppressLint("MissingPermission")
+            // Connect permission is checked before this function is called
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
@@ -48,6 +51,8 @@ class AirTag(val id: Int) : Device(), Connectable {
                 }
             }
 
+            @SuppressLint("MissingPermission")
+            // Connect permission is checked before this function is called
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 val service = gatt.getService(AIR_TAG_SOUND_SERVICE)
                 if (service == null) {
@@ -89,8 +94,8 @@ class AirTag(val id: Int) : Device(), Connectable {
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x24).toByte())
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
+                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
                 )
                 .build()
 

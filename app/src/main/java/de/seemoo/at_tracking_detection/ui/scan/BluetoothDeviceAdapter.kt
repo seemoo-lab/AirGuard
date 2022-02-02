@@ -1,7 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.Manifest
 import android.bluetooth.le.ScanResult
-import android.content.*
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -38,10 +39,13 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
         holder.bind(scanResult)
 
         holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener() {
-            if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
-                return@setOnClickListener
+            val hasAllPermissions =
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            if (hasAllPermissions) {
+                PlaySoundDialogFragment(scanResult).show(fragmentManager, null)
             }
-            PlaySoundDialogFragment(scanResult).show(fragmentManager, null)
         }
     }
 

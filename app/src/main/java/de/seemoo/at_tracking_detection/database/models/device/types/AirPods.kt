@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
@@ -17,7 +18,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AirPods(val id: Int) : Device(), Connectable {
 
@@ -34,6 +34,7 @@ class AirPods(val id: Int) : Device(), Connectable {
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
+            @SuppressLint("MissingPermission")
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
@@ -61,6 +62,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                 }
             }
 
+            @SuppressLint("MissingPermission")
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 val uuids = gatt.services.map { it.uuid.toString() }
                 Timber.d("Found UUIDS $uuids")
@@ -84,6 +86,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                 }
             }
 
+            @SuppressLint("MissingPermission")
             override fun onCharacteristicWrite(
                 gatt: BluetoothGatt?,
                 characteristic: BluetoothGattCharacteristic?,
@@ -128,10 +131,13 @@ class AirPods(val id: Int) : Device(), Connectable {
         internal val AIRPODS_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
         internal val AIRPODS_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
 
-        // TODO: Implement ScanFilter for AirPods
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
-                .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
+                .setManufacturerData(
+                    0x4C,
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
+                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                )
                 .build()
 
         override val deviceType: DeviceType

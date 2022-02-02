@@ -3,9 +3,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 enum class DeviceType {
     UNKNOWN,
     AIRTAG,
-    IPHONE,
-    IPAD,
-    MACBOOK,
+    APPLE,
     AIRPODS,
     TILE,
     CHIPOLO_ONE,

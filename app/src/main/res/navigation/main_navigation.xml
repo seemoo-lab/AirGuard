@@ -74,7 +74,6 @@
         <argument
             android:name="showAllDevices"
             android:defaultValue="false"
-
             app:argType="boolean" />
         <action
             android:id="@+id/action_navigation_devices_to_trackingFragment"

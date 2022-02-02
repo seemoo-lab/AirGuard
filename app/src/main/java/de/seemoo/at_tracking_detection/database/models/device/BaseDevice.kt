@@ -20,7 +20,7 @@ data class BaseDevice(
     @ColumnInfo(name = "address") var address: String,
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
-    @ColumnInfo(name = "connectable") val connectable: Boolean,
+    @ColumnInfo(name = "connectable") val connectable: Boolean?,
     @ColumnInfo(name = "payloadData") val payloadData: Byte?,
     @ColumnInfo(name = "firstDiscovery") val firstDiscovery: LocalDateTime,
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
@@ -62,7 +62,7 @@ data class BaseDevice(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 scanResult.isConnectable
             } else {
-                false
+                null
             }
         },
         scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
@@ -82,7 +82,7 @@ data class BaseDevice(
         DeviceType.UNKNOWN -> Unknown(deviceId)
         else -> {
             // For backwards compatibility
-            if (payloadData?.and(0x10)?.toInt() != 0 && connectable) {
+            if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {
                 AirTag(deviceId)
             } else {
                 Unknown(deviceId)

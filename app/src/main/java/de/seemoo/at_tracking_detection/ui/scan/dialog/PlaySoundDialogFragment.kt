@@ -141,6 +141,6 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     }
 
     companion object {
-        private const val DIALOG_CLOSE_DELAY = 1500L
+        private const val DIALOG_CLOSE_DELAY = 3000L
     }
 }

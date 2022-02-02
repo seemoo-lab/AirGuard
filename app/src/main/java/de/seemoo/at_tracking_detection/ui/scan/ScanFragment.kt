@@ -1,15 +1,15 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -32,8 +32,6 @@ class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
 
-    private var bluetoothLeScanner: BluetoothLeScanner? = null
-
     private var bluetoothManager: BluetoothManager? = null
 
     override fun onCreateView(
@@ -50,8 +48,6 @@ class ScanFragment : Fragment() {
 
         scanViewModel.bluetoothDeviceList.observe(viewLifecycleOwner) {
             bluetoothDeviceAdapter.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
-            // bluetoothDeviceAdapter.notifyDataSetChanged()
         }
         return binding.root
     }
@@ -88,59 +84,34 @@ class ScanFragment : Fragment() {
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val scanSettings =
             ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
-        bluetoothLeScanner = bluetoothManager?.adapter?.bluetoothLeScanner
-        bluetoothLeScanner?.stopScan(scanCallback)
 
-        bluetoothLeScanner?.startScan(Util.bleScanFilter, scanSettings, scanCallback)
+        bluetoothManager?.let {
+            val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
+            val hasScanPermission =
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
+                    Manifest.permission.BLUETOOTH_SCAN
+                )
+            if (isBluetoothEnabled && hasScanPermission) {
+                it.adapter.bluetoothLeScanner.startScan(Util.bleScanFilter, scanSettings, scanCallback)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Stop scanning if no device was detected
-            if (scanViewModel.isListEmpty.value == true) {
-                scanViewModel.scanFinished.postValue(true)
-                stopBluetoothScan()
-            }
-        }, SCAN_DURATION)
-    }
-
-    private fun stopBluetoothScan() {
-        if (bluetoothManager?.adapter?.state == BluetoothAdapter.STATE_ON) {
-            bluetoothLeScanner?.stopScan(scanCallback)
-        }
-    }
-
-
-    private fun resetBluetooth() {
-        // Do not use in production. If Bluetooth hangs this will turn off Bluetooth and turn it back on again.
-        // This cannot be used because all active Bluetooth connections will be killed
-        bluetoothManager?.adapter?.disable()
-
-        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent?) {
-                val action = intent?.action
-                if (action != null && action == BluetoothAdapter.ACTION_STATE_CHANGED) {
-                    when (intent.getIntExtra(
-                        BluetoothAdapter.EXTRA_STATE,
-                        BluetoothAdapter.ERROR
-                    )) {
-                        BluetoothAdapter.STATE_ON -> {
-                            if (bluetoothManager?.adapter?.isEnabled == true) {
-                                //perform your task here
-                                startBluetoothScan()
-                            }
-                        }
-                        BluetoothAdapter.STATE_OFF -> {
-                            Handler(Looper.getMainLooper())
-                                .postDelayed({
-                                    bluetoothManager?.adapter?.enable()
-                                }, 500)
-                        }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    // Stop scanning if no device was detected
+                    if (scanViewModel.isListEmpty.value == true) {
+                        scanViewModel.scanFinished.postValue(true)
+                        stopBluetoothScan()
                     }
-                }
+                }, SCAN_DURATION)
             }
         }
+    }
 
-        context?.registerReceiver(receiver, filter)
+    @SuppressLint("MissingPermission")
+    private fun stopBluetoothScan() {
+        bluetoothManager?.let {
+            if (it.adapter.state == BluetoothAdapter.STATE_ON) {
+                it.adapter.bluetoothLeScanner.stopScan(scanCallback)
+            }
+        }
     }
 
     override fun onResume() {

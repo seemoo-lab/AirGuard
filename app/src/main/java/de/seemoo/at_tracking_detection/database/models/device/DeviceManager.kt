@@ -3,13 +3,12 @@ package de.seemoo.at_tracking_detection.database.models.device
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.content.IntentFilter
-import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
-import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
+import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 
 object DeviceManager {
 
-    private val devices = listOf(AirTag)
+    private val devices = listOf(AirTag, FindMy, AirPods, AppleDevice)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         for (device in devices) {

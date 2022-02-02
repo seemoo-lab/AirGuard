@@ -177,4 +177,7 @@
     <string name="play_sound_error_init">Es konnte keine Verbindung zum Bluetooth Service hergestellt werden!</string>
     <string name="play_sound_error_connect">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="tracking_missing_beacons_info">Manche Beacons wurden ohne Standortinformation gefunden und werden demnach nicht angezeigt!</string>
+    <string name="device_name_apple_device">Apple Gerät %s</string>
+    <string name="device_name_unknown_device">Unbekanntes Gerät %s</string>
+    <string name="device_name_unknown_device">U</string>
 </resources>

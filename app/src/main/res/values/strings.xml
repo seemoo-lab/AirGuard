@@ -190,8 +190,9 @@
     <string name="other_devices_found">Other devices found</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_airpods" translatable="false">AirPods %s</string>
+    <string name="device_name_apple_device">Apple Device %s</string>
+    <string name="device_name_unknown_device">Unknown Device %s</string>
     <string name="play_sound_error_fail">Failed to play sound! Please try again!</string>
     <string name="play_sound_error_init">Could not connect to the Bluetooth Service!</string>
     <string name="play_sound_error_connect">Failed to connect to device!</string>
->>>>>>> 2de4e82 (fix play sound dialog states)
 </resources>
