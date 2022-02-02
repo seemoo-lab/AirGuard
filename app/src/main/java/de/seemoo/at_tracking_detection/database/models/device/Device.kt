@@ -8,9 +8,9 @@ abstract class Device {
 
     abstract val imageResource: Int
 
-    abstract val defaultDeviceName: String
-
     abstract val defaultDeviceNameWithId: String
+
+    abstract val deviceContext: DeviceContext
 
     fun getDrawable(): Drawable? {
         val context = ATTrackingDetectionApplication.getAppContext()

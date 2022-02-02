@@ -9,7 +9,10 @@ import android.bluetooth.le.ScanFilter
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import java.util.*
@@ -20,12 +23,12 @@ class AirTag(val id: Int) : Device(), Connectable {
         @DrawableRes
         get() = R.drawable.ic_airtag
 
-    override val defaultDeviceName: String
-        get() = "AirTag"
-
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_airtag)
             .format(id)
+
+    override val deviceContext: DeviceContext
+        get() = AirPods
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -101,5 +104,8 @@ class AirTag(val id: Int) : Device(), Connectable {
 
         override val deviceType: DeviceType
             get() = DeviceType.AIRTAG
+
+        override val defaultDeviceName: String
+            get() = "AirTag"
     }
 }

@@ -51,7 +51,7 @@ fun setDeviceName(textView: TextView, scanResult: ScanResult) {
     val device = BaseDevice(scanResult).device
     var deviceName = scanResult.scanRecord?.deviceName
     if (deviceName.isNullOrEmpty()) {
-        deviceName = device.defaultDeviceName
+        deviceName = device.deviceContext.defaultDeviceName
     }
     textView.text = deviceName
 }

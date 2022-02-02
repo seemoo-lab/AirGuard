@@ -13,6 +13,24 @@
         android:padding="16dp"
         tools:context=".ui.devices.filter.FilterDialogFragment">
 
+    <TextView
+        style="@style/TextAppearance.Material3.TitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_title_device_types" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/filter_device_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
         <TextView
             style="@style/TextAppearance.Material3.TitleSmall"
             android:layout_width="match_parent"

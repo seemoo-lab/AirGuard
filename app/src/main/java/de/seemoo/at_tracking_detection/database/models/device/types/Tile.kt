@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.le.ScanFilter
-import android.bluetooth.le.ScanResult
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -14,20 +13,18 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
 
 class Tile(val id: Int) : Device(), Connectable {
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_baseline_device_unknown_24
 
-    override val defaultDeviceName: String
-        get() = "Tile"
-
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_tile)
             .format(id)
+
+    override val deviceContext: DeviceContext
+        get() = AirPods
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -63,9 +60,12 @@ class Tile(val id: Int) : Device(), Connectable {
     companion object : DeviceContext {
         // TODO: Implement scan filter for tile
         override val bluetoothFilter: ScanFilter
-            get() = ScanFilter.Builder().setDeviceAddress("FF:FF:FF:FF:FF:FF") .build()
+            get() = ScanFilter.Builder().setDeviceAddress("FF:FF:FF:FF:FF:FF").build()
 
         override val deviceType: DeviceType
             get() = DeviceType.TILE
+
+        override val defaultDeviceName: String
+            get() = "Tile"
     }
 }

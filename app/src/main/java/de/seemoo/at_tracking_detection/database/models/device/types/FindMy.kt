@@ -9,16 +9,17 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
 class FindMy(val id: Int) : Device() {
+
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_baseline_device_unknown_24
 
-    override val defaultDeviceName: String
-        get() = "FindMy Device"
-
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device)
             .format(id)
+
+    override val deviceContext: DeviceContext
+        get() = AirPods
 
     companion object : DeviceContext {
         override val bluetoothFilter: ScanFilter
@@ -31,6 +32,9 @@ class FindMy(val id: Int) : Device() {
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.UNKNOWN
+            get() = DeviceType.FIND_MY
+
+        override val defaultDeviceName: String
+            get() = "FindMy Device"
     }
 }

@@ -25,12 +25,12 @@ class AirPods(val id: Int) : Device(), Connectable {
         @DrawableRes
         get() = R.drawable.ic_airpods
 
-    override val defaultDeviceName: String
-        get() = "AirPods"
-
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_airpods)
             .format(id)
+
+    override val deviceContext: DeviceContext
+        get() = Companion
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -142,5 +142,8 @@ class AirPods(val id: Int) : Device(), Connectable {
 
         override val deviceType: DeviceType
             get() = DeviceType.AIRPODS
+
+        override val defaultDeviceName: String
+            get() = "AirPods"
     }
 }

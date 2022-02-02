@@ -31,8 +31,10 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
@@ -69,6 +71,11 @@ class DevicesFragment : Fragment() {
             emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
+            devicesViewModel.addOrRemoveFilter(
+                DeviceTypeFilter.build(
+                    DeviceManager.devices.map { it.deviceType }.toSet()
+                )
+            )
         } else {
             val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDate.toLocalDate()
             devicesViewModel.addOrRemoveFilter(
@@ -81,7 +88,7 @@ class DevicesFragment : Fragment() {
             if (safeArgs.showAllDevices) {
                 deviceInfoText = R.string.info_text_all_devices
                 emptyListText = R.string.empty_list_devices
-            }else {
+            } else {
                 // Only show tracker devices, for which a notification has been received
                 devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
                 deviceInfoText = R.string.info_text_only_trackers
@@ -133,6 +140,11 @@ class DevicesFragment : Fragment() {
         showAllButton.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(NotifiedFilter.build(), true)
             devicesViewModel.addOrRemoveFilter(IgnoredFilter.build(), true)
+            devicesViewModel.addOrRemoveFilter(
+                DeviceTypeFilter.build(
+                    DeviceManager.devices.map { it.deviceType }.toSet()
+                )
+            )
         }
 
     }

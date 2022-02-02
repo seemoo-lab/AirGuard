@@ -6,4 +6,6 @@ interface DeviceContext {
     val bluetoothFilter: ScanFilter
 
     val deviceType: DeviceType
+
+    val defaultDeviceName: String
 }

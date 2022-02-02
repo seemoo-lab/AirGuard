@@ -10,8 +10,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogFilterBinding
+import de.seemoo.at_tracking_detection.databinding.IncludeFilterChipBinding
 import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
@@ -44,6 +47,26 @@ class FilterDialogFragment :
         binding.filterNotifiedChip.isChecked =
             devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())
         getActiveTimeRange()?.let { setDateRangeText(it) }
+
+        val activeDeviceTypeFilter =
+            devicesViewModel.activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
+        for (device in DeviceManager.devices) {
+            val chip =
+                IncludeFilterChipBinding.inflate(LayoutInflater.from(context))
+            chip.text = device.defaultDeviceName
+            if (activeDeviceTypeFilter.contains(device.deviceType)) {
+                chip.filterDeviceTypeChip.isChecked = true
+            }
+            chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    activeDeviceTypeFilter.add(device.deviceType)
+                } else {
+                    activeDeviceTypeFilter.remove(device.deviceType)
+                }
+                devicesViewModel.addOrRemoveFilter(activeDeviceTypeFilter)
+            }
+            binding.filterDeviceTypes.addView(chip.root)
+        }
 
         binding.filterIgnoreChip.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(
