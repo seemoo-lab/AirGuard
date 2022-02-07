@@ -90,11 +90,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim">
-            <argument
-                android:name="notificationId"
-                android:defaultValue="-1" />
-        </action>
+            app:popExitAnim="@anim/nav_default_exit_anim" />
         <argument
             android:name="showAllDevices"
             android:defaultValue="false"

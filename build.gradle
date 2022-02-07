@@ -3,7 +3,6 @@ buildscript {
     ext.kotlin_version = '1.6.10'
     ext.hilt_version = '2.40.5'
     ext.room_version = '2.4.1'
-    ext.nav_version = "2.3.5"
     repositories {
         google()
         mavenCentral()
@@ -12,10 +11,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.0'
+        classpath 'com.android.tools.build:gradle:7.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.0-alpha01"
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.0"
 
         // NOTE: Do not place your application dependencies here; they belong
