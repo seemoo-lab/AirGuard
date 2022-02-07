@@ -19,7 +19,7 @@ class FindMy(val id: Int) : Device() {
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = FindMy
 
     companion object : DeviceContext {
         override val bluetoothFilter: ScanFilter

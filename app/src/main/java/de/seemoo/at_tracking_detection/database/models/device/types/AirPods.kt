@@ -30,7 +30,7 @@ class AirPods(val id: Int) : Device(), Connectable {
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = Companion
+        get() = AirPods
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {

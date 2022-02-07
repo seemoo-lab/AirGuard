@@ -28,7 +28,7 @@ class AirTag(val id: Int) : Device(), Connectable {
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = AirTag
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
