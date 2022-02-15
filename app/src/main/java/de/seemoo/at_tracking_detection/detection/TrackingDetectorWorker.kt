@@ -13,6 +13,8 @@ import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -41,18 +43,19 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
+            val device = deviceRepository.getDevice(mapEntry.key)
+
             //Check that we found enough beacons
             if (mapEntry.value.size < MAX_BEACONS_BEFORE_ALARM) {
                 return@forEach
             }
 
             //Checks if the time difference between received beacons is large enough
-            if (!isTrackingForEnoughTime(mapEntry.value)) {
+            if (!isTrackingForEnoughTime(device, mapEntry.value)) {
                 return@forEach
             }
 
             //Check that we do not send notifications too often (one notification every 8 hours)
-            val device = deviceRepository.getDevice(mapEntry.key)
             if (device?.lastNotificationSent != null) {
                 val hoursPassed =
                     device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
@@ -101,6 +104,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     companion object {
         const val MAX_BEACONS_BEFORE_ALARM = 3
+
         /// Minimum tracking time
         const val MIN_TRACKING_TIME_SECONDS = 30 * 60
         const val MIN_DISTANCE_BETWEEN_BEACONS = 400
@@ -111,9 +115,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
          * Gets a list of beacons and checks if the user is beeing tracked for the minimum amount of
          * time before a notification is sent.
          * @param beacons
+         * @param baseDevice
          * @return
          */
-        fun isTrackingForEnoughTime(beacons: List<Beacon>): Boolean {
+        fun isTrackingForEnoughTime(baseDevice: BaseDevice?, beacons: List<Beacon>): Boolean {
             if (beacons.isEmpty()) {
                 return false
             }
@@ -125,8 +130,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val firstBeacon = beaconsSorted.first()
             val lastBeacon = beaconsSorted.last()
             val timeDiff = ChronoUnit.SECONDS.between(firstBeacon.receivedAt, lastBeacon.receivedAt)
+            val minTrackingTime =
+                baseDevice?.device?.deviceContext?.minTrackingTime ?: MIN_TRACKING_TIME_SECONDS
 
-            return timeDiff >= MIN_TRACKING_TIME_SECONDS
+            return timeDiff >= minTrackingTime
         }
 
         private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
@@ -153,7 +160,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
             return distanceReached
         }
-
 
 
         private fun getLocation(latitude: Double, longitude: Double): Location {

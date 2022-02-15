@@ -35,5 +35,8 @@ class AppleDevice(val id: Int) : Device() {
 
         override val defaultDeviceName: String
             get() = "Apple Device"
+
+        override val minTrackingTime: Int
+            get() = 120 * 60
     }
 }
