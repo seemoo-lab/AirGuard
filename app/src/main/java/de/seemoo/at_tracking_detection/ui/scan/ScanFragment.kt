@@ -48,6 +48,8 @@ class ScanFragment : Fragment() {
 
         scanViewModel.bluetoothDeviceList.observe(viewLifecycleOwner) {
             bluetoothDeviceAdapter.submitList(it)
+            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
+            bluetoothDeviceAdapter.notifyDataSetChanged()
         }
         return binding.root
     }

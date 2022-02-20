@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import kotlin.math.pow
 
 class ScanViewModel : ViewModel() {
@@ -23,10 +24,13 @@ class ScanViewModel : ViewModel() {
     }
 
     fun addScanResult(scanResult: ScanResult) {
-        bluetoothDeviceList.value?.removeIf() { it.device.address == scanResult.device.address }
-        bluetoothDeviceList.value?.add(scanResult)
-        bluetoothDeviceList.value?.sortByDescending { it.rssi }
-        bluetoothDeviceList.notifyObserver()
+        val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
+        bluetoothDeviceListValue.removeIf { it.device.address == scanResult.device.address }
+        bluetoothDeviceListValue.add(scanResult)
+        bluetoothDeviceListValue.sortByDescending { it.rssi }
+        bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+        Timber.d("Adding scan result ${scanResult.device.address}")
+        Timber.d("Device list: ${bluetoothDeviceList.value?.count()}")
     }
 
     val isListEmpty: LiveData<Boolean> = bluetoothDeviceList.map { it.isEmpty() }
