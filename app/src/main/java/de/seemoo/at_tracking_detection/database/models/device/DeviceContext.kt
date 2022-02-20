@@ -11,4 +11,6 @@ interface DeviceContext {
 
     val minTrackingTime: Int
         get() = 30 * 60
+
+    val statusByteDeviceType: UInt
 }

@@ -36,5 +36,8 @@ class FindMy(val id: Int) : Device() {
 
         override val defaultDeviceName: String
             get() = "FindMy Device"
+
+        override val statusByteDeviceType: UInt
+            get() = 2u
     }
 }

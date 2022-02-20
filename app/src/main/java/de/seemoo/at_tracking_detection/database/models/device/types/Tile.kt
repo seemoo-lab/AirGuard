@@ -67,5 +67,8 @@ class Tile(val id: Int) : Device(), Connectable {
 
         override val defaultDeviceName: String
             get() = "Tile"
+
+        override val statusByteDeviceType: UInt
+            get() = 0u
     }
 }

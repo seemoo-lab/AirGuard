@@ -131,12 +131,13 @@ class AirPods(val id: Int) : Device(), Connectable {
         internal val AIRPODS_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
         internal val AIRPODS_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
 
+        // What does this scan filter do?
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()), // Empty status byte?
+                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte()) // ff?
                 )
                 .build()
 
@@ -145,5 +146,8 @@ class AirPods(val id: Int) : Device(), Connectable {
 
         override val defaultDeviceName: String
             get() = "AirPods"
+
+        override val statusByteDeviceType: UInt
+            get() = 3u
     }
 }

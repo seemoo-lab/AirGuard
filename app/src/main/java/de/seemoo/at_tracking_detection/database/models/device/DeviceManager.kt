@@ -8,13 +8,23 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, Unknown)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
+        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x004c) ?: return Unknown.deviceType
+        val statusByte: UInt = manufacturerData[3].toUInt()
+        // Get the correct int from the byte
+        val deviceTypeInt =  (statusByte.toInt() and 0x30 shr 4).toUInt()
+
         for (device in devices) {
-            if (device.bluetoothFilter.matches(scanResult)) {
+            // Implementation of device detection is incorrect.
+//            if (device.bluetoothFilter.matches(scanResult)) {
+//                return device.deviceType
+//            }
+            if (device.statusByteDeviceType == deviceTypeInt) {
                 return device.deviceType
             }
+
         }
         return Unknown.deviceType
     }

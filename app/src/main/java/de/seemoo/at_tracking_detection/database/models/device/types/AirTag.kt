@@ -107,5 +107,7 @@ class AirTag(val id: Int) : Device(), Connectable {
 
         override val defaultDeviceName: String
             get() = "AirTag"
+        override val statusByteDeviceType: UInt
+            get() = 1u
     }
 }

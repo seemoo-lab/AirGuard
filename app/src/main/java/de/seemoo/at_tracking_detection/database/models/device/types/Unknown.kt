@@ -34,5 +34,7 @@ class Unknown(val id: Int) : Device() {
 
         override val defaultDeviceName: String
             get() = "Unknown Device"
+        override val statusByteDeviceType: UInt
+            get() = 0u
     }
 }
