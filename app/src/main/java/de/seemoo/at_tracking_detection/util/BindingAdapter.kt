@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import java.util.*
 import kotlin.math.pow
@@ -48,10 +49,9 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName(textView: TextView, scanResult: ScanResult) {
-    val device = BaseDevice(scanResult).device
-    var deviceName = scanResult.scanRecord?.deviceName
-    if (deviceName.isNullOrEmpty()) {
-        deviceName = device.deviceContext.defaultDeviceName
-    }
+    val device =  BaseDevice(scanResult).device
+    //TODO: @Niklas instatiate the device for Device Type
+
+    val deviceName = device.deviceContext.defaultDeviceName
     textView.text = deviceName
 }

@@ -3,8 +3,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
-import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
+import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -80,6 +79,9 @@ data class BaseDevice(
     val device: Device = when (deviceType) {
         DeviceType.AIRTAG -> AirTag(deviceId)
         DeviceType.UNKNOWN -> Unknown(deviceId)
+        DeviceType.APPLE -> AppleDevice(deviceId)
+        DeviceType.AIRPODS -> AirPods(deviceId)
+        DeviceType.FIND_MY -> FindMy(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {
