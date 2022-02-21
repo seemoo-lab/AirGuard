@@ -18,12 +18,12 @@ object DeviceManager {
 
         for (device in devices) {
             // Implementation of device detection is incorrect.
-//            if (device.bluetoothFilter.matches(scanResult)) {
-//                return device.deviceType
-//            }
-            if (device.statusByteDeviceType == deviceTypeInt) {
+            if (device.bluetoothFilter.matches(scanResult)) {
                 return device.deviceType
             }
+//            if (device.statusByteDeviceType == deviceTypeInt) {
+//                return device.deviceType
+//            }
 
         }
         return Unknown.deviceType

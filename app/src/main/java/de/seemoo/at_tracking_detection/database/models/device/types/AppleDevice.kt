@@ -25,7 +25,7 @@ class AppleDevice(val id: Int) : Device() {
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()),
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
                     byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
                 )
                 .build()
@@ -38,6 +38,7 @@ class AppleDevice(val id: Int) : Device() {
 
         override val minTrackingTime: Int
             get() = 120 * 60
+
         override val statusByteDeviceType: UInt
             get() = 0u
     }

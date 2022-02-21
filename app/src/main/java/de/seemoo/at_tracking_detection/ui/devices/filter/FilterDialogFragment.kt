@@ -48,8 +48,14 @@ class FilterDialogFragment :
             devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())
         getActiveTimeRange()?.let { setDateRangeText(it) }
 
+        val defaultDeviceTypeFilter = DeviceTypeFilter.build(
+            DeviceManager.devices.map { it.deviceType }.toSet()
+        )
         val activeDeviceTypeFilter =
-            devicesViewModel.activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
+            devicesViewModel.activeFilter.getOrDefault(
+                DeviceTypeFilter::class.toString(), defaultDeviceTypeFilter
+            ) as DeviceTypeFilter
+
         for (device in DeviceManager.devices) {
             val chip =
                 IncludeFilterChipBinding.inflate(LayoutInflater.from(context))

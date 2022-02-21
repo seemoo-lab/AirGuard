@@ -18,7 +18,7 @@ class Unknown(val id: Int) : Device() {
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = Unknown
 
     companion object : DeviceContext {
         override val bluetoothFilter: ScanFilter
@@ -34,6 +34,7 @@ class Unknown(val id: Int) : Device() {
 
         override val defaultDeviceName: String
             get() = "Unknown Device"
+
         override val statusByteDeviceType: UInt
             get() = 0u
     }

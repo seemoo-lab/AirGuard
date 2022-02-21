@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
-import kotlin.math.pow
 
 class ScanViewModel : ViewModel() {
 
@@ -30,6 +28,11 @@ class ScanViewModel : ViewModel() {
         bluetoothDeviceListValue.sortByDescending { it.rssi }
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
         Timber.d("Adding scan result ${scanResult.device.address}")
+        Timber.d(
+            "status bytes: ${
+                scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
+            }"
+        )
         Timber.d("Device list: ${bluetoothDeviceList.value?.count()}")
     }
 

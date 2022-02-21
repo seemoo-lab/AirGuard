@@ -24,7 +24,7 @@ class Tile(val id: Int) : Device(), Connectable {
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = Tile
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
