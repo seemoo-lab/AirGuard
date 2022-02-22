@@ -65,7 +65,7 @@
         • We will collect some information about the discovered devices like the <b>device type</b>, <b>RSSI value</b> (signal strength) and the <b>date and time</b> of the discovery \n\n
         • How many <b>notifications</b> have been sent to you, the <b>date and time</b> of the alert as well as the <b>feedback</b> which you can provide optionally\n\n
 
-        We will <b>NOT</b> share any location data or data which might let identify you! The participation is completely anonymous!</string>
+        We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous!</string>
 
     <string name="onboarding_1_description">This App will notify you when it seems like an AirTag or Find My capable device is tracking you!</string>
     <string name="location_permission_title">Location Permission</string>
