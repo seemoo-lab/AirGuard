@@ -101,7 +101,10 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
                         BluetoothConstants.ACTION_GATT_DISCONNECTED -> viewModel.playSoundState.value =
                             DialogViewModel.ConnectionState.Success
                         BluetoothConstants.ACTION_EVENT_FAILED -> viewModel.playSoundState.value =
-                            DialogViewModel.ConnectionState.Error(getString(R.string.play_sound_error_fail))
+                            DialogViewModel.ConnectionState.Error(
+                                ATTrackingDetectionApplication.getAppContext()
+                                    .getString(R.string.play_sound_error_fail)
+                            )
                         BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.playSoundState.value =
                             DialogViewModel.ConnectionState.Success
                     }

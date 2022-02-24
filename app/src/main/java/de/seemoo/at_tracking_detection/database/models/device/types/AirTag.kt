@@ -60,6 +60,8 @@ class AirTag(val id: Int) : Device(), Connectable {
                 val service = gatt.getService(AIR_TAG_SOUND_SERVICE)
                 if (service == null) {
                     Timber.e("AirTag sound service not found!")
+                    disconnect(gatt)
+                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
                 } else {
                     service.getCharacteristic(AIR_TAG_SOUND_CHARACTERISTIC)
                         .let {
@@ -72,6 +74,30 @@ class AirTag(val id: Int) : Device(), Connectable {
                 super.onServicesDiscovered(gatt, status)
             }
 
+            override fun onCharacteristicWrite(
+                gatt: BluetoothGatt?,
+                characteristic: BluetoothGattCharacteristic?,
+                status: Int
+            ) {
+                if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
+                    when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
+                        AIR_TAG_EVENT_CALLBACK -> {
+                            broadcastUpdate(
+                                BluetoothConstants.ACTION_EVENT_COMPLETED
+                            )
+                            disconnect(gatt)
+                        }
+                    }
+                }
+                else if (status == 133) { // GATT_ERROR, Timeout
+                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    disconnect(gatt)
+                }else {
+                    disconnect(gatt)
+                }
+                super.onCharacteristicWrite(gatt, characteristic, status)
+            }
+
             override fun onCharacteristicRead(
                 gatt: BluetoothGatt?,
                 characteristic: BluetoothGattCharacteristic?,
@@ -79,9 +105,12 @@ class AirTag(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
                     when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
-                        AIR_TAG_EVENT_CALLBACK -> broadcastUpdate(
-                            BluetoothConstants.ACTION_EVENT_COMPLETED
-                        )
+                        AIR_TAG_EVENT_CALLBACK -> {
+                            broadcastUpdate(
+                                BluetoothConstants.ACTION_EVENT_COMPLETED
+                            )
+                            disconnect(gatt)
+                        }
                     }
                 }
             }

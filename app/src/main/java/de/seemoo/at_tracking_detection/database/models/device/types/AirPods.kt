@@ -52,9 +52,6 @@ class AirPods(val id: Int) : Device(), Connectable {
                             }
                         }
                     }
-                    19 -> {
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
-                    }
                     else -> {
                         Timber.e("Failed to connect to bluetooth device! Status: $status")
                         broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
@@ -74,6 +71,8 @@ class AirPods(val id: Int) : Device(), Connectable {
 
                 if (service == null) {
                     Timber.e("Playing sound service not found!")
+                    disconnect(gatt)
+                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
                     return
                 }
 
@@ -83,6 +82,32 @@ class AirPods(val id: Int) : Device(), Connectable {
                     it.value = AIRPODS_START_SOUND_OPCODE
                     gatt.writeCharacteristic(it)
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
+                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                }
+            }
+
+
+            @SuppressLint("MissingPermission")
+            fun stopSoundOnAirPods(gatt: BluetoothGatt) {
+                val service = gatt.services.firstOrNull {
+                    it.uuid.toString().lowercase().contains(
+                       AIRPODS_SOUND_SERVICE
+                    )
+                }
+
+                if (service == null) {
+                    Timber.d("Sound service not found")
+                    return
+                }
+
+                val uuid = AIRPODS_SOUND_CHARACTERISTIC
+                val characteristic = service.getCharacteristic(uuid)
+                characteristic.let {
+                    gatt.setCharacteristicNotification(it, true)
+                    it.value = AIRPODS_STOP_SOUND_OPCODE
+                    gatt.writeCharacteristic(it)
+                    Timber.d("Stopping sound on Find My device with ${it.uuid}")
+
                 }
             }
 
@@ -96,29 +121,19 @@ class AirPods(val id: Int) : Device(), Connectable {
                     Timber.d("Finished writing to characteristic")
                     if (characteristic?.value.contentEquals(AIRPODS_START_SOUND_OPCODE) && gatt != null) {
                         Handler(Looper.getMainLooper()).postDelayed({
-                            val service = gatt.services.firstOrNull {
-                                it.uuid.toString().lowercase().contains(
-                                    AIRPODS_SOUND_SERVICE
-                                )
-                            }
-
-                            if (service == null) {
-                                Timber.d("Sound service not found")
-                            } else {
-                                val uuid = AIRPODS_SOUND_CHARACTERISTIC
-                                service.getCharacteristic(uuid).let {
-                                    gatt.setCharacteristicNotification(it, true)
-                                    it?.value = AIRPODS_STOP_SOUND_OPCODE
-                                    gatt.writeCharacteristic(it)
-                                    Timber.d("Stopping sound on AirPods with ${it.uuid}")
-
-                                }
-                            }
+                            stopSoundOnAirPods(gatt)
                         }, 5000)
+                    }
+
+                    if (characteristic?.value.contentEquals(AIRPODS_STOP_SOUND_OPCODE)) {
+                        disconnect(gatt)
+                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
                     }
 
                 } else {
                     Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
+                    disconnect(gatt)
+                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }

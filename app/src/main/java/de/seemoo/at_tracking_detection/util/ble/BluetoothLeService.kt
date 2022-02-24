@@ -52,6 +52,7 @@ class BluetoothLeService : Service() {
 
     fun connect(baseDevice: BaseDevice): Boolean {
         if (baseDevice.device !is Connectable) {
+            //TODO: Error not shown in UI!
             Timber.d("Device type is ${baseDevice.deviceType} and therefore not able to play a sound!")
             return false
         }
