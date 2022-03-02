@@ -179,4 +179,5 @@
     <string name="tracking_missing_beacons_info">Manche Beacons wurden ohne Standortinformation gefunden und werden demnach nicht angezeigt!</string>
     <string name="device_name_apple_device">Apple Gerät %s</string>
     <string name="device_name_unknown_device">Unbekanntes Gerät %s</string>
+    <string name="filter_title_device_types">Geräte Typen</string>
 </resources>
