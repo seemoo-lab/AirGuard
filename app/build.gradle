@@ -71,7 +71,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    debugImplementation 'com.github.bastienpaulfr:Treessence:1.0.0'
+    implementation 'com.github.bastienpaulfr:Treessence:1.0.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
