@@ -5,14 +5,14 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import java.time.LocalDate
 import java.time.ZoneId
 
-class TimeRangeFilter : Filter() {
+class DateRangeFilter : Filter() {
     override fun apply(baseDevices: List<BaseDevice>): List<BaseDevice> {
         return baseDevices.filter { device ->
             var untilMatch = true
             val untilDate = untilDate
             val fromDate = fromDate
             if (untilDate != null) {
-                untilMatch = device.lastSeen.isBefore(untilDate.atTime(23,59))
+                untilMatch = device.lastSeen.isBefore(untilDate.atTime(23, 59))
             }
             var fromMatch = true
             if (fromDate != null) {
@@ -42,7 +42,7 @@ class TimeRangeFilter : Filter() {
         fun build(from: LocalDate? = null, until: LocalDate? = null): Filter {
             fromDate = from
             untilDate = until
-            return TimeRangeFilter()
+            return DateRangeFilter()
         }
     }
 }

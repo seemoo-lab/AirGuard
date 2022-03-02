@@ -50,8 +50,5 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName(textView: TextView, scanResult: ScanResult) {
     val device =  BaseDevice(scanResult).device
-    //TODO: @Niklas instatiate the device for Device Type
-
-    val deviceName = device.deviceContext.defaultDeviceName
-    textView.text = deviceName
+    textView.text = device.deviceContext.defaultDeviceName
 }

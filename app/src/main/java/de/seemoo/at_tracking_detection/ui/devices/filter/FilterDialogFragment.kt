@@ -17,7 +17,7 @@ import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -96,7 +96,7 @@ class FilterDialogFragment :
             datePicker.addOnPositiveButtonClickListener {
                 setDateRangeText(it)
                 devicesViewModel.addOrRemoveFilter(
-                    TimeRangeFilter.build(
+                    DateRangeFilter.build(
                         toLocalDate(it.first),
                         toLocalDate(it.second)
                     )
@@ -105,16 +105,16 @@ class FilterDialogFragment :
         }
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
-            devicesViewModel.addOrRemoveFilter(TimeRangeFilter.build(), true)
+            devicesViewModel.addOrRemoveFilter(DateRangeFilter.build(), true)
         }
     }
 
     private fun getActiveTimeRange(): Pair<Long, Long>? {
         val hasActiveTimeRangeFilter =
-            devicesViewModel.activeFilter.containsKey(TimeRangeFilter::class.toString())
+            devicesViewModel.activeFilter.containsKey(DateRangeFilter::class.toString())
         return if (hasActiveTimeRangeFilter) {
             val filter =
-                devicesViewModel.activeFilter[TimeRangeFilter::class.toString()] as TimeRangeFilter
+                devicesViewModel.activeFilter[DateRangeFilter::class.toString()] as DateRangeFilter
             filter.getTimeRangePair()
         } else {
             null

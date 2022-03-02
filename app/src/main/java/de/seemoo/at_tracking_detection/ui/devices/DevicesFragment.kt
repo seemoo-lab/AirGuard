@@ -37,7 +37,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.TimeRangeFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
@@ -79,7 +79,7 @@ class DevicesFragment : Fragment() {
         } else {
             val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDate.toLocalDate()
             devicesViewModel.addOrRemoveFilter(
-                TimeRangeFilter.build(
+                DateRangeFilter.build(
                     relevantTrackingStartDate,
                     LocalDate.now()
                 )

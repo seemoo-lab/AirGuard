@@ -34,7 +34,6 @@ object DeviceManager {
             if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
                 deviceTypeCheck = device.deviceType
             }
-
         }
 
         if (deviceTypeCheck != deviceTypeFilter) {

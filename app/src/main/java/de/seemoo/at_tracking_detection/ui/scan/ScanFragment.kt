@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
@@ -94,7 +95,7 @@ class ScanFragment : Fragment() {
                     Manifest.permission.BLUETOOTH_SCAN
                 )
             if (isBluetoothEnabled && hasScanPermission) {
-                it.adapter.bluetoothLeScanner.startScan(Util.bleScanFilter, scanSettings, scanCallback)
+                it.adapter.bluetoothLeScanner.startScan(DeviceManager.scanFilter, scanSettings, scanCallback)
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     // Stop scanning if no device was detected
