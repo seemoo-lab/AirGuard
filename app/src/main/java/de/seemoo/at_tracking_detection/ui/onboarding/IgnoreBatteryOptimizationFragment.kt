@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,13 +41,16 @@ class IgnoreBatteryOptimizationFragment : Fragment() {
         val ignoreBatteryOptimizationButton =
             view.findViewById<Button>(R.id.onboarding_ignore_battery_optimization_button)
         ignoreBatteryOptimizationButton.setOnClickListener {
-            requestIgnoreBatteryOptimization()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestIgnoreBatteryOptimization()
+            }
         }
     }
 
     // This App fulfills the requirements to request ignore battery optimization. Further
     // information can be found here:
     // https://developer.android.com/training/monitoring-device-state/doze-standby.html#exemption-cases
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("BatteryLife")
     private fun requestIgnoreBatteryOptimization() {
         val intent = Intent()

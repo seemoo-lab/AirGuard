@@ -199,7 +199,9 @@ class OnboardingActivity : AppIntro() {
 
         backgroundLocationSlide(slideNumber + 2)
 
-        addSlide(IgnoreBatteryOptimizationFragment.newInstance())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            addSlide(IgnoreBatteryOptimizationFragment.newInstance())
+        }
 
         addSlide(ShareDataFragment.newInstance())
 

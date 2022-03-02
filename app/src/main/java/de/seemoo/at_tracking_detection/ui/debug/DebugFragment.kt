@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.debug
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
@@ -27,6 +28,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragmentDirections
+import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
@@ -112,6 +114,7 @@ class DebugFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun scanLeDevice() {
         bluetoothLeScanner?.let { scanner ->
             if (!scanning) { // Stops scanning after a pre-defined scan period.
@@ -148,6 +151,7 @@ class DebugFragment : Fragment() {
         )
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
+        @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
 
@@ -167,6 +171,7 @@ class DebugFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onDestroyView() {
         super.onDestroyView()
         bluetoothLeScanner?.stopScan(leScanCallback)

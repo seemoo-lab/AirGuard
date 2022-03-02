@@ -21,12 +21,14 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.util.jar.Manifest
 
 @HiltWorker
 
@@ -50,6 +52,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
+        if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_SCAN)){
+            Timber.d("Permission to perform bluetooth scan missing")
+            return Result.retry()
+        }
         try {
             val bluetoothManager =
                 applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -80,6 +86,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Start Scanning for bluetooth le devices...")
         val scanSettings =
             ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+
         bluetoothAdapter.bluetoothLeScanner.startScan(
             DeviceManager.scanFilter,
             scanSettings,
