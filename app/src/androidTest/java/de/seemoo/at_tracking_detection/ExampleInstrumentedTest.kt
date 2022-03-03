@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -41,6 +43,15 @@ class ExampleInstrumentedTest {
     @Test
     fun trackingDetectionTimeDifferenceTest() {
 
+        val testDevice = BaseDevice(
+            address = "00:00:00:00:00",
+            ignore = false,
+            connectable = true,
+            payloadData = null,
+            firstDiscovery = LocalDateTime.now(),
+            lastSeen = LocalDateTime.now(),
+            deviceType = DeviceType.AIRTAG
+        )
 
         val validBeacons1 = listOf(
             Beacon(
@@ -48,7 +59,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -56,7 +67,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
@@ -67,7 +78,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -75,7 +86,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
@@ -86,7 +97,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -94,7 +105,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
@@ -105,7 +116,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -113,7 +124,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
@@ -124,7 +135,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -132,7 +143,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
@@ -143,7 +154,7 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             ),
             Beacon(
@@ -151,19 +162,19 @@ class ExampleInstrumentedTest {
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
-                latitude =  51.4839483,
+                latitude = 51.4839483,
                 mfg = null
             )
         )
 
         runBlocking {
-            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(validBeacons1))
-            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(validBeacons2))
-            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(validBeacons3))
+            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, validBeacons1))
+            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, validBeacons2))
+            assertTrue(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, validBeacons3))
 
-            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(invalidBeacons1))
-            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(invalidBeacons2))
-            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(invalidBeacons3))
+            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, invalidBeacons1))
+            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, invalidBeacons2))
+            assertFalse(TrackingDetectorWorker.isTrackingForEnoughTime(testDevice, invalidBeacons3))
         }
 
     }
