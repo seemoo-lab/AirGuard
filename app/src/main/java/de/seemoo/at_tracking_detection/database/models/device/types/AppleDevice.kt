@@ -37,7 +37,7 @@ class AppleDevice(val id: Int) : Device() {
             get() = "Apple Device"
 
         override val minTrackingTime: Int
-            get() = 120 * 60
+            get() = 150 * 60
 
         override val statusByteDeviceType: UInt
             get() = 0u
