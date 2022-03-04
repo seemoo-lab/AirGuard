@@ -79,7 +79,7 @@
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
                 app:layout_constraintTop_toTopOf="parent"
                 app:setDeviceName="@{scanResult}"
-                tools:text="@string/title_debug" />
+                tools:text="Debug Device" />
 
             <TextView
                 android:id="@+id/scan_result_device_address"
@@ -94,7 +94,7 @@
                 app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_left"
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
                 app:layout_constraintTop_toBottomOf="@id/scan_result_guideline_horizontal"
-                tools:text="@string/title_debug" />
+                tools:text="FF:FF:FF:FF:FF" />
 
             <ImageView
                 android:id="@+id/scan_result_location_image"
@@ -120,7 +120,7 @@
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
                 app:layout_constraintTop_toTopOf="parent"
                 app:setDistance="@{scanResult}"
-                tools:text="@string/title_debug" />
+                tools:text="1.2 M" />
 
             <ImageView
                 android:id="@+id/scan_result_play_sound"

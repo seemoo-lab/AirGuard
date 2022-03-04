@@ -9,6 +9,7 @@ interface DeviceContext {
 
     val defaultDeviceName: String
 
+    /** Minimum time the device needs to be following in seconds */
     val minTrackingTime: Int
         get() = 30 * 60
 
