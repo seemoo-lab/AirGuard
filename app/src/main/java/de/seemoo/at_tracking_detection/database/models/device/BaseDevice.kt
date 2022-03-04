@@ -19,13 +19,13 @@ data class BaseDevice(
     @ColumnInfo(name = "address") var address: String,
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
-    @ColumnInfo(name = "connectable") val connectable: Boolean?,
+    @ColumnInfo(name = "connectable", defaultValue = "0") val connectable: Boolean?,
     @ColumnInfo(name = "payloadData") val payloadData: Byte?,
     @ColumnInfo(name = "firstDiscovery") val firstDiscovery: LocalDateTime,
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
-    @ColumnInfo(name = "deviceType") val deviceType: DeviceType?
+    @ColumnInfo(name = "deviceType", defaultValue = "null") val deviceType: DeviceType?
 ) {
 
     constructor(
