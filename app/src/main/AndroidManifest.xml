@@ -61,6 +61,8 @@
             <intent-filter>
                 <action android:name="de.seemoo.at_tracking_detection.FALSE_ALARM" />
                 <action android:name="de.seemoo.at_tracking_detection.IGNORE_DEVIE" />
+                <action android:name="de.seemoo.at_tracking_detection.DISMISSED_ACTION" />
+                <action android:name="de.seemoo.at_tracking_detection.CLICKED_ACTION" />
             </intent-filter>
         </receiver>
 

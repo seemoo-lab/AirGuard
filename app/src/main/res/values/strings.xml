@@ -196,4 +196,6 @@
     <string name="play_sound_error_init">Could not connect to the Bluetooth Service!</string>
     <string name="play_sound_error_connect">Failed to connect to device!</string>
     <string name="filter_title_device_types">Device Types</string>
+    <string name="notification_ignore_device">IGNORE DEVICE</string>
+    <string name="notification_false_alarm">FALSE ALARM</string>
 </resources>

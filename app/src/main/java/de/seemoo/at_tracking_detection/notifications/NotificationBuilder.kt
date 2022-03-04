@@ -52,7 +52,7 @@ class NotificationBuilder @Inject constructor(
             action = notificationAction
             putExtras(bundle)
         }
-        return PendingIntent.getActivity(
+        return PendingIntent.getBroadcast(
             context,
             code,
             intent,
@@ -81,7 +81,7 @@ class NotificationBuilder @Inject constructor(
             .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
             .addAction(
                 R.drawable.ic_warning,
-                "FALSE ALARM",
+                context.getString(R.string.notification_false_alarm),
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.FALSE_ALARM_ACTION,
@@ -89,7 +89,7 @@ class NotificationBuilder @Inject constructor(
                 )
             ).addAction(
                 R.drawable.ic_warning,
-                "IGNORE DEVICE",
+                context.getString(R.string.notification_ignore_device),
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.IGNORE_DEVICE_ACTION,
