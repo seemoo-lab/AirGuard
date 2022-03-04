@@ -147,12 +147,6 @@ object Util {
         return true
     }
 
-    val bleScanFilter: MutableList<ScanFilter> = mutableListOf(
-        ScanFilter.Builder()
-            .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
-            .build()
-    )
-
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
