@@ -1,0 +1,7 @@
+# Bug Fixes
+- Manual scanning crashed when Bluetooth was disabled
+- App froze when loading many beacons into the map
+
+# Misc
+- Correct typos, clarified wording in strings.xml by @lazytownfan
+- Correct minor typos and formatting in Privacy Policy by @lazytownfan
