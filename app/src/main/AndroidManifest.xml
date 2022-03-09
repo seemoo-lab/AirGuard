@@ -32,12 +32,14 @@
 
     <application
         android:name=".ATTrackingDetectionApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ATTrackingDetection">
+        android:theme="@style/Theme.ATTrackingDetection"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.TrackingActivity"
             android:excludeFromRecents="true"
