@@ -161,16 +161,17 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         Timber.d("Device: $device")
 
+        val uuids =  scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
         val beacon = if (BuildConfig.DEBUG) {
             // Save the manufacturer data to the beacon
             Beacon(
                 discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                scanResult.scanRecord?.bytes
+                scanResult.scanRecord?.bytes, uuids
             )
         } else {
             Beacon(
                 discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                null
+                null, uuids
             )
         }
 

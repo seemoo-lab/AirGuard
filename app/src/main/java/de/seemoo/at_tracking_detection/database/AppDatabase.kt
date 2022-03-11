@@ -20,7 +20,7 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
     autoMigrations = [AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4), AutoMigration(from = 4, to = 5)],
     exportSchema = true
 )
-@TypeConverters(DateTimeConverter::class)
+@TypeConverters(Converters::class, DateTimeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun deviceDao(): DeviceDao
