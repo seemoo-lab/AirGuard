@@ -11,7 +11,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toStringFromList(list: List<String>): String {
-        return list.joinToString(";")
+    fun toStringFromList(list: List<String>?): String {
+        return list?.joinToString(";") ?: ""
     }
 }

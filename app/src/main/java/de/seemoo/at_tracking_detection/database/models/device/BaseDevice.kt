@@ -25,7 +25,7 @@ data class BaseDevice(
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
-    @ColumnInfo(name = "deviceType", defaultValue = "null") val deviceType: DeviceType?
+    @ColumnInfo(name = "deviceType") val deviceType: DeviceType?
 ) {
 
     constructor(

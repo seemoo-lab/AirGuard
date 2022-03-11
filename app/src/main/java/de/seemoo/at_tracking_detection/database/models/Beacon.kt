@@ -20,7 +20,7 @@ data class Beacon(
     @ColumnInfo(name = "longitude") var longitude: Double?,
     @ColumnInfo(name = "latitude") var latitude: Double?,
     @ColumnInfo(name = "mfg") var manufacturerData: ByteArray?,
-    @ColumnInfo(name = "serviceUUIDs") var serviceUUIDs: List<String>?
+    @ColumnInfo(name = "serviceUUIDs", defaultValue = "null") var serviceUUIDs: List<String>?
 ) {
     constructor(
         receivedAt: LocalDateTime,
