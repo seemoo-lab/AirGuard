@@ -22,6 +22,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -87,14 +88,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanSettings =
             ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
 
-        bluetoothAdapter.bluetoothLeScanner.startScan(
-            DeviceManager.scanFilter,
-            scanSettings,
-            leScanCallback
-        )
+        BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
 
         delay(getScanDuration())
-        bluetoothAdapter.bluetoothLeScanner.stopScan(leScanCallback)
+
+        BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
+
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
         if (location == null) {

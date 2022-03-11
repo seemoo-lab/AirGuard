@@ -96,6 +96,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 LocalDateTime.now(ZoneOffset.UTC).toString()
             )
         )
+        //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             val beacons = beaconRepository.getDeviceBeacons(it.deviceAddress)
             beaconsPerDevice[it.deviceAddress] = beacons
