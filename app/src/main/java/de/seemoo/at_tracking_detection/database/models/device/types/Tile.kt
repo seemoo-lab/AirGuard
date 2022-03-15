@@ -41,6 +41,6 @@ class Tile(val id: Int) : Device(){
         override val statusByteDeviceType: UInt
             get() = 0u
 
-        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("FEED")
+        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEED-0000-1000-8000-00805F9B34FB")
     }
 }

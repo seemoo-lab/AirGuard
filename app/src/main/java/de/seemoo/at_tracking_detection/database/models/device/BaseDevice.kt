@@ -82,6 +82,7 @@ data class BaseDevice(
         DeviceType.APPLE -> AppleDevice(deviceId)
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
+        DeviceType.TILE -> Tile(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {

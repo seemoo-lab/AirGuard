@@ -10,7 +10,8 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, Tile)
+    val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Checking device type for ${scanResult.device.address}")
@@ -26,7 +27,7 @@ object DeviceManager {
 
             var deviceTypeCheck: DeviceType? = null
 
-            for (device in devices) {
+            for (device in appleDevices) {
                 // Implementation of device detection is incorrect.
                 if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
                     deviceTypeCheck = device.deviceType
