@@ -13,10 +13,14 @@ object BLEScanCallback {
     private var scanCallback: WeakReference<ScanCallback>? = null
 
     fun startScanning(leScanner: BluetoothLeScanner, filters: List<ScanFilter>, settings: ScanSettings, callback: ScanCallback) {
-        if (Util.checkBluetoothPermission() == false) {return}
+        if (Util.checkBluetoothPermission() == false) {
+            Timber.e("NO BLE SCAN PERMISSION")
+            return
+        }
 
         scanCallback = WeakReference(callback)
         leScanner.startScan(filters, settings, objectScanCallback)
+        Timber.d("BLE scanning started")
     }
 
     fun stopScanning(leScanner: BluetoothLeScanner) {

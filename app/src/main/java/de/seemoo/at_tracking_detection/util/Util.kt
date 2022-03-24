@@ -61,7 +61,7 @@ object Util {
     }
 
     fun checkBluetoothPermission(): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||  ActivityCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||  ActivityCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
     }
 
     suspend fun setGeoPointsFromList(

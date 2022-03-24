@@ -136,6 +136,6 @@ class ScanFragment : Fragment() {
     }
 
     companion object {
-        private const val SCAN_DURATION = 10000L
+        private const val SCAN_DURATION = 15000L
     }
 }
