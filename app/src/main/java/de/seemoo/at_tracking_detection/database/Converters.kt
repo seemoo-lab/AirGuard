@@ -6,12 +6,12 @@ import java.time.LocalDateTime
 class Converters {
 
     @TypeConverter
-    fun fromStringToList(value: String): List<String> {
-        return value.split(";")
+    fun fromStringToList(value: String?): List<String>? {
+        return value?.split(";")
     }
 
     @TypeConverter
-    fun toStringFromList(list: List<String>?): String {
-        return list?.joinToString(";") ?: ""
+    fun toStringFromList(list: List<String>?): String? {
+        return list?.joinToString(";")
     }
 }

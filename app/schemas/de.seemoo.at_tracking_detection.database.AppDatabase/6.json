@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "e9c6f49c667b7001612c6a2e83482286",
+    "identityHash": "6766e734817eb1fa11f5d301ba67070c",
     "entities": [
       {
         "tableName": "device",
@@ -153,7 +153,7 @@
       },
       {
         "tableName": "beacon",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `longitude` REAL, `latitude` REAL, `mfg` BLOB, `serviceUUIDs` TEXT DEFAULT null)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `longitude` REAL, `latitude` REAL, `mfg` BLOB, `serviceUUIDs` TEXT)",
         "fields": [
           {
             "fieldPath": "beaconId",
@@ -201,8 +201,7 @@
             "fieldPath": "serviceUUIDs",
             "columnName": "serviceUUIDs",
             "affinity": "TEXT",
-            "notNull": false,
-            "defaultValue": "null"
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -250,7 +249,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e9c6f49c667b7001612c6a2e83482286')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6766e734817eb1fa11f5d301ba67070c')"
     ]
   }
 }
