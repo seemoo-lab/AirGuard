@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.hilt
 
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -18,15 +19,26 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.FeedbackRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    val MIGRATION_5_6 = object : Migration(5, 6) {
+    val MIGRATION_5_7 = object : Migration(5, 7) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
+            try {
+                database.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
+            }catch (e: SQLiteException) {
+                Timber.e("Could not create new column ${e}")
+            }
+
+        }
+    }
+
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(database: SupportSQLiteDatabase) {
         }
     }
 
@@ -35,7 +47,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "attd_db")
-            .addMigrations(MIGRATION_5_6)
+            .addMigrations(MIGRATION_5_7, MIGRATION_6_7)
             .allowMainThreadQueries().build()
     }
 

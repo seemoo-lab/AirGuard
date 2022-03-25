@@ -60,7 +60,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 30),
@@ -68,7 +69,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
@@ -79,7 +81,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 45),
@@ -87,7 +90,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
@@ -98,7 +102,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 22, 10, 45),
@@ -106,7 +111,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
@@ -117,7 +123,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
@@ -125,7 +132,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
@@ -136,7 +144,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 29),
@@ -144,7 +153,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
@@ -155,7 +165,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 20),
@@ -163,7 +174,8 @@ class ExampleInstrumentedTest {
                 deviceAddress = "00:00:00:00:00",
                 longitude = 8.24823948,
                 latitude = 51.4839483,
-                mfg = null
+                mfg = null,
+                serviceUUIDs = null
             )
         )
 
