@@ -23,19 +23,19 @@ class MigrationTest {
 
     private val AUTO_MIGGRAITON_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `device` ADD COLUMN `name` TEXT DEFAULT NULL");
+            database.execSQL("ALTER TABLE `device` ADD COLUMN `name` TEXT DEFAULT NULL")
         }
     }
 
     private val AUTO_MIGRATION_3_4 = object : Migration(3, 4) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `notification` ADD COLUMN `dismissed` INTEGER DEFAULT NULL");
-            database.execSQL("ALTER TABLE `notification` ADD COLUMN `clicked` INTEGER DEFAULT NULL");
-            database.execSQL("CREATE TABLE IF NOT EXISTS `_new_device` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT)");
-            database.execSQL("INSERT INTO `_new_device` (`lastNotificationSent`,`address`,`connectable`,`firstDiscovery`,`lastSeen`,`name`,`ignore`,`payloadData`,`deviceId`,`notificationSent`) SELECT `lastNotificationSent`,`address`,`connectable`,`firstDiscovery`,`lastSeen`,`name`,`ignore`,`payloadData`,`deviceId`,`notificationSent` FROM `device`");
-            database.execSQL("DROP TABLE `device`");
-            database.execSQL("ALTER TABLE `_new_device` RENAME TO `device`");
-            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_device_address` ON `device` (`address`)");
+            database.execSQL("ALTER TABLE `notification` ADD COLUMN `dismissed` INTEGER DEFAULT NULL")
+            database.execSQL("ALTER TABLE `notification` ADD COLUMN `clicked` INTEGER DEFAULT NULL")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `_new_device` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT)")
+            database.execSQL("INSERT INTO `_new_device` (`lastNotificationSent`,`address`,`connectable`,`firstDiscovery`,`lastSeen`,`name`,`ignore`,`payloadData`,`deviceId`,`notificationSent`) SELECT `lastNotificationSent`,`address`,`connectable`,`firstDiscovery`,`lastSeen`,`name`,`ignore`,`payloadData`,`deviceId`,`notificationSent` FROM `device`")
+            database.execSQL("DROP TABLE `device`")
+            database.execSQL("ALTER TABLE `_new_device` RENAME TO `device`")
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_device_address` ON `device` (`address`)")
         }
     }
 
@@ -81,25 +81,7 @@ class MigrationTest {
         db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`, `serviceUUIDs`) VALUES ('2022-03-25T11:00:00', -78, 'aa:bb:cc:dd:ee', 50.04231, 8.34423, 'AA:BB;DD:EE;FF:EE')")
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun migrateAll() {
-
-        val db = helper.createDatabase(TEST_DB, 2).apply {
-            insertDummyData(this)
-            close()
-        }
-
-        val roomDB = Room.databaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            AppDatabase::class.java,
-            TEST_DB
-        ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
-            openHelper.writableDatabase.close()
-        }
-
-
+    fun assertDBMigrations(roomDB: AppDatabase) {
         val time = LocalDateTime.of(2022,3,1,0,0,0,0)
         val beaconDao = BeaconDao_Impl(roomDB)
         val beaconRepository = BeaconRepository(beaconDao)
@@ -114,37 +96,138 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun migrate4_5() {
-        var db = helper.createDatabase(TEST_DB, 4).apply {
+    fun migrateAll() {
+
+        helper.createDatabase(TEST_DB, 2).apply {
             insertDummyData(this)
             close()
         }
 
-        db = helper.runMigrationsAndValidate(TEST_DB, 5, true, AUTO_MIGRATION_4_5)
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun roomMigrate3_7() {
+        helper.createDatabase(TEST_DB, 3).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun roomMigrate4_7() {
+        helper.createDatabase(TEST_DB, 4).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun roomMigrate5_7() {
+        helper.createDatabase(TEST_DB, 5).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun roomMigrate6_7() {
+        helper.createDatabase(TEST_DB, 6).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate4_5() {
+        helper.createDatabase(TEST_DB, 4).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, AUTO_MIGRATION_4_5)
         insertNewBeacon(db)
     }
 
     @Test
     @Throws(IOException::class)
     fun migrate5_6() {
-        var db = helper.createDatabase(TEST_DB, 5).apply {
+        helper.createDatabase(TEST_DB, 5).apply {
             insertDummyData(this)
             close()
         }
 
-        db = helper.runMigrationsAndValidate(TEST_DB, 6, true, AUTO_MIGRATION_5_6)
+        val db = helper.runMigrationsAndValidate(TEST_DB, 6, true, AUTO_MIGRATION_5_6)
         insertNewBeacon(db)
     }
 
     @Test
     @Throws(IOException::class)
     fun migrate5_7() {
-        var db = helper.createDatabase(TEST_DB, 5).apply {
+        helper.createDatabase(TEST_DB, 5).apply {
             insertDummyData(this)
             close()
         }
 
-        db = helper.runMigrationsAndValidate(TEST_DB, 7, true, DatabaseModule.MIGRATION_5_7)
+        val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, DatabaseModule.MIGRATION_5_7)
         insertNewBeacon(db)
     }
 
