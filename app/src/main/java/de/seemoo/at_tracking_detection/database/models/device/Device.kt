@@ -16,4 +16,8 @@ abstract class Device {
         val context = ATTrackingDetectionApplication.getAppContext()
         return AppCompatResources.getDrawable(context, imageResource)
     }
+
+    fun isConnectable(): Boolean {
+        return this is Connectable
+    }
 }

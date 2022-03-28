@@ -1,0 +1,12 @@
+# Features
+- UI redesign
+- Device list filter
+
+# Bug Fixes
+- Crash when manually scanning and closing the view before the scan was complete
+- Status bar color for m3 design was mismatched
+- Onboarding crash
+
+# Misc
+-  Copyright overlay on OpenStreetMaps
+-  Text improvements

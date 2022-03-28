@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragmentDirections
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
@@ -112,6 +113,15 @@ class DebugFragment : Fragment() {
                 DebugFragmentDirections.actionNavigationDebugToDebugLogFragment()
             findNavController().navigate(directions)
         }
+
+        view.findViewById<Button>(R.id.button_debugCheckLeaks).setOnClickListener {
+            // Does not compile for release
+//            Timber.d("Retained objects: ${AppWatcher.objectWatcher.retainedObjectCount}")
+//            Timber.d("Has watched objects: ${AppWatcher.objectWatcher.hasWatchedObjects}")
+//            if (AppWatcher.objectWatcher.retainedObjectCount > 0) {
+//                Timber.d("Retained objects\n${AppWatcher.objectWatcher.retainedObjects}")
+//            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -123,10 +133,10 @@ class DebugFragment : Fragment() {
                     scanner.stopScan(leScanCallback)
                 }, SCAN_PERIOD)
                 scanning = true
-                scanner.startScan(buildFilter(), buildSettings(), leScanCallback)
+                BLEScanCallback.startScanning(scanner, buildFilter(), buildSettings(), leScanCallback)
             } else {
                 scanning = false
-                scanner.stopScan(leScanCallback)
+                BLEScanCallback.stopScanning(scanner)
             }
         }
     }
@@ -174,7 +184,7 @@ class DebugFragment : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onDestroyView() {
         super.onDestroyView()
-        bluetoothLeScanner?.stopScan(leScanCallback)
+        bluetoothLeScanner?.let { BLEScanCallback.stopScanning(it) }
     }
 
     companion object {

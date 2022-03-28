@@ -43,6 +43,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
+            //TODO: Implement tracking detection for Tile
             val device = deviceRepository.getDevice(mapEntry.key)
 
             //Check that we found enough beacons
@@ -95,6 +96,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 LocalDateTime.now(ZoneOffset.UTC).toString()
             )
         )
+        //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             val beacons = beaconRepository.getDeviceBeacons(it.deviceAddress)
             beaconsPerDevice[it.deviceAddress] = beacons

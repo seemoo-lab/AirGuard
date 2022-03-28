@@ -25,7 +25,7 @@ data class BaseDevice(
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
-    @ColumnInfo(name = "deviceType", defaultValue = "null") val deviceType: DeviceType?
+    @ColumnInfo(name = "deviceType") val deviceType: DeviceType?
 ) {
 
     constructor(
@@ -82,6 +82,7 @@ data class BaseDevice(
         DeviceType.APPLE -> AppleDevice(deviceId)
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
+        DeviceType.TILE -> Tile(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {
