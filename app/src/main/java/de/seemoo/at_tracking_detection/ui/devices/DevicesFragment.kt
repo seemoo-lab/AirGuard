@@ -45,11 +45,10 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-class DevicesFragment : Fragment() {
+abstract class DevicesFragment(private val showDevicesFound: Boolean = true, private val showAllDevices: Boolean = false) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
-    private val safeArgs: DevicesFragmentArgs by navArgs()
 
     private lateinit var deviceAdapter: DeviceAdapter
 
@@ -66,7 +65,7 @@ class DevicesFragment : Fragment() {
         var deviceInfoText = R.string.info_text_all_devices
 
 
-        if (!safeArgs.showDevicesFound) {
+        if (!showDevicesFound) {
             activity?.setTitle(R.string.title_ignored_devices)
             emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -85,7 +84,7 @@ class DevicesFragment : Fragment() {
                 )
             )
             // If we show all devices immediately, we set the correct strings here
-            if (safeArgs.showAllDevices) {
+            if (showAllDevices) {
                 deviceInfoText = R.string.info_text_all_devices
                 emptyListText = R.string.empty_list_devices
             } else {
@@ -149,18 +148,9 @@ class DevicesFragment : Fragment() {
 
     }
 
-    private val deviceItemListener =
-        DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
-            if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                return@OnClickListener
-            }
-            val directions: NavDirections =
-                DevicesFragmentDirections.actionNavigationDevicesToTrackingFragment(
-                    baseDevice.address
-                )
-            val extras = FragmentNavigatorExtras(materialCardView to baseDevice.address)
-            findNavController().navigate(directions, extras)
-        }
+    abstract val deviceItemListener: DeviceAdapter.OnClickListener
+
+
 
 
     private fun updateTexts() {
