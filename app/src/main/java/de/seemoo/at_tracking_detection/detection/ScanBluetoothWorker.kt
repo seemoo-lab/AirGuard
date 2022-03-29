@@ -16,10 +16,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
@@ -38,6 +40,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository,
+    private val scanRepository: ScanRepository,
     private val locationProvider: LocationProvider,
     private val sharedPreferences: SharedPreferences,
     private val notificationService: NotificationService,
@@ -84,12 +87,14 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
+        val scanMode = getScanMode()
         val scanSettings =
-            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+            ScanSettings.Builder().setScanMode(scanMode).build()
 
         BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
 
-        delay(getScanDuration())
+        val scanDuration: Long = getScanDuration()
+        delay(scanDuration)
 
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
 
@@ -113,11 +118,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
         backgroundWorkScheduler.scheduleTrackingDetector()
 
         sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
+        scanRepository.insert(Scan(LocalDateTime.now(), scanResultDictionary.size, scanDuration.toInt() / 1000, false, scanMode))
 
         return Result.success(
             Data.Builder()
-                .putLong("duration", getScanDuration())
-                .putInt("mode", getScanMode())
+                .putLong("duration", scanDuration)
+                .putInt("mode", scanMode)
                 .putInt("devicesFound", scanResultDictionary.size)
                 .build()
         )

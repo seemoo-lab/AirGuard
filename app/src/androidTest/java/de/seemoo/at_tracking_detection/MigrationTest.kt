@@ -137,7 +137,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate4_7() {
+    fun roomMigrate4_current() {
         helper.createDatabase(TEST_DB, 4).apply {
             insertDummyData(this)
             close()
@@ -157,7 +157,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate5_7() {
+    fun roomMigrate5_current() {
         helper.createDatabase(TEST_DB, 5).apply {
             insertDummyData(this)
             close()
@@ -177,7 +177,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate6_7() {
+    fun roomMigrate6_current() {
         helper.createDatabase(TEST_DB, 6).apply {
             insertDummyData(this)
             close()
