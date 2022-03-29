@@ -122,6 +122,10 @@ class DebugFragment : Fragment() {
 //                Timber.d("Retained objects\n${AppWatcher.objectWatcher.retainedObjects}")
 //            }
         }
+
+        view.findViewById<Button>(R.id.button_debugScans).setOnClickListener {
+            findNavController().navigate(DebugFragmentDirections.actionNavigationDebugToDebugScansFragment())
+        }
     }
 
     @SuppressLint("MissingPermission")

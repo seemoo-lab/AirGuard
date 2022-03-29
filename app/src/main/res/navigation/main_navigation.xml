@@ -58,6 +58,9 @@
             app:popUpToSaveState="false"
             app:restoreState="true"
             />
+        <action
+            android:id="@+id/action_navigation_debug_to_debugScansFragment"
+            app:destination="@id/debugScansFragment" />
     </fragment>
 
     <fragment
@@ -150,10 +153,6 @@
         android:label="Debug Logs"
         tools:layout="@layout/fragment_debug_log" />
     <fragment
-        android:id="@+id/navigation_ignoredDevices"
-        android:name="de.seemoo.at_tracking_detection.ui.devices.DevicesFragment"
-        android:label="DevicesFragment" />
-    <fragment
         android:id="@+id/navigation_ignoredDevicesFragment"
         android:name="de.seemoo.at_tracking_detection.ui.devices.IgnoredDevicesFragment"
         android:label="IgnoredDevicesFragment" >
@@ -168,5 +167,9 @@
             app:popUpTo="@id/navigation_ignoredDevicesFragment"
             />
     </fragment>
+    <fragment
+        android:id="@+id/debugScansFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.debug.DebugScansFragment"
+        android:label="DebugScansFragment" />
 
 </navigation>

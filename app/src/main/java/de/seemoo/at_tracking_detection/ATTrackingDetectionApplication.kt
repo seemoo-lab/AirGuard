@@ -61,7 +61,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             // We use this to access our logs from a file for on device debugging
             File(filesDir.path + "/logs.log").createNewFile()
             val t: Timber.Tree = FileLoggerTree.Builder()
-                .withSizeLimit(2_000_000)
+                .withSizeLimit(500_000)
                 .withDir(filesDir)
                 .withFileName("logs.log")
                 .withMinPriority(Log.VERBOSE)
