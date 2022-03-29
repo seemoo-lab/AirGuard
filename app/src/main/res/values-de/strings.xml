@@ -182,4 +182,5 @@
     <string name="filter_title_device_types">Geräte Typen</string>
     <string name="notification_ignore_device">GERÄT IGNORIEREN</string>
     <string name="notification_false_alarm">FEHLALARM</string>
+    <string name="last_scans">Last scans</string>
 </resources>

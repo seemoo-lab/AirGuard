@@ -17,6 +17,8 @@ class ScanRepository @Inject constructor(
     var relevantScans =
         scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDate)
 
+    fun relevantScans(manual: Boolean, limit: Int): List<Scan> = scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDate, manual, limit)
+
     var flowRelevantScans =
         scanDao.getFlowScansSince(RiskLevelEvaluator.relevantTrackingDate)
 
