@@ -45,7 +45,7 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-abstract class DevicesFragment(private val showDevicesFound: Boolean = true, private val showAllDevices: Boolean = false) : Fragment() {
+abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllDevices: Boolean = false) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
