@@ -65,7 +65,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             Timber.e("BluetoothAdapter not found!")
             return Result.retry()
         }
-        sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
 
         scanResultDictionary = HashMap()
 
@@ -112,6 +111,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         Timber.d("Scheduling tracking detector worker")
         backgroundWorkScheduler.scheduleTrackingDetector()
+
+        sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
 
         return Result.success(
             Data.Builder()

@@ -23,11 +23,7 @@ import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
 import de.seemoo.at_tracking_detection.util.Util
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DashboardRiskFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 @AndroidEntryPoint
 class DashboardRiskFragment : Fragment() {
 
@@ -84,6 +80,11 @@ class DashboardRiskFragment : Fragment() {
                 DashboardRiskFragmentDirections.actionNavigationDashboardToRiskDetailFragment()
             findNavController().navigate(directions)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.updateRiskLevel()
     }
 
     private fun showManualScan() {

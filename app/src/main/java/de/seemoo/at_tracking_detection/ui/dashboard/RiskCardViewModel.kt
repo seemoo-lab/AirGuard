@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RiskCardViewModel @Inject constructor(
-    riskLevelEvaluator: RiskLevelEvaluator,
+    private val riskLevelEvaluator: RiskLevelEvaluator,
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
@@ -25,12 +25,12 @@ class RiskCardViewModel @Inject constructor(
     var riskColor: Int = 0
     var showLastDetection: Boolean = true
     var clickable: Boolean = true
-    var trackersFoundModel: RiskRowViewModel
-    var lastUpdateModel: RiskRowViewModel
-    var lastDiscoveryModel: RiskRowViewModel
+    lateinit var trackersFoundModel: RiskRowViewModel
+    lateinit var lastUpdateModel: RiskRowViewModel
+    lateinit var lastDiscoveryModel: RiskRowViewModel
 
     private var dateTime: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
-    private var lastScan: LocalDateTime
+    lateinit private var lastScan: LocalDateTime
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
@@ -43,7 +43,12 @@ class RiskCardViewModel @Inject constructor(
             }
         }
 
+
     init {
+        updateRiskLevel()
+    }
+
+    fun updateRiskLevel() {
         lastScan = LocalDateTime.parse(
             sharedPreferences.getString(
                 "last_scan",
