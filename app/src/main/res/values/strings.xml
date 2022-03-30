@@ -200,4 +200,6 @@
     <string name="notification_false_alarm">FALSE ALARM</string>
     <string name="last_scans">Last scans</string>
     <string name="tip_airtag_testing"><b>Testing the app?</b> AirTags cannot be discovered when they are connected to a nearby iPhone / iPad. While connected they also do not track the location. AirTags need to be disconnected from Bluetooth and wait 15min to be discovered with the app.</string>
+    <string name="none">None</string>
+    <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
 </resources>

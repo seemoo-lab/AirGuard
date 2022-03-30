@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -34,7 +35,6 @@ import java.time.LocalDateTime
 import java.util.jar.Manifest
 
 @HiltWorker
-
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
@@ -71,7 +71,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         scanResultDictionary = HashMap()
 
-        val useLocation = sharedPreferences.getBoolean("use_location", false)
+        val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             val lastLocation = locationProvider.getLastLocation()
 
@@ -91,6 +91,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanSettings =
             ScanSettings.Builder().setScanMode(scanMode).build()
 
+        SharedPrefs.isScanningInBackground = true
         BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
 
         val scanDuration: Long = getScanDuration()
@@ -117,7 +118,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Scheduling tracking detector worker")
         backgroundWorkScheduler.scheduleTrackingDetector()
 
-        sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
+        SharedPrefs.lastScanDate = LocalDateTime.now()
+        SharedPrefs.isScanningInBackground = false
         scanRepository.insert(Scan(LocalDateTime.now(), scanResultDictionary.size, scanDuration.toInt() / 1000, false, scanMode))
 
         return Result.success(

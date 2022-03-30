@@ -14,6 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
@@ -71,7 +72,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
                 "use_location" -> {
-                    if (sharedPreferences.getBoolean("use_location", false)) {
+                    if (SharedPrefs.useLocationInTrackingDetection) {
                         Timber.d("Use location enabled!")
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -101,9 +102,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             ) == PackageManager.PERMISSION_GRANTED
 
         if (locationPermissionState && backgroundPermissionState) {
-            sharedPreferences.edit().putBoolean("use_location", true).apply()
+            SharedPrefs.useLocationInTrackingDetection = true
         } else {
-            sharedPreferences.edit().putBoolean("use_location", false).apply()
+            SharedPrefs.useLocationInTrackingDetection = false
         }
     }
 }

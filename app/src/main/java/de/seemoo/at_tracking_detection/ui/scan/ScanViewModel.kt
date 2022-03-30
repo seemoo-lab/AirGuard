@@ -9,6 +9,7 @@ import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -22,6 +23,8 @@ class ScanViewModel @Inject constructor(private val scanRepository: ScanReposito
     val scanFinished = MutableLiveData(false)
 
     val scanStart = MutableLiveData(LocalDateTime.MIN)
+
+    val isScanningInBackground = SharedPrefs.isScanningInBackground
 
     init {
         bluetoothDeviceList.value = ArrayList()

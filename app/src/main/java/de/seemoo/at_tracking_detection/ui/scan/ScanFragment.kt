@@ -86,7 +86,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
-        if (isScanning) { return }
+        if (isScanning || scanViewModel.isScanningInBackground) { return }
         bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

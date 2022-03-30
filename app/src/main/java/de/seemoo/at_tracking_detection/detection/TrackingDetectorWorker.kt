@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -86,16 +87,11 @@ class TrackingDetectorWorker @AssistedInject constructor(
         )
     }
 
-    private val useLocation = sharedPreferences.getBoolean("use_location", false)
+    private val useLocation = SharedPrefs.useLocationInTrackingDetection
 
     private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
         val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
-        val since = LocalDateTime.parse(
-            sharedPreferences.getString(
-                "last_scan",
-                LocalDateTime.now(ZoneOffset.UTC).toString()
-            )
-        )
+        val since = SharedPrefs.lastScanDate ?: LocalDateTime.now().minusMinutes(15)
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             val beacons = beaconRepository.getDeviceBeacons(it.deviceAddress)

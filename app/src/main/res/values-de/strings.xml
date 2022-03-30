@@ -184,4 +184,6 @@
     <string name="notification_false_alarm">FEHLALARM</string>
     <string name="last_scans">Last scans</string>
     <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nicht gefunden werden. Sie tracken dann auch keinen Standort. Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden.</string>
+    <string name="none">Keiner</string>
+    <string name="already_scanning_warning">Die App scannt bereits im Hintergrund. Bitte warte 10s und starte dann den Scan erneut.</string>
 </resources>
