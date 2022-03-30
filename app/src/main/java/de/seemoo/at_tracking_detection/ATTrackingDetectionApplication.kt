@@ -17,6 +17,7 @@ import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
@@ -82,26 +83,19 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             startOnboarding()
         }
 
-        if (sharedPreferences.getBoolean("share_data", false)) {
+        if (SharedPrefs.shareData) {
             backgroundWorkScheduler.scheduleShareData()
         }
 
-        if (sharedPreferences.getString("lastDataDonation", null) == null) {
-            sharedPreferences.edit()
-                .putString(
-                    "lastDataDonation",
-                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                ).apply()
+        if (SharedPrefs.lastDataDonation == null) {
+            SharedPrefs.lastDataDonation = LocalDateTime.now()
         }
 
         notificationService.setup()
         backgroundWorkScheduler.launch()
     }
 
-    private fun showOnboarding(): Boolean = !sharedPreferences.getBoolean(
-        "onboarding_completed",
-        false
-    ) or sharedPreferences.getBoolean("show_onboarding", false)
+    private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
 
     private fun hasPermissions(): Boolean {
         val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)

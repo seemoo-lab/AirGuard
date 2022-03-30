@@ -9,6 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.statistics.api.Api
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -17,17 +18,13 @@ import java.time.format.DateTimeFormatter
 class SendStatisticsWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val sharedPreferences: SharedPreferences,
     private val api: Api,
     private val deviceRepository: DeviceRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        var token = sharedPreferences.getString("token", null)
-        val lastDataDonation = sharedPreferences.getString(
-            "lastDataDonation",
-            null
-        )
+        var token = SharedPrefs.token
+        val lastDataDonation = SharedPrefs.lastDataDonation
 
         if (!api.ping().isSuccessful) {
             Timber.e("Server not available!")
@@ -37,13 +34,10 @@ class SendStatisticsWorker @AssistedInject constructor(
         if (token == null) {
             val response = api.getToken().body() ?: return Result.retry()
             token = response.token
-            with(sharedPreferences.edit()) {
-                putString("token", token)
-                apply()
-            }
+            SharedPrefs.token = token
         }
 
-        val devices = deviceRepository.getDeviceBeaconsSince(lastDataDonation)
+        val devices = deviceRepository.getDeviceBeaconsSinceDate(lastDataDonation)
 
         if (devices.isEmpty()) {
             Timber.d("Nothing to send...")
@@ -66,13 +60,6 @@ class SendStatisticsWorker @AssistedInject constructor(
 
         Timber.d("${devices.size} devices shared!")
 
-        with(sharedPreferences.edit()) {
-            putString(
-                "lastDataDonation",
-                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-            )
-            apply()
-        }
         return Result.success()
     }
 }

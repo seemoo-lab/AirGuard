@@ -64,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
                 "share_data" -> {
-                    if (sharedPreferences.getBoolean("share_data", false)) {
+                    if (SharedPrefs.shareData) {
                         Timber.d("Enabled background statistics sharing!")
                         backgroundWorkScheduler.scheduleShareData()
                     } else {

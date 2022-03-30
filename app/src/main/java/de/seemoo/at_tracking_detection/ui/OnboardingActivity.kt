@@ -73,7 +73,7 @@ class OnboardingActivity : AppIntro() {
 
 
         if (permission == null) {
-            sharedPreferences.edit().putBoolean("onboarding_completed", true).apply()
+            SharedPrefs.onBoardingCompleted = true
             backgroundWorkScheduler.launch()
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java).apply {

@@ -6,7 +6,6 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Location
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -42,7 +41,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
     private val locationProvider: LocationProvider,
-    private val sharedPreferences: SharedPreferences,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
 ) :
@@ -187,7 +185,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private fun getScanMode(): Int {
-        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
             ScanSettings.SCAN_MODE_LOW_POWER
         } else {
@@ -196,7 +194,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private fun getScanDuration(): Long {
-        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
             15000L
         } else {

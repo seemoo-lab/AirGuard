@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
 import android.view.View
 import android.widget.ImageView
@@ -23,11 +24,10 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     }
 }
 
+@SuppressLint("SetTextI18n")
 @BindingAdapter("setDistance", requireAll = true)
 fun setDistance(textView: TextView, scanResult: ScanResult) {
-    val context = ATTrackingDetectionApplication.getAppContext()
-    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    val useMetric = sharedPreferences.getBoolean("use_metric", Locale.getDefault() != Locale.US)
+    val useMetric = SharedPrefs.useMetricSystem
 
     var txPowerLevel = scanResult.scanRecord?.txPowerLevel
     if (txPowerLevel == null || txPowerLevel == Int.MIN_VALUE) {

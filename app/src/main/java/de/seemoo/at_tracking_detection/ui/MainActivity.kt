@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import org.osmdroid.config.Configuration
 import java.io.File
 import java.time.LocalDateTime
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        sharedPreferences.edit().putString("last_time_opened", dateTime.toString()).apply()
+        SharedPrefs.lastTimeOpened = dateTime
         super.onDestroy()
     }
 

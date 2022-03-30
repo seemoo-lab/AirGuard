@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import androidx.hilt.work.HiltWorker
@@ -14,12 +13,10 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 @HiltWorker
@@ -29,7 +26,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
     private val notificationService: NotificationService,
     private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository,
-    private val sharedPreferences: SharedPreferences
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
