@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -58,13 +57,12 @@
 
         <include
             android:id="@+id/include_scan_empty_explanation"
-            layout="@layout/include_empty_explanation"
+            layout="@layout/include_empty_manual_scan_explanation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="24dp"
             android:visibility="@{(!vm.scanFinished || !vm.isListEmpty)  ? View.GONE : View.VISIBLE, default=gone}"
-            bind:drawable="@{@drawable/ic_security_on}"
-            bind:text="@{@string/scan_result_no_devices}" />
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

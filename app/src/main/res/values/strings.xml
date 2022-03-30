@@ -126,7 +126,7 @@
     <string name="twitter">Twitter</string>
     <string name="scan_title">Manual Scan</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!</string>
+    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags) and Tile.</string>
     <string name="ble_service_connection_error">Failed to connect to device!</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices!</string>
@@ -199,4 +199,5 @@
     <string name="notification_ignore_device">IGNORE DEVICE</string>
     <string name="notification_false_alarm">FALSE ALARM</string>
     <string name="last_scans">Last scans</string>
+    <string name="tip_airtag_testing"><b>Testing the app?</b> AirTags cannot be discovered when they are connected to a nearby iPhone / iPad. While connected they also do not track the location. AirTags need to be disconnected from Bluetooth and wait 15min to be discovered with the app.</string>
 </resources>

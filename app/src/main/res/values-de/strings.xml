@@ -113,7 +113,7 @@
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
     <string name="scan_title">Manueller Scan</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element "</string>
-    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!</string>
+    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!\nWir scannen nur nach Apple Find My Trackern (AirTags) und Tile.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="yes_button">Ja</string>
     <string name="scan_enable_bluetooth_title">Bluetooth Suche</string>
@@ -183,4 +183,5 @@
     <string name="notification_ignore_device">GERÄT IGNORIEREN</string>
     <string name="notification_false_alarm">FEHLALARM</string>
     <string name="last_scans">Last scans</string>
+    <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nicht gefunden werden. Sie tracken dann auch keinen Standort. Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden.</string>
 </resources>
