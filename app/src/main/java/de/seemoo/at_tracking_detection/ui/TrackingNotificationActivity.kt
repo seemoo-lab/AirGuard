@@ -11,7 +11,7 @@ import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
 import timber.log.Timber
 
 @AndroidEntryPoint
-class TrackingActivity : AppCompatActivity() {
+class TrackingNotificationActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 

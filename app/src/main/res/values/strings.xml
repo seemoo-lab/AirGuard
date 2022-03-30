@@ -98,8 +98,12 @@
     <string name="onboarding_share_data_dialog">You have to decide whether you want to share some anonymized data or not!</string>
     <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device">Find My Device %s</string>
-    <string name="notification_text">Open the notification to get more info. A device has followed you for at least 30 minutes.</string>
-    <string name="notification_title">A tracker was discovered!</string>
+    <string name="notification_text_base">Open the notification to get more info. A tracker has followed you for at least 30 minutes.</string>
+    <string name="notification_title_base">A tracker has been following you</string>
+    <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least 30 minutes.</string>
+    <string name="notification_text_multiple">Open the notification to get more info. The %s has followed you for at least 30 minutes.</string>
+    <string name="notification_title_vocal">An %s has been following you</string>
+    <string name="notification_title_consonant">A %s has been following you</string>
     <string name="notification_title_ble_error">BLE Scanning failed</string>
     <string name="alert_sent_icon">Alert sent icon</string>
     <string name="device_icon">Device icon</string>

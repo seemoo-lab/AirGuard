@@ -39,10 +39,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ATTrackingDetection"
         android:largeHeap="true">
+
         <activity
-            android:name=".ui.TrackingActivity"
+            android:name=".ui.TrackingNotificationActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
             android:parentActivityName=".ui.MainActivity" />
 
         <provider
@@ -69,10 +71,10 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:allowTaskReparenting="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

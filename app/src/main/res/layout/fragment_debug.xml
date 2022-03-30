@@ -70,12 +70,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/start_ble_scanning"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="0.48"
-                android:text="Refresh" />
+                android:text="Start scanning" />
 
             <Space
                 android:layout_width="0dp"
@@ -99,7 +99,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/donate_data"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0px"
                 android:layout_height="match_parent"

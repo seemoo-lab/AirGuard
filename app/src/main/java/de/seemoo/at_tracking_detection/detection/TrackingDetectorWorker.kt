@@ -68,7 +68,13 @@ class TrackingDetectorWorker @AssistedInject constructor(
             }
 
             Timber.d("Found more than $MAX_BEACONS_BEFORE_ALARM beacons per device... Sending Notification!")
-            notificationService.sendTrackingNotification(mapEntry.key)
+
+            if (device != null) {
+                notificationService.sendTrackingNotification(device)
+            }else {
+                notificationService.sendTrackingNotification(mapEntry.key)
+            }
+
             device?.notificationSent = true
             device?.lastNotificationSent = LocalDateTime.now()
             device?.let { d -> deviceRepository.update(d) }

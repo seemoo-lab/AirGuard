@@ -81,8 +81,6 @@
     <string name="onboarding_share_data_yes">Ja</string>
     <string name="onboarding_share_data_dialog">Du musst entscheiden, ob Du anonymisierte Daten teilen willst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
-    <string name="notification_text">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
-    <string name="notification_title">Ein Tracker wurde entdeckt!</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
@@ -186,4 +184,10 @@
     <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nicht gefunden werden. Sie tracken dann auch keinen Standort. Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden.</string>
     <string name="none">Keiner</string>
     <string name="already_scanning_warning">Die App scannt bereits im Hintergrund. Bitte warte 10s und starte dann den Scan erneut.</string>
+    <string name="notification_title_vocal">Ein %s folgt dir</string>
+    <string name="notification_title_consonant">Ein %s folgt dir</string>
+    <string name="notification_text_single">Öffnen, um weitere Informationen zu erhalten. Die %s ist Dir für mindestens 30 Minuten gefolgt.</string>
+    <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens 30 Minuten gefolgt.</string>
+    <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
+    <string name="notification_title_base">Ein Tracker folgt dir</string>
 </resources>

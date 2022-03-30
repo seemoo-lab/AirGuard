@@ -7,6 +7,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -23,6 +24,10 @@ class SendStatisticsWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        if (BuildConfig.DEBUG) {
+            Timber.d("Not sending any data. Debug mode")
+            return Result.success()
+        }
         var token = SharedPrefs.token
         val lastDataDonation = SharedPrefs.lastDataDonation
 
