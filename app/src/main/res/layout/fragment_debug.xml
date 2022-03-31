@@ -1,125 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.debug.DebugFragment">
 
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.debug.DebugViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <ListView
-            android:id="@+id/bluetoothList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5">
-
-        </ListView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:layout_weight="0.08"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_debugScans"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="0.48"
-            android:text="Scans" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:layout_weight="0.08"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_debugLog"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="0.48"
-            android:text="Logs" />
-
-        <Button
-            android:id="@+id/button_debugCheckLeaks"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="0.48"
-            android:text="Check leaks" />
-
-    </LinearLayout>
-
+        tools:context=".ui.debug.DebugFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="0.07"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <Button
-                android:id="@+id/start_ble_scanning"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0px"
-                android:layout_height="match_parent"
-                android:layout_weight="0.48"
-                android:text="Start scanning" />
+            <ListView
+                android:id="@+id/bluetoothList"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5">
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.02" />
+            </ListView>
 
-            <Button
-                android:id="@+id/button2"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.48"
-                android:text="Notify" />
+            <TextView
+                android:id="@+id/scanning_in_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.scanText}"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.08"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_debugScans"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Scans" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.08"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_debugLog"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Logs" />
+
+                <Button
+                    android:id="@+id/start_background_scan"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Background scan" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.07"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/start_ble_scanning"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Start scanning" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.02" />
+
+                <Button
+                    android:id="@+id/button2"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Notify" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.07"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/donate_data"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Donate Data" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.02" />
+
+                <Button
+                    android:id="@+id/button4"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.48"
+                    android:text="Test Connection" />
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="0.07"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/donate_data"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0px"
-                android:layout_height="match_parent"
-                android:layout_weight="0.48"
-                android:text="Donate Data" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.02" />
-
-            <Button
-                android:id="@+id/button4"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.48"
-                android:text="Test Connection" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

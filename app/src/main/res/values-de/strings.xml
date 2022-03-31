@@ -68,8 +68,8 @@
     <string name="settings_theme_system_default">Systemstandard</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_theme_light">Hell</string>
-    <string name="settings_use_low_power_ble_summary">Wenn aktiviert, wird nur Bluetooth Low Power Scan verwendet, um in der Nähe befindliche AirTags zu erkennen. <b>WARNUNG</b>: Dies kann dazu führen, dass einige Geräte nicht erkannt werden.</string>
-    <string name="settings_use_low_power_ble_title">Low-Power-Scan verwenden</string>
+    <string name="settings_use_low_power_ble_summary">Diese Einstellung verwendet weniger Strom, führt aber auch zu einer langsameren und schlechteren Erkennung von Trackern.</string>
+    <string name="settings_use_low_power_ble_title">Low Power Scan Modus</string>
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
     <string name="tracking_info">Scanne diesen AirTag mit Deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
     <string name="info">Informationen</string>

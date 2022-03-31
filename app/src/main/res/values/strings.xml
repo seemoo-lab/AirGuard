@@ -81,8 +81,7 @@
     <string name="settings_theme_system_default">System Default</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
-    <string name="settings_use_low_power_ble_summary">If enabled, Bluetooth Low Energy scanning will be used to discover nearby AirTags! <b>WARNING</b>: Without this option, some devices might not be discovered!</string>
-    <string name="settings_use_low_power_ble_title">Use Low Energy Scan</string>
+    <string name="settings_use_low_power_ble_summary">This settings will use less energy, but also lead to a worse detection of trackers</string>
     <string name="tracking_device_not_connectable">This device is not able to play a sound!</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information!</string>
     <string name="info">Information</string>
@@ -206,4 +205,5 @@
     <string name="tip_airtag_testing"><b>Testing the app?</b> AirTags cannot be discovered when they are connected to a nearby iPhone / iPad. While connected they also do not track the location. AirTags need to be disconnected from Bluetooth and wait 15min to be discovered with the app.</string>
     <string name="none">None</string>
     <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
+    <string name="settings_use_low_power_ble_title">Low Power Scan Mode</string>
 </resources>

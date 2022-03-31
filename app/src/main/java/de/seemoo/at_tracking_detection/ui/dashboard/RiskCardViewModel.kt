@@ -42,7 +42,6 @@ class RiskCardViewModel @Inject constructor(
             }
 
 
-
     init {
         updateRiskLevel()
     }

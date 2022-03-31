@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.databinding.FragmentDebugBinding
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
@@ -64,14 +66,18 @@ class DebugFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothLeScanner = bluetoothManager.adapter?.bluetoothLeScanner
-        val root = inflater.inflate(R.layout.fragment_debug, container, false)
-        bluetoothList = root.findViewById(R.id.bluetoothList)
-        return root
+
+        val binding: FragmentDebugBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_debug, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = debugViewModel
+
+        bluetoothList = binding.root.findViewById(R.id.bluetoothList)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -114,13 +120,8 @@ class DebugFragment : Fragment() {
             findNavController().navigate(directions)
         }
 
-        view.findViewById<Button>(R.id.button_debugCheckLeaks).setOnClickListener {
-            // Does not compile for release
-//            Timber.d("Retained objects: ${AppWatcher.objectWatcher.retainedObjectCount}")
-//            Timber.d("Has watched objects: ${AppWatcher.objectWatcher.hasWatchedObjects}")
-//            if (AppWatcher.objectWatcher.retainedObjectCount > 0) {
-//                Timber.d("Retained objects\n${AppWatcher.objectWatcher.retainedObjects}")
-//            }
+        view.findViewById<Button>(R.id.start_background_scan).setOnClickListener {
+            backgroundWorkScheduler.launch()
         }
 
         view.findViewById<Button>(R.id.button_debugScans).setOnClickListener {
