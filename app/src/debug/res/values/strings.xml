@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">AirGuard-Dev</string>
+    <string name="app_name" translatable="false">AirGuard-Dev</string>
 
 </resources>
