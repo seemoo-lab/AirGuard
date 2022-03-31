@@ -102,7 +102,7 @@ class OnboardingActivity : AppIntro() {
                 )
             )
             askForPermissions(
-                permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+                permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
                 slideNumber = slideNumber,
                 required = true
             )

@@ -11,9 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DebugViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    private val deviceRepository: DeviceRepository,
-    private val sharedPreferences: SharedPreferences
+    sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
@@ -31,7 +29,7 @@ class DebugViewModel @Inject constructor(
 
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
-
+        updateScanText()
     }
 
     fun updateScanText() {

@@ -33,7 +33,12 @@ class NotificationBuilder @Inject constructor(
 
         val resultPendingIntent: PendingIntent = TaskStackBuilder.create(ATTrackingDetectionApplication.getCurrentActivity()).run {
             addNextIntentWithParentStack(intent)
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+            var flags = PendingIntent.FLAG_UPDATE_CURRENT
+            // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flags = flags or PendingIntent.FLAG_IMMUTABLE
+            }
+            getPendingIntent(0, flags)
         }
         return resultPendingIntent
 

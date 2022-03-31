@@ -102,6 +102,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
 
         for (permission in requiredPermissions) {
