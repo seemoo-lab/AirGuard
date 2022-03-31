@@ -19,13 +19,31 @@
 
         </ListView>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="0.08"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/button_debugLog"
             style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.08"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.48"
             android:text="Logs" />
+
+        <Button
+            android:id="@+id/button_debugCheckLeaks"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="0.48"
+            android:text="Check leaks" />
+
+    </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"

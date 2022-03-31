@@ -1,10 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
-import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
@@ -26,6 +24,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -34,6 +33,7 @@ class ScanFragment : Fragment() {
     private val scanViewModel: ScanViewModel by viewModels()
 
     private var bluetoothManager: BluetoothManager? = null
+    private var isScanning = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +71,7 @@ class ScanFragment : Fragment() {
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             Timber.e("BLE Scan failed. $errorCode")
+            stopBluetoothScan()
             view?.let {
                 Snackbar.make(
                     it,
@@ -82,6 +83,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
+        if (isScanning) { return }
         bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -95,7 +97,8 @@ class ScanFragment : Fragment() {
                     Manifest.permission.BLUETOOTH_SCAN
                 )
             if (isBluetoothEnabled && hasScanPermission) {
-                it.adapter.bluetoothLeScanner.startScan(DeviceManager.scanFilter, scanSettings, scanCallback)
+                BLEScanCallback.startScanning(it.adapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, scanCallback)
+                isScanning = true
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     // Stop scanning if no device was detected
@@ -108,11 +111,11 @@ class ScanFragment : Fragment() {
         }
     }
 
-    @SuppressLint("MissingPermission")
     private fun stopBluetoothScan() {
         bluetoothManager?.let {
             if (it.adapter.state == BluetoothAdapter.STATE_ON) {
-                it.adapter.bluetoothLeScanner.stopScan(scanCallback)
+                BLEScanCallback.stopScanning(it.adapter.bluetoothLeScanner)
+                isScanning = false
             }
         }
     }
@@ -133,6 +136,6 @@ class ScanFragment : Fragment() {
     }
 
     companion object {
-        private const val SCAN_DURATION = 10000L
+        private const val SCAN_DURATION = 15000L
     }
 }
