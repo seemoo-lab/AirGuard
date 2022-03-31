@@ -81,6 +81,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         if (showOnboarding() or !hasPermissions()) {
             startOnboarding()
+        }else {
+            backgroundWorkScheduler.launch()
         }
 
         if (SharedPrefs.shareData) {
@@ -92,7 +94,6 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         notificationService.setup()
-        backgroundWorkScheduler.launch()
     }
 
     private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
