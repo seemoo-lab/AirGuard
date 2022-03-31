@@ -77,7 +77,9 @@
                 android:layout_marginTop="22dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:viewModel="@{viewModel}" />
+                app:viewModel="@{viewModel}"
+                android:visibility="@{viewModel.lastScans.length() == 0 ? View.GONE : View.VISIBLE}"
+                />
 
             <include
                 layout="@layout/include_risk_detail_find_airtag"
