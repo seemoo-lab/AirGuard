@@ -1,31 +1,31 @@
-Mit AirGuard bekommst du den Anti-stalking Schutz, den du verdienst! 
-Die App scannt deine Umgebung im Hintergrund, um tracker, wie AirTags oder andere Find My Tracker zu finden. Findet die App heraus, dass ein Tracker dir folgt, dann bekommst du eine Benachrichtigung. 
+Mit AirGuard bekommst du den Anti-Stalking-Schutz, den du verdienst! 
+Die App scannt deine Umgebung im Hintergrund, um Tracker wie AirTags oder andere "Find My"-Tracker zu finden. Findet die App heraus, dass ein Tracker dir folgt, dann bekommst du eine Benachrichtigung. 
 
-Diese Tracker sind nur so groß wie eine Münze und ideal, um Android Nutzer zu verfolgen. Auf iOS hat Apple dafür eine automatische Warnung integriert, doch unter Android bekommst du diese nur mit AirGuard. 
+Diese Tracker sind nur so groß wie eine Münze und ideal, um Android-Nutzer zu verfolgen. Auf iOS hat Apple dafür eine automatische Warnung integriert, doch unter Android bekommst du diese nur mit AirGuard. 
 
-Nachdem ein AirTag gefunden wurde, kannst du diesen klingeln lassen oder mit einem manuellen Scan auf die Suche gehen. Findest du ein Gerät, dann raten wir dir es zu deaktivieren, damit es nicht mehr deinen Standort verfolgt. 
+Nachdem ein AirTag gefunden wurde, kannst du diesen klingeln lassen oder mit einem manuellen Scan auf die Suche gehen. Findest du ein Gerät, dann raten wir dir, es zu deaktivieren, damit es nicht mehr deinen Standort verfolgt. 
 
-Die App speichert deinen Standort nur lokal, um dir später zu zeigen an welchen Orten ein Tracker die gefolgt ist. Persönliche Daten teilt diese App niemals. 
+Die App speichert deinen Standort nur lokal, um dir später zu zeigen, an welchen Orten dir ein Tracker gefolgt ist. Persönliche Daten teilt diese App niemals. 
 
-Wenn niemand dich versucht zu starken über einen AirTag, dann wird die App dich auch nicht stören. 
+Wenn niemand versucht, dich über einen AirTag zu stalken, dann wird die App dich auch nicht stören. 
 
 <h2><b>Wie funktioniert die App?</h2></b>
 
-AirGuard verwendet Bluetooth um AirTags und andere Find My tracker zu finden. Alles was gefunden wird, wird lokal auf deinem Gerät gespeichert und ausgewertet. 
+AirGuard verwendet Bluetooth, um AirTags und andere "Find My"-Tracker zu finden. Alles, was gefunden wird, wird lokal auf deinem Gerät gespeichert und ausgewertet. 
 
-Immer, wenn ein tracker mehrfach an verschiedenen Orten gefunden wurde, dann wird AirGuard das bemerken. Wurde der Tracker mindestens drei mal gefunden, bekommst du eine Warnung und kannst einen Ton auf dem Tracker abspielen. 
+Immer, wenn ein Tracker mehrfach an verschiedenen Orten gefunden wurde, dann wird AirGuard das bemerken. Wurde der Tracker mindestens dreimal gefunden, bekommst du eine Warnung und kannst einen Ton auf dem Tracker abspielen. 
 
 <h2><b>Wer sind wir?</h2></b>
 Wir sind Teil der Technischen Universität Darmstadt. Dieses Projekt ist Teil der wissenschaftlichen Forschung des Lehrstuhls für Sichere Mobile Netze. 
-Unser Ziele sind die Privatsphäre von Menschen zu schützen und herauszufinden, wie verbreitet das stalking Problem über AirTags ist. 
+Unser Ziel ist es, die Privatsphäre von Menschen zu schützen und herauszufinden, wie verbreitet das Stalking-Problem über AirTags ist. 
 
-Mit dieser App kannst du an einer freiwilligen Studie teilnehmen. Diese erhebt nur anonymisierten Daten. 
+Mit dieser App kannst du an einer freiwilligen Studie teilnehmen. Diese erhebt nur anonymisierte Daten. 
 
-Diese App wird niemals monetisiert werden und Werbung anzeigen oder Geld für bestimmte Funktionen verlangen. 
+Diese App wird niemals monetisiert werden, Werbung anzeigen oder Geld für bestimmte Funktionen verlangen. 
 
 Unsere Datenschutzerklärung befindet sich hier: 
 https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
 
 Rechtliches
-AirTag, FindMy und iOS are eingetragene Marken von Apple Inc. 
-Dieses Projekt ist keine Zusammenarbeit mit Apple Inc.
+AirTag, Find My und iOS sind eingetragene Marken von Apple Inc. 
+Wir arbeiten nicht mit Apple Inc. zusammen.
