@@ -93,7 +93,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
         val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
-        val since = SharedPrefs.lastScanDate ?: LocalDateTime.now().minusMinutes(15)
+        val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             val beacons = beaconRepository.getDeviceBeacons(it.deviceAddress)
