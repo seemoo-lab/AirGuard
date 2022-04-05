@@ -116,6 +116,8 @@ class ScanFragment : Fragment() {
     }
 
     private fun stopBluetoothScan() {
+        if (!isScanning) { return }
+
         bluetoothManager?.let {
             if (it.adapter.state == BluetoothAdapter.STATE_ON) {
                 BLEScanCallback.stopScanning(it.adapter.bluetoothLeScanner)
