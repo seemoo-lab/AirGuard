@@ -81,7 +81,7 @@
     <string name="settings_theme_system_default">System Default</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
-    <string name="settings_use_low_power_ble_summary">If enabled, Bluetooth Low Energy scanning will be used to discover nearby AirTags! <b>WARNING</b>: Without this option, some devices might not be discovered!</string>
+    <string name="settings_use_low_power_ble_summary">If enabled, low power scanning mode will be used to discover nearby AirTags. This will reduce energy consumption. WARNING: When this option is enabled, some devices might be detected late or not at all!</string>
     <string name="settings_use_low_power_ble_title">Use Low Energy Scan</string>
     <string name="tracking_device_not_connectable">This device is not able to play a sound!</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information!</string>
