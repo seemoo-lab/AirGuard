@@ -128,5 +128,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         fun getCurrentActivity(): Activity {
             return instance.activityLifecycleCallbacks.currentActivity
         }
+        fun getCurrentApp(): ATTrackingDetectionApplication {
+            return instance
+        }
     }
 }
