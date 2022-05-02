@@ -1,0 +1,1 @@
+This versions fixes an issue that background scans would stop for some users after an update or reboot.

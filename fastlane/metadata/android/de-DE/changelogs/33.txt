@@ -1,0 +1,1 @@
+Behebt ein Problem, dass die Background Scans bei manchen Nutzer:innen nach dem Neustart oder Update nicht mehr starten. 

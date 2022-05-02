@@ -1,3 +1,0 @@
-- First version of detecting Tile trackers. Works in manual scan and with background alerts
-- Bugfix for Android 12 devices that prevented scanning. 
-- Sorry for 1.3 that was causing a crash after the update. This update fixes it.
