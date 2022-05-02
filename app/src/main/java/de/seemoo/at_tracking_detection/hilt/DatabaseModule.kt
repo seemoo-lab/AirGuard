@@ -11,14 +11,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import de.seemoo.at_tracking_detection.database.AppDatabase
-import de.seemoo.at_tracking_detection.database.daos.BeaconDao
-import de.seemoo.at_tracking_detection.database.daos.DeviceDao
-import de.seemoo.at_tracking_detection.database.daos.FeedbackDao
-import de.seemoo.at_tracking_detection.database.daos.NotificationDao
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.repository.FeedbackRepository
-import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.database.daos.*
+import de.seemoo.at_tracking_detection.database.repository.*
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -72,6 +66,11 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideScanDao(database: AppDatabase): ScanDao {
+        return database.scanDao()
+    }
+
+    @Provides
     fun provideBeaconRepository(beaconDao: BeaconDao): BeaconRepository {
         return BeaconRepository(beaconDao)
     }
@@ -89,5 +88,10 @@ object DatabaseModule {
     @Provides
     fun providesFeedbackRepository(feedbackDao: FeedbackDao): FeedbackRepository {
         return FeedbackRepository(feedbackDao)
+    }
+
+    @Provides
+    fun provideScanRepository(scanDao: ScanDao): ScanRepository {
+        return ScanRepository(scanDao)
     }
 }

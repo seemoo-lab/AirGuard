@@ -6,7 +6,6 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Location
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -16,11 +15,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -32,14 +34,13 @@ import java.time.LocalDateTime
 import java.util.jar.Manifest
 
 @HiltWorker
-
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository,
+    private val scanRepository: ScanRepository,
     private val locationProvider: LocationProvider,
-    private val sharedPreferences: SharedPreferences,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
 ) :
@@ -53,7 +54,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
-        if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_SCAN)){
+        val scanMode = getScanMode()
+        val scan = Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode)
+        scanRepository.insert(scan)
+
+        if (!Util.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
         }
@@ -65,11 +70,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
             Timber.e("BluetoothAdapter not found!")
             return Result.retry()
         }
-        sharedPreferences.edit().putString("last_scan", LocalDateTime.now().toString()).apply()
 
         scanResultDictionary = HashMap()
 
-        val useLocation = sharedPreferences.getBoolean("use_location", false)
+        val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             val lastLocation = locationProvider.getLastLocation()
 
@@ -86,11 +90,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
         val scanSettings =
-            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+            ScanSettings.Builder().setScanMode(scanMode).build()
 
+        SharedPrefs.isScanningInBackground = true
         BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
 
-        delay(getScanDuration())
+        val scanDuration: Long = getScanDuration()
+        delay(scanDuration)
 
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
 
@@ -113,10 +119,17 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Scheduling tracking detector worker")
         backgroundWorkScheduler.scheduleTrackingDetector()
 
+        SharedPrefs.lastScanDate = LocalDateTime.now()
+        SharedPrefs.isScanningInBackground = false
+        scan.endDate = LocalDateTime.now()
+        scan.duration = scanDuration.toInt() / 1000
+        scan.noDevicesFound = scanResultDictionary.size
+        scanRepository.update(scan)
+
         return Result.success(
             Data.Builder()
-                .putLong("duration", getScanDuration())
-                .putInt("mode", getScanMode())
+                .putLong("duration", scanDuration)
+                .putInt("mode", scanMode)
                 .putInt("devicesFound", scanResultDictionary.size)
                 .build()
         )
@@ -178,7 +191,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private fun getScanMode(): Int {
-        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
             ScanSettings.SCAN_MODE_LOW_POWER
         } else {
@@ -187,7 +200,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private fun getScanDuration(): Long {
-        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
+        val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
             15000L
         } else {

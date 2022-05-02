@@ -17,6 +17,7 @@ import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
@@ -61,7 +62,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             // We use this to access our logs from a file for on device debugging
             File(filesDir.path + "/logs.log").createNewFile()
             val t: Timber.Tree = FileLoggerTree.Builder()
-                .withSizeLimit(2_000_000)
+                .withSizeLimit(500_000)
                 .withDir(filesDir)
                 .withFileName("logs.log")
                 .withMinPriority(Log.VERBOSE)
@@ -80,33 +81,28 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         if (showOnboarding() or !hasPermissions()) {
             startOnboarding()
+        }else {
+            backgroundWorkScheduler.launch()
         }
 
-        if (sharedPreferences.getBoolean("share_data", false)) {
+        if (SharedPrefs.shareData) {
             backgroundWorkScheduler.scheduleShareData()
         }
 
-        if (sharedPreferences.getString("lastDataDonation", null) == null) {
-            sharedPreferences.edit()
-                .putString(
-                    "lastDataDonation",
-                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                ).apply()
+        if (SharedPrefs.lastDataDonation == null) {
+            SharedPrefs.lastDataDonation = LocalDateTime.now()
         }
 
         notificationService.setup()
-        backgroundWorkScheduler.launch()
     }
 
-    private fun showOnboarding(): Boolean = !sharedPreferences.getBoolean(
-        "onboarding_completed",
-        false
-    ) or sharedPreferences.getBoolean("show_onboarding", false)
+    private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
 
     private fun hasPermissions(): Boolean {
         val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
 
         for (permission in requiredPermissions) {
@@ -129,8 +125,16 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     companion object {
         private lateinit var instance: ATTrackingDetectionApplication
         fun getAppContext(): Context = instance.applicationContext
-        fun getCurrentActivity(): Activity {
-            return instance.activityLifecycleCallbacks.currentActivity
+        fun getCurrentActivity(): Activity? {
+            return try {
+                instance.activityLifecycleCallbacks.currentActivity
+            }catch (e: UninitializedPropertyAccessException) {
+                Timber.e("Failed accessing current activity $e")
+                null
+            }
+        }
+        fun getCurrentApp(): ATTrackingDetectionApplication {
+            return instance
         }
     }
 }

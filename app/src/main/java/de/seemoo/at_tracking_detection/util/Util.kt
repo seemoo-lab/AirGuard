@@ -34,6 +34,7 @@ object Util {
 
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity()
+        if (context == null) {return false}
         when {
             ContextCompat.checkSelfPermission(
                 context,

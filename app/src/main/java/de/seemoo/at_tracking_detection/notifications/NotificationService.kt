@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.notifications
 
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.viewmodel.NotificationViewModel
 import timber.log.Timber
 import javax.inject.Inject
@@ -21,6 +22,17 @@ class NotificationService @Inject constructor(
                 TRACKING_NOTIFICATION_TAG,
                 notificationId,
                 notificationBuilder.buildTrackingNotification(deviceAddress, notificationId)
+            )
+        }
+    }
+
+    suspend fun sendTrackingNotification(baseDevice: BaseDevice) {
+        val notificationId = notificationViewModel.insert(deviceAddress = baseDevice.address)
+        with(notificationManagerCompat) {
+            notify(
+                TRACKING_NOTIFICATION_TAG,
+                notificationId,
+                notificationBuilder.buildTrackingNotification(baseDevice, notificationId)
             )
         }
     }

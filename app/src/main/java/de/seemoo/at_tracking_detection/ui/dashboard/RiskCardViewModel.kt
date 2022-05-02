@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import java.text.DateFormat
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RiskCardViewModel @Inject constructor(
-    riskLevelEvaluator: RiskLevelEvaluator,
+    private val riskLevelEvaluator: RiskLevelEvaluator,
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
@@ -25,43 +26,51 @@ class RiskCardViewModel @Inject constructor(
     var riskColor: Int = 0
     var showLastDetection: Boolean = true
     var clickable: Boolean = true
-    var trackersFoundModel: RiskRowViewModel
-    var lastUpdateModel: RiskRowViewModel
-    var lastDiscoveryModel: RiskRowViewModel
+    lateinit var trackersFoundModel: RiskRowViewModel
+    lateinit var lastUpdateModel: RiskRowViewModel
+    lateinit var lastDiscoveryModel: RiskRowViewModel
 
-    private var dateTime: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
-    private var lastScan: LocalDateTime
+    private var lastScan: LocalDateTime? = null
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                "last_scan" -> lastScan = LocalDateTime.parse(
-                    sharedPreferences.getString(
-                        "last_scan",
-                        dateTime.minusMinutes(15).toString()
-                    )
-                )
+                "last_scan" -> {
+                    lastScan = SharedPrefs.lastScanDate
+                    updateLastUpdateModel()
+                    }
+                }
             }
-        }
+
 
     init {
-        lastScan = LocalDateTime.parse(
-            sharedPreferences.getString(
-                "last_scan",
-                dateTime.toString()
-            )
-        )
+        updateRiskLevel()
+    }
+
+    fun updateLastUpdateModel() {
         val context = ATTrackingDetectionApplication.getAppContext()
-        val dateFormat = DateFormat.getDateTimeInstance()
-        val lastDiscoveryDate = riskLevelEvaluator.getLastTrackerDiscoveryDate()
-        val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
-        val totalAlerts = riskLevelEvaluator.getNumberRelevantTrackers()
-        val lastScanString =
+
+        val lastScanString = if (lastScan != null) {
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(lastScan)
+        }else {
+            ATTrackingDetectionApplication.getAppContext().getString(R.string.none)
+        }
 
         lastUpdateModel = RiskRowViewModel(
             context.getString(R.string.last_scan_info, lastScanString),
             ContextCompat.getDrawable(context, R.drawable.ic_last_update)!!
         )
+    }
+
+    fun updateRiskLevel() {
+        lastScan = SharedPrefs.lastScanDate
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val dateFormat = DateFormat.getDateTimeInstance()
+        val lastDiscoveryDate = riskLevelEvaluator.getLastTrackerDiscoveryDate()
+        val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
+        val totalAlerts = riskLevelEvaluator.getNumberRelevantTrackers()
+
+        updateLastUpdateModel()
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
 
         when (riskLevelEvaluator.evaluateRiskLevel()) {

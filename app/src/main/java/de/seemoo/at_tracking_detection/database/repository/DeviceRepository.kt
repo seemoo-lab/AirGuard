@@ -44,6 +44,14 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
         }
     }
 
+    suspend fun getDeviceBeaconsSinceDate(dateTime: LocalDateTime?): List<DeviceBeaconNotification> {
+        return if (dateTime != null) {
+            deviceDao.getDeviceBeaconsSince(dateTime)
+        } else {
+            deviceDao.getDeviceBeacons()
+        }
+    }
+
     @WorkerThread
     suspend fun insert(baseDevice: BaseDevice) {
         deviceDao.insert(baseDevice)

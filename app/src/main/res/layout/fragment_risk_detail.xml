@@ -56,7 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/dates_detected"
-                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
                         android:textColor="@color/white" />
 
                     <TextView
@@ -73,10 +73,20 @@
             </com.google.android.material.card.MaterialCardView>
 
             <include
+                layout="@layout/include_scan_times"
+                android:layout_marginTop="22dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:viewModel="@{viewModel}"
+                android:visibility="@{viewModel.lastScans.length() == 0 ? View.GONE : View.VISIBLE}"
+                />
+
+            <include
                 layout="@layout/include_risk_detail_find_airtag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp" />
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"/>
 
         </LinearLayout>
     </ScrollView>

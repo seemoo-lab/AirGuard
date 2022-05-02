@@ -17,14 +17,15 @@ android {
     buildFeatures {
         viewBinding true
         dataBinding true
+        compose true
     }
 
     defaultConfig {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 29
-        versionName "1.3.2"
+        versionCode 33
+        versionName "1.3.4"
 
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
@@ -62,12 +63,21 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.2.0-alpha08"
+    }
+
+
     sourceSets {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
 //        androidTest.assets.srcDirs += files("/Users/seemoo/Work/Research/AirGuard/airguard-app/app/schemas/de.seemoo.at_tracking_detection.database.AppDatabase".toString())
     }
 
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
 }
 
 aboutLibraries {
@@ -85,8 +95,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
@@ -123,8 +133,27 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.room:room-testing:2.4.2"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    //Finds memory leaks while running the app in Debug mode
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+
+    //Compose
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    // Compose Material Design
+    implementation 'androidx.compose.material:material:1.1.1'
+    // Animations
+    implementation 'androidx.compose.animation:animation:1.1.1'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+    // UI Tests
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
+    // When using a MDC theme
+    implementation "com.google.android.material:compose-theme-adapter:1.1.7"
+
 }

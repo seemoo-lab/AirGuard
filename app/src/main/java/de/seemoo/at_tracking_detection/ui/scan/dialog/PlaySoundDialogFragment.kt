@@ -43,6 +43,7 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
         super.onResume()
         val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
         val activity = ATTrackingDetectionApplication.getCurrentActivity()
+        if (activity == null) {return}
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)

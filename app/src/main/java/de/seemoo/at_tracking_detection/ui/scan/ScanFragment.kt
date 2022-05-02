@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -25,7 +26,9 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
@@ -83,7 +86,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
-        if (isScanning) { return }
+        if (isScanning || scanViewModel.isScanningInBackground) { return }
         bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -99,6 +102,7 @@ class ScanFragment : Fragment() {
             if (isBluetoothEnabled && hasScanPermission) {
                 BLEScanCallback.startScanning(it.adapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, scanCallback)
                 isScanning = true
+                scanViewModel.scanStart.postValue(LocalDateTime.now())
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     // Stop scanning if no device was detected
@@ -112,11 +116,17 @@ class ScanFragment : Fragment() {
     }
 
     private fun stopBluetoothScan() {
+        if (!isScanning) { return }
+
         bluetoothManager?.let {
             if (it.adapter.state == BluetoothAdapter.STATE_ON) {
                 BLEScanCallback.stopScanning(it.adapter.bluetoothLeScanner)
                 isScanning = false
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            scanViewModel.saveScanToRepository()
         }
     }
 

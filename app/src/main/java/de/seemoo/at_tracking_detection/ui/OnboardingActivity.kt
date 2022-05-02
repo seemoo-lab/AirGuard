@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.ui.onboarding.IgnoreBatteryOptimizationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.ShareDataFragment
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
 import javax.inject.Inject
@@ -65,14 +66,14 @@ class OnboardingActivity : AppIntro() {
             ) == PackageManager.PERMISSION_GRANTED
 
         if (locationPermissionState && backgroundPermissionState) {
-            sharedPreferences.edit().putBoolean("use_location", true).apply()
+            SharedPrefs.useLocationInTrackingDetection = true
         } else {
-            sharedPreferences.edit().putBoolean("use_location", false).apply()
+            SharedPrefs.useLocationInTrackingDetection = false
         }
 
 
         if (permission == null) {
-            sharedPreferences.edit().putBoolean("onboarding_completed", true).apply()
+            SharedPrefs.onBoardingCompleted = true
             backgroundWorkScheduler.launch()
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java).apply {
@@ -101,7 +102,7 @@ class OnboardingActivity : AppIntro() {
                 )
             )
             askForPermissions(
-                permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+                permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
                 slideNumber = slideNumber,
                 required = true
             )
@@ -215,7 +216,7 @@ class OnboardingActivity : AppIntro() {
 
     private fun handleRequiredPermission(permissionName: String) {
         if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
-            sharedPreferences.edit().putBoolean("use_location", false).apply()
+            SharedPrefs.useLocationInTrackingDetection = false
         } else if (dialog?.isShowing != true) {
             MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.permission_required)

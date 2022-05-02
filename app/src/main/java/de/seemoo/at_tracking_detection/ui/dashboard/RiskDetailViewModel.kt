@@ -12,6 +12,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class RiskDetailViewModel @Inject constructor(
     riskLevelEvaluator: RiskLevelEvaluator,
     deviceRepository: DeviceRepository,
+    scanRepository: ScanRepository,
     val beaconRepository: BeaconRepository
 ) : ViewModel() {
 
@@ -47,6 +49,12 @@ class RiskDetailViewModel @Inject constructor(
     val isMapLoading = MutableLiveData(false)
 
     val receivedNotificationDatesString: String = lastSeenDates.joinToString(separator = "\n")
+
+    val lastScans: String = {
+        val scans = scanRepository.relevantScans(false, 5)
+        val scanDates = scans.map { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.endDate) }
+        scanDates.joinToString(separator = "\n")
+    }()
 
     fun allBeacons(): Flow<List<Beacon>> {
         return beaconRepository.getBeaconsSince(relevantDate)

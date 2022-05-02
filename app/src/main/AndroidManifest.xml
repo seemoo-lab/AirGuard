@@ -39,10 +39,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ATTrackingDetection"
         android:largeHeap="true">
+
         <activity
-            android:name=".ui.TrackingActivity"
+            android:name=".ui.TrackingNotificationActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
             android:parentActivityName=".ui.MainActivity" />
 
         <provider
@@ -67,12 +69,19 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".worker.ScheduleWorkersReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".ui.MainActivity"
+            android:allowTaskReparenting="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -11,9 +11,11 @@ import de.seemoo.at_tracking_detection.database.AppDatabase
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao_Impl
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.hilt.DatabaseModule
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
 
@@ -81,6 +83,16 @@ class MigrationTest {
         db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`, `serviceUUIDs`) VALUES ('2022-03-25T11:00:00', -78, 'aa:bb:cc:dd:ee', 50.04231, 8.34423, 'AA:BB;DD:EE;FF:EE')")
     }
 
+    @After
+    fun removeDB() {
+        helper.createDatabase(TEST_DB, 2).apply {
+            val path =  this.path
+            this.close()
+            val dbFile = File(path)
+            assert(dbFile.delete() == true)
+        }
+    }
+
     fun assertDBMigrations(roomDB: AppDatabase) {
         val time = LocalDateTime.of(2022,3,1,0,0,0,0)
         val beaconDao = BeaconDao_Impl(roomDB)
@@ -137,7 +149,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate4_7() {
+    fun roomMigrate4_current() {
         helper.createDatabase(TEST_DB, 4).apply {
             insertDummyData(this)
             close()
@@ -157,7 +169,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate5_7() {
+    fun roomMigrate5_current() {
         helper.createDatabase(TEST_DB, 5).apply {
             insertDummyData(this)
             close()
@@ -177,8 +189,28 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate6_7() {
+    fun roomMigrate6_current() {
         helper.createDatabase(TEST_DB, 6).apply {
+            insertDummyData(this)
+            close()
+        }
+
+        val roomDB = Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            AppDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            insertNewBeacon(openHelper.writableDatabase)
+            openHelper.writableDatabase.close()
+        }
+
+        assertDBMigrations(roomDB)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun roomMigrate7_current() {
+        helper.createDatabase(TEST_DB, 7).apply {
             insertDummyData(this)
             close()
         }
