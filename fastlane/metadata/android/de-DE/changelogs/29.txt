@@ -1,3 +1,0 @@
-- Erste Version, um Tile Tracker zu finden. Die Erkennung funktioniert im manuellen Scan und über die Hintergrund Scans.
-- Bugfix der scannen auf Android 12 unterbunden hat. 
-- Update 1.3 hat zu abstürzen geführt, was wir in diesem Update beheben
