@@ -125,8 +125,13 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     companion object {
         private lateinit var instance: ATTrackingDetectionApplication
         fun getAppContext(): Context = instance.applicationContext
-        fun getCurrentActivity(): Activity {
-            return instance.activityLifecycleCallbacks.currentActivity
+        fun getCurrentActivity(): Activity? {
+            return try {
+                instance.activityLifecycleCallbacks.currentActivity
+            }catch (e: UninitializedPropertyAccessException) {
+                Timber.e("Failed accessing current activity $e")
+                null
+            }
         }
         fun getCurrentApp(): ATTrackingDetectionApplication {
             return instance

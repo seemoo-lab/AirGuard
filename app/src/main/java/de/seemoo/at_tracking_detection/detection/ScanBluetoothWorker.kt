@@ -58,7 +58,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scan = Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode)
         scanRepository.insert(scan)
 
-        if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_SCAN)){
+        if (!Util.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
         }

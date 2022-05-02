@@ -71,6 +71,7 @@ class TrackingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val activity = ATTrackingDetectionApplication.getCurrentActivity()
+        if (activity == null) {return}
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)

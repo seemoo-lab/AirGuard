@@ -82,7 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "app_theme" -> {
                     Util.setSelectedTheme(sharedPreferences)
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                        ATTrackingDetectionApplication.getCurrentActivity().recreate()
+                        ATTrackingDetectionApplication.getCurrentActivity()?.recreate()
                     }
                 }
             }

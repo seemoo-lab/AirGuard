@@ -30,8 +30,8 @@ class NotificationBuilder @Inject constructor(
             action = NotificationConstants.CLICKED_ACTION
             putExtras(bundle)
         }
-
-        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(ATTrackingDetectionApplication.getCurrentActivity()).run {
+        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: ATTrackingDetectionApplication.getAppContext()
+        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(intent)
             var flags = PendingIntent.FLAG_UPDATE_CURRENT
             // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
