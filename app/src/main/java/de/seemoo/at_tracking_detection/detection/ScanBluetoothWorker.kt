@@ -55,8 +55,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
         val scanMode = getScanMode()
-        val scan = Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode)
-        scanRepository.insert(scan)
+        val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
 
         if (!Util.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
@@ -116,15 +115,18 @@ class ScanBluetoothWorker @AssistedInject constructor(
             )
         }
 
-        Timber.d("Scheduling tracking detector worker")
-        backgroundWorkScheduler.scheduleTrackingDetector()
-
         SharedPrefs.lastScanDate = LocalDateTime.now()
         SharedPrefs.isScanningInBackground = false
-        scan.endDate = LocalDateTime.now()
-        scan.duration = scanDuration.toInt() / 1000
-        scan.noDevicesFound = scanResultDictionary.size
-        scanRepository.update(scan)
+        val scan = scanRepository.scanWithId(scanId.toInt())
+        if (scan != null) {
+            scan.endDate = LocalDateTime.now()
+            scan.duration = scanDuration.toInt() / 1000
+            scan.noDevicesFound = scanResultDictionary.size
+            scanRepository.update(scan)
+        }
+
+        Timber.d("Scheduling tracking detector worker")
+        backgroundWorkScheduler.scheduleTrackingDetector()
 
         return Result.success(
             Data.Builder()

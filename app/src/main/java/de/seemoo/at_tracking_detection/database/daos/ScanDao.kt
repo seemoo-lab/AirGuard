@@ -12,6 +12,9 @@ interface ScanDao {
     @Query("SELECT * FROM scan WHERE endDate >= :since ORDER by endDate DESC")
     fun getScansSince(since: LocalDateTime): List<Scan>
 
+    @Query("SELECT * FROM scan WHERE startDate >= :since ORDER by startDate DESC")
+    fun getDebugScansSince(since: LocalDateTime): List<Scan>
+
     @Query("SELECT * FROM scan WHERE endDate >= :since AND isManual = :manual ORDER by endDate DESC LIMIT :limit")
     fun getScansSince(since: LocalDateTime, manual: Boolean, limit: Int): List<Scan>
 
@@ -23,6 +26,9 @@ interface ScanDao {
 
     @Query("SELECT * FROM scan ORDER by endDate DESC")
     fun getFlowAllScans(): Flow<List<Scan>>
+
+    @Query("SELECT * FROM scan WHERE startDate >= :since ORDER by startDate DESC")
+    fun getFlowDebugRelevantScans(since: LocalDateTime): Flow<List<Scan>>
 
     @Query("SELECT COUNT(*) FROM scan WHERE endDate >= :since ORDER by endDate DESC")
     fun getNumberOfScansSince(since: LocalDateTime): Int
