@@ -18,7 +18,7 @@ class DebugScanViewModel @Inject constructor(
     val scans: List<Scan>
 
     init {
-        scansLive = scanRepository.flowRelevantScans.asLiveData()
-        scans = scanRepository.relevantScans
+        scansLive = scanRepository.flowDebugScans.asLiveData()
+        scans = scanRepository.relevantDebugScans
     }
 }
