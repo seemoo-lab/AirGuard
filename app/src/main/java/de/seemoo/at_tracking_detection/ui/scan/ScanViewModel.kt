@@ -56,6 +56,7 @@ class ScanViewModel @Inject constructor(private val scanRepository: ScanReposito
     suspend fun saveScanToRepository() {
         if (scanStart.value == LocalDateTime.MIN) { return }
         val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()
-        scanRepository.insert(Scan(LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, true, ScanSettings.SCAN_MODE_LOW_LATENCY))
+        val scan = Scan(endDate = LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, isManual = true, scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY, startDate = scanStart.value ?: LocalDateTime.now())
+        scanRepository.insert(scan)
     }
 }

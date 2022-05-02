@@ -52,7 +52,7 @@ class RiskDetailViewModel @Inject constructor(
 
     val lastScans: String = {
         val scans = scanRepository.relevantScans(false, 5)
-        val scanDates = scans.map { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.date) }
+        val scanDates = scans.map { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.endDate) }
         scanDates.joinToString(separator = "\n")
     }()
 

@@ -30,9 +30,16 @@ class ScanRepository @Inject constructor(
 
     var countInRelevantTime: Int = scanDao.getNumberOfScansSince(RiskLevelEvaluator.relevantTrackingDate)
 
+    val relevantUnfinishedScans: List<Scan> = scanDao.unfinishedScans(RiskLevelEvaluator.relevantTrackingDate)
+
     @WorkerThread
     suspend fun insert(scan: Scan): Long = scanDao.insert(scan)
 
     @WorkerThread
     suspend fun  deleteIrrelevantScans() = scanDao.deleteUntil(RiskLevelEvaluator.relevantTrackingDate)
+
+    @WorkerThread
+    suspend fun update(scan: Scan) = scanDao.update(scan)
+
+    fun scanWithId(scanId: Int) = scanDao.scanWithId(scanId)
 }

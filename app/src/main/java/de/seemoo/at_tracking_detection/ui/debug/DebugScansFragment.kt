@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.debug
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -78,14 +80,31 @@ class DebugScansFragment: Fragment() {
     }
 
     @Composable
+    private fun DateText(scan: Scan) {
+        Row {
+            if (scan.startDate != null) {
+                Text(text = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(scan.startDate))
+            }
+            if (scan.endDate != null) {
+                Text(" - ")
+                Text(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(scan.endDate))
+            }
+        }
+
+    }
+
+    @Composable
     private fun LastScanList() {
         Column {
             Test()
             LazyColumn {
                 items(viewModel.scans) { scan ->
                     Row (Modifier.padding(horizontal = Dp(8.0F))) {
-                        Text(text = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(scan.date))
-                        Text(text = "| ${scan.duration} | Found: ${scan.noDevicesFound} | Mode: ${scan.scanMode} | ${scan.isManual}")
+                        Column {
+                            DateText(scan = scan)
+                            Text(text = "| ${scan.duration} | Found: ${scan.noDevicesFound} | Mode: ${scan.scanMode} | ${scan.isManual}")
+                            Divider()
+                        }
                     }
                 }
             }

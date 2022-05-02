@@ -12,29 +12,46 @@ import java.time.LocalDateTime
 data class Scan(
     @PrimaryKey(autoGenerate = true) val scanId: Int,
     /*Date when the scan has finished*/
-    @ColumnInfo(name = "date") val date: LocalDateTime,
+    @ColumnInfo(name = "endDate") var endDate: LocalDateTime?,
     /*Number of devices found during the scan*/
-    @ColumnInfo(name = "noDevicesFound") val noDevicesFound: Int,
+    @ColumnInfo(name = "noDevicesFound") var noDevicesFound: Int?,
     /*Duration in seconds of the scan*/
-    @ColumnInfo(name = "duration") val duration: Int,
+    @ColumnInfo(name = "duration") var duration: Int?,
     /*`True` if the scan is manually started*/
     @ColumnInfo(name = "isManual") val isManual: Boolean,
     /*Android Scan mode used*/
-    @ColumnInfo(name = "scanMode") val scanMode: Int
+    @ColumnInfo(name = "scanMode") val scanMode: Int,
+    @ColumnInfo(name = "startDate") val startDate: LocalDateTime?
 ) {
     constructor(
-        date: LocalDateTime,
+        endDate: LocalDateTime,
         noDevicesFound: Int,
         duration: Int,
         isManual: Boolean,
-        scanMode: Int
+        scanMode: Int,
+        startDate: LocalDateTime
     ): this(
         scanId = 0,
-        date,
+        endDate,
         noDevicesFound,
         duration,
         isManual,
-        scanMode
+        scanMode,
+        startDate
     )
+
+    constructor(
+        startDate: LocalDateTime,
+        isManual: Boolean,
+        scanMode: Int,
+    ): this (
+        scanId = 0,
+        endDate = null,
+        noDevicesFound = null,
+        duration = null,
+        isManual = isManual,
+        scanMode = scanMode,
+        startDate = startDate,
+            )
 
 }

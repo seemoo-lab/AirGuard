@@ -54,6 +54,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
+        val scanMode = getScanMode()
+        val scan = Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode)
+        scanRepository.insert(scan)
+
         if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_SCAN)){
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
@@ -85,7 +89,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
-        val scanMode = getScanMode()
         val scanSettings =
             ScanSettings.Builder().setScanMode(scanMode).build()
 
@@ -118,7 +121,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         SharedPrefs.lastScanDate = LocalDateTime.now()
         SharedPrefs.isScanningInBackground = false
-        scanRepository.insert(Scan(LocalDateTime.now(), scanResultDictionary.size, scanDuration.toInt() / 1000, false, scanMode))
+        scan.endDate = LocalDateTime.now()
+        scan.duration = scanDuration.toInt() / 1000
+        scan.noDevicesFound = scanResultDictionary.size
+        scanRepository.update(scan)
 
         return Result.success(
             Data.Builder()
