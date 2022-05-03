@@ -207,4 +207,5 @@
     <string name="none">None</string>
     <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Mode</string>
+    <string name="ignored_devices">Ignored devices</string>
 </resources>

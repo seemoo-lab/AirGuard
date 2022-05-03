@@ -191,4 +191,5 @@
     <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
+    <string name="ignored_devices">Ignorierte Geräte</string>
 </resources>

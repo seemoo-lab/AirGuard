@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.devices.AllDevicesFragment">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="de.seemoo.at_tracking_detection.ui.devices.AllDevicesViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical">
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <include
+                    layout="@layout/include_number_card"
+                    android:id="@+id/tracker_devices_card"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:cardName="@{@string/tracker_detected}"
+                    app:cardNumber="@{viewModel.countTracking}"
+                    app:cardBackgroundColorInt="@{viewModel.riskColor}"
+                    />
+
+                <include
+                    layout="@layout/include_number_card"
+                    android:id="@+id/all_devices_card"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    android:layout_marginStart="8dp"
+                    app:cardName="@{@string/other_devices_found}"
+                    app:cardNumber="@{viewModel.countNotTracking}"
+                    app:cardBackgroundColorInt="@{@color/gray_card_background}"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="22dp"
+                >
+
+                <include
+                    layout="@layout/include_number_card"
+                    android:id="@+id/ignored_devices_card"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:cardName="@{@string/ignored_devices}"
+                    app:cardNumber="@{viewModel.countIgnored}"
+                    app:cardBackgroundColorInt="@{@color/gray_card_background}"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</layout>

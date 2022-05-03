@@ -41,6 +41,12 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device")
     fun getTotalCount(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0")
+    fun getCountNotTracking(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1")
+    fun getCountIgnored(): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since")
     fun getTotalCountChange(since: LocalDateTime): Flow<Int>
 

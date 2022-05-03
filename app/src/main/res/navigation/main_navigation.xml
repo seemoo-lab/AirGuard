@@ -171,5 +171,24 @@
         android:id="@+id/debugScansFragment"
         android:name="de.seemoo.at_tracking_detection.ui.debug.DebugScansFragment"
         android:label="DebugScansFragment" />
+    <fragment
+        android:id="@+id/navigation_allDevicesFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.devices.AllDevicesFragment"
+        android:label="AllDevicesFragment" >
+        <action
+            android:id="@+id/action_navigation_allDevicesFragment_to_navigation_ignoredDevicesFragment"
+            app:destination="@id/navigation_ignoredDevicesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_navigation_allDevicesFragment_to_devices_found"
+            app:destination="@id/devices_found"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
 </navigation>
