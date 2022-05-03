@@ -192,4 +192,7 @@
     <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
     <string name="ignored_devices">Ignorierte Geräte</string>
+    <string name="airtags_found">Gefundene AirTags</string>
+    <string name="findmy_found">Gefundene Find My Geräte</string>
+    <string name="tile_found">Gefundene Tiles</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentAllDevicesBinding
 import de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailFragmentDirections
 
@@ -58,19 +59,34 @@ class AllDevicesFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.tracker_devices_card).setOnClickListener {
             val directions: NavDirections =
-                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(true)
+                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(showDevicesFound = true)
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.all_devices_card).setOnClickListener {
             val directions: NavDirections =
-                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(true, true)
+                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(showDevicesFound = true, showAllDevices = true)
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.ignored_devices_card).setOnClickListener {
             val directions: NavDirections =
                 AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToNavigationIgnoredDevicesFragment()
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.airtags_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.AIRTAG)
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.findmy_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.FIND_MY)
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.tiles_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.TILE)
             findNavController().navigate(directions)
         }
     }

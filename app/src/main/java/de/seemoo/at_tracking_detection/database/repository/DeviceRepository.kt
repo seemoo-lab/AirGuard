@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -39,6 +40,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDate)
 
     val countIgnored = deviceDao.getCountIgnored()
+
+    fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDate)
 
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {

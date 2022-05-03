@@ -32,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
@@ -45,7 +46,7 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllDevices: Boolean = false) : Fragment() {
+abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllDevices: Boolean = false, var deviceType: DeviceType?=null) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
@@ -93,6 +94,10 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
                 deviceInfoText = R.string.info_text_only_trackers
                 emptyListText = R.string.empty_list_trackers
             }
+        }
+
+        if (deviceType != null && deviceType != DeviceType.UNKNOWN) {
+            devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)

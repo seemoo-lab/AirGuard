@@ -22,6 +22,7 @@ class DeviceTypeFilter : Filter() {
         private var deviceTypes: ArraySet<DeviceType> = arraySetOf()
 
         fun build(deviceTypes: Set<DeviceType>): Filter {
+            this.deviceTypes.clear()
             this.deviceTypes.addAll(deviceTypes)
             return DeviceTypeFilter()
         }

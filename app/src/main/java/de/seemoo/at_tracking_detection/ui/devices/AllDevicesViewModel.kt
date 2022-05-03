@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
@@ -21,6 +22,10 @@ class AllDevicesViewModel @Inject constructor(
     val countNotTracking = deviceRepository.countNotTracking.asLiveData()
     val countIgnored = deviceRepository.countIgnored.asLiveData()
     val countTracking = deviceRepository.trackingDevicesSinceCount(RiskLevelEvaluator.relevantTrackingDate).asLiveData()
+
+    val countAirTags = deviceRepository.countForDeviceType(DeviceType.AIRTAG).asLiveData()
+    val countFindMy = deviceRepository.countForDeviceType(DeviceType.FIND_MY).asLiveData()
+    val countTile = deviceRepository.countForDeviceType(DeviceType.TILE).asLiveData()
 
     var riskColor: Int
 
