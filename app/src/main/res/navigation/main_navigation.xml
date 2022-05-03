@@ -91,6 +91,31 @@
     </fragment>
 
     <fragment
+        android:id="@+id/devices_found2"
+        android:name="de.seemoo.at_tracking_detection.ui.devices.FoundDevicesFragment"
+        android:label="@string/title_devices">
+        <argument
+            android:name="showDevicesFound"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="showAllDevices"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_navigation_devices_to_trackingFragment"
+            app:destination="@id/trackingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToSaveState="true" />
+        <argument
+            android:name="deviceType"
+            android:defaultValue="UNKNOWN"
+            app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType" />
+    </fragment>
+    <fragment
         android:id="@+id/deviceMapFragment"
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.DeviceMapFragment"
         android:label="@string/title_device_map">
@@ -168,7 +193,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="true"
+            app:popUpToInclusive="false"
             app:popUpToSaveState="true" />
     </fragment>
     <fragment
@@ -187,16 +212,12 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
         <action
-            android:id="@+id/action_navigation_allDevicesFragment_to_devices_found"
-            app:destination="@id/devices_found"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            android:id="@+id/action_navigation_allDevicesFragment_to_devices_found2"
+            app:destination="@id/devices_found2"
             app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
 </navigation>
