@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -24,7 +26,7 @@ import java.time.ZoneId
 
 @AndroidEntryPoint
 class FilterDialogFragment :
-    BottomSheetDialogFragment() {
+    Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels({ requireParentFragment() })
 
@@ -37,11 +39,28 @@ class FilterDialogFragment :
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogFilterBinding.inflate(LayoutInflater.from(context))
+        _binding?.viewModel = devicesViewModel
+        _binding?.lifecycleOwner = viewLifecycleOwner
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        filterAdaptions()
+
+        view.findViewById<MaterialButton>(R.id.filter_button).setOnClickListener {
+            val value = devicesViewModel.filterIsExpanded.value ?: false
+            devicesViewModel.filterIsExpanded.postValue(!value)
+        }
+//
+//        view.findViewById<MaterialButton>(R.id.filter_button_expanded).setOnClickListener {
+//            val value = devicesViewModel.filterIsExpanded.value ?: false
+//            devicesViewModel.filterIsExpanded.postValue(!value)
+//        }
+    }
+
+    private fun filterAdaptions() {
         binding.filterIgnoreChip.isChecked =
             devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())
         binding.filterNotifiedChip.isChecked =
@@ -108,6 +127,8 @@ class FilterDialogFragment :
             devicesViewModel.addOrRemoveFilter(DateRangeFilter.build(), true)
         }
     }
+
+
 
     private fun getActiveTimeRange(): Pair<Long, Long>? {
         val hasActiveTimeRangeFilter =

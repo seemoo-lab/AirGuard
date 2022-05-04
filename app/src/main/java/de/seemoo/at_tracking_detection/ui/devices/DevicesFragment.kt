@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Filter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -50,6 +51,7 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
+    private val dialogFragment = FilterDialogFragment()
 
     private lateinit var deviceAdapter: DeviceAdapter
 
@@ -131,10 +133,7 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
         postponeEnterTransition()
         view.findViewById<RecyclerView>(R.id.devices_recycler_view)
             .doOnPreDraw { startPostponedEnterTransition() }
-        val filterFab = view.findViewById<FloatingActionButton>(R.id.filter_fab)
-        filterFab.setOnClickListener {
-            FilterDialogFragment().show(childFragmentManager, DIALOG_TAG)
-        }
+
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
             updateTexts()
@@ -151,11 +150,13 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
             )
         }
 
+        //Adding the Filter fragment to the view
+        val transaction = childFragmentManager.beginTransaction().add(R.id.filter_fragment, dialogFragment)
+        transaction.commit()
+
     }
 
     abstract val deviceItemListener: DeviceAdapter.OnClickListener
-
-
 
 
     private fun updateTexts() {

@@ -18,6 +18,8 @@ class DeviceTypeFilter : Filter() {
 
     fun remove(deviceType: DeviceType) = deviceTypes.remove(deviceType)
 
+    var deviceTypes: ArraySet<DeviceType> = DeviceTypeFilter.deviceTypes
+
     companion object {
         private var deviceTypes: ArraySet<DeviceType> = arraySetOf()
 
