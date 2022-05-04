@@ -94,10 +94,6 @@ class DashboardRiskFragment : Fragment() {
         view.findViewById<ImageButton>(R.id.hide_survey_card_button).setOnClickListener {
             dismissSurveyCard()
         }
-
-        view.findViewById<MaterialCardView>(R.id.survey_card).setOnClickListener {
-            participateInSurvey()
-        }
     }
 
     override fun onStart() {
