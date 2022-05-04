@@ -87,6 +87,7 @@ class NotificationService @Inject constructor(
                 // 10s to 60s
                 timeInMillisUntilNotification = Random(6544).nextLong(10 * 1000, 60 * 1000)
             }
+            val alarmTime = System.currentTimeMillis() + timeInMillisUntilNotification
             val dateForNotification = LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
             SharedPrefs.surveyNotificationDate = dateForNotification
 
@@ -100,7 +101,7 @@ class NotificationService @Inject constructor(
 
             val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            alarmManager.set(AlarmManager.RTC_WAKEUP, timeInMillisUntilNotification, pendingIntent)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
             Timber.d("Scheduled a survey reminder notificaiton at $dateForNotification")
         }
     }
