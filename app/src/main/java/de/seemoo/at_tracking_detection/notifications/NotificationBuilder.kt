@@ -44,6 +44,26 @@ class NotificationBuilder @Inject constructor(
 
     }
 
+    private fun pendingIntentMainActivity(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            action = NotificationConstants.CLICKED_ACTION
+        }
+
+        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: ATTrackingDetectionApplication.getAppContext()
+        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(intent)
+            var flags = PendingIntent.FLAG_UPDATE_CURRENT
+            // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flags = flags or PendingIntent.FLAG_IMMUTABLE
+            }
+            getPendingIntent(0, flags)
+        }
+        return resultPendingIntent
+
+    }
+
 
     private fun packBundle(deviceAddress: String, notificationId: Int): Bundle = Bundle().apply {
         putString("deviceAddress", deviceAddress)
@@ -171,12 +191,31 @@ class NotificationBuilder @Inject constructor(
     fun buildBluetoothErrorNotification(): Notification {
         val notificationId = -100
         val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_ble_error))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingNotificationIntent(bundle))
             .setCategory(Notification.CATEGORY_ERROR)
             .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
+    }
+
+    fun buildSurveyInfoNotification(): Notification {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val text = context.getString(R.string.survey_info_1) + " " + context.getString(R.string.survey_info_2) + " " + context.getString(R.string.survey_info_3)
+
+        val pendingIntent = pendingIntentMainActivity()
+
+        return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
+            .setContentTitle("AirGuard - " + context.getString(R.string.survey_card_title))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(Notification.CATEGORY_STATUS)
+            .setSmallIcon(R.drawable.ic_edit_48px)
+            .setContentIntent(pendingIntent)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setAutoCancel(true)
             .build()
     }

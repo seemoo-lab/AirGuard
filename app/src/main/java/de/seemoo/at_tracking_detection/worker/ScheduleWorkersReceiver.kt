@@ -18,5 +18,6 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
         if (SharedPrefs.shareData) {
             backgroundWorkScheduler.scheduleShareData()
         }
+        Timber.d("Scheduled background work")
     }
 }

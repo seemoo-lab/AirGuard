@@ -12,7 +12,6 @@ import java.util.*
 
 object SharedPrefs {
 
-
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ATTrackingDetectionApplication.getAppContext())
 
     var isScanningInBackground: Boolean
@@ -130,4 +129,34 @@ object SharedPrefs {
         set(value) {
             sharedPreferences.edit().putBoolean("use_metric", value).apply()
         }
+
+    var dismissSurveyInformation: Boolean
+        get() {
+            return sharedPreferences.getBoolean("dismiss_survey_information", false)
+        }set(value) {
+            sharedPreferences.edit().putBoolean("dismiss_survey_information", value).apply()
+        }
+
+    var surveyNotificationDate: LocalDateTime?
+        get() {
+            val dateString = sharedPreferences.getString("survey_notification_date", null)
+            if (dateString != null) {
+                try {
+                    return LocalDateTime.parse(dateString)
+                }catch(e: DateTimeParseException) {
+                    return null
+                }
+            }
+            return null
+        }
+        set(value) {
+            sharedPreferences.edit().putString("survey_notification_date", value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).apply()
+        }
+
+    var surveyNotficationSent: Boolean
+        get() {
+            return sharedPreferences.getBoolean("survey_notification_sent", false)
+        }set(value) {
+        sharedPreferences.edit().putBoolean("survey_notification_sent", value).apply()
+    }
 }

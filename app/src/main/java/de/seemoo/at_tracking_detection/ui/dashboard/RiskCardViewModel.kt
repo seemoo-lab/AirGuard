@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.content.SharedPreferences
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -26,9 +27,10 @@ class RiskCardViewModel @Inject constructor(
     var riskColor: Int = 0
     var showLastDetection: Boolean = true
     var clickable: Boolean = true
-    lateinit var trackersFoundModel: RiskRowViewModel
-    lateinit var lastUpdateModel: RiskRowViewModel
-    lateinit var lastDiscoveryModel: RiskRowViewModel
+    var trackersFoundModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
+    var lastUpdateModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
+    var lastDiscoveryModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
+    var dismissSurveyInformation: MutableLiveData<Boolean> = MutableLiveData(SharedPrefs.dismissSurveyInformation)
 
     private var lastScan: LocalDateTime? = null
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
@@ -39,6 +41,12 @@ class RiskCardViewModel @Inject constructor(
                     updateLastUpdateModel()
                     }
                 }
+
+            when (key) {
+                "dismiss_survey_information" -> {
+                    dismissSurveyInformation.postValue(SharedPrefs.dismissSurveyInformation)
+                }
+            }
             }
 
 
@@ -55,10 +63,10 @@ class RiskCardViewModel @Inject constructor(
             ATTrackingDetectionApplication.getAppContext().getString(R.string.none)
         }
 
-        lastUpdateModel = RiskRowViewModel(
+        lastUpdateModel.postValue ( RiskRowViewModel(
             context.getString(R.string.last_scan_info, lastScanString),
             ContextCompat.getDrawable(context, R.drawable.ic_last_update)!!
-        )
+        ))
     }
 
     fun updateRiskLevel() {
@@ -78,14 +86,14 @@ class RiskCardViewModel @Inject constructor(
                 riskLevel = context.getString(R.string.risk_level_low)
                 riskColor = ContextCompat.getColor(context, R.color.risk_low)
 
-                trackersFoundModel = RiskRowViewModel(
+                trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_DAYS),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                )
-                lastDiscoveryModel = RiskRowViewModel(
+                ))
+                lastDiscoveryModel.postValue(RiskRowViewModel(
                     context.getString(R.string.last_discovery),
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                )
+                ))
 
                 showLastDetection = false
 
@@ -94,19 +102,19 @@ class RiskCardViewModel @Inject constructor(
                 riskLevel = context.getString(R.string.risk_level_medium)
                 riskColor = ContextCompat.getColor(context, R.color.risk_medium)
 
-                trackersFoundModel = RiskRowViewModel(
+                trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
                         RiskLevelEvaluator.RELEVANT_DAYS
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                )
+                ))
 
-                lastDiscoveryModel = RiskRowViewModel(
+                lastDiscoveryModel.postValue(RiskRowViewModel(
                     context.getString(R.string.last_discovery, lastDiscoveryDateString),
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                )
+                ))
 
 
             }
@@ -116,19 +124,19 @@ class RiskCardViewModel @Inject constructor(
                 riskColor = ContextCompat.getColor(context, R.color.risk_high)
 
 
-                trackersFoundModel = RiskRowViewModel(
+                trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
                         RiskLevelEvaluator.RELEVANT_DAYS
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                )
+                ))
 
-                lastDiscoveryModel = RiskRowViewModel(
+                lastDiscoveryModel.postValue(RiskRowViewModel(
                     context.getString(R.string.last_discovery, lastDiscoveryDateString),
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                )
+                ))
             }
         }
     }

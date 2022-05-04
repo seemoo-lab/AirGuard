@@ -94,6 +94,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         notificationService.setup()
+        notificationService.scheduleSurveyNotification(false)
     }
 
     private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
