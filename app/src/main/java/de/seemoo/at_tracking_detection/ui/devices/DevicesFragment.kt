@@ -151,7 +151,7 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
         }
 
         //Adding the Filter fragment to the view
-        val transaction = childFragmentManager.beginTransaction().add(R.id.filter_fragment, dialogFragment)
+        val transaction = childFragmentManager.beginTransaction().replace(R.id.filter_fragment, dialogFragment)
         transaction.commit()
 
     }

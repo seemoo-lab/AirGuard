@@ -5,7 +5,7 @@ import androidx.collection.arraySetOf
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
-class DeviceTypeFilter : Filter() {
+class DeviceTypeFilter(deviceTypes: Set<DeviceType>) : Filter() {
     override fun apply(baseDevices: List<BaseDevice>): List<BaseDevice> {
         return baseDevices.filter {
             deviceTypes.contains(it.deviceType)
@@ -18,15 +18,16 @@ class DeviceTypeFilter : Filter() {
 
     fun remove(deviceType: DeviceType) = deviceTypes.remove(deviceType)
 
-    var deviceTypes: ArraySet<DeviceType> = DeviceTypeFilter.deviceTypes
+    var deviceTypes: ArraySet<DeviceType>
+
+    init {
+        this.deviceTypes = ArraySet()
+        this.deviceTypes.addAll(deviceTypes)
+    }
 
     companion object {
-        private var deviceTypes: ArraySet<DeviceType> = arraySetOf()
-
         fun build(deviceTypes: Set<DeviceType>): Filter {
-            this.deviceTypes.clear()
-            this.deviceTypes.addAll(deviceTypes)
-            return DeviceTypeFilter()
+            return DeviceTypeFilter(deviceTypes)
         }
     }
 }
