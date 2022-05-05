@@ -104,7 +104,9 @@ class DevicesViewModel @Inject constructor(
                 filterStringBuilder.append(DeviceType.userReadableName(device))
                 filterStringBuilder.append(", ")
             }
-            filterStringBuilder.delete(filterStringBuilder.length-2, filterStringBuilder.length-1)
+            if (deviceTypeFilter.deviceTypes.count() > 0) {
+                filterStringBuilder.delete(filterStringBuilder.length-2, filterStringBuilder.length-1)
+            }
         }else {
             // All devices
             filterStringBuilder.append(context.getString(R.string.title_device_map))
