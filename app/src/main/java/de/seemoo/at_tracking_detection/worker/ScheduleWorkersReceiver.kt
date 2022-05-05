@@ -18,6 +18,7 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
         if (SharedPrefs.shareData) {
             backgroundWorkScheduler.scheduleShareData()
         }
+        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
         Timber.d("Scheduled background work")
     }
 }

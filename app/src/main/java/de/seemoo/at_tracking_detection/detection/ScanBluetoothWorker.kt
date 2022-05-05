@@ -127,6 +127,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         Timber.d("Scheduling tracking detector worker")
         backgroundWorkScheduler.scheduleTrackingDetector()
+        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
 
         return Result.success(
             Data.Builder()
