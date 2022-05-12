@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AirGuard</string>
+    <string name="title_ignored_devices">既知のタグ</string>
+    <string name="title_dashboard">ダッシュボード</string>
+    <string name="title_settings">設定</string>
+    <string name="title_debug">デバック</string>
+    <string name="title_feedback">フィードバック</string>
+    <string name="title_tracking">{deviceAddress} をあなたはフォローしています</string>
+    <string name="title_devices_tracking">タグ {deviceAddress}</string>
+    <string name="title_device_map">すべてのタグ</string>
+    <string name="title_devices">タグ</string>
+    <string name="map_empty_text">まだタグは検知されていません、検知されるたびに検知した場所をマップ上に表示します。これは追跡されているという意味ではありません。不特定多数の人が所有しているタグを検知しているケースがほとんどです。</string>
+    <string name="mark_false_alarm">誤報</string>
+    <string name="channel_name">追跡されています</string>
+    <string name="channel_description">追跡装置が発見された可能性があります</string>
+    <string name="statistics_beacons">タグを見つけました</string>
+    <string name="statistics_devices">位置</string>
+    <string name="statistics_alerts">送信済みの警告</string>
+    <string name="statistics_false_alarms">誤報</string>
+    <string name="statistics_devices_monitored">監視中のタグ</string>
+    <string name="settings_share_data_summary">匿名化されたデータを共有してプロジェクトをサポートする</string>
+    <string name="settings_share_data_title">研究に参加する</string>
+    <string name="device_item_first_discovery">発見した場所:</string>
+    <string name="beacons">ビーコン</string>
+    <string name="devices_swipe">スワイプして消す</string>
+    <string name="devices_list_empty">アプリがAirTagまたは別のFindMyデバイスを検出すると、それらがここに一覧表示されます。リストには、あなたを追跡しなかったデバイスが含まれている可能性があります。あなたを追跡するデバイスについては、通知を受け取ります。</string>
+    <string name="ignored_device_list_empty">既知のデバイス（所有しているAirTagなど）によって追跡されているという通知を受け取った場合は、無視してかまいません。それらはここに表示されます。注意：AirTagはBluetoothアドレスを1日1回変更するため、既知のAirTagは1日後に新しいものになります。</string>
+    <string name="settings_use_location_summary">有効にすると、追跡時に詳細な情報を提供できます。</string>
+    <string name="settings_use_location_title">位置情報を使用する</string>
+    <string name="error_requesting_location_permission">位置情報取得の許可の要求中にエラーが発生しました</string>
+    <string name="tracking_locate_at_title">音を出す</string>
+    <string name="tracking_locate_at_subtitle">AirTagを見つける</string>
+    <string name="permissions_background_location_title">バックグラウンド探知</string>
+    <string name="permission_background_location_message">この許可を与えることにより、追跡時に、より詳細な情報を提供できます。これはオプション機能です</string>
+    <string name="tracking_feedback_title">フィードバック</string>
+    <string name="tracking_feedback_subtitle">発見した場所をを提供する</string>
+    <string name="tracking_ignore_device_title">無視するタグ</string>
+    <string name="tracking_ignore_device_subtitle">このタグの通知をミュートする</string>
+    <string name="tracking_false_alarm_title">誤報</string>
+    <string name="tracking_false_alarm_subtitle">この通知を誤報としてマークする</string>
+    <string name="tracking_missing_beacons_info">一部のタグは位置データなしで検知されたため、表示されません</string>
+    <string name="feedback_question1">Find Myデバイスはどこに隠されていましたか？</string>
+    <string name="feedback_location_backpack">リュックサック</string>
+    <string name="feedback_location_clothes">服</string>
+    <string name="feedback_location_car">車</string>
+    <string name="feedback_location_bike">自転車</string>
+    <string name="feedback_close">選ぶ</string>
+    <string name="tracking_locate_at_playing_sound">音を鳴らしています</string>
+    <string name="permission_required">許可が必要です</string>
+    <string name="permission_required_message">このアプリを使用するには、この許可を与える必要があります</string>
+    <string name="rssi">RSSI</string>
+    <string name="device_item_last_seen">最後に検知した日時:</string>
+    <string name="dashboard_tile_change">+%d</string>
+    <string name="onboarding_share_data_title">私たちの研究に参加しますか?</string>
+    <string name="onboarding_share_data_switch">研究に参加する</string>
+    <string name="onboarding_share_data_description">
+        このアプリは、ドイツのダルムシュタット工科大学の研究者によって開発されました。私たちの調査では、悪意のある追跡の試みによって影響を受けている人の数を調べたいと考えています。
+        AppleのFindMyデバイスが実際に人の追跡に使用されているかどうか。そして最終的には、アプリを通じてこれから人々をどれだけうまく守れるかを研究したいと考えています。 \n
+        <b>参加するには18歳以上である必要があります</b>
+        \n\n
+
+        • <b>デバイスタイプ</b>、<b>RSSI値</b>（信号強度）、<b>検出日時</b>など、検出されたデバイスに関する情報を収集します \n\n
+        • 送信された<b>通知</b>の数、アラートの<b>日時</b>、およびオプションで提供できる<b>フィードバック</b> \n\n
+
+        位置情報やあなたを特定する可能性のあるデータは<b>共有しません</b>。参加は完全に匿名です！</string>
+    <string name="onboarding_1_description">このアプリは、AirTagまたはFind My対応デバイスがあなたを追跡しているように見えるときに通知します</string>
+    <string name="location_permission_title">位置情報の許可</string>
+    <string name="location_permission_message">このアプリは、アプリが閉じているか使用されていない場合でも、AirTagまたはその他のFindMyデバイスのBluetoothスキャンを許可するために位置情報の取得の許可が必要です。さらに、オプションで、追跡されたときにアプリが場所をログに記録できるようにすることができます。</string>
+    <string name="onboarding_ignore_battery_optimization_title">バッテリーの最適化</string>
+    <string name="onboarding_ignore_battery_optimization_description">アプリがバックグラウンドで動作できるようにするには、バッテリーセーバーを無効にする必要があります</string>
+    <string name="onboarding_ignore_battery_optimization">バッテリーの最適化を無視する</string>
+    <string name="onboarding_4_title">バックグラウンドでの、位置情報取得の許可</string>
+    <string name="onboarding_4_description">あなたが追跡されている場合に、より詳細な位置履歴を取得するには、このアプリが常にあなたの位置情報を使用できるようにします。このアプリは位置データを収集して、アプリが閉じているときや使用されていないときでも、AirTagまたはFindMyデバイスの位置を保存できるようにします。この機能はオプションであり、位置データがデバイスから第三者に送信されることはありません。</string>
+    <string name="onboarding_5_title">準備ができました</string>
+    <string name="settings_theme_system_default">システムデフォルト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_use_low_power_ble_summary">この設定は、タグをより少ないエネルギーで検出できますが、検出が遅れる可能性もあります</string>
+    <string name="tracking_device_not_connectable">この追跡デバイスはサウンドを再生できません</string>
+    <string name="tracking_info">NFC経由で携帯電話でこのAirTagをスキャンして、詳細情報を入手してください。</string>
+    <string name="info">情報</string>
+    <string name="settings_third_party_libraries_title">サードパーティのライブラリ</string>
+    <string name="settings_third_party_libraries_summary">使用されているすべてのサードパーティライブラリとそのライセンスのリストを表示する</string>
+    <string name="settings_privacy_policy_title">プライバシーポリシー</string>
+    <string name="settings_privacy_policy_summary">シンプルなプライバシーポリシー</string>
+    <string name="onboarding_share_data_no">いいえ</string>
+    <string name="onboarding_share_data_yes">はい</string>
+    <string name="onboarding_share_data_dialog">匿名化されたデータを共有するかどうかを決定する必要があります</string>
+    <string name="device_name_find_my_device">Find My デバイス %s</string>
+    <string name="notification_text_base">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
+    <string name="notification_title_base">追跡タグが発見されました!</string>
+    <string name="notification_text_single">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
+    <string name="notification_text_multiple">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
+    <string name="notification_title_vocal">%s があなたを追跡しています</string>
+    <string name="notification_title_consonant">%s があなたを追跡しています</string>
+    <string name="notification_title_multiple">%s があなたを追跡しています</string>
+    <string name="notification_title_ble_error">BLEスキャンに失敗しました</string>
+    <string name="alert_sent_icon">アラート送信アイコン</string>
+    <string name="device_icon">デバイスアイコン</string>
+    <string name="location_sample_image">場所のサンプル画像</string>
+    <string name="permissions_location_title">バックグラウンドでの位置情報</string>
+    <string name="permission_location_message">この許可は、AirTagまたはFindMyデバイスがあなたを追跡している場合に備えてより詳細な追跡情報を提供するために必要です。この許可はオプションです</string>
+    <string name="onboarding_2_title">位置情報の許可</string>
+    <string name="onboarding_2_description">このアプリは、Bluetooth Low Energyを介して周囲のAirTagを検索するために、現在地にアクセスするための許可が必要です。この許可がないと、追跡デバイスは見つけられません。位置データがデバイスから外部に送信されることはありません </string>
+    <string name="devices_edit_title">タグ名の編集</string>
+    <string name="cancel_button">キャンセル</string>
+    <string name="devices_alter_removed">"%s" 取り除かれました</string>
+    <string name="undo_button">元に戻す</string>
+    <string name="grant_location_permission">位置情報取得の取得を許可する</string>
+    <string name="grant_permission">許可を与える</string>
+    <string name="cancel">いいえ</string>
+    <string name="no_button">大丈夫です</string>
+    <string name="dashboard_scan_fab_description">追跡タグをスキャンしてください!</string>
+    <string name="dashboard_scan_fab">手動スキャン</string>
+    <string name="onboarding_scan_title">Bluetoothスキャン</string>
+    <string name="onboarding_scan_description">追跡デバイスをスキャンするには、Bluetoothデバイスをスキャンするための許可が必要です</string>
+    <string name="onboarding_connect_title">Bluetooth接続</string>
+    <string name="onboarding_connect_description">追跡デバイスが見つかった場合、AirGuardはその上でサウンドを再生する機能を提供します。このためには、このデバイスに接続するための許可が必要です。</string>
+    <string name="twitter_description">私達のTwitterを見る</string>
+    <string name="twitter">Twitter</string>
+    <string name="scan_title">手動スキャン</string>
+    <string name="scan_result_item_image_description">スキャン結果</string>
+    <string name="scan_result_no_devices">安心してください。タグは見つかりませんでした</string>
+    <string name="ble_service_connection_error">デバイスとの接続に失敗しました</string>
+    <string name="yes_button">はい</string>
+    <string name="scan_enable_bluetooth_message">スキャンをするためにBluetoothをONにしてください</string>
+    <string name="scan_enable_bluetooth_title">Bluetoothスキャン中</string>
+    <string name="risk_level_low">問題なし</string>
+    <string name="risk_level_medium">注意</string>
+    <string name="risk_level_high">危険</string>
+    <string name="no_trackers_found">過去 %d 日間にタグは見つかりませんでした</string>
+    <string name="found_x_trackers">過去 %d 日間に %d つのタグが検出されました</string>
+    <string name="last_scan_info">最後のスキャン日時: %s</string>
+    <string name="last_discovery">最後に見つかったタグは %s です</string>
+    <string name="how_does_airguard_work">AirGuardの仕組みは?</string>
+    <string name="notification_help">
+        • タグを手動でスキャンし、最終的に音を出して見つけます\n<br />
+        • タグの電池を外します\n<br />
+        • それを持って警察に行きましょう\n<br />
+        • タグの電池を抜く前に、安全な場所に移動してください\n<br />
+    </string>
+    <string name="i_got_a_notification_what_should_i_do">通知を受け取ったらどうすればよいですか？</string>
+
+    <string name="find_tracker_help">
+        • 誤報が発生する可能性があります。あなたの近くの誰かがAirTagを使用してるかもしれないからです\n<br />
+        • 異なる日に複数の通知を受け取った場合は、必ず手動スキャンをしてください。
+    </string>
+    <string name="i_cannot_find_the_tracker">タグが見つかりません！</string>
+    <string name="airguard_scan_explanation">AirGuard は Bluetooth を使用してタグを探します</string>
+    <string name="airguard_detection_explanation">AirGuardは位置情報の助けを借りてタグが複数の場所であなたを追跡しているかどうかを検出できます</string>
+    <string name="airguard_notification_explanation">隠されたタグがあなたを追跡しているときに通知を出します。上のカードは、色がオレンジまたは赤に変わります。</string>
+    <string name="find_sound">音を出して見つけます</string>
+    <string name="find_manual_scan">手動スキャンを実行し、距離からタグを見つけます</string>
+    <string name="find_battery">電池を外します</string>
+    <string name="find_headline">AirTagを見つけて無効化する</string>
+    <string name="title_risk_detail">リスク評価</string>
+    <string name="show_all">すべて表示</string>
+    <string name="tracker_detected">検出されたタグ</string>
+    <string name="locations_tracked">追跡された場所</string>
+    <string name="dates_detected">検出された日付</string>
+    <string name="filter">フィルターを開く</string>
+    <string name="filter_ignored">無視する</string>
+    <string name="filter_notified">あなたの場所を追跡する</string>
+    <string name="filter_title_device_attributes">デバイス属性</string>
+    <string name="filter_apply">申し込む</string>
+    <string name="filter_from_until_text">%s それまで %s</string>
+    <string name="filter_date_range_picker_title">最後に見たのは</string>
+    <string name="app_theme_dark">ダーク</string>
+    <string name="app_theme_light">ライト</string>
+    <string name="app_theme_system_default">デフォルト</string>
+    <string name="settings_app_theme_title">テーマ</string>
+    <string name="settings_app_theme_summary">テーマを選ぶ</string>
+    <string name="settings_metric_title">メートル法</string>
+    <string name="settings_metric_summary">メートル法を使用して距離を表示する</string>
+    <string name="info_text_only_trackers">このリストには、過去14日間にあなたを追跡したと思われるタグのみが表示されます。すべてのデバイスを表示するには、右下隅のボタンを使用してフィルターを変更できます</string>
+    <string name="info_text_all_devices">このリストには、過去14日間にAirGuardで検出されたすべてのデバイスが表示されます。これには、あなたを追跡していないデバイスが含まれます。タグには「!」が付いています。右下隅のボタンを使用して、デバイスをフィルタリングできます</string>
+    <string name="info_text_all_locations">この画面には、デバイスが見つかったすべての場所が表示されます。これには、現在地を追跡していないデバイスも含まれます。</string>
+    <string name="empty_list_devices">このリストには、過去14日間にAirGuardで検出されたすべてのデバイスが表示されます。デバイスは見つかりませんでした。アプリはBluetoothを使用してのみ潜在的な追跡デバイスを見つけることができるため、Bluetoothを有効にしておくことを忘れないでください</string>
+    <string name="empty_list_trackers">このリストには、過去14日間に現在地を追跡していたデバイスのみが表示されます。デバイスはあなたを追跡してあなたの場所を追跡しようとしませんでした。デバイスが現在地を追跡しているときはいつでも、通知を受け取ります。追跡デバイスを見つけるためにBluetoothを有効にしておくことを忘れないでください。下のボタンを使用すると、トラッカーとして分類されていないデバイスも含め、すべてのデバイスを表示できます。</string>
+    <string name="show_all_button">すべてのデバイスを表示する</string>
+    <string name="empty_image_content_description">空のリストを示す画像</string>
+    <string name="beacon_locations">ビーコンの場所</string>
+    <string name="other_devices_found">見つかった他のデバイス</string>
+    <string name="device_name_apple_device">Appleデバイス %s</string>
+    <string name="device_name_unknown_device">不明なデバイス %s</string>
+    <string name="play_sound_error_fail">音を出すことに失敗しました。やり直してください！</string>
+    <string name="play_sound_error_init">Bluetoothサービスに接続できませんでした！</string>
+    <string name="play_sound_error_connect">デバイスに接続できません!</string>
+    <string name="filter_title_device_types">デバイスタイプ</string>
+    <string name="notification_ignore_device">デバイスを無視する</string>
+    <string name="notification_false_alarm">誤報</string>
+    <string name="last_scans">最後のスキャン</string>
+    <string name="tip_airtag_testing"><b>アプリをテストしますか？</b> AirTagは、近くのiPhone/iPadに接続されている場合は検出できません。接続している間は、場所も追跡しません。 AirTagをBluetoothから切断し、アプリで検出されるまで15分待つ必要があります。</string>
+    <string name="none">なし</string>
+    <string name="already_scanning_warning">アプリはすでにバックグラウンドでスキャンをしています。 10秒待ってから手動スキャンを再開してください</string>
+    <string name="settings_use_low_power_ble_title">Low Energy Scanを使用する</string>
+</resources>
