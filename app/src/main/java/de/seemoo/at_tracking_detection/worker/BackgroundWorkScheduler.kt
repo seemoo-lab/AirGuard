@@ -77,7 +77,9 @@ class BackgroundWorkScheduler @Inject constructor(
         @SuppressLint("UnspecifiedImmutableFlag")
         fun scheduleAlarmWakeupIfScansFail() {
             //Run in 2 hours
-            val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
+//            val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
+            // Run in 60minBack
+            val timeInMillisUntilNotification: Long = 60 * 60 * 1000
 
             val alarmDate = LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
             val alarmTime = System.currentTimeMillis() + timeInMillisUntilNotification
