@@ -24,7 +24,7 @@ class NotificationBuilder @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    private fun pendingNotificationIntent(bundle: Bundle): PendingIntent {
+    private fun pendingNotificationIntent(bundle: Bundle, notificationId: Int): PendingIntent {
         val intent = Intent(context, TrackingNotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             action = NotificationConstants.CLICKED_ACTION
@@ -36,9 +36,10 @@ class NotificationBuilder @Inject constructor(
             var flags = PendingIntent.FLAG_UPDATE_CURRENT
             // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // This prevents security issues that some apps can execute code on behalf of our app
                 flags = flags or PendingIntent.FLAG_IMMUTABLE
             }
-            getPendingIntent(0, flags)
+            getPendingIntent(notificationId, flags)
         }
         return resultPendingIntent
 
@@ -102,7 +103,7 @@ class NotificationBuilder @Inject constructor(
             .setContentTitle(context.getString(R.string.notification_title_base))
             .setContentText(notifyText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
@@ -150,16 +151,18 @@ class NotificationBuilder @Inject constructor(
                 }
             }
             else -> {
-                notificationTitle = context.getString(R.string.notification_title_vocal, device.deviceContext.defaultDeviceName )
+                notificationTitle = context.getString(R.string.notification_title_consonant, device.deviceContext.defaultDeviceName )
                 notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
             }
         }
+
+        val pendingIntent = pendingNotificationIntent(bundle, notificationId)
 
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingIntent)
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
@@ -195,7 +198,7 @@ class NotificationBuilder @Inject constructor(
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_ble_error))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ERROR)
             .setSmallIcon(R.drawable.ic_scan_icon)
             .setAutoCancel(true)
