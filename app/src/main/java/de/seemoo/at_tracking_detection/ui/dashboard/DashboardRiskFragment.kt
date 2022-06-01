@@ -123,7 +123,7 @@ class DashboardRiskFragment : Fragment() {
         dialogBuilder?.setMessage(R.string.survey_alert_message)
         dialogBuilder?.setPositiveButton(R.string.remind_later) { dialog, which ->
             SharedPrefs.dismissSurveyInformation = true
-            ATTrackingDetectionApplication.getCurrentApp().notificationService.scheduleSurveyNotification(true)
+            ATTrackingDetectionApplication.getCurrentApp()?.notificationService?.scheduleSurveyNotification(true)
         }
 
         dialogBuilder?.setNegativeButton(R.string.show_not_again) { dialog, which ->

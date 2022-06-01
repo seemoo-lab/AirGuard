@@ -76,8 +76,9 @@ class NotificationService @Inject constructor(
     @SuppressLint("UnspecifiedImmutableFlag")
     fun scheduleSurveyNotification(replace: Boolean) {
         // Do not send multiple notifications
-        if (SharedPrefs.surveyNotficationSent && !replace) {return}
+        if (!ATTrackingDetectionApplication.SURVEY_IS_RUNNING) {return}
 
+        if (SharedPrefs.surveyNotficationSent && !replace) {return}
         //Check if already scheduled
         val notificationDate = SharedPrefs.surveyNotificationDate
         if ( replace || notificationDate == null || notificationDate < LocalDateTime.now()) {

@@ -59,7 +59,7 @@ class NotificationBuilder @Inject constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 flags = flags or PendingIntent.FLAG_IMMUTABLE
             }
-            getPendingIntent(0, flags)
+            getPendingIntent(1654, flags)
         }
         return resultPendingIntent
 
