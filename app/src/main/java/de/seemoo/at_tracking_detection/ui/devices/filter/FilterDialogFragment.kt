@@ -82,7 +82,10 @@ class FilterDialogFragment :
             if (activeDeviceTypeFilter.contains(device.deviceType)) {
                 chip.filterDeviceTypeChip.isChecked = true
             }
-            chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
+
+            chip.filterDeviceTypeChip.id = (device.deviceType.toString() + ".chip").hashCode()
+
+                chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     activeDeviceTypeFilter.add(device.deviceType)
                 } else {

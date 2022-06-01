@@ -96,6 +96,9 @@ object Util {
             beaconList
                 .filter { it.latitude != null && it.longitude != null }
                 .map { beacon ->
+                    if (map.isShown == false) {
+                        return@map
+                    }
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
                     marker.infoWindow = DeviceMarkerInfo(
