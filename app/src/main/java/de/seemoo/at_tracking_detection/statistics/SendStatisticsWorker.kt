@@ -43,6 +43,9 @@ class SendStatisticsWorker @AssistedInject constructor(
         }
 
         val devices = deviceRepository.getDeviceBeaconsSinceDate(lastDataDonation)
+        // This makes sure that no devices will be sent twice. If the donation fails, then the app
+        // will upload newer data the next time.
+        SharedPrefs.lastDataDonation = LocalDateTime.now()
 
         if (devices.isEmpty()) {
             Timber.d("Nothing to send...")
