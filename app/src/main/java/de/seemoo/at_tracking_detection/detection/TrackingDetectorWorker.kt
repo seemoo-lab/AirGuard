@@ -40,8 +40,11 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
-            //TODO: Implement tracking detection for Tile
             val device = deviceRepository.getDevice(mapEntry.key)
+            //Double check that this device is not ignored
+            if (device?.ignore == true) {
+                return@forEach
+            }
 
             //Check that we found enough beacons
             if (mapEntry.value.size < MAX_BEACONS_BEFORE_ALARM) {
