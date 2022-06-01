@@ -108,10 +108,9 @@ class DashboardRiskFragment : Fragment() {
     }
 
     private fun participateInSurvey() {
-        //TODO: Add real survey URL
         val intent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("https://survey.seemoo.tu-darmstadt.de")
+            Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
         )
         startActivity(intent)
     }

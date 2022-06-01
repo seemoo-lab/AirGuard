@@ -138,5 +138,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         fun getCurrentApp(): ATTrackingDetectionApplication {
             return instance
         }
+        //TODO: Add real survey URL
+        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de"
     }
 }

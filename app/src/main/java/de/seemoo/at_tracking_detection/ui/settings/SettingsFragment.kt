@@ -58,6 +58,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
                 return@OnPreferenceClickListener true
             }
+
+        findPreference<Preference>("survey")?.setOnPreferenceClickListener {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
+            )
+            startActivity(intent)
+            return@setOnPreferenceClickListener true
+        }
     }
 
     private val sharedPreferenceListener =

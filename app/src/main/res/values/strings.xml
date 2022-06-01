@@ -217,8 +217,11 @@
     <string name="survey_info_1">How many people are suffering under stalking and location tracking?</string>
     <string name="survey_info_2">How can we protect those people?</string>
     <string name="survey_info_3">Please participate even if you have not suffered from such attacks</string>
+    <string name="survey_info_4">Conducted by Technical University of Darmstadt, Germany</string>
     <string name="remind_later">Remind me later</string>
     <string name="show_not_again">Don\'t show it again</string>
     <string name="survey_alert_title">Survey information</string>
     <string name="survey_alert_message">Do you want to be reminded about the survey later?</string>
+    <string name="survery_settings_summary">Technical University of Darmstadt conducts a survey to find out how people are affected by stalking</string>
+    <string name="survey_settings_title">Survey on stalking and location tracking</string>
 </resources>
