@@ -7,15 +7,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
 import timber.log.Timber
+import java.time.Instant
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -200,6 +204,25 @@ class NotificationBuilder @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ERROR)
+            .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
+    }
+
+    fun buildDebugFoundDeviceNotification(scanResult: android.bluetooth.le.ScanResult): Notification {
+
+        val deviceType = DeviceManager.getDeviceType(scanResult)
+
+        val milisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
+        val timeOfEvent = System.currentTimeMillis() - milisecondsSinceEvent
+        val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
+
+
+        return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
+            .setContentTitle("Discovered ${deviceType.name} | ${scanResult.device.address}")
+            .setContentText("Received at ${eventDate.toString()}")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_STATUS)
             .setSmallIcon(R.drawable.ic_scan_icon)
             .setAutoCancel(true)
             .build()

@@ -24,7 +24,6 @@ import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -139,7 +138,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             return instance
         }
         //TODO: Add real survey URL
-        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de"
+        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
         val SURVEY_IS_RUNNING = true
     }
 }

@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.notifications
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -11,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.viewmodel.NotificationViewModel
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
@@ -70,6 +72,16 @@ class NotificationService @Inject constructor(
             )
         }
         SharedPrefs.surveyNotficationSent = true
+    }
+
+    fun sendDebugNotificationFoundDevice(scanResult: ScanResult) {
+        with(notificationManagerCompat) {
+            notify(
+                BLE_SCAN_ERROR_TAG,
+                Random.nextInt(),
+                notificationBuilder.buildDebugFoundDeviceNotification(scanResult)
+                )
+        }
     }
 
 

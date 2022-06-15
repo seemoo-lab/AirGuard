@@ -7,6 +7,8 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.location.Location
+import android.os.Handler
+import android.os.Looper
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -30,8 +32,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.jar.Manifest
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltWorker
 class ScanBluetoothWorker @AssistedInject constructor(
@@ -76,13 +81,16 @@ class ScanBluetoothWorker @AssistedInject constructor(
         if (useLocation) {
             val lastLocation = locationProvider.getLastLocation()
 
-            location = lastLocation
-            Timber.d("Using last location for the tag detection")
-
-            //Getting the most accurate location here
-            locationProvider.getCurrentLocation { loc ->
-                this.location = loc
-                Timber.d("Updated to current location")
+            if (lastLocation != null) {
+                // Location matches the requirement. No need to request a new one
+                location = lastLocation
+                Timber.d("Using last location")
+            }else {
+                //Getting the most accurate location here
+                locationProvider.getCurrentLocation { loc ->
+                    this.location = loc
+                    Timber.d("Updated to current location")
+                }
             }
         }
 
@@ -96,8 +104,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
-
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
+
+        //TODO: We need to **here** wait for the location to come  in
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
@@ -208,6 +217,25 @@ class ScanBluetoothWorker @AssistedInject constructor(
             15000L
         } else {
             8000L
+        }
+    }
+
+    private suspend fun waitForRequestedLocation() {
+        if (location != null) {
+            //Location already there. Just return
+            return
+        }
+
+
+        return suspendCoroutine { cont ->
+            var coroutineFinished = false
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                if (!coroutineFinished) {
+                    //TODO:
+                    cont.resume()
+                }
+            }, 8000)
         }
     }
 
