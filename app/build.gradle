@@ -109,6 +109,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.5'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.work:work-testing:2.7.1'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.5'
 
     implementation "com.google.dagger:hilt-android:$hilt_version"

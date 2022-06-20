@@ -28,13 +28,9 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Duration
 import java.time.LocalDateTime
-import java.util.jar.Manifest
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -55,7 +51,15 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private var scanResultDictionary: HashMap<String, DiscoveredDevice> = HashMap()
 
-    private var location: Location? = null
+    var location: Location? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                locationRetrievedCallback?.let { it() }
+            }
+        }
+
+    private var locationRetrievedCallback: (() -> Unit)? = null
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
@@ -105,14 +109,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
-
-        //TODO: We need to **here** wait for the location to come  in
-
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
-        if (location == null) {
-            Timber.d("No location found")
-        }
+        //Waiting for updated location to come in
+        val fetchedLocation = this.waitForRequestedLocation()
+        Timber.d("Fetched location? ${fetchedLocation}")
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
@@ -220,22 +221,36 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun waitForRequestedLocation() {
+    private suspend fun waitForRequestedLocation(): Boolean {
         if (location != null) {
             //Location already there. Just return
-            return
+            return true
         }
-
 
         return suspendCoroutine { cont ->
             var coroutineFinished = false
+
             val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
+            val runnable = Runnable {
                 if (!coroutineFinished) {
-                    //TODO:
-                    cont.resume()
+                    coroutineFinished = true
+                    locationRetrievedCallback = null
+                    Timber.d("Could not get location update in time.")
+                    cont.resume(false)
                 }
-            }, 8000)
+            }
+
+            locationRetrievedCallback = {
+                if (!coroutineFinished) {
+                    handler.removeCallbacks(runnable)
+                    coroutineFinished = true
+                    cont.resume(true)
+                }
+            }
+
+            // Fallback if no location is fetched in time
+            handler.postDelayed(runnable, 8000)
+
         }
     }
 

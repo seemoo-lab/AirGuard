@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
@@ -37,7 +38,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
         val context = ATTrackingDetectionApplication.getAppContext()
         val locationManager = context.getSystemService<LocationManager>()
         if (locationManager != null) {
-            locationProvider = LocationProvider(locationManager)
+            locationProvider = LocationProvider(locationManager, DefaultBuildVersionProvider())
         }
     }
 
@@ -45,7 +46,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
     private var location: Location? = null
     private var isUpdatingLocation = false
 
-    public fun startScan() {
+    fun startScan() {
         val scanSettings = scanSettings() ?: return
 
         val applicationContext = ATTrackingDetectionApplication.getAppContext()
@@ -72,7 +73,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
 
 
-    public fun stopScan() {
+    fun stopScan() {
         this.bluetoothAdapter?.bluetoothLeScanner?.let { BLEScanCallback.stopScanning(it) }
     }
 

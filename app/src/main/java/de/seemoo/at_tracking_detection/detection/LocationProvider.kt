@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -9,6 +10,8 @@ import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
+import de.seemoo.at_tracking_detection.util.BuildVersionProvider
+import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
@@ -19,13 +22,16 @@ import javax.inject.Singleton
 
 
 @Singleton
-class LocationProvider @Inject constructor(private val locationManager: LocationManager): LocationListener {
+open class LocationProvider @Inject constructor(
+    private val locationManager: LocationManager,
+    private val versionProvider: BuildVersionProvider): LocationListener {
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var locationCallback: ((Location?)->Unit)? = null
+//    private val versionProvider = DefaultBuildVersionProvider()
 
 
-    fun getLastLocation(): Location? {
+    open fun getLastLocation(): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -37,19 +43,28 @@ class LocationProvider @Inject constructor(private val locationManager: Location
      * Fetches the most recent location from network and gps and returns the one that has been recveived more recently
      * @return the most recent location across multiple providers
      */
+    @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
     private fun getLastLocationFromAnyProvider(): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
-        if (Build.VERSION.SDK_INT >= 31) {
+        if (versionProvider.sdkInt() >= Build.VERSION_CODES.S && locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
             //Use the fused location provider
             val fusedLocation = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)
 
             // Check if the requirements are satisfied
-            if (fusedLocation != null && ) {
+            if (fusedLocation != null && locationMatchesMinimumRequirements(fusedLocation)) {
                 return fusedLocation
             }
+            return null
+        }else {
+            return legacyGetLastLocationFromAnyProvider()
+        }
+    }
+
+    private fun legacyGetLastLocationFromAnyProvider(): Location? {
+        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
@@ -108,12 +123,33 @@ class LocationProvider @Inject constructor(private val locationManager: Location
     /**
      * Get the current location with a callback
      */
-    fun getCurrentLocation(callback: (Location?) -> Unit) {
+    @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
+    open fun getCurrentLocation(callback: (Location?) -> Unit) {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
 
-        Timber.d("Requesting Location...")
+        if (versionProvider.sdkInt() >= 31 && locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+            Timber.d("Requesting fused location updates")
+            this.locationCallback = callback
+            locationManager.requestLocationUpdates(
+                LocationManager.FUSED_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
+        }else {
+            legacyGetCurrentLocationFromAnyProvider(callback)
+        }
+    }
+
+    fun legacyGetCurrentLocationFromAnyProvider(callback: (Location?) -> Unit) {
+        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
+        Timber.d("Requesting legacy location updates")
         val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val networkProviderEnabled =
             locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
