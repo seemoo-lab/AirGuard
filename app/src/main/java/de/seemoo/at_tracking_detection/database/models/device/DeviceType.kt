@@ -30,4 +30,12 @@ enum class DeviceType {
             }
         }
     }
+
+    fun canBeIgnored(): Boolean {
+        return when (this) {
+            TILE -> true
+            APPLE -> true
+            else -> false
+        }
+    }
 }
