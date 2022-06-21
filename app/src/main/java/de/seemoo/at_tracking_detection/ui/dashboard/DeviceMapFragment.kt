@@ -52,6 +52,8 @@ class DeviceMapFragment : Fragment() {
 
         Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
+        Util.enableMyLocationOverlay(map)
+
         lifecycleScope.launch {
             var beaconList = listOf<Beacon>()
             if (safeArgs.showAllDevices) {

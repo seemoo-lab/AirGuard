@@ -129,6 +129,8 @@ class TrackingFragment : Fragment() {
             }
         }
 
+        Util.enableMyLocationOverlay(map)
+
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
