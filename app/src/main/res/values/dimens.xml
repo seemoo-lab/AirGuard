@@ -14,5 +14,5 @@
     <dimen name="guideline_start">24dp</dimen>
     <dimen name="guideline_end">24dp</dimen>
     <dimen name="guideline_back">24dp</dimen>
-    <dimen name="tracking_tile_height">145dp</dimen>
+    <dimen name="tracking_tile_height">110dp</dimen>
 </resources>

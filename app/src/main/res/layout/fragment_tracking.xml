@@ -55,19 +55,20 @@
 
             <include
                 android:id="@+id/location_missing_hint"
-                layout="@layout/item_icon_text_row"
-                android:layout_width="wrap_content"
+                layout="@layout/item_icon_text_row_color"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/card_margin"
                 android:visibility="@{vm.beaconsHaveMissingLocation ? View.VISIBLE : View.GONE, default=visible}"
                 app:iconDrawable="@{@drawable/ic_baseline_info_24}"
-                app:rowText="@{@string/tracking_missing_beacons_info}" />
+                app:rowText="@{@string/tracking_missing_beacons_info}"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
+
 
                 <include
                     android:id="@+id/tracking_play_sound"
@@ -86,6 +87,7 @@
                     bind:vm="@{vm}"
 
                     />
+
 
                 <include
                     android:id="@+id/tracking_ignore_device"
@@ -107,16 +109,11 @@
 
                     />
 
-
             </LinearLayout>
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-
+                android:orientation="horizontal" >
                 <include
                     android:id="@+id/tracking_feedback"
                     layout="@layout/include_tracking_tile"
@@ -132,7 +129,6 @@
                     bind:title="@{@string/tracking_feedback_title}"
                     bind:vm="@{vm}"
                     />
-
 
                 <include
                     android:id="@+id/tracking_false_alarm"
@@ -154,7 +150,11 @@
 
                     />
             </LinearLayout>
+
         </LinearLayout>
+
+
+
 
         <TextView
             android:id="@+id/tracking_scan_airtag_text"

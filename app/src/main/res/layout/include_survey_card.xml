@@ -51,22 +51,22 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_baseline_location_on_24}"
                 app:rowText="@{@string/survey_info_1}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_auto_awesome_48px}"
                 app:rowText="@{@string/survey_info_2}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_group_48px}"
                 app:rowText="@{@string/survey_info_3}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_school_48}"
                 app:rowText="@{@string/survey_info_4}" />
             

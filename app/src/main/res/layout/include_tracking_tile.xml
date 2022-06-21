@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <data>
 
@@ -56,7 +58,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="15dp">
+            android:layout_margin="8dp">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/tracking_guideline_left"
@@ -90,7 +92,9 @@
                 app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tracking_guideline_left"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_baseline_play_circle_outline_24"
+                />
 
             <FrameLayout
                 android:layout_width="0dp"
@@ -128,7 +132,8 @@
                     android:contentDescription="@string/tracking_locate_at_playing_sound"
                     android:scaleType="fitEnd"
                     android:visibility="@{vm.error ? View.VISIBLE : View.INVISIBLE}"
-                    app:srcCompat="@drawable/ic_baseline_error_outline_24" />
+                    app:srcCompat="@drawable/ic_baseline_error_outline_24"
+                    />
             </FrameLayout>
 
             <TextView
@@ -139,17 +144,20 @@
                 android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:text="@{title}"
-                android:textAppearance="?attr/textAppearanceTitleLarge"
-                android:textSize="20sp"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tracking_guideline_horizontal" />
+                app:layout_constraintTop_toBottomOf="@id/tracking_guideline_horizontal"
+                tools:text="Title text"
+                />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autoSizeMinTextSize="10sp"
                 android:autoSizeTextType="uniform"
                 android:text="@{subtitle}"
+                tools:text="Subtitle text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

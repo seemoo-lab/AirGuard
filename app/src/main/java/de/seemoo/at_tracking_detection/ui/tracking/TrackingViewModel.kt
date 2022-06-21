@@ -64,6 +64,8 @@ class TrackingViewModel @Inject constructor(
                 if (deviceType != null) {
                     this.canBeIgnored.postValue(deviceType.canBeIgnored())
                 }
+                val notification = notificationRepository.notificationForDevice(it).firstOrNull()
+                notification?.let { notificationId.postValue(it.notificationId) }
             }
         }
 

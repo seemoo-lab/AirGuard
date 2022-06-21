@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.Notification
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.relations.NotificationFeedback
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -43,6 +44,9 @@ interface NotificationDao {
 
     @Query("SELECT * FROM notification ORDER BY createdAt DESC LIMIT 1")
     fun getLastNotification(): List<Notification>
+
+    @Query("SELECT * FROM notification WHERE deviceAddress == :deviceAddress ORDER BY createdAt DESC")
+    fun getNotificationForDevice(deviceAddress: String): List<Notification>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
