@@ -29,13 +29,26 @@
                 layout="@layout/include_tracker_location_cards"
                 app:viewModel="@{viewModel}" />
 
-            <include
-                layout="@layout/include_devices_beacons_cards"
-                android:layout_height="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="22dp"
-                app:viewModel="@{viewModel}" />
+                android:layout_height="wrap_content" >
 
+                <include
+                    layout="@layout/include_number_card"
+                    android:id="@+id/card_devices_found"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    android:layout_marginTop="22dp"
+                    app:cardName="@{@string/other_devices_found}"
+                    app:cardBackgroundColorInt="@{viewModel.riskColor}"
+                    app:cardNumber="@{viewModel.totalNumberOfDevicesFound}"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/risk_card"
                 style="?attr/materialCardViewElevatedStyle"

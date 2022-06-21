@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarItems: Set<Int> = setOf(
-            R.id.navigation_ignoredDevicesFragment,
+            R.id.navigation_allDevicesFragment,
             R.id.navigation_dashboard,
             R.id.navigation_settings
         )

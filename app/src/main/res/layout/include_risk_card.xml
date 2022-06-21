@@ -70,7 +70,7 @@
 
                 <include
                     android:id="@+id/risk_level_row"
-                    layout="@layout/item_icon_text_row"
+                    layout="@layout/item_icon_text_white"
                     bind:iconDrawable="@{vm.trackersFoundModel.image}"
                     bind:rowText="@{vm.trackersFoundModel.text}" />
 
@@ -83,7 +83,7 @@
 
                 <include
                     android:id="@+id/last_detection_row"
-                    layout="@layout/item_icon_text_row"
+                    layout="@layout/item_icon_text_white"
                     android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
                     bind:iconDrawable="@{vm.lastDiscoveryModel.image}"
                     bind:rowText="@{vm.lastDiscoveryModel.text}" />
@@ -98,7 +98,7 @@
 
                 <include
                     android:id="@+id/last_update_row"
-                    layout="@layout/item_icon_text_row"
+                    layout="@layout/item_icon_text_white"
                     bind:iconDrawable="@{vm.lastUpdateModel.image}"
                     bind:rowText="@{vm.lastUpdateModel.text}" />
 

@@ -68,6 +68,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:attr/textColorTertiary"
                 tools:src="@drawable/ic_baseline_device_unknown_24" />
 
             <TextView

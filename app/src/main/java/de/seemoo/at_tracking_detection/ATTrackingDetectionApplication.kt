@@ -19,12 +19,12 @@ import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.OpportunisticBLEScanner
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -94,6 +94,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         notificationService.setup()
+        notificationService.scheduleSurveyNotification(false)
+        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
     }
 
     private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
@@ -133,8 +135,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                 null
             }
         }
-        fun getCurrentApp(): ATTrackingDetectionApplication {
+        fun getCurrentApp(): ATTrackingDetectionApplication? {
             return instance
         }
+        //TODO: Add real survey URL
+        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
+        val SURVEY_IS_RUNNING = true
     }
 }

@@ -7,15 +7,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
 import timber.log.Timber
+import java.time.Instant
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +28,7 @@ class NotificationBuilder @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    private fun pendingNotificationIntent(bundle: Bundle): PendingIntent {
+    private fun pendingNotificationIntent(bundle: Bundle, notificationId: Int): PendingIntent {
         val intent = Intent(context, TrackingNotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             action = NotificationConstants.CLICKED_ACTION
@@ -36,9 +40,30 @@ class NotificationBuilder @Inject constructor(
             var flags = PendingIntent.FLAG_UPDATE_CURRENT
             // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // This prevents security issues that some apps can execute code on behalf of our app
                 flags = flags or PendingIntent.FLAG_IMMUTABLE
             }
-            getPendingIntent(0, flags)
+            getPendingIntent(notificationId, flags)
+        }
+        return resultPendingIntent
+
+    }
+
+    private fun pendingIntentMainActivity(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            action = NotificationConstants.CLICKED_ACTION
+        }
+
+        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: ATTrackingDetectionApplication.getAppContext()
+        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(intent)
+            var flags = PendingIntent.FLAG_UPDATE_CURRENT
+            // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flags = flags or PendingIntent.FLAG_IMMUTABLE
+            }
+            getPendingIntent(1654, flags)
         }
         return resultPendingIntent
 
@@ -82,7 +107,7 @@ class NotificationBuilder @Inject constructor(
             .setContentTitle(context.getString(R.string.notification_title_base))
             .setContentText(notifyText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
@@ -130,16 +155,18 @@ class NotificationBuilder @Inject constructor(
                 }
             }
             else -> {
-                notificationTitle = context.getString(R.string.notification_title_vocal, device.deviceContext.defaultDeviceName )
+                notificationTitle = context.getString(R.string.notification_title_consonant, device.deviceContext.defaultDeviceName )
                 notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
             }
         }
+
+        val pendingIntent = pendingNotificationIntent(bundle, notificationId)
 
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingIntent)
             .setCategory(Notification.CATEGORY_ALARM)
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
@@ -171,12 +198,50 @@ class NotificationBuilder @Inject constructor(
     fun buildBluetoothErrorNotification(): Notification {
         val notificationId = -100
         val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_ble_error))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingNotificationIntent(bundle))
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ERROR)
             .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
+    }
+
+    fun buildDebugFoundDeviceNotification(scanResult: android.bluetooth.le.ScanResult): Notification {
+
+        val deviceType = DeviceManager.getDeviceType(scanResult)
+
+        val milisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
+        val timeOfEvent = System.currentTimeMillis() - milisecondsSinceEvent
+        val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
+
+
+        return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
+            .setContentTitle("Discovered ${deviceType.name} | ${scanResult.device.address}")
+            .setContentText("Received at ${eventDate.toString()}")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_STATUS)
+            .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
+    }
+
+    fun buildSurveyInfoNotification(): Notification {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val text = context.getString(R.string.survey_info_1) + " " + context.getString(R.string.survey_info_2) + " " + context.getString(R.string.survey_info_3)
+
+        val pendingIntent = pendingIntentMainActivity()
+
+        return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
+            .setContentTitle("AirGuard - " + context.getString(R.string.survey_card_title))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(Notification.CATEGORY_STATUS)
+            .setSmallIcon(R.drawable.ic_edit_48px)
+            .setContentIntent(pendingIntent)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setAutoCancel(true)
             .build()
     }

@@ -26,6 +26,9 @@ This app will never get monetized by showing ads, in-app purchases or anything e
 Our privacy policy can be found here: 
 https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
 
+This app is open-source: 
+https://github.com/seemoo-lab/AirGuard
+
 Disclaimer
 AirTag, FindMy and iOS are trademarks of Apple Inc. 
 We are not working together with Apple Inc.

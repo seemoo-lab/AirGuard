@@ -35,6 +35,9 @@ class BeaconRepository @Inject constructor(
     fun getDeviceBeacons(deviceAddress: String): List<Beacon> =
         beaconDao.getDeviceBeacons(deviceAddress)
 
+    fun getDeviceBeaconsSince(deviceAddress: String, since: LocalDateTime): List<Beacon> =
+        beaconDao.getDeviceBeaconsSince(deviceAddress, since)
+
     fun getBeaconsForDevices(baseDevices: List<BaseDevice>): List<Beacon> {
         return baseDevices.map {
             beaconDao.getDeviceBeacons(it.address)

@@ -9,10 +9,10 @@
         android:title="@string/title_dashboard" />
 
     <item
-        android:id="@+id/navigation_ignoredDevicesFragment"
-        android:contentDescription="@string/title_ignored_devices"
+        android:id="@+id/navigation_allDevicesFragment"
+        android:contentDescription="@string/title_devices"
         android:icon="@drawable/ic_baseline_list_24"
-        android:title="@string/title_ignored_devices" />
+        android:title="@string/title_devices" />
 
     <item
         android:id="@+id/navigation_settings"

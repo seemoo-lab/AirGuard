@@ -36,17 +36,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_sound}"
                 app:rowText="@{@string/find_sound}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_scan_icon}"
                 app:rowText="@{@string/find_manual_scan}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_battery}"
                 app:rowText="@{@string/find_battery}" />
 

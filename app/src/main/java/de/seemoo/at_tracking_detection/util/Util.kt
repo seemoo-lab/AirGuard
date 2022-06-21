@@ -31,6 +31,7 @@ import timber.log.Timber
 object Util {
 
     const val MAX_ZOOM_LEVEL = 19.5
+    const val ZOOMED_OUT_LEVEL = 15.0
 
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity()
@@ -65,30 +66,42 @@ object Util {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||  ActivityCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun enableMyLocationOverlay(
+        map:MapView
+    ) {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val locationOverlay = MyLocationNewOverlay(map)
+        val options = BitmapFactory.Options()
+        val bitmapPerson =
+            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
+        locationOverlay.setPersonIcon(bitmapPerson)
+        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
+        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
+        locationOverlay.enableMyLocation()
+        locationOverlay.enableFollowLocation()
+        map.overlays.add(locationOverlay)
+        map.controller.setZoom(ZOOMED_OUT_LEVEL)
+    }
+
     suspend fun setGeoPointsFromList(
         beaconList: List<Beacon>,
         map: MapView,
         connectWithPolyline: Boolean = false,
         onMarkerWindowClick: ((beacon: Beacon) -> Unit)? = null
     ): Boolean {
-        val locationOverlay = MyLocationNewOverlay(map)
-        val options = BitmapFactory.Options()
+
         val context = ATTrackingDetectionApplication.getAppContext()
         val copyrightOverlay = CopyrightOverlay(context)
 
-        val bitmapPerson =
-            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-        locationOverlay.setPersonIcon(bitmapPerson)
-        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
         val markerList = ArrayList<Marker>()
 
-        locationOverlay.enableMyLocation()
+
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
-        map.overlays.add(locationOverlay)
+
         map.overlays.add(copyrightOverlay)
 
         // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
@@ -96,6 +109,9 @@ object Util {
             beaconList
                 .filter { it.latitude != null && it.longitude != null }
                 .map { beacon ->
+                    if (map.isShown == false) {
+                        return@map
+                    }
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
                     marker.infoWindow = DeviceMarkerInfo(
@@ -131,10 +147,11 @@ object Util {
             map.overlays.add(line)
         }
         if (geoPointList.isEmpty()) {
-            locationOverlay.enableFollowLocation()
             mapController.setZoom(MAX_ZOOM_LEVEL)
             return false
         }
+        val myLocationOverlay = map.overlays.firstOrNull{ it is MyLocationNewOverlay} as? MyLocationNewOverlay
+        myLocationOverlay?.disableFollowLocation()
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
 
         map.post {

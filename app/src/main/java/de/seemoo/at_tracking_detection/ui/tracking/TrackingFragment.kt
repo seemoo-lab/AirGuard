@@ -53,8 +53,10 @@ class TrackingFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
-        trackingViewModel.notificationId.postValue(safeArgs.notificationId)
-        trackingViewModel.deviceAddress.postValue(safeArgs.deviceAddress)
+        val notifId = safeArgs.notificationId
+        val deviceAddress = safeArgs.deviceAddress
+        trackingViewModel.notificationId.postValue(notifId)
+        trackingViewModel.deviceAddress.postValue(deviceAddress)
         trackingViewModel.loadDevice(safeArgs.deviceAddress)
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
             notificationId = it
@@ -126,6 +128,8 @@ class TrackingFragment : Fragment() {
                 ).show()
             }
         }
+
+        Util.enableMyLocationOverlay(map)
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {

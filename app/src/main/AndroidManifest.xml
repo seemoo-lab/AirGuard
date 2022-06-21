@@ -76,6 +76,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".notifications.ScheduledNotificationReceiver"/>
+
         <activity
             android:name=".ui.MainActivity"
             android:allowTaskReparenting="true"

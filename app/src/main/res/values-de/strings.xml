@@ -191,4 +191,21 @@
     <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
+    <string name="ignored_devices">Ignorierte Geräte</string>
+    <string name="airtags_found">Gefundene AirTags</string>
+    <string name="findmy_found">Gefundene Find My Geräte</string>
+    <string name="tile_found">Gefundene Tiles</string>
+    <string name="survey_card_title">Wir machen eine Umfrage</string>
+    <string name="survey_card_info_text">Wir versuchen herauszufinden wie viele Menschen von Stalking und Location Tracking betroffen sind. Wir laden Sie ein an der Umfrage teilzunehmen. Dies gilt auch, wenn sie bis jetzt nicht von solchen Attacken betroffen waren. Diese Umfrage ist Teil des Forschungsprojekts an der TU Darmstadt.</string>
+    <string name="participate">Teilnehmen</string>
+    <string name="survey_info_1">Wie viele Menschen sind von Stalking und Location Tracking betroffen?</string>
+    <string name="survey_info_2">Wie können wir diese Menschen besser schützen?</string>
+    <string name="survey_info_3">Bitte nehmen Sie an der Umfrage Teil auch, wenn sie nicht von solchen Angriffen betroffen waren</string>
+    <string name="remind_later">Erinnere mich später</string>
+    <string name="show_not_again">Zeige keine Informationen dazu mehr an</string>
+    <string name="survey_alert_title">Umfrage Informationen</string>
+    <string name="survey_alert_message">Willst du erneut auf die Umfrage aufmerksam gemacht werden?</string>
+    <string name="survery_settings_summary">Die Technische Universität Darmstadt führt eine Umfrage durch um herauszufinden, wie Menschen von Stalking betroffen sind</string>
+    <string name="survey_settings_title">Umfrage zum Thema Stalking und Location Tracking</string>
+    <string name="survey_info_4">Durchgeführt von der Technischen Universität Darmstadt</string>
 </resources>

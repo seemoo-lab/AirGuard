@@ -16,6 +16,7 @@ class FoundDevicesFragment: DevicesFragment(true) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         this.showAllDevices = safeArgs.showAllDevices
+        this.deviceType = safeArgs.deviceType
         super.onCreate(savedInstanceState)
     }
 

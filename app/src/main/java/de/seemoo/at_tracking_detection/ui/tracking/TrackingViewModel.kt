@@ -33,6 +33,8 @@ class TrackingViewModel @Inject constructor(
     val device = MutableLiveData<BaseDevice>()
     val connectable = MutableLiveData<Boolean>(false)
 
+    val canBeIgnored = MutableLiveData<Boolean>(false)
+
     val showNfcHint = MutableLiveData<Boolean>(false)
 
     val isMapLoading = MutableLiveData(false)
@@ -58,6 +60,12 @@ class TrackingViewModel @Inject constructor(
                 deviceIgnored.postValue(it.ignore)
                 connectable.postValue(it.device is Connectable)
                 showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
+                val deviceType = it.deviceType
+                if (deviceType != null) {
+                    this.canBeIgnored.postValue(deviceType.canBeIgnored())
+                }
+                val notification = notificationRepository.notificationForDevice(it).firstOrNull()
+                notification?.let { notificationId.postValue(it.notificationId) }
             }
         }
 
