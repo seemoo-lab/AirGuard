@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -31,8 +32,12 @@ class TrackingDetectorWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Tracking detection background job started!")
         val ignoredDevices = deviceRepository.ignoredDevicesSync
+
+
+        // All beacons in the last 14 days for devices detected during the last scan
+        val latestBeaconsPerDevice = getLatestBeaconsPerDevice()
         // remove devices which are ignored
-        val cleanedBeaconsPerDevice = getLatestBeaconsPerDevice().filterKeys { address ->
+        val cleanedBeaconsPerDevice = latestBeaconsPerDevice.filterKeys { address ->
             !ignoredDevices.map { it.address }.contains(address)
         }
 
@@ -94,12 +99,17 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     private val useLocation = SharedPrefs.useLocationInTrackingDetection
 
+    /**
+     * Retrieves the devices detected during the last scan (last 15min)
+     * @return a HashMap with the device address as key and the list of beacons as value (all beacons in the relevant interval)
+     */
     private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
         val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
         val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
-            val beacons = beaconRepository.getDeviceBeacons(it.deviceAddress)
+            // Only retrieve the last two weeks since they are only relevant for tracking
+            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDate)
             beaconsPerDevice[it.deviceAddress] = beacons
         }
         return beaconsPerDevice

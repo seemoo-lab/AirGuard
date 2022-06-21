@@ -29,6 +29,9 @@ interface BeaconDao {
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun getDeviceBeacons(deviceAddress: String): List<Beacon>
 
+    @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress AND receivedAt >= :since ORDER BY receivedAt DESC")
+    fun getDeviceBeaconsSince(deviceAddress: String, since: LocalDateTime): List<Beacon>
+
     @Query("SELECT * FROM (SELECT * FROM beacon ORDER BY receivedAt DESC, deviceAddress ASC) GROUP BY deviceAddress")
     fun getLatestBeaconPerDevice(): Flow<List<Beacon>>
 
