@@ -222,7 +222,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private suspend fun waitForRequestedLocation(): Boolean {
-        if (location != null) {
+        if (location != null || SharedPrefs.useLocationInTrackingDetection == false) {
             //Location already there. Just return
             return true
         }

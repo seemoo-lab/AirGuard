@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.notifications.NotificationBuilder
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
 import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkBuilder
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.runBlocking
@@ -74,6 +75,7 @@ class ScanBluetoothWorkerTest {
 
         this.db = roomDB
         executor = Executors.newSingleThreadExecutor()
+        SharedPrefs.useLocationInTrackingDetection = true
     }
 
     @Test
@@ -157,6 +159,44 @@ class ScanBluetoothWorkerTest {
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
         val locationProvider = TestLocationProvider(true, 20000, context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
+
+        val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
+        val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()!!.backgroundWorkScheduler
+
+        val params = WorkerParameters(
+            UUID.randomUUID(),
+            Data.EMPTY,
+            Collections.emptyList(),
+            WorkerParameters.RuntimeExtras(),
+            1,
+            // This is unused for ListenableWorker
+            executor,
+            WorkManagerTaskExecutor(executor),
+            WorkerFactory.getDefaultWorkerFactory(),
+            TestProgressUpdater(),
+            TestForegroundUpdater()
+        )
+
+        val worker = ScanBluetoothWorker(
+            context,
+            params,
+            beaconRepository, deviceRepository, scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
+
+        runBlocking {
+            val result = worker.doWork()
+            assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
+            Assert.assertNull(worker.location)
+        }
+    }
+
+    @Test
+    fun testLocationNotAllowedInBackgroundScan() {
+        SharedPrefs.useLocationInTrackingDetection = false
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val beaconRepository = DatabaseModule.provideBeaconRepository(DatabaseModule.provideBeaconDao(db))
+        val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
+        val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
+        val locationProvider = TestLocationProvider(true, 0, context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
         val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()!!.backgroundWorkScheduler
