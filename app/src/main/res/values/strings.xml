@@ -35,7 +35,7 @@
     <string name="tracking_locate_at_subtitle">Locate AirTag</string>
     <string name="permissions_background_location_title">Background Location</string>
     <string name="permission_background_location_message">By granting this permission, more detailed tracking information can be provided when being tracked. This is an optional feature.</string>
-    <string name="ok_button">OK</string>
+    <string name="ok_button" translatable="false">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Provide some insights</string>
     <string name="tracking_ignore_device_title">Ignore Device</string>

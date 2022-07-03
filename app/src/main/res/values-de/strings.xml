@@ -31,7 +31,6 @@
     <string name="tracking_locate_at_subtitle">AirTag lokalisieren</string>
     <string name="permissions_location_title">Standort im Hintergrund</string>
     <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "Find My"-Gerät erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
-    <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
     <string name="tracking_ignore_device_title">Gerät ignorieren</string>
