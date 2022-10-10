@@ -89,5 +89,10 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.TILE)
             findNavController().navigate(directions)
         }
+
+        view.findViewById<MaterialCardView>(R.id.smarttags_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.GALAXY_SMART_TAG)
+            findNavController().navigate(directions)
+        }
     }
 }

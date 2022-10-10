@@ -83,6 +83,7 @@ data class BaseDevice(
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
+        DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {

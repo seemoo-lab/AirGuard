@@ -111,7 +111,7 @@
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
     <string name="scan_title">Manueller Scan</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
-    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!\nWir scannen nur nach Apple Find My Trackern (AirTags) und Tile.</string>
+    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!\nWir scannen nur nach Apple Find My Trackern (AirTags), Galaxy SmartTags und Tile Trackern.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="yes_button">Ja</string>
     <string name="scan_enable_bluetooth_title">Bluetooth Suche</string>
@@ -208,4 +208,7 @@
     <string name="survery_settings_summary">Die Technische Universität Darmstadt führt eine Umfrage durch um herauszufinden, wie Menschen von Stalking betroffen sind</string>
     <string name="survey_settings_title">Umfrage zum Thema Stalking und Location Tracking</string>
     <string name="survey_info_4">Durchgeführt von der Technischen Universität Darmstadt</string>
+    <string name="smarttag_found">Gefundene SmartTags</string>
+    <string name="onboarding_setting_summary">Immer den Einrichtungsdialog anzeigen</string>
+    <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
 </resources>

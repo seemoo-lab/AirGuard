@@ -220,7 +220,7 @@
     <fragment
         android:id="@+id/navigation_allDevicesFragment"
         android:name="de.seemoo.at_tracking_detection.ui.devices.AllDevicesFragment"
-        android:label="AllDevicesFragment" >
+        android:label="@string/title_devices"  >
         <action
             android:id="@+id/action_navigation_allDevicesFragment_to_navigation_ignoredDevicesFragment"
             app:destination="@id/navigation_ignoredDevicesFragment"

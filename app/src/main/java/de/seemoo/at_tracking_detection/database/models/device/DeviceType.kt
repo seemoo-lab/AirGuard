@@ -26,6 +26,7 @@ enum class DeviceType {
                 APPLE -> AppleDevice.defaultDeviceName
                 FIND_MY -> FindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
+                GALAXY_SMART_TAG -> SmartTag.defaultDeviceName
                 else -> Unknown.defaultDeviceName
             }
         }
@@ -34,6 +35,7 @@ enum class DeviceType {
     fun canBeIgnored(): Boolean {
         return when (this) {
             TILE -> true
+            GALAXY_SMART_TAG -> true
             APPLE -> true
             else -> false
         }
