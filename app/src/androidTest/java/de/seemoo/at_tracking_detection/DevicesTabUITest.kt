@@ -55,6 +55,10 @@ class DevicesTabUITest {
             .perform(click())
         openFirstItem()
 
+        onView(withId(R.id.smarttags_found_card))
+            .perform(click())
+        openFirstItem()
+
         onView(withId(R.id.all_devices_card))
             .perform(click())
         openFirstItem()
@@ -89,7 +93,9 @@ class DevicesTabUITest {
         onView(withText("FindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
+        onView(withText("Galaxy SmartTag")).perform(click())
         onView(withText("Tile")).perform(click())
+
 
         onView(withText("Show all devices")).check(matches(isDisplayed()))
 
@@ -98,6 +104,7 @@ class DevicesTabUITest {
         onView(withText("FindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
+        onView(withText("Galaxy SmartTag")).perform(click())
         onView(withText("Tile")).perform(click())
 
         onView(withText("identified trackers")).perform(click())

@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, Tile)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, Tile) // TODO: SmartTag results in Crash
     val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
@@ -38,8 +38,14 @@ object DeviceManager {
         }else if (services != null) {
             //Check if this device is a Tile
             if (services.contains(Tile.offlineFindingServiceUUID)) {
+                // TODO Modify???
                 return Tile.deviceType
             }
+            else if(services.contains(SmartTag.offlineFindingServiceUUID)){
+                // TODO Modify???
+                return SmartTag.deviceType
+            }
+
         }
         return Unknown.deviceType
     }

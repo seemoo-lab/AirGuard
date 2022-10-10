@@ -130,7 +130,7 @@
     <string name="twitter">Twitter</string>
     <string name="scan_title">Manual Scan</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags) and Tile.</string>
+    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -193,6 +193,7 @@
     <string name="beacon_locations">Beacon locations</string>
     <string name="other_devices_found">Other devices found</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
+    <string name="device_name_smarttag" translatable="false">SmartTag %s</string>
     <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Apple Device %s</string>
     <string name="device_name_unknown_device">Unknown Device %s</string>
@@ -211,6 +212,7 @@
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Find My Devices found</string>
     <string name="tile_found">Tiles found</string>
+    <string name="smarttag_found">SmartTags found</string>
     <string name="survey_card_title">We are doing a survey</string>
     <string name="survey_card_info_text">We are trying to find out how many people are experiencing stalking and location tracking attacks. We invite every user to participate in the survey, even if you are not a victim to any of these attacks. This survey is part of our research project at the Technical University of Darmstadt.</string>
     <string name="participate">Participate</string>
@@ -224,4 +226,6 @@
     <string name="survey_alert_message">Do you want to be reminded about the survey later?</string>
     <string name="survery_settings_summary">Technical University of Darmstadt conducts a survey to find out how people are affected by stalking</string>
     <string name="survey_settings_title">Survey on stalking and location tracking</string>
+    <string name="onboarding_setting_summary">Will always show the app onboarding procedure</string>
+    <string name="onboarding_setting_title">Show Onboarding</string>
 </resources>

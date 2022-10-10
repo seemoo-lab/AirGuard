@@ -66,8 +66,8 @@
 
     <SwitchPreferenceCompat
         android:key="show_onboarding"
-        android:summary="Will always show the app onboarding procedure"
-        android:title="Show Onboarding"
+        android:summary="@string/onboarding_setting_summary"
+        android:title="@string/onboarding_setting_title"
         app:isPreferenceVisible="@bool/debug" />
 
 </PreferenceScreen>
