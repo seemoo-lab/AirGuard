@@ -13,7 +13,6 @@ interface BeaconDao {
     @Query("SELECT COUNT(DISTINCT(deviceAddress)) FROM beacon WHERE receivedAt >= :since")
     fun getLatestBeaconCount(since: LocalDateTime): Flow<Int>
 
-
     @Query("SELECT COUNT(*) FROM beacon WHERE receivedAt >= :since")
     fun getTotalCountChange(since: LocalDateTime): Flow<Int>
 
@@ -35,11 +34,19 @@ interface BeaconDao {
     @Query("SELECT * FROM (SELECT * FROM beacon ORDER BY receivedAt DESC, deviceAddress ASC) GROUP BY deviceAddress")
     fun getLatestBeaconPerDevice(): Flow<List<Beacon>>
 
-    @Query("SELECT COUNT(*) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL")
+    @Query("SELECT COUNT(*) FROM beacon, location WHERE location.locationId = beacon.locationId AND latitude IS NOT NULL AND longitude IS NOT NULL")
     fun getTotalLocationCount(): Flow<Int>
 
-    @Query("SELECT COUNT(DISTINCT(deviceAddress)) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND receivedAt >= :since")
+    @Query("SELECT COUNT(DISTINCT(deviceAddress)) FROM beacon, location WHERE location.locationId = beacon.locationId AND latitude IS NOT NULL AND longitude IS NOT NULL AND receivedAt >= :since")
     fun getLatestLocationsCount(since: LocalDateTime): Flow<Int>
+
+    /*
+    @Query("SELECT COUNT(*) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL")
+    fun getTotalLocationCount(): Flow<Int> // old version
+
+    @Query("SELECT COUNT(DISTINCT(deviceAddress)) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND receivedAt >= :since")
+    fun getLatestLocationsCount(since: LocalDateTime): Flow<Int> // old version
+     */
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(beacon: Beacon): Long

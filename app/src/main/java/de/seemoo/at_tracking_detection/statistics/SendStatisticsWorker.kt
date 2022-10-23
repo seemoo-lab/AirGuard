@@ -56,8 +56,9 @@ class SendStatisticsWorker @AssistedInject constructor(
         devices.forEach {
             it.address = ""
             it.beacons.forEach { beacon ->
-                beacon.latitude = null
-                beacon.longitude = null
+                // beacon.latitude = null
+                // beacon.longitude = null
+                beacon.locationId = null
                 beacon.deviceAddress = ""
             }
         }

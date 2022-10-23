@@ -18,11 +18,13 @@ import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
@@ -41,6 +43,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
+    private val locationRepository: LocationRepository,
     private val locationProvider: LocationProvider,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
@@ -82,6 +85,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         scanResultDictionary = HashMap()
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
+        // TODO: this can possibly result in lots of useless null locations
         if (useLocation) {
             val lastLocation = locationProvider.getLastLocation()
 
@@ -186,16 +190,44 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         Timber.d("Device: $device")
 
+        var locId: Int? = null // set locationId to null if gps location could not be retrieved
+
+        if (latitude != null && longitude != null) {
+            var location = locationRepository.closestLocation(latitude, longitude)
+
+            var locationResult = FloatArray(1) // TODO: can we replace the distance calculation with a less complicated system?
+            locationResult[0] = Float.MAX_VALUE
+            if (location != null) {
+                Location.distanceBetween(latitude, longitude, location.latitude, location.longitude, locationResult)
+            }
+
+            if (location == null || locationResult[0] > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
+                // Create new location entry
+                location = LocationModel(discoveryDate, longitude, latitude)
+                locationRepository.insert(location)
+                Timber.d("Add new Location to the database!")
+            } else {
+                Timber.d("Location already in the database!")
+                // If location is within the set limit, just use that location
+            }
+
+            locId = location.locationId
+        }
+
         val uuids =  scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
-        val beacon = if (BuildConfig.DEBUG) {
+        val beacon = if (BuildConfig.DEBUG) { // TODO: maybe change this, because we need service data for samsung
             // Save the manufacturer data to the beacon
             Beacon(
-                discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
+                /* discoveryDate, scanResult.rssi, scanResult.device.address, locationId,
+                scanResult.scanRecord?.bytes, uuids */
+                discoveryDate, scanResult.rssi, scanResult.device.address, locId,
                 scanResult.scanRecord?.bytes, uuids
             )
         } else {
             Beacon(
-                discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
+                /* discoveryDate, scanResult.rssi, scanResult.device.address, locationId,
+                null, uuids*/
+                discoveryDate, scanResult.rssi, scanResult.device.address, locId,
                 null, uuids
             )
         }
@@ -222,7 +254,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private suspend fun waitForRequestedLocation(): Boolean {
-        if (location != null || SharedPrefs.useLocationInTrackingDetection == false) {
+        if (location != null || !SharedPrefs.useLocationInTrackingDetection) {
             //Location already there. Just return
             return true
         }
@@ -255,4 +287,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime) {}
+
+    companion object {
+        const val MAX_DISTANCE_UNTIL_NEW_LOCATION = 150 // in meters
+    }
 }
