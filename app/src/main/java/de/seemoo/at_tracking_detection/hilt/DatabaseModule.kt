@@ -36,12 +36,18 @@ object DatabaseModule {
         }
     }
 
+    val MIGRATION_9_10 = object : Migration(9, 10) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            // TODO: implement
+        }
+    }
+
 
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "attd_db")
-            .addMigrations(MIGRATION_5_7, MIGRATION_6_7)
+            .addMigrations(MIGRATION_5_7, MIGRATION_6_7) // TODO: add MIGRATION_9_10
             .allowMainThreadQueries().build()
     }
 
@@ -68,6 +74,11 @@ object DatabaseModule {
     @Provides
     fun provideScanDao(database: AppDatabase): ScanDao {
         return database.scanDao()
+    }
+
+    @Provides
+    fun provideLocationDao(database: AppDatabase): LocationDao {
+        return database.locationDao()
     }
 
     @Provides

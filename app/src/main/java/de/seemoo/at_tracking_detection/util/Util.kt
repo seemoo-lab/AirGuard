@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.util
 
 import android.Manifest
+import android.app.Application
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -104,16 +105,19 @@ object Util {
 
         map.overlays.add(copyrightOverlay)
 
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
         // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
         withContext(Dispatchers.Default) {
             beaconList
-                .filter { it.latitude != null && it.longitude != null }
+                .filter { it.locationId != null && it.locationId != 0 }
                 .map { beacon ->
-                    if (map.isShown == false) {
+                    if (!map.isShown) {
                         return@map
                     }
+                    val location = locationRepository.getLocationWithId(beacon.locationId!!)!!
                     val marker = Marker(map)
-                    val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
+                    val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.infoWindow = DeviceMarkerInfo(
                         R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
                     )

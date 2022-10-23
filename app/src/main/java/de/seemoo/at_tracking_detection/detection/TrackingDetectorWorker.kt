@@ -13,6 +13,8 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.repository.LocationRepository
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -27,6 +29,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
     private val notificationService: NotificationService,
     private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository,
+    private val locationRepository: LocationRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -43,7 +46,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             !ignoredDevices.map { it.address }.contains(address)
         }
 
-        var notificaitonsSent = 0
+        var notificationsSent = 0
 
         //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
@@ -88,13 +91,13 @@ class TrackingDetectorWorker @AssistedInject constructor(
             device?.notificationSent = true
             device?.lastNotificationSent = LocalDateTime.now()
             device?.let { d -> deviceRepository.update(d) }
-            notificaitonsSent += 1
+            notificationsSent += 1
         }
 
-        Timber.d("Tracking detector worker finished. Sent $notificaitonsSent notifications")
+        Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
         return Result.success(
             Data.Builder()
-                .putInt("sentNotifications", notificaitonsSent)
+                .putInt("sentNotifications", notificationsSent)
                 .build()
         )
     }
@@ -117,17 +120,43 @@ class TrackingDetectorWorker @AssistedInject constructor(
         return beaconsPerDevice
     }
 
+    private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
+        var distanceReached = false
+
+        // Check first if any beacons meet the minimal distance requirement
+        beacons.forEach { first ->
+            beacons.forEach { second ->
+                if (first.locationId != null && second.locationId != null){
+                    val firstLocation: LocationModel? = locationRepository.getLocationWithId(first.locationId!!)
+                    val secondLocation: LocationModel? = locationRepository.getLocationWithId(second.locationId!!)
+
+                    if (firstLocation != null && secondLocation != null) {
+                        val firstLocationObject: Location = getLocation(firstLocation.latitude, firstLocation.longitude)
+                        val secondLocationObject: Location = getLocation(secondLocation.latitude, secondLocation.longitude)
+
+                        // Return true if any beacon pair full fills the minimal distance requirement
+                        if (firstLocationObject.distanceTo(secondLocationObject) >= MIN_DISTANCE_BETWEEN_BEACONS) {
+                            distanceReached = true
+                        }
+                    }
+                }
+            }
+        }
+
+        return distanceReached
+    }
+
     companion object {
         const val MAX_BEACONS_BEFORE_ALARM = 3
 
         /// Minimum tracking time
-        const val MIN_TRACKING_TIME_SECONDS = 30 * 60
-        const val MIN_DISTANCE_BETWEEN_BEACONS = 400
+        const val MIN_TRACKING_TIME_SECONDS = 30 * 60 // in seconds
+        const val MIN_DISTANCE_BETWEEN_BEACONS = 400 // in meters
 
         //Moving some functions to the companion object to make them testable
 
         /**
-         * Gets a list of beacons and checks if the user is beeing tracked for the minimum amount of
+         * Gets a list of beacons and checks if the user is being tracked for the minimum amount of
          * time before a notification is sent.
          * @param beacons
          * @param baseDevice
@@ -150,32 +179,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
             return timeDiff >= minTrackingTime
         }
-
-        private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
-
-            var distanceReached = false
-
-            // Check first if any beacons meet the minimal distance requirement
-            beacons.forEach { first ->
-                beacons.forEach { second ->
-                    if (
-                        first.latitude != null && first.longitude != null &&
-                        second.latitude != null && second.longitude != null
-                    ) {
-                        val firstLocation = getLocation(first.latitude!!, first.longitude!!)
-                        val secondLocation = getLocation(second.latitude!!, second.longitude!!)
-
-                        // Return true if any beacon pair full fills the minimal distance requirement
-                        if (firstLocation.distanceTo(secondLocation) >= MIN_DISTANCE_BETWEEN_BEACONS) {
-                            distanceReached = true
-                        }
-                    }
-                }
-            }
-
-            return distanceReached
-        }
-
 
         private fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
