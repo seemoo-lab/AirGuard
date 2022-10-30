@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,7 +85,7 @@ object Util {
         map.controller.setZoom(ZOOMED_OUT_LEVEL)
     }
 
-    suspend fun setGeoPointsFromList(
+    suspend fun setGeoPointsFromListOfBeacons( // TODO: remove in future and replace with Location?
         beaconList: List<Beacon>,
         map: MapView,
         connectWithPolyline: Boolean = false,
@@ -170,10 +171,101 @@ object Util {
             }
         }
 
-//            map.zoomToBoundingBox(boundingBox, true)
+        // map.zoomToBoundingBox(boundingBox, true)
 
         return true
     }
+
+    suspend fun setGeoPointsFromListOfLocations(
+        locationList: List<LocationModel>,
+        map: MapView,
+        connectWithPolyline: Boolean = false,
+        // TODO: onMarkerWindowClick: ((location: LocationModel) -> List<Beacon>)? = null
+    ): Boolean {
+
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val copyrightOverlay = CopyrightOverlay(context)
+
+        val mapController = map.controller
+        val geoPointList = ArrayList<GeoPoint>()
+        val markerList = ArrayList<Marker>()
+
+
+        map.setTileSource(TileSourceFactory.MAPNIK)
+        map.setUseDataConnection(true)
+        map.setMultiTouchControls(true)
+
+        map.overlays.add(copyrightOverlay)
+
+        // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
+        withContext(Dispatchers.Default) {
+            locationList
+                .filter { it.locationId != 0 } // TODO: unnecessary if zero fixed
+                .map { location ->
+                    if (!map.isShown) {
+                        return@map
+                    }
+                    val marker = Marker(map)
+                    val geoPoint = GeoPoint(location.latitude, location.longitude)
+                    /*
+                    marker.infoWindow = DeviceMarkerInfo(
+                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick // TODO modify
+                    )
+                     */
+                    marker.position = geoPoint
+                    marker.icon = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_baseline_location_on_45_black
+                    )
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    geoPointList.add(geoPoint)
+                    markerList.add(marker)
+
+                    marker.setOnMarkerClickListener { clickedMarker, _ ->
+                        if (clickedMarker.isInfoWindowShown) {
+                            clickedMarker.closeInfoWindow()
+                        } else {
+                            clickedMarker.showInfoWindow()
+                        }
+                        true
+                    }
+                }
+        }
+        map.overlays.addAll(markerList)
+
+        Timber.d("Added ${geoPointList.size} markers to the map!")
+
+        if (connectWithPolyline) {
+            val line = Polyline(map)
+            line.setPoints(geoPointList)
+            line.infoWindow = null
+            map.overlays.add(line)
+        }
+        if (geoPointList.isEmpty()) {
+            mapController.setZoom(MAX_ZOOM_LEVEL)
+            return false
+        }
+        val myLocationOverlay = map.overlays.firstOrNull{ it is MyLocationNewOverlay} as? MyLocationNewOverlay
+        myLocationOverlay?.disableFollowLocation()
+        val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
+
+        map.post {
+            try {
+                Timber.d("Zoom in to bounds -> $boundingBox")
+                map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
+
+            } catch (e: IllegalArgumentException) {
+                mapController.setCenter(boundingBox.centerWithDateLine)
+                mapController.setZoom(10.0)
+                Timber.e("Failed to zoom to bounding box! ${e.message}")
+            }
+        }
+
+        // map.zoomToBoundingBox(boundingBox, true)
+
+        return true
+    }
+
 
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {

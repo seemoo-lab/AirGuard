@@ -26,6 +26,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.insertScanResult
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -127,6 +128,22 @@ class ScanFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             scanViewModel.saveScanToRepository()
+            // TODO
+            /*
+            if (scan != null) {
+                insertScanResult(
+                    scanResult = null, // TODO: need scanResult
+                    latitude = null, // TODO: need location
+                    longitude = null,
+                    accuracy = null,
+                    discoveryDate = null, // TODO: need date
+                    beaconRepository = null, // TODO: need repositories
+                    deviceRepository = null,
+                    locationRepository = null,
+                )
+            }
+
+             */
         }
     }
 

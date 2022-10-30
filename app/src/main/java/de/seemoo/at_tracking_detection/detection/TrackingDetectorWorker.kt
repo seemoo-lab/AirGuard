@@ -180,7 +180,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             return timeDiff >= minTrackingTime
         }
 
-        private fun getLocation(latitude: Double, longitude: Double): Location {
+        fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
             location.latitude = latitude
             location.longitude = longitude

@@ -11,6 +11,8 @@ import javax.inject.Inject
 class BeaconRepository @Inject constructor(
     private val beaconDao: BeaconDao
 ) {
+    val allBeacons: List<Beacon> = beaconDao.getAllBeacons()
+
     val totalCount: Flow<Int> = beaconDao.getTotalCount()
 
     val locationCount: Flow<Int> = beaconDao.getTotalLocationCount()

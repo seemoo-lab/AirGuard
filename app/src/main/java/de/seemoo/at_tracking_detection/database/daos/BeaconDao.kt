@@ -7,6 +7,9 @@ import java.time.LocalDateTime
 
 @Dao
 interface BeaconDao {
+    @Query("SELECT * FROM beacon")
+    fun getAllBeacons(): List<Beacon>
+
     @Query("SELECT * FROM beacon WHERE receivedAt >= :since")
     fun getLatestBeacons(since: LocalDateTime): List<Beacon>
 

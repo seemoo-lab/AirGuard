@@ -16,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Util
 import kotlinx.coroutines.flow.collect
@@ -55,21 +56,28 @@ class DeviceMapFragment : Fragment() {
         Util.enableMyLocationOverlay(map)
 
         lifecycleScope.launch {
-            var beaconList = listOf<Beacon>()
+            // var beaconList = listOf<Beacon>() // TODO: remove
+            var locationList = listOf<LocationModel>()
+            /*
+            // TODO: old Code, figure out if still relevant
             if (safeArgs.showAllDevices) {
                 viewModel.allBeacons().collect { beaconList = it }
             } else {
                 beaconList = viewModel.discoveredBeacons
             }
 
-            Util.setGeoPointsFromList(beaconList, map) { beacon ->
+             */
+
+            // This is the view for all Locations
+            Util.setGeoPointsFromListOfLocations(locationList, map) /*{ location -> // TODO: old Code, figure out if still relevant
                 val directions: NavDirections =
                     DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(
                         beacon.deviceAddress,
                         -1
                     )
                 findNavController().navigate(directions)
-            }
+
+            }*/
         }.invokeOnCompletion {
             viewModel.isMapLoading.postValue(false)
         }

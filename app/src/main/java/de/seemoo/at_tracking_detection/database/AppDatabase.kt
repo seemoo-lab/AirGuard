@@ -27,7 +27,7 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
         AutoMigration(from=5, to=6),
         AutoMigration(from=7, to=8),
         AutoMigration(from=8, to=9, spec = AppDatabase.RenameScanMigrationSpec::class),
-        AutoMigration(from=9, to=10, spec = AppDatabase.MigrateToLocationDB::class)
+        // AutoMigration(from=9, to=10, spec = AppDatabase.MigrateToLocationDB::class)
     ],
     exportSchema = true
 )
@@ -55,6 +55,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     }
 
+    /*
     @DeleteColumn(
         tableName = "beacon",
         columnName = "latitude",
@@ -66,4 +67,5 @@ abstract class AppDatabase : RoomDatabase() {
     class MigrateToLocationDB: AutoMigrationSpec {
 
     }
+     */
 }

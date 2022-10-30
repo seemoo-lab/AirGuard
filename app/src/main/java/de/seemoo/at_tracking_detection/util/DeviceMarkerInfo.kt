@@ -8,7 +8,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import timber.log.Timber
 
-class DeviceMarkerInfo(
+class DeviceMarkerInfo( // TODO: modify for new location model
     layoutResId: Int,
     map: MapView,
     private val beacon: Beacon,
