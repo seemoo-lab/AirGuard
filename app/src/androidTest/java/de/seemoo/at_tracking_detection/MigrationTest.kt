@@ -64,7 +64,7 @@ class MigrationTest {
 
 
     private val ALL_MIGRATIONS = arrayOf(
-        DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7
+        DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7, DatabaseModule.MIGRATION_9_10 // TODO
     )
 
     @get:Rule

@@ -41,16 +41,15 @@ object DatabaseModule {
 
     val MIGRATION_9_10 = object : Migration(9, 10) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            // TODO: This migration makes the App Crash when migration, why?
             // add location table and locationID to beacon
             try {
                 database.execSQL("CREATE TABLE `location` (`locationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `accuracy` REAL)")
+                database.execSQL("CREATE UNIQUE INDEX `index_location_latitude_longitude` ON `location` (`latitude`, `longitude`)")
                 database.execSQL("ALTER TABLE `beacon` ADD COLUMN `locationId` INTEGER")
             }catch (e: SQLiteException) {
                 Timber.e("Could not create location ${e}")
             }
 
-            /*
             var sql: String = ""
             while (true) {
                 val beacon = database.query("SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1")
@@ -105,8 +104,6 @@ object DatabaseModule {
                 sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconID` = $beaconId"
                 database.execSQL(sql)
             }
-
-              */
 
             try {
                 database.execSQL("CREATE TABLE `beacon_backup` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `locationId` INTEGER, `mfg` BLOB, `serviceUUIDs` TEXT)")
