@@ -63,10 +63,10 @@ class DashboardViewModel @Inject constructor(
             it == WorkInfo.State.RUNNING
         }
 
-    val totalLocationsTrackedCount: LiveData<Int> = beaconRepository.locationCount.asLiveData()
+    val totalLocationsTrackedCount: LiveData<Int> = beaconRepository.locationCount.asLiveData() // TODO: change to new model ???
 
     val totalLocationsCountChange: LiveData<Int> =
-        beaconRepository.totalLocationCountChange(lastTimeOpened).asLiveData()
+        beaconRepository.totalLocationCountChange(lastTimeOpened).asLiveData() // TODO: change to new model ???
 
     val totalDeviceCount: LiveData<Int> = deviceRepository.totalCount.asLiveData()
     val totalDeviceCountChange: LiveData<Int> =

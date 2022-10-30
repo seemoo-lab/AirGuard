@@ -134,7 +134,9 @@ class TrackingFragment : Fragment() {
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
-                Util.setGeoPointsFromList(it, map, true)
+
+                // This is the per Device View
+                Util.setGeoPointsFromListOfBeacons(it, map, true)  // TODO: modify to Location Model???
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }

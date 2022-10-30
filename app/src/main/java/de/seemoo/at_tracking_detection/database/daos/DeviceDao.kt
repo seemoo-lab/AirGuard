@@ -2,8 +2,6 @@ package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
