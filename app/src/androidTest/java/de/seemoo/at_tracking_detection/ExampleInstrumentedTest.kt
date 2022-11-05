@@ -58,8 +58,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -67,8 +68,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 30),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             )
@@ -79,8 +81,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -88,8 +91,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 45),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             )
@@ -100,8 +104,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -109,8 +114,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 22, 10, 45),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = 1,
                 mfg = null,
                 serviceUUIDs = null
             )
@@ -121,8 +127,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -130,8 +137,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             )
@@ -142,8 +150,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -151,8 +160,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 29),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             )
@@ -163,8 +173,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             ),
@@ -172,8 +183,9 @@ class ExampleInstrumentedTest {
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 20),
                 rssi = -90,
                 deviceAddress = "00:00:00:00:00",
-                longitude = 8.24823948,
-                latitude = 51.4839483,
+                // longitude = 8.24823948,
+                // latitude = 51.4839483,
+                locationId = null,
                 mfg = null,
                 serviceUUIDs = null
             )

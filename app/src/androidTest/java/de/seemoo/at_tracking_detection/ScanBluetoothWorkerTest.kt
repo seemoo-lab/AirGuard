@@ -84,6 +84,7 @@ class ScanBluetoothWorkerTest {
         val beaconRepository = DatabaseModule.provideBeaconRepository(DatabaseModule.provideBeaconDao(db))
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
+        val locationRepository = DatabaseModule.provideLocationRepository(DatabaseModule.provideLocationDao(db))
         val locationProvider = LocationProvider(context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
@@ -106,7 +107,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -120,6 +121,7 @@ class ScanBluetoothWorkerTest {
         val beaconRepository = DatabaseModule.provideBeaconRepository(DatabaseModule.provideBeaconDao(db))
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
+        val locationRepository = DatabaseModule.provideLocationRepository(DatabaseModule.provideLocationDao(db))
         val locationProvider = TestLocationProvider(true, 9000, context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
@@ -142,7 +144,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -158,6 +160,7 @@ class ScanBluetoothWorkerTest {
         val beaconRepository = DatabaseModule.provideBeaconRepository(DatabaseModule.provideBeaconDao(db))
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
+        val locationRepository = DatabaseModule.provideLocationRepository(DatabaseModule.provideLocationDao(db))
         val locationProvider = TestLocationProvider(true, 20000, context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
@@ -180,7 +183,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -196,6 +199,7 @@ class ScanBluetoothWorkerTest {
         val beaconRepository = DatabaseModule.provideBeaconRepository(DatabaseModule.provideBeaconDao(db))
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
+        val locationRepository = DatabaseModule.provideLocationRepository(DatabaseModule.provideLocationDao(db))
         val locationProvider = TestLocationProvider(true, 0, context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
@@ -218,7 +222,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
