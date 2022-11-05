@@ -59,15 +59,18 @@ object DatabaseModule {
                     break
                 }
 
+                beacon.moveToFirst()
+
                 var longitude: Double = beacon.getDouble(4)
                 var latitude: Double = beacon.getDouble(5)
 
-                sql = "SELECT `latitude`, `longitude` FROM `location` ORDER BY ABS(`latitude` - $latitude) + ABS(`longitude` - $longitude) ASC LIMIT 1\""
+                sql = "SELECT `latitude`, `longitude` FROM `location` ORDER BY ABS(`latitude` - $latitude) + ABS(`longitude` - $longitude) ASC LIMIT 1"
                 val closestLocation = database.query(sql)
 
                 var insertNewLocation = false
 
                 if (closestLocation.count > 0){
+                    closestLocation.moveToFirst()
                     val closestLatitude = closestLocation.getDouble(0)
                     val closestLongitude = closestLocation.getDouble(1)
 
@@ -87,22 +90,32 @@ object DatabaseModule {
                 if (insertNewLocation) {
                     val deviceAddress = beacon.getString(3)
 
-                    sql = "SELECT `firstDiscovery`, `lastSeen` FROM `device` WHERE `address` = $deviceAddress"
-                    val device = database.query(sql)
-                    val firstDiscovery =  device.getString(0)
-                    val lastSeen = device.getString(1)
+                    //Fallback if device db is inconsistent
+                    var firstDiscovery = beacon.getString(1) // receivedAt
+                    var lastSeen = firstDiscovery // receivedAt
 
-                    sql = "INSERT INTO `location` (`firstDiscovery`, `lastSeen`, `latitude`, `longitude`) VALUES ($firstDiscovery, $lastSeen, $latitude, $longitude)"
+                    sql = "SELECT `firstDiscovery`, `lastSeen` FROM `device` WHERE `address` = '$deviceAddress'"
+                    val device = database.query(sql)
+
+                    if (device.count > 0) {
+                        device.moveToFirst()
+                        firstDiscovery =  device.getString(0)
+                        lastSeen = device.getString(1)
+                    }
+
+                    sql = "INSERT INTO `location` (`firstDiscovery`, `lastSeen`, `latitude`, `longitude`) VALUES ('$firstDiscovery', '$lastSeen', $latitude, $longitude)"
                     database.execSQL(sql)
                 }
 
                 sql = "SELECT `locationId` FROM `location` WHERE `latitude` = $latitude AND `longitude` = $longitude"
                 val location = database.query(sql)
-
-                val locationId = location.getInt(0)
-                val beaconId = beacon.getInt(0)
-                sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconID` = $beaconId"
-                database.execSQL(sql)
+                if (location.count > 0) { // else: locationId stays null
+                    location.moveToFirst()
+                    val locationId = location.getInt(0)
+                    val beaconId = beacon.getInt(0)
+                    sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconID` = $beaconId"
+                    database.execSQL(sql)
+                }
             }
 
             try {
@@ -185,5 +198,10 @@ object DatabaseModule {
     @Provides
     fun provideScanRepository(scanDao: ScanDao): ScanRepository {
         return ScanRepository(scanDao)
+    }
+
+    @Provides
+    fun provideLocationRepository(locationDao: LocationDao): LocationRepository {
+        return LocationRepository(locationDao)
     }
 }

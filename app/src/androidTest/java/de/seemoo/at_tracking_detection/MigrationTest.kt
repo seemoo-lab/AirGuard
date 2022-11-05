@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 class MigrationTest {
     private val TEST_DB = "migration-test"
 
-    private val AUTO_MIGGRAITON_2_3 = object : Migration(2, 3) {
+    private val AUTO_MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE `device` ADD COLUMN `name` TEXT DEFAULT NULL")
         }
@@ -64,7 +64,7 @@ class MigrationTest {
 
 
     private val ALL_MIGRATIONS = arrayOf(
-        DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7, DatabaseModule.MIGRATION_9_10 // TODO
+        DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7, DatabaseModule.MIGRATION_9_10
     )
 
     @get:Rule
@@ -81,6 +81,18 @@ class MigrationTest {
 
     fun insertNewBeacon(db: SupportSQLiteDatabase) {
         db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`, `serviceUUIDs`) VALUES ('2022-03-25T11:00:00', -78, 'aa:bb:cc:dd:ee', 50.04231, 8.34423, 'AA:BB;DD:EE;FF:EE')")
+    }
+
+    fun insertNewBeacon2(db: SupportSQLiteDatabase) {
+        db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`, `serviceUUIDs`) VALUES ('2022-03-25T15:00:00', -50, 'aa:bb:cc:dd:ee', 50.04232, 8.34424, 'AA:BB;DD:EE;FF:EE')")
+    }
+
+    fun insertNewBeacon3(db: SupportSQLiteDatabase) {
+        db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`, `serviceUUIDs`) VALUES ('2022-03-25T19:00:00', -60, 'aa:bb:cc:dd:ee', 40.04232, 4.34424, 'AA:BB;DD:EE;FF:EE')")
+    }
+
+    fun insertNewBeaconWithLocationId(db: SupportSQLiteDatabase) {
+        db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `locationId`, `serviceUUIDs`) VALUES ('2022-04-25T11:00:00', -79, 'aa:bb:cc:dd:ee', 1, 'AA:BB;DD:EE;FF:EE')")
     }
 
     @After
@@ -120,7 +132,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -129,7 +141,7 @@ class MigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun roomMigrate3_7() {
+    fun roomMigrate3_current() {
         helper.createDatabase(TEST_DB, 3).apply {
             insertDummyData(this)
             close()
@@ -140,7 +152,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -160,7 +172,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -180,7 +192,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -200,7 +212,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -220,7 +232,7 @@ class MigrationTest {
             AppDatabase::class.java,
             TEST_DB
         ).addMigrations(*ALL_MIGRATIONS).build().apply {
-            insertNewBeacon(openHelper.writableDatabase)
+            insertNewBeaconWithLocationId(openHelper.writableDatabase)
             openHelper.writableDatabase.close()
         }
 
@@ -261,6 +273,20 @@ class MigrationTest {
 
         val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, DatabaseModule.MIGRATION_5_7)
         insertNewBeacon(db)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate9_10() {
+        helper.createDatabase(TEST_DB, 9).apply {
+            insertNewBeacon(this)
+            insertNewBeacon2(this) // different location but in distance for same locationId
+            insertNewBeacon3(this) // totally different location
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 10, true, DatabaseModule.MIGRATION_9_10)
+        insertNewBeaconWithLocationId(db)
     }
 
 }
