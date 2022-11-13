@@ -52,7 +52,16 @@ object DatabaseModule {
 
             var sql: String = ""
             while (true) {
-                val beacon = database.query("SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1")
+                /*
+                TODO: Error - Latitude and Longitude gets swapped during migration
+                TODO: Error - Every Location gets created, but most locationIDs become null
+
+                Works correct:
+                Migration of firstDiscovery and lastSeen from device
+                name and accuracy stay null during migration
+                 */
+                sql = "SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1"
+                val beacon = database.query(sql)
 
                 if (beacon.count == 0) {
                     // If there are no more locations left to do, then break
@@ -61,29 +70,37 @@ object DatabaseModule {
 
                 beacon.moveToFirst()
 
-                var longitude: Double = beacon.getDouble(4)
-                var latitude: Double = beacon.getDouble(5)
+                // println("Coordinates")
+                var latitude: Double = beacon.getDouble(4)
+                // println("Latitude: $latitude")
+                var longitude: Double = beacon.getDouble(5)
+                // println("Longitude: $longitude")
 
-                sql = "SELECT `latitude`, `longitude` FROM `location` ORDER BY ABS(`latitude` - $latitude) + ABS(`longitude` - $longitude) ASC LIMIT 1"
+                sql = "SELECT `longitude`, `latitude` FROM `location` ORDER BY ABS(`latitude` - $latitude) + ABS(`longitude` - $longitude) ASC LIMIT 1"
                 val closestLocation = database.query(sql)
 
                 var insertNewLocation = false
 
                 if (closestLocation.count > 0){
                     closestLocation.moveToFirst()
-                    val closestLatitude = closestLocation.getDouble(0)
-                    val closestLongitude = closestLocation.getDouble(1)
+                    val closestLongitude = closestLocation.getDouble(0)
+                    val closestLatitude = closestLocation.getDouble(1)
 
                     val locationA = getLocation(latitude, longitude)
                     val locationB = getLocation(closestLatitude, closestLongitude)
                     val distanceBetweenLocations = locationA.distanceTo(locationB)
                     if (distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION){
+                        // println("Insert New, because far enough away")
                         insertNewLocation = true
                     } else {
+                        // println("Get existing location")
                         latitude = closestLatitude
                         longitude = closestLongitude
+                        // println("Latitude: $latitude")
+                        // println("Longitude: $longitude")
                     }
                 } else if (closestLocation.count == 0) {
+                    // println("Insert New, because no locations in database")
                     insertNewLocation = true
                 }
 
@@ -98,22 +115,26 @@ object DatabaseModule {
                     val device = database.query(sql)
 
                     if (device.count > 0) {
+                        // println("Successfully got timestamps from device table")
                         device.moveToFirst()
                         firstDiscovery =  device.getString(0)
                         lastSeen = device.getString(1)
                     }
 
-                    sql = "INSERT INTO `location` (`firstDiscovery`, `lastSeen`, `latitude`, `longitude`) VALUES ('$firstDiscovery', '$lastSeen', $latitude, $longitude)"
+                    sql = "INSERT INTO `location` (`firstDiscovery`, `lastSeen`, `longitude`, `latitude`) VALUES ('$firstDiscovery', '$lastSeen', $longitude, $latitude)"
                     database.execSQL(sql)
                 }
 
                 sql = "SELECT `locationId` FROM `location` WHERE `latitude` = $latitude AND `longitude` = $longitude"
                 val location = database.query(sql)
+                // println(location.count)
                 if (location.count > 0) { // else: locationId stays null
                     location.moveToFirst()
                     val locationId = location.getInt(0)
+                    // println("locationId: $locationId")
                     val beaconId = beacon.getInt(0)
-                    sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconID` = $beaconId"
+                    // println("beaconId: $beaconId")
+                    sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconId` = $beaconId"
                     database.execSQL(sql)
                 }
             }

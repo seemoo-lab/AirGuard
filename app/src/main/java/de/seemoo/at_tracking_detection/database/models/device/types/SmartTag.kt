@@ -29,7 +29,7 @@ class SmartTag(val id: Int) : Device(){
                     offlineFindingServiceUUID,
                     // 13, FF --> After 24 Hours, 12, FE --> After 15 Minutes
                     byteArrayOf((0x13).toByte()),
-                    byteArrayOf((0xFE).toByte())
+                    byteArrayOf((0xFF).toByte())
                 )
                 .build()
 
