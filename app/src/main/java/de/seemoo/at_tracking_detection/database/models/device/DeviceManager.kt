@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, Tile)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
@@ -41,7 +41,19 @@ object DeviceManager {
                 return Tile.deviceType
             }
             else if(services.contains(SmartTag.offlineFindingServiceUUID)){
-                return SmartTag.deviceType
+                fun getBitFromByte(value: Int, position: Int): Boolean {
+                    return ((value shr position) and 1) == 1;
+                }
+
+                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+
+                return if (serviceData == null){
+                    SamsungDevice.deviceType
+                } else if (getBitFromByte(serviceData[12].toInt(), 4)) {
+                    SmartTagPlus.deviceType
+                } else {
+                    SmartTag.deviceType
+                }
             }
 
         }
