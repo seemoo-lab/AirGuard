@@ -1,7 +1,5 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 
 enum class DeviceType {
@@ -15,7 +13,9 @@ enum class DeviceType {
     CHIPOLO_ONE_SPOT,
     CHIPOLO_CARD,
     CHIPOLO_CARD_SPOT,
-    GALAXY_SMART_TAG;
+    SAMSUNG,
+    GALAXY_SMART_TAG,
+    GALAXY_SMART_TAG_PLUS;
 
     companion object  {
         fun userReadableName(deviceType: DeviceType): String {
@@ -26,7 +26,9 @@ enum class DeviceType {
                 APPLE -> AppleDevice.defaultDeviceName
                 FIND_MY -> FindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
+                SAMSUNG -> SamsungDevice.defaultDeviceName
                 GALAXY_SMART_TAG -> SmartTag.defaultDeviceName
+                GALAXY_SMART_TAG_PLUS -> SmartTagPlus.defaultDeviceName
                 else -> Unknown.defaultDeviceName
             }
         }
@@ -35,7 +37,7 @@ enum class DeviceType {
     fun canBeIgnored(): Boolean {
         return when (this) {
             TILE -> true
-            GALAXY_SMART_TAG -> true
+            SAMSUNG -> true
             APPLE -> true
             else -> false
         }

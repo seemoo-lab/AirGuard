@@ -211,4 +211,5 @@
     <string name="smarttag_found">Gefundene SmartTags</string>
     <string name="onboarding_setting_summary">Immer den Einrichtungsdialog anzeigen</string>
     <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
+    <string name="device_name_samsung_device">Samsung Gerät %s</string>
 </resources>

@@ -134,6 +134,7 @@ object DatabaseModule {
                     // println("locationId: $locationId")
                     val beaconId = beacon.getInt(0)
                     // println("beaconId: $beaconId")
+                    // TODO: this still does not work
                     sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconId` = $beaconId"
                     database.execSQL(sql)
                 }

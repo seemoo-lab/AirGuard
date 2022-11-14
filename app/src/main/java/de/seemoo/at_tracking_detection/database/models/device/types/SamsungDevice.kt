@@ -9,45 +9,40 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
-class SmartTag(val id: Int) : Device() {
+class SamsungDevice(val id: Int) : Device(){
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_baseline_device_unknown_24 // TODO: own logo
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_samsung_device)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = SmartTag
+        get() = SamsungDevice
 
     companion object : DeviceContext {
+        // TODO: change
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setServiceData(
                     offlineFindingServiceUUID,
-                    // First Byte: 13, FF --> After 24 Hours, 12, FE --> After 15 Minutes
-                    // Twelve Byte: 04, 00 --> UWB off, 04, 04 --> UWB on
-                    byteArrayOf(
-                        (0x13).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
-                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
-                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte())),
-                    byteArrayOf(
-                        (0xFE).toByte(), (0x6B.toByte()), (0xFA.toByte()), (0x00.toByte()),
-                        (0xC8.toByte()), (0x40.toByte()), (0x62.toByte()), (0x8F.toByte()),
-                        (0x00.toByte()), (0xE2.toByte()), (0x60.toByte()), (0x00.toByte()))
+                    // 13, FF --> After 24 Hours, 12, FE --> After 15 Minutes
+                    byteArrayOf((0x13).toByte()),
+                    byteArrayOf((0xFE).toByte())
                 )
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.GALAXY_SMART_TAG
+            get() = DeviceType.SAMSUNG
 
         override val defaultDeviceName: String
-            get() = "Galaxy SmartTag"
+            get() = "Samsung Device"
 
         override val statusByteDeviceType: UInt
             get() = 0u
 
-        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
+        private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
     }
+
 }

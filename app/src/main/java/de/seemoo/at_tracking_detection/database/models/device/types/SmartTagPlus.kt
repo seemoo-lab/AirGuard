@@ -9,17 +9,17 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
-class SmartTag(val id: Int) : Device() {
+class SmartTagPlus(val id: Int) : Device() {
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_baseline_device_unknown_24 // TODO: own logo
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag_plus)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = SmartTag
+        get() = SmartTagPlus
 
     companion object : DeviceContext {
         override val bluetoothFilter: ScanFilter
@@ -33,17 +33,17 @@ class SmartTag(val id: Int) : Device() {
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte())),
                     byteArrayOf(
-                        (0xFE).toByte(), (0x6B.toByte()), (0xFA.toByte()), (0x00.toByte()),
-                        (0xC8.toByte()), (0x40.toByte()), (0x62.toByte()), (0x8F.toByte()),
-                        (0x00.toByte()), (0xE2.toByte()), (0x60.toByte()), (0x00.toByte()))
+                        (0xFE).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte()))
                 )
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.GALAXY_SMART_TAG
+            get() = DeviceType.GALAXY_SMART_TAG_PLUS
 
         override val defaultDeviceName: String
-            get() = "Galaxy SmartTag"
+            get() = "Galaxy SmartTag Plus"
 
         override val statusByteDeviceType: UInt
             get() = 0u
