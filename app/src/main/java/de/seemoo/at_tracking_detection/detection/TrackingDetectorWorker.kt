@@ -31,8 +31,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Timber.d("Tracking detection background job started!")
+        // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
 
+        //TODO: Devices marked as false alarm should not be used for new alerts.
 
         // All beacons in the last 14 days for devices detected during the last scan
         val latestBeaconsPerDevice = getLatestBeaconsPerDevice()
