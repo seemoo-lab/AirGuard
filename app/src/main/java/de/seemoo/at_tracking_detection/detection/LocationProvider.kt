@@ -9,9 +9,7 @@ import android.location.LocationManager
 import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
-import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
@@ -131,7 +129,6 @@ open class LocationProvider @Inject constructor(
 
         if (versionProvider.sdkInt() >= 31 && locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
             Timber.d("Requesting fused location updates")
-            this.locationCallback = callback
             locationManager.requestLocationUpdates(
                 LocationManager.FUSED_PROVIDER,
                 MIN_UPDATE_TIME_MS,
@@ -208,7 +205,7 @@ open class LocationProvider @Inject constructor(
 
     companion object {
         const val MIN_UPDATE_TIME_MS = 100L
-        const val MIN_DISTANCE_METER = 10.0F
+        const val MIN_DISTANCE_METER = 0.0F
         const val MAX_AGE_SECONDS = 100L
         const val MIN_ACCURACY_METER = 100L
     }

@@ -224,7 +224,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
             }
 
             // Fallback if no location is fetched in time
-            handler.postDelayed(runnable, 8000)
+            val maximumLocationDurationMillis = 60_000L
+            handler.postDelayed(runnable, maximumLocationDurationMillis)
 
         }
     }

@@ -15,6 +15,7 @@ import androidx.work.Configuration
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
+import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
@@ -26,6 +27,7 @@ import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
+import java.util.*
 import javax.inject.Inject
 
 
@@ -46,6 +48,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var locationRepository: LocationRepository
+
+    @Inject
+    lateinit var locationProvider: LocationProvider
 
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 
@@ -100,6 +105,17 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         notificationService.setup()
         notificationService.scheduleSurveyNotification(false)
         BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
+
+        if (BuildConfig.DEBUG) {
+            // Get a location for testing
+            Timber.d("Request location")
+            val startTime = Date()
+            locationProvider.getCurrentLocation { loc ->
+                val endTime = Date()
+                val duration = (endTime.time - startTime.time) / 1000
+                Timber.d("Got location $loc after $duration")
+            }
+        }
     }
 
     private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding

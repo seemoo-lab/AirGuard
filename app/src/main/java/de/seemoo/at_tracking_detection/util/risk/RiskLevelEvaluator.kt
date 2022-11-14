@@ -30,6 +30,9 @@ class RiskLevelEvaluator(
                 beaconRepository.getDeviceBeacons(it.address)
             }.flatten()
 
+            //TODO: Ignored devices and false alarms should not be in the list
+            // Change risk evaluation to the one in AirGuard iOS
+            // How can we de
             val firstBeacon = trackedLocations.first()
             val lastBeacon = trackedLocations.last()
 
@@ -43,6 +46,9 @@ class RiskLevelEvaluator(
         }
     }
 
+    /**
+     * The date when a tracker has been discovered last
+     */
     fun getLastTrackerDiscoveryDate(): Date {
         val relevantDate = relevantTrackingDate
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
@@ -53,6 +59,7 @@ class RiskLevelEvaluator(
             ?: Date()
     }
 
+    // How many trackers have been relevant here as tracker
     fun getNumberRelevantTrackers(): Int {
         val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
@@ -61,6 +68,7 @@ class RiskLevelEvaluator(
     }
 
     companion object {
+        /** The number of days that we use to calculate the risk **/
         const val RELEVANT_DAYS: Long = 14
         val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
     }
