@@ -53,6 +53,19 @@
             />
     </fragment>
 
+    <fragment
+        android:id="@+id/navigation_manual_scan"
+        android:name="de.seemoo.at_tracking_detection.ui.scan.ScanFragment"
+        android:label="@string/scan_title"
+        tools:layout="@layout/fragment_scan">
+        <action
+            android:id="@+id/action_settings_to_about_libs"
+            app:destination="@id/about_libraries"
+            app:popUpTo="@id/navigation_manual_scan"
+            app:popUpToSaveState="true"
+            />
+    </fragment>
+
     <include app:graph="@navigation/aboutlibs_navigation" />
 
     <fragment

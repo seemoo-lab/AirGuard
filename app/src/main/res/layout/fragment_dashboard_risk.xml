@@ -74,6 +74,7 @@
 
         </ScrollView>
 
+        <!--
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/scan_fab"
             android:layout_width="wrap_content"
@@ -85,6 +86,6 @@
             app:icon="@drawable/ic_radar_tracking"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
-
+        -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -127,16 +127,19 @@ object DatabaseModule {
 
                 sql = "SELECT `locationId` FROM `location` WHERE `latitude` = $latitude AND `longitude` = $longitude"
                 val location = database.query(sql)
-                // println(location.count)
+                println(location.count)
                 if (location.count > 0) { // else: locationId stays null
                     location.moveToFirst()
                     val locationId = location.getInt(0)
-                    // println("locationId: $locationId")
+                    println("locationId: $locationId")
                     val beaconId = beacon.getInt(0)
-                    // println("beaconId: $beaconId")
+                    println("beaconId: $beaconId")
                     // TODO: this still does not work
                     sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconId` = $beaconId"
                     database.execSQL(sql)
+
+                    sql = "SELECT * FROM `beacon` WHERE `locationId` IS NOT NULL"
+                    println(database.query(sql).count)
                 }
             }
 

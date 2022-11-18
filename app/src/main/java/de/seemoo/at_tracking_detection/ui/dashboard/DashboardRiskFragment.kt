@@ -58,6 +58,7 @@ class DashboardRiskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /*
         binding.scanFab.setOnClickListener {
             val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -79,6 +80,7 @@ class DashboardRiskFragment : Fragment() {
                 showManualScan()
             }
         }
+        */
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {

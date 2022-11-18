@@ -48,10 +48,13 @@ object DeviceManager {
                 val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 
                 return if (serviceData == null){
+                    Timber.d("Samsung Service Data is null")
                     SamsungDevice.deviceType
                 } else if (getBitFromByte(serviceData[12].toInt(), 4)) {
+                    Timber.d("Samsung Service Data is SmartTag Plus")
                     SmartTagPlus.deviceType
                 } else {
+                    Timber.d("Samsung Service Data is SmartTag")
                     SmartTag.deviceType
                 }
             }
