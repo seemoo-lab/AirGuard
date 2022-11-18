@@ -56,6 +56,9 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND deviceType = :deviceType")
     fun getCountForType(deviceType: String, since: LocalDateTime): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2)")
+    fun getCountForTypes(deviceType1: String, deviceType2: String, since: LocalDateTime): Flow<Int>
+
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM device JOIN beacon ON beacon.deviceAddress = deviceAddress WHERE beacon.receivedAt >= :dateTime")
