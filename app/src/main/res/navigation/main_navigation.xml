@@ -60,7 +60,7 @@
         tools:layout="@layout/fragment_scan">
         <action
             android:id="@+id/action_settings_to_about_libs"
-            app:destination="@id/about_libraries"
+            app:destination="@id/scanFragment"
             app:popUpTo="@id/navigation_manual_scan"
             app:popUpToSaveState="true"
             />

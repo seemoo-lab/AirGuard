@@ -23,10 +23,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.insertScanResult
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -128,22 +133,6 @@ class ScanFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             scanViewModel.saveScanToRepository()
-            // TODO
-            /*
-            if (scan != null) {
-                insertScanResult(
-                    scanResult = null, // TODO: need scanResult
-                    latitude = null, // TODO: need location
-                    longitude = null,
-                    accuracy = null,
-                    discoveryDate = null, // TODO: need date
-                    beaconRepository = null, // TODO: need repositories
-                    deviceRepository = null,
-                    locationRepository = null,
-                )
-            }
-
-             */
         }
     }
 
@@ -152,7 +141,7 @@ class ScanFragment : Fragment() {
         startBluetoothScan()
     }
 
-    override fun onPause() {
+    override fun onPause() { // TODO: Difference
         super.onPause()
         stopBluetoothScan()
     }
