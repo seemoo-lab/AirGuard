@@ -118,8 +118,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
         //Waiting for updated location to come in
-        val fetchedLocation = this.waitForRequestedLocation()
-        Timber.d("Fetched location? ${fetchedLocation}")
+        val fetchedLocation = waitForRequestedLocation()
+        Timber.d("Fetched location? $fetchedLocation")
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
@@ -288,7 +288,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         ): BaseDevice {
             var device = deviceRepository.getDevice(scanResult.device.address)
             if (device == null) {
-                Timber.d("Add new Location to the database!")
+                Timber.d("Add new Device to the database!")
                 device = BaseDevice(scanResult)
                 deviceRepository.insert(device)
             } else {

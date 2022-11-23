@@ -19,6 +19,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -62,9 +63,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        // TODO startScanning
     }
 
     override fun onDestroy() {
+        // TODO stopScanning
         SharedPrefs.lastTimeOpened = dateTime
         super.onDestroy()
     }
