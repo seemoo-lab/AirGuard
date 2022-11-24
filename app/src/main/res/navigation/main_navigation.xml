@@ -109,6 +109,10 @@
             android:name="deviceType"
             app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType"
             android:defaultValue="UNKNOWN" />
+        <argument
+            android:name="deviceType2"
+            app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType"
+            android:defaultValue="UNKNOWN" />
     </fragment>
 
     <fragment
@@ -133,6 +137,10 @@
             app:popUpToSaveState="true" />
         <argument
             android:name="deviceType"
+            android:defaultValue="UNKNOWN"
+            app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType" />
+        <argument
+            android:name="deviceType2"
             android:defaultValue="UNKNOWN"
             app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType" />
     </fragment>
