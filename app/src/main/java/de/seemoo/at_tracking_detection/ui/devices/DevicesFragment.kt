@@ -47,7 +47,12 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllDevices: Boolean = false, var deviceType: DeviceType?=null) : Fragment() {
+abstract class DevicesFragment(
+    var showDevicesFound: Boolean = true,
+    var showAllDevices: Boolean = false,
+    var deviceType: DeviceType?=null,
+    var deviceType2: DeviceType?=null,
+) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
@@ -99,7 +104,11 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
         }
 
         if (deviceType != null && deviceType != DeviceType.UNKNOWN) {
-            devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
+            if (deviceType2 != null && deviceType2 != DeviceType.UNKNOWN) {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!, deviceType2!!)))
+            } else {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
+            }
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)
