@@ -26,12 +26,12 @@ open class LocationProvider @Inject constructor(
 
     private val locationRequesters = ArrayList<LocationRequester>()
 
-    open fun getLastLocation(): Location? {
+    open fun getLastLocation(checkRequirements: Boolean = true): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
-        return getLastLocationFromAnyProvider()
+        return getLastLocationFromAnyProvider(checkRequirements)
     }
 
     /**
@@ -39,7 +39,7 @@ open class LocationProvider @Inject constructor(
      * @return the most recent location across multiple providers
      */
     @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
-    private fun getLastLocationFromAnyProvider(): Location? {
+    private fun getLastLocationFromAnyProvider(checkRequirements: Boolean): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -51,10 +51,18 @@ open class LocationProvider @Inject constructor(
 
         // The fused location provider does not work reliably with Samsung + Android 12
         // We just stay with the legacy location, because this just works
-        return legacyGetLastLocationFromAnyProvider()
+        val lastLocation = legacyGetLastLocationFromAnyProvider(checkRequirements)
+
+        if (lastLocation != null && bestLocation != null && !checkRequirements) {
+            if (lastLocation.time > bestLocation.time) {
+                return lastLocation
+            }
+            return bestLocation
+        }
+        return lastLocation
     }
 
-    private fun legacyGetLastLocationFromAnyProvider(): Location? {
+    private fun legacyGetLastLocationFromAnyProvider(checkRequirements: Boolean): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -82,8 +90,11 @@ open class LocationProvider @Inject constructor(
                 }else if (networkRequirements) {
                     // Only network satisfies. Return it
                     return networkLocation
-                }else {
-                    return null
+                }else if (!checkRequirements) {
+                    if (gpsLocation.time > networkLocation.time) {
+                        return gpsLocation
+                    }
+                    return networkLocation
                 }
             }else if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
                 // Only gps satisfies and network does not exist
@@ -92,6 +103,8 @@ open class LocationProvider @Inject constructor(
         }
 
         if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
+            return networkLocation
+        }else if (!checkRequirements) {
             return networkLocation
         }
 
