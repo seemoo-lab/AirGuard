@@ -103,6 +103,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
         //Waiting for updated location to come in
         val fetchedLocation = this.waitForRequestedLocation()
         Timber.d("Fetched location? $fetchedLocation")
+        if (location == null) {
+            // Get the last location no matter if the requirements match or not
+            location = locationProvider.getLastLocation(false)
+        }
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
