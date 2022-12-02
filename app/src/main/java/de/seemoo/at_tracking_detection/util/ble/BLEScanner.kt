@@ -27,6 +27,9 @@ object BLEScanner {
     var isScanning = false
     private var lastLocation: Location? = null
 
+    // Contains the last 10 scan results
+    private var scanResults = ArrayList<ScanResult>()
+
     init {
 
     }
@@ -39,6 +42,8 @@ object BLEScanner {
 
         val scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+
+        scanResults.clear()
 
         this.bluetoothManager?.let {
             val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
@@ -70,15 +75,21 @@ object BLEScanner {
                 if (!Util.checkBluetoothPermission()) {return}
 
                 it.adapter.bluetoothLeScanner.stopScan(ownScanCallback)
-                isScanning = false
             }
         }
+        isScanning = false
+        scanResults.clear()
         Timber.d("Bluetooth scan stopped")
     }
 
     fun registerCallback(callback: ScanCallback) {
         callbacks.add(callback)
         Timber.d("New BLE ScanCallback registered")
+
+        //Pass the last results
+        scanResults.forEach {
+            callback.onScanResult(ScanSettings.CALLBACK_TYPE_ALL_MATCHES, it)
+        }
     }
 
     fun unregisterCallback(callback: ScanCallback) {
@@ -91,8 +102,15 @@ object BLEScanner {
             super.onScanResult(callbackType, result)
             // TODO: Add scan result to DB here. Detection events should not be to close after each other.
             // New detection events (Beacons) every 15min
-
             Timber.d("Found a device $result")
+
+            result?.let { scanResult ->
+                scanResults.add(0, scanResult)
+                if (scanResults.size > 10) {
+                    scanResults.removeLastOrNull()
+                }
+            }
+
             callbacks.forEach {
                 it.onScanResult(callbackType, result)
             }
