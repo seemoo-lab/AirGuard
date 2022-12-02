@@ -32,8 +32,8 @@ import timber.log.Timber
 
 object Util {
 
-    const val MAX_ZOOM_LEVEL = 19.5
-    const val ZOOMED_OUT_LEVEL = 15.0
+    private const val MAX_ZOOM_LEVEL = 19.5
+    private const val ZOOMED_OUT_LEVEL = 15.0
 
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity()
@@ -179,10 +179,7 @@ object Util {
     suspend fun setGeoPointsFromListOfLocations(
         locationList: List<LocationModel>,
         map: MapView,
-        connectWithPolyline: Boolean = false,
-        // TODO: onMarkerWindowClick: ((location: LocationModel) -> List<Beacon>)? = null
     ): Boolean {
-
         val context = ATTrackingDetectionApplication.getAppContext()
         val copyrightOverlay = CopyrightOverlay(context)
 
@@ -197,10 +194,10 @@ object Util {
 
         map.overlays.add(copyrightOverlay)
 
-        // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
+        // TODO: there is still a bubble when clicking on the marker
         withContext(Dispatchers.Default) {
             locationList
-                .filter { it.locationId != 0 } // TODO: unnecessary if zero fixed
+                .filter { it.locationId != 0 }
                 .map { location ->
                     if (!map.isShown) {
                         return@map
@@ -209,7 +206,7 @@ object Util {
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     /*
                     marker.infoWindow = DeviceMarkerInfo(
-                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick // TODO modify
+                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
                     )
                      */
                     marker.position = geoPoint
@@ -217,10 +214,11 @@ object Util {
                         context,
                         R.drawable.ic_baseline_location_on_45_black
                     )
-                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    // marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     geoPointList.add(geoPoint)
                     markerList.add(marker)
 
+                    /*
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
                         if (clickedMarker.isInfoWindowShown) {
                             clickedMarker.closeInfoWindow()
@@ -229,22 +227,19 @@ object Util {
                         }
                         true
                     }
+
+                     */
                 }
         }
         map.overlays.addAll(markerList)
 
         Timber.d("Added ${geoPointList.size} markers to the map!")
 
-        if (connectWithPolyline) {
-            val line = Polyline(map)
-            line.setPoints(geoPointList)
-            line.infoWindow = null
-            map.overlays.add(line)
-        }
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)
             return false
         }
+
         val myLocationOverlay = map.overlays.firstOrNull{ it is MyLocationNewOverlay} as? MyLocationNewOverlay
         myLocationOverlay?.disableFollowLocation()
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)

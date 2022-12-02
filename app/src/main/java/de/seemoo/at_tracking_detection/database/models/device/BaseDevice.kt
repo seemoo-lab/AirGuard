@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
+import android.bluetooth.le.ScanRecord
 import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
@@ -55,7 +56,7 @@ data class BaseDevice(
         0,
         UUID.randomUUID().toString(),
         scanResult.device.address,
-        scanResult.scanRecord?.deviceName,
+        getDeviceName(scanResult),
         false,
         scanResult.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -99,4 +100,15 @@ data class BaseDevice(
     fun getFormattedDiscoveryDate(): String = firstDiscovery.format(dateTimeFormatter)
 
     fun getFormattedLastSeenDate(): String = lastSeen.format(dateTimeFormatter)
+
+    companion object {
+        fun getDeviceName(scanResult: ScanResult): String? {
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.defaultDeviceName
+                DeviceType.GALAXY_SMART_TAG -> SmartTag.defaultDeviceName
+                DeviceType.SAMSUNG -> SamsungDevice.defaultDeviceName
+                else -> scanResult.scanRecord?.deviceName
+            }
+        }
+    }
 }
