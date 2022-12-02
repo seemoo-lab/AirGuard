@@ -30,6 +30,7 @@ import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.insertScanResult
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -40,9 +41,6 @@ import java.time.LocalDateTime
 class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
-
-    private var bluetoothManager: BluetoothManager? = null
-    private var isScanning = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,48 +90,19 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
-        if (isScanning || scanViewModel.isScanningInBackground) { return }
-        bluetoothManager =
-            ATTrackingDetectionApplication.getAppContext()
-                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val scanSettings =
-            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
-
-        bluetoothManager?.let {
-            val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
-            if (isBluetoothEnabled && hasScanPermission) {
-                BLEScanCallback.startScanning(it.adapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, scanCallback)
-                isScanning = true
-                scanViewModel.scanStart.postValue(LocalDateTime.now())
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    // Stop scanning if no device was detected
-                    if (scanViewModel.isListEmpty.value == true) {
-                        scanViewModel.scanFinished.postValue(true)
-                        stopBluetoothScan()
-                    }
-                }, SCAN_DURATION)
-            }
+        // Start a scan if the BLEScanner is not already running
+        if (!BLEScanner.isScanning) {
+            BLEScanner.startBluetoothScan(this.requireContext())
         }
+
+        // Register the current fragment as a callback
+        BLEScanner.registerCallback(this.scanCallback)
     }
 
     private fun stopBluetoothScan() {
-        if (!isScanning) { return }
-
-        bluetoothManager?.let {
-            if (it.adapter.state == BluetoothAdapter.STATE_ON) {
-                BLEScanCallback.stopScanning(it.adapter.bluetoothLeScanner)
-                isScanning = false
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            scanViewModel.saveScanToRepository()
-        }
+        // We just unregister the callback, but keep the scanner running
+        // until the app is closed / moved to background
+        BLEScanner.unregisterCallback(this.scanCallback)
     }
 
     override fun onResume() {
