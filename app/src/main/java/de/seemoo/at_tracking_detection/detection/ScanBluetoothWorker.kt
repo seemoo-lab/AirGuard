@@ -233,6 +233,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     companion object {
         const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
+        private const val TIME_BETWEEN_BEACONS: Long = 15 // 15 minutes until the same beacon gets saved again in the db
 
         suspend fun insertScanResult(
             scanResult: ScanResult,
@@ -249,7 +250,19 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // set locationId to null if gps location could not be retrieved
             val locId: Int? = saveLocation(locationRepository, latitude, longitude, discoveryDate, accuracy)?.locationId
 
-            saveBeacon(beaconRepository, scanResult, discoveryDate, locId)
+            if (((locId == null) && beaconRepository.getNumberOfBeaconsAddress(
+                    deviceAddress = scanResult.device.address,
+                    since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
+                ) == 0 ) ||
+                ((locId != null) && beaconRepository.getNumberOfBeaconsAddressAndLocation(
+                    deviceAddress = scanResult.device.address,
+                    locationId = locId,
+                    since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
+                ) == 0)
+            ) {
+                // There was no beacon with the same properties in the last 15 minutes
+                saveBeacon(beaconRepository, scanResult, discoveryDate, locId)
+            }
         }
 
         private suspend fun saveBeacon(
@@ -263,15 +276,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 if (BuildConfig.DEBUG) { // TODO: maybe change this, because we need service data for samsung
                     // Save the manufacturer data to the beacon
                     Beacon(
-                        /* discoveryDate, scanResult.rssi, scanResult.device.address, locationId,
-                    scanResult.scanRecord?.bytes, uuids */
                         discoveryDate, scanResult.rssi, scanResult.device.address, locId,
                         scanResult.scanRecord?.bytes, uuids
                     )
                 } else {
                     Beacon(
-                        /* discoveryDate, scanResult.rssi, scanResult.device.address, locationId,
-                    null, uuids*/
                         discoveryDate, scanResult.rssi, scanResult.device.address, locId,
                         null, uuids
                     )

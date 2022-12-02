@@ -4,6 +4,7 @@ import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Dao
 interface BeaconDao {
@@ -42,6 +43,12 @@ interface BeaconDao {
 
     @Query("SELECT COUNT(DISTINCT(deviceAddress)) FROM beacon, location WHERE location.locationId = beacon.locationId AND latitude IS NOT NULL AND longitude IS NOT NULL AND receivedAt >= :since")
     fun getLatestLocationsCount(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM beacon WHERE deviceAddress LIKE :deviceAddress AND receivedAt >= :since ORDER BY receivedAt DESC")
+    fun getNumberOfBeaconsAddress(deviceAddress: String, since: LocalDateTime): Int
+
+    @Query("SELECT COUNT(*) FROM beacon WHERE deviceAddress LIKE :deviceAddress AND locationId == :locationId AND receivedAt >= :since ORDER BY receivedAt DESC")
+    fun getNumberOfBeaconsAddressAndLocation(deviceAddress: String, locationId: Int, since: LocalDateTime): Int
 
     /*
     @Query("SELECT COUNT(*) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL")
