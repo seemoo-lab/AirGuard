@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -15,6 +16,7 @@ import androidx.work.Configuration
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
@@ -106,10 +108,16 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             // Get a location for testing
             Timber.d("Request location")
             val startTime = Date()
-            locationProvider.getCurrentLocation { loc ->
-                val endTime = Date()
-                val duration = (endTime.time - startTime.time) / 1000
-                Timber.d("Got location $loc after $duration")
+            val locationRequester: LocationRequester = object  : LocationRequester() {
+                override fun receivedAccurateLocationUpdate(location: Location) {
+                    val endTime = Date()
+                    val duration = (endTime.time - startTime.time) / 1000
+                    Timber.d("Got location $location after $duration s")
+                }
+            }
+            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester)
+            if (location != null) {
+                Timber.d("Using last known location")
             }
         }
     }

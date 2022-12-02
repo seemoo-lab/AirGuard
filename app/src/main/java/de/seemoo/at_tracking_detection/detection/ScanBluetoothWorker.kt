@@ -83,19 +83,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
-            val lastLocation = locationProvider.getLastLocation()
-
-            if (lastLocation != null) {
-                // Location matches the requirement. No need to request a new one
-                location = lastLocation
-                Timber.d("Using last location")
-            }else {
-                //Getting the most accurate location here
-                locationProvider.getCurrentLocation { loc ->
-                    this.location = loc
-                    Timber.d("Updated to current location")
-                }
-            }
+            // Returns the last known location if this matches our requirements or starts new location updates
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester)
         }
 
         //Starting BLE Scan
@@ -113,7 +102,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         //Waiting for updated location to come in
         val fetchedLocation = this.waitForRequestedLocation()
-        Timber.d("Fetched location? ${fetchedLocation}")
+        Timber.d("Fetched location? $fetchedLocation")
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
@@ -168,6 +157,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
     }
 
+    private val locationRequester: LocationRequester = object : LocationRequester() {
+        override fun receivedAccurateLocationUpdate(location: Location) {
+            this@ScanBluetoothWorker.location = location
+            this@ScanBluetoothWorker.locationRetrievedCallback?.let { it() }
+        }
+    }
+
     private suspend fun insertScanResult(
         scanResult: ScanResult,
         latitude: Double?,
@@ -198,7 +194,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
                 null, uuids
             )
+
         }
+
 
         beaconRepository.insert(beacon)
     }
@@ -222,7 +220,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private suspend fun waitForRequestedLocation(): Boolean {
-        if (location != null || SharedPrefs.useLocationInTrackingDetection == false) {
+        if (location != null || !SharedPrefs.useLocationInTrackingDetection) {
             //Location already there. Just return
             return true
         }
