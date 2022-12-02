@@ -20,6 +20,8 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -62,9 +64,21 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(appBarItems)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        // TODO startScanning
     }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.d("MainActivity onResume called")
+        BLEScanner.startBluetoothScan(this.applicationContext)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        Timber.d("MainActivity onPause called")
+        BLEScanner.stopBluetoothScan()
+    }
+
 
     override fun onDestroy() {
         // TODO stopScanning
