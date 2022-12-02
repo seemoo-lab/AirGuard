@@ -170,7 +170,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
     fun fetchCurrentLocation() {
         //Getting the most accurate location here
         isUpdatingLocation = true
-        val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester)
+        val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester, 45_000L)
         if (loc != null) {
             location = loc
             Timber.d("Updated to current location")

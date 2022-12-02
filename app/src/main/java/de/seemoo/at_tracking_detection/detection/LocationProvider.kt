@@ -10,6 +10,8 @@ import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -128,10 +130,12 @@ open class LocationProvider @Inject constructor(
     /**
      * Request location updates to get the current location.
      *
+     * @param locationRequester: Abstract class implementation that contains a callback method that is called when a matching location was found
+     * @param timeoutMillis: After the timeout the last location will be returned no matter if it matches the requirements or not
      * @return the last known location if this already satisfies our requirements
      */
     @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
-    open fun lastKnownOrRequestLocationUpdates(locationRequester: LocationRequester): Location? {
+    open fun lastKnownOrRequestLocationUpdates(locationRequester: LocationRequester, timeoutMillis: Long?): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -147,7 +151,42 @@ open class LocationProvider @Inject constructor(
         // We just stay with the legacy location, because this just works
         requestLegacyLocationUpdatesFromAnyProvider()
 
+        if (timeoutMillis != null) {
+            setTimeoutForLocationUpdate(requester =  locationRequester, timeoutMillis= timeoutMillis)
+        }
+
         return null
+    }
+
+    /**
+     * Set a timeout for location requests. After the timeout the last location will be returned no
+     * matter if the location matches the requirements or not
+     *
+     * @param requester abstract class that contains a callback that is called when the timeout is reached
+     * @param timeoutMillis milliseconds after which the timeout will be executed
+     */
+    private fun setTimeoutForLocationUpdate(requester: LocationRequester, timeoutMillis: Long) {
+        val handler = Handler(Looper.getMainLooper())
+
+        val runnable = kotlinx.coroutines.Runnable {
+            if (this@LocationProvider.locationRequesters.size == 0) {
+                // The location was already returned
+                return@Runnable
+            }
+
+            Timber.d("Location request timed out")
+            val lastLocation = this@LocationProvider.getLastLocation(checkRequirements = false)
+            lastLocation?.let {
+                requester.receivedAccurateLocationUpdate(location = lastLocation)
+            }
+            if (this@LocationProvider.locationRequesters.size == 1) {
+                this@LocationProvider.stopLocationUpdates()
+                this@LocationProvider.locationRequesters.clear()
+            }
+        }
+
+        handler.postDelayed(runnable, timeoutMillis)
+        Timber.d("Location request timeout set to $timeoutMillis")
     }
 
     private fun requestLegacyLocationUpdatesFromAnyProvider() {
@@ -195,7 +234,7 @@ open class LocationProvider @Inject constructor(
 
     override fun onLocationChanged(location: Location) {
         Timber.d("Location updated: ${location.latitude} ${location.longitude}")
-        val bestLastLocation = this.bestLastLocation?.let { it }
+        val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location
         }else {
@@ -219,6 +258,7 @@ open class LocationProvider @Inject constructor(
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
 
     // Android Phones with SDK < 30 need these methods
@@ -236,6 +276,6 @@ open class LocationProvider @Inject constructor(
 
 }
 
-public abstract class LocationRequester {
-    public abstract fun receivedAccurateLocationUpdate(location: Location)
+abstract class LocationRequester {
+    abstract fun receivedAccurateLocationUpdate(location: Location)
 }

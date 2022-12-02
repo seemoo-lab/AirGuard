@@ -84,7 +84,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 45_000L)
         }
 
         //Starting BLE Scan
@@ -105,7 +105,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Fetched location? $fetchedLocation")
         if (location == null) {
             // Get the last location no matter if the requirements match or not
-            location = locationProvider.getLastLocation(false)
+            location = locationProvider.getLastLocation(checkRequirements = false)
         }
 
         //Adding all scan results to the database after the scan has finished

@@ -115,7 +115,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                     Timber.d("Got location $location after $duration s")
                 }
             }
-            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester)
+            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, 20_000L)
             if (location != null) {
                 Timber.d("Using last known location")
             }
