@@ -182,6 +182,8 @@ open class LocationProvider @Inject constructor(
             if (this@LocationProvider.locationRequesters.size == 1) {
                 this@LocationProvider.stopLocationUpdates()
                 this@LocationProvider.locationRequesters.clear()
+            }else {
+                this@LocationProvider.locationRequesters.remove(requester)
             }
         }
 
