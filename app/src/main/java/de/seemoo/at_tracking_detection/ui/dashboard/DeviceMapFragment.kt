@@ -19,6 +19,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
@@ -56,17 +57,7 @@ class DeviceMapFragment : Fragment() {
         Util.enableMyLocationOverlay(map)
 
         lifecycleScope.launch {
-            // var beaconList = listOf<Beacon>() // TODO: remove
-            var locationList = listOf<LocationModel>()
-            /*
-            // TODO: old Code, figure out if still relevant
-            if (safeArgs.showAllDevices) {
-                viewModel.allBeacons().collect { beaconList = it }
-            } else {
-                beaconList = viewModel.discoveredBeacons
-            }
-
-             */
+            var locationList = viewModel.locationRepository.locationsSince(since = RiskLevelEvaluator.relevantTrackingDate)
 
             // This is the view for all Locations
             Util.setGeoPointsFromListOfLocations(locationList, map) /*{ location -> // TODO: old Code, figure out if still relevant

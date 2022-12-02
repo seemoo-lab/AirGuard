@@ -91,7 +91,7 @@ class ScanFragment : Fragment() {
         }
     }
 
-    private fun startBluetoothScan() {
+    private fun startBluetoothScan() { // TODO: Cannot move this to Companion, but need to call from MainActivity???
         if (isScanning || scanViewModel.isScanningInBackground) { return }
         bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
@@ -121,7 +121,7 @@ class ScanFragment : Fragment() {
         }
     }
 
-    private fun stopBluetoothScan() {
+    fun stopBluetoothScan() { // TODO: Cannot move this to Companion, but need to call from MainActivity???
         if (!isScanning) { return }
 
         bluetoothManager?.let {
@@ -141,7 +141,7 @@ class ScanFragment : Fragment() {
         startBluetoothScan()
     }
 
-    override fun onPause() { // TODO: Difference
+    override fun onPause() {
         super.onPause()
         stopBluetoothScan()
     }

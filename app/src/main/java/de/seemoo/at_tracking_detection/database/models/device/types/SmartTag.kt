@@ -12,7 +12,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 class SmartTag(val id: Int) : Device() {
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_baseline_device_unknown_24 // TODO: own logo
+        get() = R.drawable.ic_smarttag_icon
 
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
@@ -29,7 +29,7 @@ class SmartTag(val id: Int) : Device() {
                     // First Byte: 13, FF --> After 24 Hours, 12, FE --> After 15 Minutes
                     // Twelve Byte: 04, 00 --> UWB off, 04, 04 --> UWB on
                     byteArrayOf(
-                        (0x13).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x12).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte())),
                     byteArrayOf(

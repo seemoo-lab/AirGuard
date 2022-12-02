@@ -27,7 +27,7 @@ interface LocationDao {
     fun getLocationWithId(locationId: Int): LocationModel?
 
     @Query("SELECT COUNT(*) FROM location, beacon WHERE location.locationId = :locationId AND location.locationId = beacon.locationId")
-    fun getNumberOfBeaconsForLocation(locationId: Int): Int // TODO: check if correct
+    fun getNumberOfBeaconsForLocation(locationId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(location: LocationModel): Long

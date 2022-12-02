@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.location.LocationManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.MainScope
@@ -19,7 +21,9 @@ import kotlinx.coroutines.async
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
@@ -27,6 +31,7 @@ class ScanViewModel @Inject constructor(
     private val deviceRepository: DeviceRepository,
     private val locationRepository: LocationRepository,
     private val beaconRepository: BeaconRepository,
+    private val locationProvider: LocationProvider,
     ) : ViewModel() {
 
     val bluetoothDeviceList = MutableLiveData<MutableList<ScanResult>>()
@@ -46,19 +51,22 @@ class ScanViewModel @Inject constructor(
     }
 
     fun addScanResult(scanResult: ScanResult) {
-        MainScope().async { // TODO: main Scope correct here???
-            // TODO: waitForRequestedLocation()
-            ScanBluetoothWorker.insertScanResult(
-                scanResult = scanResult,
-                latitude = null, // TODO
-                longitude = null, // TODO
-                accuracy = null, // TODO
-                discoveryDate = LocalDateTime.now(),
-                beaconRepository = beaconRepository,
-                deviceRepository = deviceRepository,
-                locationRepository = locationRepository,
-            )
-        }
+        locationProvider.getCurrentLocation { loc ->
+            Timber.d("Got location $loc in ScanViewModel")
+
+            MainScope().async {
+                ScanBluetoothWorker.insertScanResult(
+                    scanResult = scanResult,
+                    latitude = loc?.latitude,
+                    longitude = loc?.longitude,
+                    accuracy = loc?.accuracy,
+                    discoveryDate = LocalDateTime.now(),
+                    beaconRepository = beaconRepository,
+                    deviceRepository = deviceRepository,
+                    locationRepository = locationRepository,
+                )
+                }
+            }
 
         val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
         bluetoothDeviceListValue.removeIf { it.device.address == scanResult.device.address }

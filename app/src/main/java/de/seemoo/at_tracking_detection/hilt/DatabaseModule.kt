@@ -52,14 +52,6 @@ object DatabaseModule {
 
             var sql: String = ""
             while (true) {
-                /*
-                TODO: Error - Latitude and Longitude gets swapped during migration
-                TODO: Error - Every Location gets created, but most locationIDs become null
-
-                Works correct:
-                Migration of firstDiscovery and lastSeen from device
-                name and accuracy stay null during migration
-                 */
                 sql = "SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1"
                 val beacon = database.query(sql)
 
@@ -134,7 +126,6 @@ object DatabaseModule {
                     println("locationId: $locationId")
                     val beaconId = beacon.getInt(0)
                     println("beaconId: $beaconId")
-                    // TODO: this still does not work
                     sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconId` = $beaconId"
                     database.execSQL(sql)
 
