@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -24,6 +25,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
@@ -157,10 +159,19 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
         }
     }
 
+    private val locationRequester: LocationRequester = object  : LocationRequester() {
+        override fun receivedAccurateLocationUpdate(location: Location) {
+            this@OpportunisticBLEScanner.location = location
+            Timber.d("Updated to current location")
+            isUpdatingLocation = false
+        }
+    }
+
     fun fetchCurrentLocation() {
         //Getting the most accurate location here
         isUpdatingLocation = true
-        locationProvider?.getCurrentLocation { loc ->
+        val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester, 45_000L)
+        if (loc != null) {
             location = loc
             Timber.d("Updated to current location")
             isUpdatingLocation = false

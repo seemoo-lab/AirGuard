@@ -87,21 +87,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         scanResultDictionary = HashMap()
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
-        // TODO: this can possibly result in lots of useless null locations
         if (useLocation) {
-            val lastLocation = locationProvider.getLastLocation()
-
-            if (lastLocation != null) {
-                // Location matches the requirement. No need to request a new one
-                location = lastLocation
-                Timber.d("Using last location")
-            }else {
-                //Getting the most accurate location here
-                locationProvider.getCurrentLocation { loc ->
-                    this.location = loc
-                    Timber.d("Updated to current location")
-                }
-            }
+            // Returns the last known location if this matches our requirements or starts new location updates
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 45_000L)
         }
 
         //Starting BLE Scan
@@ -120,6 +108,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
         //Waiting for updated location to come in
         val fetchedLocation = waitForRequestedLocation()
         Timber.d("Fetched location? $fetchedLocation")
+        if (location == null) {
+            // Get the last location no matter if the requirements match or not
+            location = locationProvider.getLastLocation(checkRequirements = false)
+        }
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
@@ -175,6 +167,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
             if (BuildConfig.DEBUG) {
                 notificationService.sendBLEErrorNotification()
             }
+        }
+    }
+
+    private val locationRequester: LocationRequester = object : LocationRequester() {
+        override fun receivedAccurateLocationUpdate(location: Location) {
+            this@ScanBluetoothWorker.location = location
+            this@ScanBluetoothWorker.locationRetrievedCallback?.let { it() }
         }
     }
 
