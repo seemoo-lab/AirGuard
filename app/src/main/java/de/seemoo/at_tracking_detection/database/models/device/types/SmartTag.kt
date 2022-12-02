@@ -43,7 +43,7 @@ class SmartTag(val id: Int) : Device() {
             get() = DeviceType.GALAXY_SMART_TAG
 
         override val defaultDeviceName: String
-            get() = "Galaxy SmartTag"
+            get() = "SmartTag"
 
         override val statusByteDeviceType: UInt
             get() = 0u

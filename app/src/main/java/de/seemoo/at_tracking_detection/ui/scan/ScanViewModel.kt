@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -52,17 +53,25 @@ class ScanViewModel @Inject constructor(
         var location = locationProvider.getLastLocation(checkRequirements = false)
         Timber.d("Got location $location in ScanViewModel")
 
-        MainScope().async {
-            ScanBluetoothWorker.insertScanResult(
-                scanResult = scanResult,
-                latitude = location?.latitude,
-                longitude = location?.longitude,
-                accuracy = location?.accuracy,
-                discoveryDate = LocalDateTime.now(),
-                beaconRepository = beaconRepository,
-                deviceRepository = deviceRepository,
-                locationRepository = locationRepository,
-            )
+        val currentDate = LocalDateTime.now()
+
+        if (beaconRepository.getNumberOfBeaconsAddress(
+            deviceAddress = scanResult.device.address,
+            since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
+        ) == 0 ) {
+            // There was no beacon with the address saved in the last 15 minutes
+            MainScope().async {
+                ScanBluetoothWorker.insertScanResult(
+                    scanResult = scanResult,
+                    latitude = location?.latitude,
+                    longitude = location?.longitude,
+                    accuracy = location?.accuracy,
+                    discoveryDate = currentDate,
+                    beaconRepository = beaconRepository,
+                    deviceRepository = deviceRepository,
+                    locationRepository = locationRepository,
+                )
+            }
         }
 
         val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
