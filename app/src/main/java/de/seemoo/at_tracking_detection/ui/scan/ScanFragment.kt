@@ -97,6 +97,15 @@ class ScanFragment : Fragment() {
 
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
+
+        // Show to the user that no devices have been found
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Stop scanning if no device was detected
+            if (scanViewModel.isListEmpty.value == true) {
+                scanViewModel.scanFinished.postValue(true)
+                stopBluetoothScan()
+            }
+        }, SCAN_DURATION)
     }
 
     private fun stopBluetoothScan() {
