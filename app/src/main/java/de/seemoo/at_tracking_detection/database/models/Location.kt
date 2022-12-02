@@ -19,7 +19,7 @@ data class Location(
         latitude: Double,
         accuracy: Float?
     ): this(
-        0, // TODO: does this add an actual 0 to the database???
+        0,
         null,
         firstDiscovery, // firstDiscovery
         firstDiscovery, // lastSeen

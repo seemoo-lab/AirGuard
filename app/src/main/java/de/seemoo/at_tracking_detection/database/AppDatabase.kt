@@ -7,9 +7,6 @@ import de.seemoo.at_tracking_detection.database.models.*
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 
-
-// Database Definition
-// TODO: Migration from Version 9 to 10, where Location is independent table
 @Database(
     version = 10,
     entities = [
@@ -27,7 +24,6 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
         AutoMigration(from=5, to=6),
         AutoMigration(from=7, to=8),
         AutoMigration(from=8, to=9, spec = AppDatabase.RenameScanMigrationSpec::class),
-        // AutoMigration(from=9, to=10, spec = AppDatabase.MigrateToLocationDB::class)
     ],
     exportSchema = true
 )
@@ -54,18 +50,4 @@ abstract class AppDatabase : RoomDatabase() {
     class RenameScanMigrationSpec: AutoMigrationSpec {
 
     }
-
-    /*
-    @DeleteColumn(
-        tableName = "beacon",
-        columnName = "latitude",
-    )
-    @DeleteColumn(
-        tableName = "beacon",
-        columnName = "longitude",
-    )
-    class MigrateToLocationDB: AutoMigrationSpec {
-
-    }
-     */
 }

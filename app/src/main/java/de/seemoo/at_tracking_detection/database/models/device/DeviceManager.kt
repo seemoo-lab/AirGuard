@@ -49,7 +49,7 @@ object DeviceManager {
 
                 return if (serviceData == null){
                     Timber.d("Samsung Service Data is null")
-                    SamsungDevice.deviceType
+                    SamsungDevice.deviceType // TODO: ???
                 } else if (getBitFromByte(serviceData[12].toInt(), 4)) {
                     Timber.d("Samsung Service Data is SmartTag Plus")
                     SmartTagPlus.deviceType
