@@ -40,8 +40,6 @@ class ScanViewModel @Inject constructor(
 
     val scanStart = MutableLiveData(LocalDateTime.MIN)
 
-    val isScanningInBackground = SharedPrefs.isScanningInBackground
-
     init {
         bluetoothDeviceList.value = ArrayList()
     }
