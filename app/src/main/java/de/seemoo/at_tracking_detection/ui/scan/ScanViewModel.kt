@@ -49,22 +49,21 @@ class ScanViewModel @Inject constructor(
     }
 
     fun addScanResult(scanResult: ScanResult) {
-        locationProvider.getCurrentLocation { loc ->
-            Timber.d("Got location $loc in ScanViewModel")
+        var location = locationProvider.getLastLocation(checkRequirements = false)
+        Timber.d("Got location $location in ScanViewModel")
 
-            MainScope().async {
-                ScanBluetoothWorker.insertScanResult(
-                    scanResult = scanResult,
-                    latitude = loc?.latitude,
-                    longitude = loc?.longitude,
-                    accuracy = loc?.accuracy,
-                    discoveryDate = LocalDateTime.now(),
-                    beaconRepository = beaconRepository,
-                    deviceRepository = deviceRepository,
-                    locationRepository = locationRepository,
-                )
-                }
-            }
+        MainScope().async {
+            ScanBluetoothWorker.insertScanResult(
+                scanResult = scanResult,
+                latitude = location?.latitude,
+                longitude = location?.longitude,
+                accuracy = location?.accuracy,
+                discoveryDate = LocalDateTime.now(),
+                beaconRepository = beaconRepository,
+                deviceRepository = deviceRepository,
+                locationRepository = locationRepository,
+            )
+        }
 
         val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
         bluetoothDeviceListValue.removeIf { it.device.address == scanResult.device.address }
@@ -85,6 +84,7 @@ class ScanViewModel @Inject constructor(
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
 
     suspend fun saveScanToRepository(){
+        // Not used anymore, because manual scan is always when the app is open
         if (scanStart.value == LocalDateTime.MIN) { return }
         val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()
         val scan = Scan(endDate = LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, isManual = true, scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY, startDate = scanStart.value ?: LocalDateTime.now())
