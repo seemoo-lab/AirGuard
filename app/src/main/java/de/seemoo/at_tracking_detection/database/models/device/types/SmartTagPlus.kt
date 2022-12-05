@@ -9,11 +9,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
-class SmartTagPlus(val id: Int) : Device() {
-    override val imageResource: Int
-        @DrawableRes
-        get() = R.drawable.ic_smarttag_icon
-
+class SmartTagPlus(override val id: Int) : SamsungDevice(id) {
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag_plus)
             .format(id)
@@ -48,6 +44,6 @@ class SmartTagPlus(val id: Int) : Device() {
         override val statusByteDeviceType: UInt
             get() = 0u
 
-        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
+        private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
     }
 }

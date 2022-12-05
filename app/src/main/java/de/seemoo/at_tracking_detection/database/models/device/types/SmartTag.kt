@@ -9,11 +9,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
-class SmartTag(val id: Int) : Device() {
-    override val imageResource: Int
-        @DrawableRes
-        get() = R.drawable.ic_smarttag_icon
-
+class SmartTag(override val id: Int) : SamsungDevice(id) {
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
             .format(id)
