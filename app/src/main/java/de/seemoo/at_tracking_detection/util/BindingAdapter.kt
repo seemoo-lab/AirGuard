@@ -13,7 +13,9 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.pow
 
 @BindingAdapter("setAdapter")
@@ -50,9 +52,19 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 }
 
 @BindingAdapter("setDeviceName", requireAll = true)
-fun setDeviceName(textView: TextView, scanResult: ScanResult) {
+fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val device =  BaseDevice(scanResult).device
     textView.text = device.deviceContext.defaultDeviceName
+    /* TODO
+    lateinit var deviceRepository: DeviceRepository
+    var deviceFromDb = deviceRepository.getDevice(scanResult.device.address)
+    if (deviceFromDb != null) {
+        textView.text = deviceFromDb.name
+    } else {
+        textView.text = device.deviceContext.defaultDeviceName
+    }
+
+     */
 }
 
 @BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)

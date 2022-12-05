@@ -58,17 +58,7 @@ class DeviceMapFragment : Fragment() {
 
         lifecycleScope.launch {
             var locationList = viewModel.locationRepository.locationsSince(since = RiskLevelEvaluator.relevantTrackingDate)
-
-            // This is the view for all Locations
-            Util.setGeoPointsFromListOfLocations(locationList, map) /*{ location -> // TODO: old Code, figure out if still relevant
-                val directions: NavDirections =
-                    DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(
-                        beacon.deviceAddress,
-                        -1
-                    )
-                findNavController().navigate(directions)
-
-            }*/
+            Util.setGeoPointsFromListOfLocations(locationList, map)
         }.invokeOnCompletion {
             viewModel.isMapLoading.postValue(false)
         }

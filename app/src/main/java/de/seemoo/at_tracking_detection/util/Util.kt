@@ -214,21 +214,19 @@ object Util {
                         context,
                         R.drawable.ic_baseline_location_on_45_black
                     )
-                    // marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     geoPointList.add(geoPoint)
                     markerList.add(marker)
 
-                    /*
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
                         if (clickedMarker.isInfoWindowShown) {
                             clickedMarker.closeInfoWindow()
                         } else {
-                            clickedMarker.showInfoWindow()
+                            // clickedMarker.showInfoWindow()
+                            clickedMarker.closeInfoWindow()
                         }
-                        true
+                        false
                     }
-
-                     */
                 }
         }
         map.overlays.addAll(markerList)
