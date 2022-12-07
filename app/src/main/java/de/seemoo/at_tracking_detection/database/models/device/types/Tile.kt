@@ -20,7 +20,7 @@ import java.util.*
 class Tile(val id: Int) : Device(){
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_baseline_device_unknown_24 // TODO: own logo
+        get() = R.drawable.ic_tile
 
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_tile)
