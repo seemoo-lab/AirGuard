@@ -27,6 +27,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.insertScanResult

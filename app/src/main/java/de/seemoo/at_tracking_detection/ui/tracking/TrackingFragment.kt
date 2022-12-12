@@ -21,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
@@ -72,8 +73,8 @@ class TrackingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val activity = ATTrackingDetectionApplication.getCurrentActivity()
-        if (activity == null) {return}
+        val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
+
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
@@ -135,8 +136,19 @@ class TrackingFragment : Fragment() {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
 
+                var locationList = arrayListOf<Location>()
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
+                it.filter { it.locationId != null && it.locationId != 0 }
+                    .map {
+                        val location = locationRepository.getLocationWithId(it.locationId!!)
+                        if (location != null) {
+                            locationList.add(location)
+                        }
+                    }
+
                 // This is the per Device View
-                Util.setGeoPointsFromListOfBeacons(it, map, true)  // TODO: modify to Location Model???
+                Util.setGeoPointsFromListOfLocations(locationList.toList(), map)
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }
