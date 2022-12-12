@@ -15,6 +15,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
@@ -48,6 +49,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var deviceRepository: DeviceRepository
 
     @Inject
     lateinit var locationRepository: LocationRepository

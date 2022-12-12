@@ -55,16 +55,14 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val device =  BaseDevice(scanResult).device
     textView.text = device.deviceContext.defaultDeviceName
-    /* TODO
-    lateinit var deviceRepository: DeviceRepository
+
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
     var deviceFromDb = deviceRepository.getDevice(scanResult.device.address)
-    if (deviceFromDb != null) {
+    if (deviceFromDb?.name != null && deviceFromDb.name != "") {
         textView.text = deviceFromDb.name
     } else {
         textView.text = device.deviceContext.defaultDeviceName
     }
-
-     */
 }
 
 @BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)

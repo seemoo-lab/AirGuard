@@ -50,9 +50,6 @@ class ScanViewModel @Inject constructor(
     }
 
     fun addScanResult(scanResult: ScanResult) {
-        var location = locationProvider.getLastLocation(checkRequirements = false)
-        Timber.d("Got location $location in ScanViewModel")
-
         val currentDate = LocalDateTime.now()
 
         if (beaconRepository.getNumberOfBeaconsAddress(
@@ -60,6 +57,10 @@ class ScanViewModel @Inject constructor(
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
         ) == 0 ) {
             // There was no beacon with the address saved in the last 15 minutes
+
+            var location = locationProvider.getLastLocation() // if not working: checkRequirements = false
+            Timber.d("Got location $location in ScanViewModel")
+
             MainScope().async {
                 ScanBluetoothWorker.insertScanResult(
                     scanResult = scanResult,
@@ -75,7 +76,9 @@ class ScanViewModel @Inject constructor(
         }
 
         val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
-        bluetoothDeviceListValue.removeIf { it.device.address == scanResult.device.address }
+        bluetoothDeviceListValue.removeIf {
+            it.device.address == scanResult.device.address
+        }
         bluetoothDeviceListValue.add(scanResult)
         bluetoothDeviceListValue.sortByDescending { it.rssi }
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
@@ -92,7 +95,7 @@ class ScanViewModel @Inject constructor(
 
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
 
-    suspend fun saveScanToRepository(){
+    suspend fun saveScanToRepository(){ // TODO: when App is closed
         // Not used anymore, because manual scan is always when the app is open
         if (scanStart.value == LocalDateTime.MIN) { return }
         val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()

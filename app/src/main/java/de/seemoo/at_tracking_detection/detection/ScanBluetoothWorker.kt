@@ -22,6 +22,8 @@ import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SmartTag
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
@@ -245,6 +247,36 @@ class ScanBluetoothWorker @AssistedInject constructor(
             deviceRepository: DeviceRepository,
             locationRepository: LocationRepository,
         ) {
+            val deviceType = deviceRepository.getDevice(scanResult.device.address)?.deviceType
+
+            // This makes sure that Samsung SmartTags do not get entered into the database if they change their key every 15 Minutes
+            // Will be removed in a future update when SmartTags can be grouped
+            if (deviceType == DeviceType.GALAXY_SMART_TAG || deviceType == DeviceType.GALAXY_SMART_TAG_PLUS || deviceType == DeviceType.SAMSUNG) {
+                println("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOIIIIIIIIIII") // TODO: this is not getting called
+                fun getBitsFromByte(value: Byte, position: Int): Boolean {
+                    return ((value.toInt() shr position) and 1) == 1;
+                }
+
+                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+
+                // This checks if SmartTag is Offline for longer than 24 Hours
+                if (serviceData != null) {
+                    println("Samsung Service Data Check Offline: ") // TODO: remove
+                    println(getBitsFromByte(serviceData[0], 5)) // TODO: remove
+                    println(getBitsFromByte(serviceData[0], 6)) // TODO: remove
+                    println(getBitsFromByte(serviceData[0], 7)) // TODO: remove
+                    if (!(!getBitsFromByte(serviceData[0], 5) && getBitsFromByte(
+                            serviceData[0],
+                            6
+                        ) && getBitsFromByte(serviceData[0], 7))
+                    ) {
+                        println("Not Overmature Offline Mode") // TODO: remove
+                        Timber.d("Samsung: Not Overmature Offline Mode")
+                        return
+                    }
+                }
+            }
+
             saveDevice(deviceRepository, scanResult, discoveryDate)
 
             // set locationId to null if gps location could not be retrieved
@@ -253,7 +285,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             saveBeacon(beaconRepository, scanResult, discoveryDate, locId)
         }
 
-        private suspend fun saveBeacon(
+    private suspend fun saveBeacon(
             beaconRepository: BeaconRepository,
             scanResult: ScanResult,
             discoveryDate: LocalDateTime,

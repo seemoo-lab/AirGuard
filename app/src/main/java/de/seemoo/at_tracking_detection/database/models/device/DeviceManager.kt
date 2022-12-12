@@ -41,16 +41,25 @@ object DeviceManager {
                 return Tile.deviceType
             }
             else if(services.contains(SmartTag.offlineFindingServiceUUID)){
-                fun getBitFromByte(value: Int, position: Int): Boolean {
-                    return ((value shr position) and 1) == 1;
+                fun getBitsFromByte(value: Byte, position: Int): Boolean {
+                    return ((value.toInt() shr position) and 1) == 1
                 }
 
                 val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 
+                // TODO: remove
+                if (serviceData != null) {
+                    println("Service Data Byte: ")
+                    println(String.format("%02X", serviceData[12]))
+                    println("Service Data Bit for UWB: ")
+                    println(getBitsFromByte(serviceData[12], 5))
+                }
+
                 return if (serviceData == null){
                     Timber.d("Samsung Service Data is null")
-                    SamsungDevice.deviceType // TODO: ???
-                } else if (getBitFromByte(serviceData[12].toInt(), 4)) {
+                    SamsungDevice.deviceType
+                // TODO: test this!!!
+                } else if (getBitsFromByte(serviceData[12], 5)) {
                     Timber.d("Samsung Service Data is SmartTag Plus")
                     SmartTagPlus.deviceType
                 } else {
