@@ -10,7 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NotificationRepository @Inject constructor(private val notificationDao: NotificationDao) {
+class NotificationRepository @Inject constructor(
+    private val notificationDao: NotificationDao
+    ) {
 
     val totalCount: Flow<Int> = notificationDao.getTotalCount()
 
@@ -43,6 +45,10 @@ class NotificationRepository @Inject constructor(private val notificationDao: No
     val last_notification: List<Notification> = notificationDao.getLastNotification()
 
     fun notificationForDevice(device: BaseDevice) = notificationDao.getNotificationForDevice(device.address)
+
+    fun getNotificationForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getNotificationForDeviceSinceCount(deviceAddress, since)
+
+    fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getFalseAlarmForDeviceSinceCount(deviceAddress, since)
 
     @WorkerThread
     suspend fun insert(notification: Notification): Long {

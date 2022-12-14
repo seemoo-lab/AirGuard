@@ -44,6 +44,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDate)
     fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDate)
 
+    fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
+
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
         return if (dateTime != null) {
