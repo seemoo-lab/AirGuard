@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        // TODO stopScanning
         SharedPrefs.lastTimeOpened = dateTime
         super.onDestroy()
     }

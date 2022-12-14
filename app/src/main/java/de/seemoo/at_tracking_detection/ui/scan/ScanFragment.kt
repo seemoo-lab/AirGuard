@@ -120,7 +120,7 @@ class ScanFragment : Fragment() {
         startBluetoothScan()
     }
 
-    override fun onPause() { // TODO: Difference
+    override fun onPause() {
         super.onPause()
         stopBluetoothScan()
     }
