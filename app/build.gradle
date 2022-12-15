@@ -78,6 +78,7 @@ android {
             excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1']
         }
     }
+    namespace 'de.seemoo.at_tracking_detection'
 
 }
 
