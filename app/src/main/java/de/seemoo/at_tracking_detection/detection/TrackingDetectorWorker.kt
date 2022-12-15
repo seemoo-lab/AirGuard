@@ -13,14 +13,11 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
-import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -32,7 +29,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
     private val notificationService: NotificationService,
     private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository,
-    private val locationRepository: LocationRepository,
     private val notificationRepository: NotificationRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -104,7 +100,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             return if (device.lastNotificationSent != null) {
                 val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
                 // Last Notification longer than 8 hours
-                hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_SINCE_LAST_NOTIFICATION
+                hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
             } else{
                 true
             }

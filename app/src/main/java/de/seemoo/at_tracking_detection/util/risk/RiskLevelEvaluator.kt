@@ -75,8 +75,8 @@ class RiskLevelEvaluator(
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2
         private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3
-        private const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
-        const val HOURS_AT_LEAST_SINCE_LAST_NOTIFICATION: Long = 8
+        const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
+        const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8
         private val atLeastTrackedSince: LocalDateTime = LocalDateTime.now().minusHours(HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
         val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)

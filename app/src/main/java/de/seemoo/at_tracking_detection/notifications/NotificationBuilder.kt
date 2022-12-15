@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.Instant
 import java.time.ZoneId
@@ -102,7 +103,7 @@ class NotificationBuilder @Inject constructor(
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val notifyText = context.getString(R.string.notification_text_base)
+        val notifyText = context.getString(R.string.notification_text_base, RiskLevelEvaluator.HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_base))
             .setContentText(notifyText)
@@ -149,14 +150,14 @@ class NotificationBuilder @Inject constructor(
             DeviceType.AIRTAG, DeviceType.APPLE, DeviceType.AIRPODS, DeviceType.UNKNOWN -> {
                 notificationTitle = context.getString(R.string.notification_title_vocal, device.deviceContext.defaultDeviceName )
                 if (baseDevice.deviceType == DeviceType.AIRPODS) {
-                    notificationText =  context.getString(R.string.notification_text_multiple, device.deviceContext.defaultDeviceName)
+                    notificationText =  context.getString(R.string.notification_text_multiple, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
                 }else {
-                    notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
+                    notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
                 }
             }
             else -> {
                 notificationTitle = context.getString(R.string.notification_title_consonant, device.deviceContext.defaultDeviceName )
-                notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
+                notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
             }
         }
 
