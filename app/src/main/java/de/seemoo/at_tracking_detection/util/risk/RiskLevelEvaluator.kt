@@ -71,12 +71,15 @@ class RiskLevelEvaluator(
     companion object {
         /** The number of days that we use to calculate the risk **/
         const val RELEVANT_DAYS: Long = 14
+        private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5
+        private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2
         private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3
         private const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
         const val HOURS_AT_LEAST_SINCE_LAST_NOTIFICATION: Long = 8
         private val atLeastTrackedSince: LocalDateTime = LocalDateTime.now().minusHours(HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
         val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+        private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Checks if BaseDevice is a tracking device
         // Goes through all the criteria
@@ -99,13 +102,15 @@ class RiskLevelEvaluator(
                             val minTrackingTime = device.device.deviceContext.minTrackingTime
                             val beaconList = beaconRepository.getDeviceBeacons(device.address)
                             val timeDiff = maxTimeDiffBetweenBeacons(beaconList)
-                            val timeDiffInDays = timeDiff / (24 * 3600)
 
-                            // Time between trackers long enough
-                            if (timeDiffInDays >= 1) {
-                                return RiskLevel.MEDIUM
-                            } else if (timeDiff >= minTrackingTime) {
-                                return RiskLevel.HIGH
+                            if (timeDiff >= minTrackingTime) {
+                                val numberOfNotifications = notificationRepository.getNotificationForDeviceSinceCount(device.address, relevantNotificationDate)
+
+                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK) {
+                                    RiskLevel.HIGH
+                                } else{
+                                    RiskLevel.MEDIUM
+                                }
                             }
                         }
                     }
