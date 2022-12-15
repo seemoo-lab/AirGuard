@@ -50,11 +50,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         var notificationsSent = 0
 
-        //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
             val device = deviceRepository.getDevice(mapEntry.key)
 
-            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation, deviceRepository, beaconRepository, notificationRepository) == RiskLevel.HIGH && checkLastNotification(device)) {
+            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation, deviceRepository, beaconRepository, notificationRepository) != RiskLevel.LOW && checkLastNotification(device)) {
                 // Send Notification
                 Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
