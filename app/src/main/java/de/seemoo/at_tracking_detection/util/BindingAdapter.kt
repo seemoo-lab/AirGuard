@@ -10,10 +10,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.Connectable
-import de.seemoo.at_tracking_detection.database.models.device.Device
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.pow
@@ -53,14 +49,12 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
-    val device =  BaseDevice(scanResult).device
-    textView.text = device.deviceContext.defaultDeviceName
-
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
-    var deviceFromDb = deviceRepository.getDevice(scanResult.device.address)
-    if (deviceFromDb?.name != null && deviceFromDb.name != "") {
-        textView.text = deviceFromDb.name
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+    var deviceFromDb = deviceRepository?.getDevice(scanResult.device.address)
+    if (deviceFromDb?.name != null) {
+        textView.text = deviceFromDb.getDeviceNameWithID()
     } else {
+        val device =  BaseDevice(scanResult).device
         textView.text = device.deviceContext.defaultDeviceName
     }
 }

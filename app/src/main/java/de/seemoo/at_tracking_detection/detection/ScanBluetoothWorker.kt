@@ -247,6 +247,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             deviceRepository: DeviceRepository,
             locationRepository: LocationRepository,
         ) {
+            println("Insert Scan Result called")
             val deviceType = deviceRepository.getDevice(scanResult.device.address)?.deviceType
 
             // This makes sure that Samsung SmartTags do not get entered into the database if they change their key every 15 Minutes
@@ -265,15 +266,20 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     println(getBitsFromByte(serviceData[0], 5)) // TODO: remove
                     println(getBitsFromByte(serviceData[0], 6)) // TODO: remove
                     println(getBitsFromByte(serviceData[0], 7)) // TODO: remove
-                    if (!(!getBitsFromByte(serviceData[0], 5) && getBitsFromByte(
+                    // Overmature Offline Mode: 011
+                    if (!getBitsFromByte(serviceData[0], 5) && getBitsFromByte(
                             serviceData[0],
                             6
-                        ) && getBitsFromByte(serviceData[0], 7))
+                        ) && getBitsFromByte(serviceData[0], 7)
                     ) {
+                        println("Overmature Offline Mode") // TODO: remove
+                        Timber.d("Samsung: Overmature Offline Mode")
+                    } else {
                         println("Not Overmature Offline Mode") // TODO: remove
                         Timber.d("Samsung: Not Overmature Offline Mode")
                         return
                     }
+
                 }
             }
 
