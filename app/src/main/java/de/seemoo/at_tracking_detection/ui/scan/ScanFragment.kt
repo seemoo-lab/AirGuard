@@ -1,13 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,26 +11,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
-import de.seemoo.at_tracking_detection.util.Util
-import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.insertScanResult
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {

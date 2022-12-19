@@ -47,13 +47,14 @@ object DeviceManager {
 
                 val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 
-                // TODO: remove
+                /*
                 if (serviceData != null) {
                     println("Service Data Byte: ")
                     println(String.format("%02X", serviceData[12]))
                     println("Service Data Bit for UWB: ")
                     println(getBitsFromByte(serviceData[12], 5))
                 }
+                 */
 
                 return if (serviceData == null){
                     Timber.d("Samsung Service Data is null")
