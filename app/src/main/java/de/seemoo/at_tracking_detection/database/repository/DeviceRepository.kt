@@ -46,6 +46,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
 
+    fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
+
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
         return if (dateTime != null) {
