@@ -63,7 +63,7 @@ class RiskLevelEvaluator(
     // How many trackers have been relevant here as tracker
     fun getNumberRelevantTrackers(): Int {
         val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
-        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
 
         return baseDevices.count()
     }

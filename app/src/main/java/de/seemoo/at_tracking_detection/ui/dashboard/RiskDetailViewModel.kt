@@ -33,7 +33,7 @@ class RiskDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val relevantDate = RiskLevelEvaluator.relevantTrackingDate
-    private val trackersFound: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
+    private val trackersFound: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
     private val lastSeenDates = trackersFound.map {
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.lastSeen)
     }

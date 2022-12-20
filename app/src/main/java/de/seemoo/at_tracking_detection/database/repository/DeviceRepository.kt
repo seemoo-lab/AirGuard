@@ -16,7 +16,7 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun trackingDevicesSince(since: LocalDateTime) = deviceDao.getAllNotificationSince(since)
 
-    fun trackingDevicesSinceFlow(since: LocalDateTime) = deviceDao.getAllNotificationSinceFlow(since)
+    fun trackingDevicesNotIgnoredSince(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSince(since)
 
     fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
 
