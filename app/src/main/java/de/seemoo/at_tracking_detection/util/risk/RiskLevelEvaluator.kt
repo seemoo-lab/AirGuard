@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.util.risk
 
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -30,7 +31,7 @@ class RiskLevelEvaluator(
         } else {
             var riskMedium = false
             for (baseDevice in baseDevices) {
-                val deviceRiskLevel = checkRiskLevelForDevice(baseDevice, useLocation, deviceRepository, beaconRepository, notificationRepository)
+                val deviceRiskLevel = checkRiskLevelForDevice(baseDevice, useLocation)
                 if (deviceRiskLevel == RiskLevel.HIGH) {
                     return RiskLevel.HIGH
                 } else if (deviceRiskLevel == RiskLevel.MEDIUM) {
@@ -75,6 +76,7 @@ class RiskLevelEvaluator(
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2
         private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3
+        private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F
         const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8
         private val atLeastTrackedSince: LocalDateTime = LocalDateTime.now().minusHours(HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
@@ -83,7 +85,12 @@ class RiskLevelEvaluator(
 
         // Checks if BaseDevice is a tracking device
         // Goes through all the criteria
-        fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean, deviceRepository: DeviceRepository, beaconRepository: BeaconRepository, notificationRepository: NotificationRepository): RiskLevel {
+        fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean): RiskLevel {
+            // get Repositories
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository!!
+
             // Not ignored
             // Tracker has been seen long enough
             if (!device.ignore && device.firstDiscovery <= atLeastTrackedSince) {
@@ -103,10 +110,14 @@ class RiskLevelEvaluator(
                             val beaconList = beaconRepository.getDeviceBeacons(device.address)
                             val timeDiff = maxTimeDiffBetweenBeacons(beaconList)
 
+                            // Tracker was detected for at least the minimum Tracking Time
                             if (timeDiff >= minTrackingTime) {
                                 val numberOfNotifications = notificationRepository.getNotificationForDeviceSinceCount(device.address, relevantNotificationDate)
+                                val numberOfLocationsWithAccuracyLimit = deviceRepository.getNumberOfLocationsForDeviceWithAccuracyLimitSince(device.address, MAX_ACCURACY_FOR_LOCATIONS, relevantTrackingDate)
 
-                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK) {
+                                // High Risk: High Number of Notifications and Accurate Locations
+                                // Medium Risk: Low Number of Notifications or only inaccurate Location Reports
+                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
                                     RiskLevel.HIGH
                                 } else{
                                     RiskLevel.MEDIUM

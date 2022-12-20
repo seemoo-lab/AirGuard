@@ -65,6 +65,9 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND device.lastSeen >= :since")
     fun getNumberOfLocationsForDevice(deviceAddress: String, since: LocalDateTime): Int
 
+    @Query("SELECT COUNT(*) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
+    fun getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int
+
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM device JOIN beacon ON beacon.deviceAddress = deviceAddress WHERE beacon.receivedAt >= :dateTime")
