@@ -20,6 +20,9 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
     fun getAllNotificationSince(since: LocalDateTime): List<BaseDevice>
 
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY lastSeen DESC")
+    fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
+
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
     fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
