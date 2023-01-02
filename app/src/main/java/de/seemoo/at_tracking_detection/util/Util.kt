@@ -24,6 +24,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 
@@ -84,6 +85,7 @@ object Util {
     suspend fun setGeoPointsFromListOfLocations(
         locationList: List<LocationModel>,
         map: MapView,
+        connectWithPolyline: Boolean = false,
     ): Boolean {
         val context = ATTrackingDetectionApplication.getAppContext()
         val copyrightOverlay = CopyrightOverlay(context)
@@ -136,6 +138,13 @@ object Util {
         map.overlays.addAll(markerList)
 
         Timber.d("Added ${geoPointList.size} markers to the map!")
+
+        if (connectWithPolyline) {
+            val line = Polyline(map)
+            line.setPoints(geoPointList)
+            line.infoWindow = null
+            map.overlays.add(line)
+        }
 
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)

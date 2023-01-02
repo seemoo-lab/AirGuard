@@ -148,7 +148,7 @@ class TrackingFragment : Fragment() {
                     }
 
                 // This is the per Device View
-                Util.setGeoPointsFromListOfLocations(locationList.toList(), map)
+                Util.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }
