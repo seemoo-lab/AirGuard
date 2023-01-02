@@ -254,7 +254,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // This makes sure that Samsung SmartTags do not get entered into the database if they change their key every 15 Minutes
             // Will be removed in a future update when SmartTags can be grouped
             if (deviceType == DeviceType.GALAXY_SMART_TAG || deviceType == DeviceType.GALAXY_SMART_TAG_PLUS || deviceType == DeviceType.SAMSUNG) {
-                println("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOIIIIIIIIIII") // TODO: this is not getting called
                 fun getBitsFromByte(value: Byte, position: Int): Boolean {
                     return ((value.toInt() shr position) and 1) == 1;
                 }
@@ -263,15 +262,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
                 // This checks if SmartTag is Offline for longer than 24 Hours
                 if (serviceData != null) {
-                    println("Samsung Service Data Check Offline: ") // TODO: remove
-                    println(getBitsFromByte(serviceData[0], 5)) // TODO: remove
-                    println(getBitsFromByte(serviceData[0], 6)) // TODO: remove
-                    println(getBitsFromByte(serviceData[0], 7)) // TODO: remove
-                    // Overmature Offline Mode: 011
-                    if (!getBitsFromByte(serviceData[0], 5) && getBitsFromByte(
+                    // Overmature Offline Mode: 011 (Little Endian (5,6,7) --> (2,1,0))
+                    if (!getBitsFromByte(serviceData[0], 2) && getBitsFromByte(
                             serviceData[0],
-                            6
-                        ) && getBitsFromByte(serviceData[0], 7)
+                            1
+                        ) && getBitsFromByte(serviceData[0], 0)
                     ) {
                         println("Overmature Offline Mode") // TODO: remove
                         Timber.d("Samsung: Overmature Offline Mode")
@@ -300,7 +295,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         ): Beacon {
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val beacon =
-                if (BuildConfig.DEBUG) { // TODO: maybe change this, because we need service data for samsung
+                if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
                         discoveryDate, scanResult.rssi, scanResult.device.address, locId,

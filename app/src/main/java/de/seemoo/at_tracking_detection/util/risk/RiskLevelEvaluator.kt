@@ -5,6 +5,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import java.time.LocalDateTime
@@ -29,20 +30,30 @@ class RiskLevelEvaluator(
         if (totalTrackers == 0) {
             return RiskLevel.LOW
         } else {
-            var riskMedium = false
+            var riskMediumCounterStatic = 0 // Counter for Devices with Risk Medium with a static MAC-Address (e.g. Tile)
+            var riskMediumCounterDynamic = 0 // Counter for Devices with Risk Medium with a dynamic MAC-Address (e.g. Apple)
             for (baseDevice in baseDevices) {
                 val deviceRiskLevel = checkRiskLevelForDevice(baseDevice, useLocation)
                 if (deviceRiskLevel == RiskLevel.HIGH) {
                     return RiskLevel.HIGH
                 } else if (deviceRiskLevel == RiskLevel.MEDIUM) {
-                    riskMedium = true
+                    if (baseDevice.deviceType == DeviceType.TILE) {
+                        riskMediumCounterStatic += 1
+                    } else {
+                        riskMediumCounterDynamic += 1
+                    }
                 }
             }
 
-            if (riskMedium) {
-                return RiskLevel.MEDIUM
+            val riskMediumCounterAll = riskMediumCounterDynamic + riskMediumCounterStatic
+
+            return if (riskMediumCounterAll == 0) {
+                RiskLevel.LOW
+            } else if (riskMediumCounterDynamic >= MAX_NUMBER_MEDIUM_RISK) {
+                RiskLevel.HIGH
+            } else {
+                RiskLevel.MEDIUM
             }
-            return RiskLevel.LOW
         }
     }
 
@@ -79,6 +90,7 @@ class RiskLevelEvaluator(
         const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F
         const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8
+        const val MAX_NUMBER_MEDIUM_RISK: Long = 3
         private val atLeastTrackedSince: LocalDateTime = LocalDateTime.now().minusHours(HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
         val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
