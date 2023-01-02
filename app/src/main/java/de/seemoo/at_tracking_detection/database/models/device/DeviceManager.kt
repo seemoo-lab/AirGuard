@@ -52,15 +52,15 @@ object DeviceManager {
                     println("Service Data Byte: ")
                     println(String.format("%02X", serviceData[12]))
                     println("Service Data Bit for UWB: ")
-                    println(getBitsFromByte(serviceData[12], 5))
+                    println(getBitsFromByte(serviceData[12], 2))
                 }
                  */
 
                 return if (serviceData == null){
                     Timber.d("Samsung Service Data is null")
                     SamsungDevice.deviceType
-                // TODO: test this!!!
-                } else if (getBitsFromByte(serviceData[12], 5)) {
+                // Little Endian: (5) -> (2)
+                } else if (getBitsFromByte(serviceData[12], 2)) {
                     Timber.d("Samsung Service Data is SmartTag Plus")
                     SmartTagPlus.deviceType
                 } else {
