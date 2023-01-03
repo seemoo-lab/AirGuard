@@ -22,14 +22,20 @@ class SmartTagPlus(override val id: Int) : SamsungDevice(id) {
             get() = ScanFilter.Builder()
                 .setServiceData(
                     offlineFindingServiceUUID,
-                    // First Byte: 13, FF --> After 24 Hours, 12, FE --> After 15 Minutes
-                    // Twelve Byte: 04, 00 --> UWB off, 04, 04 --> UWB on
+                    // First Byte:
+                    // 13, FF --> After 24 Hours,
+                    // 12, FE --> After 15 Minutes
+                    // 10, F8 --> Instant
+                    //
+                    // Twelve Byte:
+                    // 04, 00 --> UWB off,
+                    // 04, 04 --> UWB on
                     byteArrayOf(
-                        (0x12).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x10).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte())),
                     byteArrayOf(
-                        (0xFE).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0xF8).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte()))
                 )

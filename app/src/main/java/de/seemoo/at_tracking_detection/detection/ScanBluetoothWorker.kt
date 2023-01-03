@@ -21,6 +21,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SmartTag
@@ -29,6 +30,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.util.Util.getBitsFromByte
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
@@ -232,7 +234,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
     }
 
-    class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime) {}
+    class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime)
 
     companion object {
         const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
@@ -248,38 +250,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             deviceRepository: DeviceRepository,
             locationRepository: LocationRepository,
         ) {
-            println("Insert Scan Result called")
-            val deviceType = deviceRepository.getDevice(scanResult.device.address)?.deviceType
-
-            // This makes sure that Samsung SmartTags do not get entered into the database if they change their key every 15 Minutes
-            // Will be removed in a future update when SmartTags can be grouped
-            if (deviceType == DeviceType.GALAXY_SMART_TAG || deviceType == DeviceType.GALAXY_SMART_TAG_PLUS || deviceType == DeviceType.SAMSUNG) {
-                fun getBitsFromByte(value: Byte, position: Int): Boolean {
-                    return ((value.toInt() shr position) and 1) == 1;
-                }
-
-                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
-
-                // This checks if SmartTag is Offline for longer than 24 Hours
-                if (serviceData != null) {
-                    // Overmature Offline Mode: 011 (Little Endian (5,6,7) --> (2,1,0))
-                    if (!getBitsFromByte(serviceData[0], 2) && getBitsFromByte(
-                            serviceData[0],
-                            1
-                        ) && getBitsFromByte(serviceData[0], 0)
-                    ) {
-                        println("Overmature Offline Mode") // TODO: remove
-                        Timber.d("Samsung: Overmature Offline Mode")
-                    } else {
-                        println("Not Overmature Offline Mode") // TODO: remove
-                        Timber.d("Samsung: Not Overmature Offline Mode")
-                        return
-                    }
-
-                }
-            }
-
-            saveDevice(deviceRepository, scanResult, discoveryDate)
+            saveDevice(deviceRepository, scanResult, discoveryDate) ?: return // return when device does not qualify to be saved
 
             // set locationId to null if gps location could not be retrieved
             val locId: Int? = saveLocation(locationRepository, latitude, longitude, discoveryDate, accuracy)?.locationId
@@ -316,11 +287,20 @@ class ScanBluetoothWorker @AssistedInject constructor(
             deviceRepository: DeviceRepository,
             scanResult: ScanResult,
             discoveryDate: LocalDateTime
-        ): BaseDevice {
+        ): BaseDevice? {
             var device = deviceRepository.getDevice(scanResult.device.address)
             if (device == null) {
-                Timber.d("Add new Device to the database!")
                 device = BaseDevice(scanResult)
+
+                // Check if ConnectionState qualifies Device to be saved
+                // Only Save when Device is offline long enough
+                when(device.getConnectionState(scanResult)){
+                    ConnectionState.OVERMATURE_OFFLINE -> {}
+                    ConnectionState.UNKOWN -> {}
+                    else -> return null
+                }
+
+                Timber.d("Add new Device to the database!")
                 deviceRepository.insert(device)
             } else {
                 Timber.d("Device already in the database... Updating the last seen date!")

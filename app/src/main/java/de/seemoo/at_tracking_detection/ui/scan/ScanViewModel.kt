@@ -51,14 +51,13 @@ class ScanViewModel @Inject constructor(
 
     fun addScanResult(scanResult: ScanResult) {
         val currentDate = LocalDateTime.now()
-
         if (beaconRepository.getNumberOfBeaconsAddress(
             deviceAddress = scanResult.device.address,
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
-        ) == 0 ) {
-            // There was no beacon with the address saved in the last 15 minutes
+        ) == 0) {
+            // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
 
-            var location = locationProvider.getLastLocation() // if not working: checkRequirements = false
+            val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
             Timber.d("Got location $location in ScanViewModel")
 
             MainScope().async {
