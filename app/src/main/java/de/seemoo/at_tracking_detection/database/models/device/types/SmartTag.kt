@@ -27,11 +27,11 @@ class SmartTag(override val id: Int) : SamsungDevice(id) {
                     byteArrayOf(
                         (0x12).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
                         (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
-                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte())),
+                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte())),
                     byteArrayOf(
-                        (0xFE).toByte(), (0x6B.toByte()), (0xFA.toByte()), (0x00.toByte()),
-                        (0xC8.toByte()), (0x40.toByte()), (0x62.toByte()), (0x8F.toByte()),
-                        (0x00.toByte()), (0xE2.toByte()), (0x60.toByte()), (0x00.toByte()))
+                        (0xFE).toByte(), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x00.toByte()),
+                        (0x00.toByte()), (0x00.toByte()), (0x00.toByte()), (0x04.toByte()))
                 )
                 .build()
 
