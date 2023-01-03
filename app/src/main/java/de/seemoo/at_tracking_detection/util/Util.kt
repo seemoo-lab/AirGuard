@@ -65,6 +65,11 @@ object Util {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||  ActivityCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun getBitsFromByte(value: Byte, position: Int): Boolean {
+        // This uses Little Endian
+        return ((value.toInt() shr position) and 1) == 1
+    }
+
     fun enableMyLocationOverlay(
         map:MapView
     ) {

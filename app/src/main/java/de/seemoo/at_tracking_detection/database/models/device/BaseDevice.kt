@@ -101,6 +101,16 @@ data class BaseDevice(
 
     fun getFormattedLastSeenDate(): String = lastSeen.format(dateTimeFormatter)
 
+    fun getConnectionState(scanResult: ScanResult): ConnectionState {
+        return when (DeviceManager.getDeviceType(scanResult)) {
+            DeviceType.TILE -> Tile.getConnectionState(scanResult)
+            DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
+            DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
+            DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
+            else -> ConnectionState.UNKOWN
+        }
+    }
+
     companion object {
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
@@ -110,5 +120,7 @@ data class BaseDevice(
                 else -> scanResult.scanRecord?.deviceName
             }
         }
+
+
     }
 }

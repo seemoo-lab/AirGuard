@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
+import de.seemoo.at_tracking_detection.util.Util.getBitsFromByte
 import kotlin.experimental.and
 
 object DeviceManager {
@@ -41,32 +42,7 @@ object DeviceManager {
                 return Tile.deviceType
             }
             else if(services.contains(SmartTag.offlineFindingServiceUUID)){
-                fun getBitsFromByte(value: Byte, position: Int): Boolean {
-                    return ((value.toInt() shr position) and 1) == 1
-                }
-
-                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
-
-                /*
-                if (serviceData != null) {
-                    println("Service Data Byte: ")
-                    println(String.format("%02X", serviceData[12]))
-                    println("Service Data Bit for UWB: ")
-                    println(getBitsFromByte(serviceData[12], 2))
-                }
-                 */
-
-                return if (serviceData == null){
-                    Timber.d("Samsung Service Data is null")
-                    SamsungDevice.deviceType
-                // Little Endian: (5) -> (2)
-                } else if (getBitsFromByte(serviceData[12], 2)) {
-                    Timber.d("Samsung Service Data is SmartTag Plus")
-                    SmartTagPlus.deviceType
-                } else {
-                    Timber.d("Samsung Service Data is SmartTag")
-                    SmartTag.deviceType
-                }
+                return SamsungDevice.getSamsungDeviceType(scanResult)
             }
 
         }
