@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import java.util.*
-import javax.inject.Inject
 import kotlin.math.pow
 
 @BindingAdapter("setAdapter")
@@ -47,10 +48,22 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
     imageView.setImageDrawable(device.getDrawable())
 }
 
+@BindingAdapter("setDeviceColor", requireAll = true)
+fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
+    val device = BaseDevice(scanResult)
+    when (device.getConnectionState(scanResult)) {
+        ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-16711936)
+        ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-256)
+        ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-16776961)
+        ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.UNKOWN -> materialCardView.setCardBackgroundColor(0)
+    }
+}
+
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-    var deviceFromDb = deviceRepository?.getDevice(scanResult.device.address)
+    val deviceFromDb = deviceRepository?.getDevice(scanResult.device.address)
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {

@@ -19,7 +19,8 @@
         style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="85dp"
-        android:layout_margin="@dimen/card_margin">
+        android:layout_margin="@dimen/card_margin"
+        app:setDeviceColor="@{scanResult}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
