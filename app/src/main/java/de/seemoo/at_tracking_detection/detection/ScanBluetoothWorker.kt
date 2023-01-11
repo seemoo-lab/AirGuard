@@ -94,23 +94,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         scanResultDictionary = HashMap()
 
-        val useLocation = SharedPrefs.useLocationInTrackingDetection
-        if (useLocation) {
-            val lastLocation = locationProvider.getLastLocation()
-
-            if (lastLocation != null) {
-                // Location matches the requirement. No need to request a new one
-                location = lastLocation
-                Timber.d("Using last location")
-            }else {
-                //Getting the most accurate location here
-                locationProvider.getCurrentLocation { loc ->
-                    this.location = loc
-                    Timber.d("Updated to current location")
-                }
-            }
-        }
-
         //Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
         val scanSettings =
@@ -124,9 +107,26 @@ class ScanBluetoothWorker @AssistedInject constructor(
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
-        //Waiting for updated location to come in
-        val fetchedLocation = this.waitForRequestedLocation()
-        Timber.d("Fetched location? ${fetchedLocation}")
+        if (SharedPrefs.useLocationInTrackingDetection && scanResultDictionary.size > 0) {
+            val lastLocation = locationProvider.getLastLocation(false)
+
+            if (lastLocation != null) {
+                // Location matches the requirement. No need to request a new one
+                location = lastLocation
+                Timber.d("Using last location")
+            } else {
+                //Getting the most accurate location here
+                locationProvider.getCurrentLocation { loc ->
+                    this.location = loc
+                    Timber.d("Updated to current location")
+                }
+
+                val fetchedLocation = this.waitForRequestedLocation()
+                Timber.d("Fetched location? ${fetchedLocation}")
+            }
+
+            if (location == null) location = locationProvider.getLastLocation(true);
+        }
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
