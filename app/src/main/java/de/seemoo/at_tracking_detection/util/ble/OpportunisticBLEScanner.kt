@@ -135,7 +135,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
-            val lastLocation = locationProvider?.getLastLocation()
+            val lastLocation = locationProvider?.getLastLocation(false)
 
             if (lastLocation != null) {
                 val millisecondsSinceLocation = (SystemClock.elapsedRealtimeNanos() - lastLocation.elapsedRealtimeNanos) / 1000000L

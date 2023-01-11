@@ -9,9 +9,7 @@ import android.location.LocationManager
 import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
-import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
@@ -28,15 +26,13 @@ open class LocationProvider @Inject constructor(
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var locationCallback: ((Location?)->Unit)? = null
-//    private val versionProvider = DefaultBuildVersionProvider()
 
-
-    open fun getLastLocation(): Location? {
+    open fun getLastLocation(any: Boolean): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
-        return getLastLocationFromAnyProvider()
+        return getLastLocationFromAnyProvider(any)
     }
 
     /**
@@ -44,7 +40,7 @@ open class LocationProvider @Inject constructor(
      * @return the most recent location across multiple providers
      */
     @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
-    private fun getLastLocationFromAnyProvider(): Location? {
+    private fun getLastLocationFromAnyProvider(any: Boolean): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -54,16 +50,16 @@ open class LocationProvider @Inject constructor(
             val fusedLocation = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)
 
             // Check if the requirements are satisfied
-            if (fusedLocation != null && locationMatchesMinimumRequirements(fusedLocation)) {
+            if (fusedLocation != null && (any || locationMatchesMinimumRequirements(fusedLocation))) {
                 return fusedLocation
             }
             return null
-        }else {
-            return legacyGetLastLocationFromAnyProvider()
+        } else {
+            return legacyGetLastLocationFromAnyProvider(any)
         }
     }
 
-    private fun legacyGetLastLocationFromAnyProvider(): Location? {
+    private fun legacyGetLastLocationFromAnyProvider(any: Boolean): Location? {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
@@ -76,8 +72,8 @@ open class LocationProvider @Inject constructor(
 
             if (gpsLocation != null && networkLocation != null) {
                 // Got to past locations, lets check which passes our requirements
-                val gpsRequirements = locationMatchesMinimumRequirements(gpsLocation)
-                val networkRequirements = locationMatchesMinimumRequirements(networkLocation)
+                val gpsRequirements = (any || locationMatchesMinimumRequirements(gpsLocation))
+                val networkRequirements = (any || locationMatchesMinimumRequirements(networkLocation))
                 if (gpsRequirements && networkRequirements) {
                     // Check which one is more current
                     if (gpsLocation.time > networkLocation.time) {
@@ -94,13 +90,13 @@ open class LocationProvider @Inject constructor(
                 }else {
                     return null
                 }
-            }else if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
+            }else if (gpsLocation != null && (any || locationMatchesMinimumRequirements(gpsLocation))) {
                 // Only gps satisfies and network does not exist
                 return gpsLocation
             }
         }
 
-        if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
+        if (networkLocation != null && (any || locationMatchesMinimumRequirements(networkLocation))) {
             return networkLocation
         }
 
@@ -182,10 +178,6 @@ open class LocationProvider @Inject constructor(
                 handler.looper
             )
         }
-    }
-
-    fun stopLocationUpdates() {
-        locationManager.removeUpdates(this)
     }
 
     override fun onLocationChanged(location: Location) {
