@@ -125,7 +125,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         /// Minimum tracking time
         const val MIN_TRACKING_TIME_SECONDS = 30 * 60
-        const val MIN_DISTANCE_BETWEEN_BEACONS = 400
+        const val ADDITIONAL_DISTANCE_BETWEEN_BEACONS = 50
 
         //Moving some functions to the companion object to make them testable
 
@@ -169,7 +169,14 @@ class TrackingDetectorWorker @AssistedInject constructor(
                         val secondLocation = getLocation(second.latitude!!, second.longitude!!)
 
                         // Return true if any beacon pair full fills the minimal distance requirement
-                        if (firstLocation.distanceTo(secondLocation) >= MIN_DISTANCE_BETWEEN_BEACONS) {
+                        // Accuracy is given in (m) where the true location could be anywhere within
+                        // a circle of (m) radius with coordinates at the center, therefore we take
+                        // the sum of the two points accuracies to ensure that the points do not
+                        // overlap. We additionally add the possible distance travelled back from
+                        // one point to another in the combined fix ages at 15 m/s. Finally, we add
+                        // 50 (m) buffer.
+                        if (firstLocation.distanceTo(secondLocation) >= ADDITIONAL_DISTANCE_BETWEEN_BEACONS +
+                                first.accuracy!! + second.accuracy!! + (first.age!! + second.age!!) * 15){
                             distanceReached = true
                         }
                     }
