@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
 import androidx.hilt.work.HiltWorker
@@ -16,6 +17,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
+import de.seemoo.at_tracking_detection.worker.ForegroundService
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -88,6 +90,9 @@ class TrackingDetectorWorker @AssistedInject constructor(
             device?.let { d -> deviceRepository.update(d) }
             notificaitonsSent += 1
         }
+
+        val service = Intent(getApplicationContext(), ForegroundService::class.java)
+        getApplicationContext()!!.startForegroundService(service)
 
         Timber.d("Tracking detector worker finished. Sent $notificaitonsSent notifications")
         return Result.success(
