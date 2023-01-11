@@ -9,6 +9,7 @@ import android.content.Context
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -30,7 +31,10 @@ import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.delay
 import timber.log.Timber
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -60,6 +64,15 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
 
     private var locationRetrievedCallback: (() -> Unit)? = null
+
+    private fun getSecondsSinceLocation(location: Location): Long {
+        val millisecondsSinceLocation = (SystemClock.elapsedRealtimeNanos() - location.elapsedRealtimeNanos) / 1000000L
+        val timeOfLocationevent = System.currentTimeMillis() - millisecondsSinceLocation
+        val locationDate = Instant.ofEpochMilli(timeOfLocationevent).atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val timeDiff = ChronoUnit.SECONDS.between(locationDate, LocalDateTime.now())
+
+        return timeDiff
+    }
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
@@ -121,7 +134,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 discoveredDevice.scanResult,
                 location?.latitude,
                 location?.longitude,
-                discoveredDevice.discoveryDate
+                discoveredDevice.discoveryDate,
+                location?.accuracy?.toInt(),
+                getSecondsSinceLocation(location!!).toInt()
             )
         }
 
@@ -172,7 +187,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         scanResult: ScanResult,
         latitude: Double?,
         longitude: Double?,
-        discoveryDate: LocalDateTime
+        discoveryDate: LocalDateTime,
+        accuracy: Int?,
+        age: Int?
     ) {
         var device = deviceRepository.getDevice(scanResult.device.address)
         if (device == null) {
@@ -191,12 +208,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // Save the manufacturer data to the beacon
             Beacon(
                 discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                scanResult.scanRecord?.bytes, uuids
+                scanResult.scanRecord?.bytes, uuids, accuracy, age
             )
         } else {
             Beacon(
                 discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                null, uuids
+                null, uuids, accuracy, age
             )
         }
 
