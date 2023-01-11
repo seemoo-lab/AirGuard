@@ -266,7 +266,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             }
 
             // Fallback if no location is fetched in time
-            handler.postDelayed(runnable, 8000)
+            handler.postDelayed(runnable, 180000)  // wait up to 3 minutes for GPS lock
 
         }
     }
