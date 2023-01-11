@@ -20,7 +20,9 @@ data class Beacon(
     @ColumnInfo(name = "longitude") var longitude: Double?,
     @ColumnInfo(name = "latitude") var latitude: Double?,
     @ColumnInfo(name = "mfg") var manufacturerData: ByteArray?,
-    @ColumnInfo(name = "serviceUUIDs") var serviceUUIDs: List<String>?
+    @ColumnInfo(name = "serviceUUIDs") var serviceUUIDs: List<String>?,
+    @ColumnInfo(name = "accuracy") var accuracy: Int?,
+    @ColumnInfo(name = "age") var age: Int?
 ) {
     constructor(
         receivedAt: LocalDateTime,
@@ -29,7 +31,9 @@ data class Beacon(
         longitude: Double?,
         latitude: Double?,
         mfg: ByteArray?,
-        serviceUUIDs: List<String>?
+        serviceUUIDs: List<String>?,
+        accuracy: Int?,
+        age: Int?
     ) : this(
         0,
         receivedAt,
@@ -38,7 +42,9 @@ data class Beacon(
         longitude,
         latitude,
         mfg,
-        serviceUUIDs
+        serviceUUIDs,
+        accuracy,
+        age
     )
 
     fun getFormattedDate(): String =
@@ -56,6 +62,8 @@ data class Beacon(
         if (deviceAddress != other.deviceAddress) return false
         if (longitude != other.longitude) return false
         if (latitude != other.latitude) return false
+        if (accuracy != other.accuracy) return false
+        if (age != other.age) return false
 
         return true
     }
