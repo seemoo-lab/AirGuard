@@ -114,9 +114,8 @@ data class BaseDevice(
     companion object {
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.defaultDeviceName
-                DeviceType.GALAXY_SMART_TAG -> SmartTag.defaultDeviceName
-                DeviceType.SAMSUNG -> SamsungDevice.defaultDeviceName
+                DeviceType.GALAXY_SMART_TAG_PLUS -> null
+                DeviceType.GALAXY_SMART_TAG -> null
                 else -> scanResult.scanRecord?.deviceName
             }
         }

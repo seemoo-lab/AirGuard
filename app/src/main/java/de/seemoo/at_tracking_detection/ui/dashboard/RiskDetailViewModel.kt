@@ -39,14 +39,13 @@ class RiskDetailViewModel @Inject constructor(
     }
 
     var riskColor: Int
-    var numberOfTrackersFound: Int = trackersFound.count()
+    val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDate).asLiveData()
 
-    val totalLocationsTrackedCount: Int = locationRepository.locationsSince(relevantDate).count()
+    val totalLocationsTrackedCount= locationRepository.locationsSinceCount(relevantDate).asLiveData()
 
-    val discoveredBeacons: List<Beacon> = beaconRepository.getBeaconsForDevices(trackersFound)
+    // val discoveredBeacons: List<Beacon> = beaconRepository.getBeaconsForDevices(trackersFound)
 
-    //Total numbers
-    val totalNumberOfDevicesFound: LiveData<Int> = deviceRepository.deviceCountSince(relevantDate).asLiveData()
+    val totalNumberOfDevicesFound: LiveData<Int> = deviceRepository.countNotTracking.asLiveData()
 
     val isMapLoading = MutableLiveData(false)
 
