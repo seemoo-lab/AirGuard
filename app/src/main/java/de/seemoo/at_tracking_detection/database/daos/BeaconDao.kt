@@ -8,8 +8,12 @@ import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Dao
 interface BeaconDao {
-    @Query("SELECT * FROM beacon")
+    @Query("SELECT * FROM beacon ORDER BY receivedAt DESC")
     fun getAllBeacons(): List<Beacon>
+
+    // @Query("SELECT mfg FROM beacon WHERE mfg LIKE :Key LIMIT 1")
+    @Query("SELECT * FROM beacon WHERE mfg LIKE :ServiceData")
+    fun getBeaconsWithDataLike(ServiceData: String): List<Beacon>
 
     @Query("SELECT * FROM beacon WHERE receivedAt >= :since")
     fun getLatestBeacons(since: LocalDateTime): List<Beacon>

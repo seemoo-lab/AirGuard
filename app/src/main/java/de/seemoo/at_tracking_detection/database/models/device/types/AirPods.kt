@@ -151,8 +151,12 @@ class AirPods(val id: Int) : Device(), Connectable {
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()), // Empty status byte?
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte()) // ff?
+                    // Only Offline Devices:
+                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()), // Empty status byte?
+                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte()) // ff?
+                    // All Devices:
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()),
+                    byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
                 )
                 .build()
 

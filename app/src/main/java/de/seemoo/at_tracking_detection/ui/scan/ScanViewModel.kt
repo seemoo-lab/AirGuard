@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
@@ -52,7 +53,7 @@ class ScanViewModel @Inject constructor(
     fun addScanResult(scanResult: ScanResult) {
         val currentDate = LocalDateTime.now()
         if (beaconRepository.getNumberOfBeaconsAddress(
-            deviceAddress = scanResult.device.address,
+            deviceAddress = getPublicKey(scanResult),
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
         ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
@@ -67,9 +68,6 @@ class ScanViewModel @Inject constructor(
                     longitude = location?.longitude,
                     accuracy = location?.accuracy,
                     discoveryDate = currentDate,
-                    beaconRepository = beaconRepository,
-                    deviceRepository = deviceRepository,
-                    locationRepository = locationRepository,
                 )
             }
         }

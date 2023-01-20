@@ -1,9 +1,11 @@
 package de.seemoo.at_tracking_detection.database.repository
 
+import android.os.ParcelUuid
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.SmartTag
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject

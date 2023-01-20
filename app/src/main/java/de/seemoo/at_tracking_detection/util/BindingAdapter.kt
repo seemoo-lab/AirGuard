@@ -6,12 +6,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
 import java.util.*
 import kotlin.math.pow
 
@@ -56,14 +56,14 @@ fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
         ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-256)
         ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-16776961)
         ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
-        ConnectionState.UNKOWN -> materialCardView.setCardBackgroundColor(0)
+        ConnectionState.UNKNOWN -> materialCardView.setCardBackgroundColor(0)
     }
 }
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-    val deviceFromDb = deviceRepository?.getDevice(scanResult.device.address)
+    val deviceFromDb = deviceRepository?.getDevice(SamsungDevice.getPublicKey(scanResult))
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {
@@ -74,8 +74,9 @@ fun setDeviceName (textView: TextView, scanResult: ScanResult) {
 
 @BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)
 fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
-    val device = BaseDevice(scanResult).device
-    if (device.isConnectable()) {
+    val baseDevice = BaseDevice(scanResult)
+    val device = baseDevice.device
+    if (device.isConnectable() && baseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
         view.visibility = View.VISIBLE
     }else {
         view.visibility = View.GONE

@@ -17,6 +17,6 @@ interface DeviceContext {
     val statusByteDeviceType: UInt
 
     fun getConnectionState(scanResult: ScanResult): ConnectionState {
-        return ConnectionState.UNKOWN
+        return ConnectionState.UNKNOWN
     }
 }

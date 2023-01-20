@@ -17,8 +17,6 @@ data class Beacon(
     @ColumnInfo(name = "receivedAt") val receivedAt: LocalDateTime,
     @ColumnInfo(name = "rssi") val rssi: Int,
     @ColumnInfo(name = "deviceAddress") var deviceAddress: String,
-    /* @ColumnInfo(name = "longitude") var longitude: Double?,
-    @ColumnInfo(name = "latitude") var latitude: Double?, */
     @ColumnInfo(name = "locationId") var locationId: Int?,
     @ColumnInfo(name = "mfg") var manufacturerData: ByteArray?,
     @ColumnInfo(name = "serviceUUIDs") var serviceUUIDs: List<String>?
@@ -46,6 +44,21 @@ data class Beacon(
 
     fun getFormattedDate(): String =
         receivedAt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+
+    fun getKey(): ByteArray? {
+        return manufacturerData?.get(22)?.let { // TODO: test, maybe also use in ScanBluetoothWorker with ServiceData instead of manufacturerData???
+            byteArrayOf(
+                manufacturerData?.get(15)!!,
+                manufacturerData?.get(16)!!,
+                manufacturerData?.get(17)!!,
+                manufacturerData?.get(18)!!,
+                manufacturerData?.get(19)!!,
+                manufacturerData?.get(20)!!,
+                manufacturerData?.get(21)!!,
+                it,)
+        }
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
