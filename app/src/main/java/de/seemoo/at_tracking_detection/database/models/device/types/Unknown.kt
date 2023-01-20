@@ -26,7 +26,7 @@ class Unknown(val id: Int) : Device() {
                 .setManufacturerData(
                     0x4C,
                     byteArrayOf((0x12).toByte(), (0x19).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte())
+                    byteArrayOf((0xFF).toByte(), (0xFF).toByte()) // TODO: remove
                 ).build()
 
         override val deviceType: DeviceType

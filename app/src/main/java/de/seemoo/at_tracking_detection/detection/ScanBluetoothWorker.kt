@@ -7,7 +7,6 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.location.Location
-import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import androidx.hilt.work.HiltWorker
@@ -16,21 +15,18 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.SmartTag
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
-import de.seemoo.at_tracking_detection.util.Util.getBitsFromByte
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
@@ -126,9 +122,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 location?.longitude,
                 location?.accuracy,
                 discoveredDevice.discoveryDate,
-                beaconRepository,
-                deviceRepository,
-                locationRepository,
             )
         }
 
@@ -246,35 +239,53 @@ class ScanBluetoothWorker @AssistedInject constructor(
             longitude: Double?,
             accuracy: Float?,
             discoveryDate: LocalDateTime,
-            beaconRepository: BeaconRepository,
-            deviceRepository: DeviceRepository,
-            locationRepository: LocationRepository,
         ) {
-            saveDevice(deviceRepository, scanResult, discoveryDate) ?: return // return when device does not qualify to be saved
+            saveDevice(scanResult, discoveryDate) ?: return // return when device does not qualify to be saved
 
             // set locationId to null if gps location could not be retrieved
-            val locId: Int? = saveLocation(locationRepository, latitude, longitude, discoveryDate, accuracy)?.locationId
+            val locId: Int? = saveLocation(latitude, longitude, discoveryDate, accuracy)?.locationId
 
-            saveBeacon(beaconRepository, scanResult, discoveryDate, locId)
+            saveBeacon(scanResult, discoveryDate, locId)
         }
 
+
+    /*
+    // TODO: remove
+    private fun checkBeacon(scanResult: ScanResult): Boolean? {
+        // returns true if a samsung beacon with this key exists
+        // returns false if no samsung beacon with this key exists
+        // returns null if scanResult is invalid
+
+        println("checkBeacon")
+        println(scanResult)
+
+        val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+        val key: ByteArray = getPublicKey(scanResult) ?: return null
+        println(key[0])
+        beaconRepository.getSamsungBeaconWithKey(key)?: return false
+        println(beaconRepository.getSamsungBeaconWithKey(key)!!.beaconId)
+        return true
+    }
+
+     */
+
     private suspend fun saveBeacon(
-            beaconRepository: BeaconRepository,
             scanResult: ScanResult,
             discoveryDate: LocalDateTime,
             locId: Int?
         ): Beacon {
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val beacon =
                 if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
-                        discoveryDate, scanResult.rssi, scanResult.device.address, locId,
+                        discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
                         scanResult.scanRecord?.bytes, uuids
                     )
                 } else {
                     Beacon(
-                        discoveryDate, scanResult.rssi, scanResult.device.address, locId,
+                        discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
                         null, uuids
                     )
                 }
@@ -284,19 +295,36 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
 
         private suspend fun saveDevice(
-            deviceRepository: DeviceRepository,
             scanResult: ScanResult,
             discoveryDate: LocalDateTime
         ): BaseDevice? {
-            var device = deviceRepository.getDevice(scanResult.device.address)
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+
+            val deviceAddress = getPublicKey(scanResult)
+
+            /*
+            // TODO: remove
+            val deviceAddress = when(DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.SAMSUNG -> getPublicKey(scanResult)
+                DeviceType.GALAXY_SMART_TAG -> getPublicKey(scanResult)
+                DeviceType.GALAXY_SMART_TAG_PLUS -> getPublicKey(scanResult)
+                else -> scanResult.device.address
+            }
+            */
+
+            // Checks if Device already exists in device database
+            var device = deviceRepository.getDevice(deviceAddress)
             if (device == null) {
+                // Do not Save Samsung Devices
                 device = BaseDevice(scanResult)
 
                 // Check if ConnectionState qualifies Device to be saved
                 // Only Save when Device is offline long enough
                 when(device.getConnectionState(scanResult)){
                     ConnectionState.OVERMATURE_OFFLINE -> {}
-                    ConnectionState.UNKOWN -> {}
+                    // ConnectionState.OFFLINE -> {} // TODO: remove
+                    // ConnectionState.PREMATURE_OFFLINE -> {} // TODO: remove
+                    ConnectionState.UNKNOWN -> {}
                     else -> return null
                 }
 
@@ -313,12 +341,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
 
         private suspend fun saveLocation(
-            locationRepository: LocationRepository,
             latitude: Double?,
             longitude: Double?,
             discoveryDate: LocalDateTime,
             accuracy: Float?
         ): LocationModel? {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
             // set location to null if gps location could not be retrieved
             var location: LocationModel? = null
 

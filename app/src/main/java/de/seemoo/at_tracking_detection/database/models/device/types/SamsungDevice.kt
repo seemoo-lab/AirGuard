@@ -74,7 +74,7 @@ open class SamsungDevice(open val id: Int) : Device(){
                 }
             }
 
-            return ConnectionState.UNKOWN
+            return ConnectionState.UNKNOWN
         }
 
         fun getSamsungDeviceType(scanResult: ScanResult): DeviceType{
@@ -99,6 +99,18 @@ open class SamsungDevice(open val id: Int) : Device(){
             } else {
                 Timber.d("Samsung Service Data is SmartTag")
                 SmartTag.deviceType
+            }
+        }
+
+        fun getPublicKey(scanResult: ScanResult): String{
+            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+
+            fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+
+            return if (serviceData == null || serviceData.size < 12) {
+                scanResult.device.address
+            } else {
+                byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
             }
         }
     }

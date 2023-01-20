@@ -1,10 +1,10 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
-import android.bluetooth.le.ScanRecord
 import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -55,7 +55,7 @@ data class BaseDevice(
     constructor(scanResult: ScanResult) : this(
         0,
         UUID.randomUUID().toString(),
-        scanResult.device.address,
+        getPublicKey(scanResult),
         getDeviceName(scanResult),
         false,
         scanResult.let {
@@ -107,7 +107,11 @@ data class BaseDevice(
             DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
             DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
             DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
-            else -> ConnectionState.UNKOWN
+            DeviceType.AIRPODS -> AppleDevice.getConnectionState(scanResult)
+            DeviceType.FIND_MY -> AppleDevice.getConnectionState(scanResult)
+            DeviceType.AIRTAG -> AppleDevice.getConnectionState(scanResult)
+            DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+            else -> ConnectionState.UNKNOWN
         }
     }
 
