@@ -23,7 +23,8 @@ class RiskLevelEvaluator(
      * Evaluates the risk that the user is at. For this all notifications sent (equals trackers discovered) for the last `RELEVANT_DAYS` are checked and a risk score is evaluated
      */
     fun evaluateRiskLevel(): RiskLevel {
-        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantTrackingDate)
+        // val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantTrackingDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDate)
 
         val totalTrackers = baseDevices.count()
 
@@ -88,7 +89,7 @@ class RiskLevelEvaluator(
         private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3
         const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F
-        const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 8
+        const val HOURS_AT_LEAST_TRACKED_BEFORE_ALARM: Long = 2 // TODO: how high???
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3
         private val atLeastTrackedSince: LocalDateTime = LocalDateTime.now().minusHours(HOURS_AT_LEAST_TRACKED_BEFORE_ALARM)
