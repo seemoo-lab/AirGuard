@@ -302,16 +302,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
             val deviceAddress = getPublicKey(scanResult)
 
-            /*
-            // TODO: remove
-            val deviceAddress = when(DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.SAMSUNG -> getPublicKey(scanResult)
-                DeviceType.GALAXY_SMART_TAG -> getPublicKey(scanResult)
-                DeviceType.GALAXY_SMART_TAG_PLUS -> getPublicKey(scanResult)
-                else -> scanResult.device.address
-            }
-            */
-
             // Checks if Device already exists in device database
             var device = deviceRepository.getDevice(deviceAddress)
             if (device == null) {
@@ -322,8 +312,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 // Only Save when Device is offline long enough
                 when(device.getConnectionState(scanResult)){
                     ConnectionState.OVERMATURE_OFFLINE -> {}
-                    // ConnectionState.OFFLINE -> {} // TODO: remove
-                    // ConnectionState.PREMATURE_OFFLINE -> {} // TODO: remove
+                    // ConnectionState.OFFLINE -> {}
+                    // ConnectionState.PREMATURE_OFFLINE -> {}
                     ConnectionState.UNKNOWN -> {}
                     else -> return null
                 }

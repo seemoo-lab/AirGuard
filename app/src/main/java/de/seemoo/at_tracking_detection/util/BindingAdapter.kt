@@ -52,10 +52,10 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
     val device = BaseDevice(scanResult)
     when (device.getConnectionState(scanResult)) {
-        ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-16711936)
-        ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-256)
-        ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-16776961)
-        ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(0)
         ConnectionState.UNKNOWN -> materialCardView.setCardBackgroundColor(0)
     }
 }
