@@ -37,7 +37,8 @@ enum class DeviceType {
     fun canBeIgnored(): Boolean {
         return when (this) {
             TILE -> true
-            SAMSUNG -> true
+            GALAXY_SMART_TAG_PLUS -> true
+            GALAXY_SMART_TAG -> true
             APPLE -> true
             else -> false
         }

@@ -5,7 +5,6 @@ import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.types.SmartTag
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -54,4 +53,9 @@ class BeaconRepository @Inject constructor(
 
     @WorkerThread
     suspend fun insert(beacon: Beacon): Long = beaconDao.insert(beacon)
+
+    @WorkerThread
+    suspend fun update(beacon: Beacon) {
+        beaconDao.update(beacon)
+    }
 }

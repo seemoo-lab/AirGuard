@@ -4,7 +4,6 @@ import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Dao
 interface BeaconDao {
@@ -64,6 +63,9 @@ interface BeaconDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(beacon: Beacon): Long
+
+    @Update
+    suspend fun update(beacon: Beacon)
 
     @Delete
     suspend fun delete(beacon: Beacon)
