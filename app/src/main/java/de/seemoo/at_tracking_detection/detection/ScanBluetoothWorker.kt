@@ -252,11 +252,19 @@ class ScanBluetoothWorker @AssistedInject constructor(
             scanResult: ScanResult,
             discoveryDate: LocalDateTime,
             locId: Int?
-        ): Beacon {
+        ): Beacon? {
             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
-            val beacon =
-                if (BuildConfig.DEBUG) {
+            val uniqueIdentifier = getPublicKey(scanResult)
+
+            var beacon: Beacon? = null
+            val beacons = beaconRepository.getDeviceBeaconsSince(
+                deviceAddress = uniqueIdentifier,
+                since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
+            )
+
+            if (beacons.isEmpty()) {
+                beacon = if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
                         discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
@@ -268,8 +276,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
                         null, uuids
                     )
                 }
+                beaconRepository.insert(beacon)
+            } else if ((beacons[0].locationId == null || beacons[0].locationId == null) && locId != null && locId != 0){
+                beacon = beacons[0]
+                beacon.locationId = locId
+                beaconRepository.update(beacon)
+            }
 
-            beaconRepository.insert(beacon)
             return beacon
         }
 
