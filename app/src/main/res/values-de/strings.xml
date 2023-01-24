@@ -26,6 +26,8 @@
     <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem AirTag, den Du besitzt) verfolgt wirst, dann kannst Du diese ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag. Ein bekannter AirTag wird also nach einem Tag als ein neuer angezeigt.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
+    <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>
+    <string name="settings_show_connected_devices">Zeigt Geräte im Scan-Tab, welche mit ihrem Besitzergerät verbunden sind</string>
     <string name="error_requesting_location_permission">Die Standortberechtigung konnte nicht angefragt werden.</string>
     <string name="tracking_locate_at_title">Ton abspielen</string>
     <string name="tracking_locate_at_subtitle">AirTag lokalisieren</string>

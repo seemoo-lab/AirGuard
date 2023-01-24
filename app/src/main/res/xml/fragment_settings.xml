@@ -30,6 +30,13 @@
         android:summary="@string/settings_metric_summary"
         android:title="@string/settings_metric_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:icon="@drawable/ic_radar_tracking"
+        android:key="show_connected_devices"
+        android:summary="@string/settings_show_connected_devices"
+        android:title="@string/settings_show_connected_devices_title" />
+
     <Preference
         android:icon="@drawable/ic_group_48px"
         android:key="survey"

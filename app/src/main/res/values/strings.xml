@@ -86,6 +86,9 @@
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information.</string>
     <string name="info">Information</string>
 
+    <string name="settings_show_connected_devices_title">Show connected devices</string>
+    <string name="settings_show_connected_devices">Show devices that are connected to their owner devices in the scan tab</string>
+
     <string name="settings_third_party_libraries_title">Third Party Libraries</string>
     <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
 

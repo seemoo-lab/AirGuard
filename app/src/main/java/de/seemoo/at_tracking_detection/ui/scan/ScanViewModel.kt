@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -23,7 +25,6 @@ import kotlinx.coroutines.async
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -52,8 +53,9 @@ class ScanViewModel @Inject constructor(
 
     fun addScanResult(scanResult: ScanResult) {
         val currentDate = LocalDateTime.now()
+        val uniqueIdentifier = getPublicKey(scanResult) // either public key or MAC-Address
         if (beaconRepository.getNumberOfBeaconsAddress(
-            deviceAddress = getPublicKey(scanResult),
+            deviceAddress = uniqueIdentifier,
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
         ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
@@ -74,12 +76,19 @@ class ScanViewModel @Inject constructor(
 
         val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
         bluetoothDeviceListValue.removeIf {
-            it.device.address == scanResult.device.address
+            getPublicKey(it) == uniqueIdentifier
         }
-        bluetoothDeviceListValue.add(scanResult)
+
+        if (!SharedPrefs.showConnectedDevices && BaseDevice.getConnectionState(scanResult) !in DeviceManager.savedConnectionStates){
+            // Do not show connected devices when criteria is met
+            bluetoothDeviceListValue.remove(scanResult)
+        } else {
+            bluetoothDeviceListValue.add(scanResult)
+        }
+
         bluetoothDeviceListValue.sortByDescending { it.rssi }
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
-        Timber.d("Adding scan result ${scanResult.device.address}")
+        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(
             "status bytes: ${
                 scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
@@ -92,7 +101,7 @@ class ScanViewModel @Inject constructor(
 
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
 
-    suspend fun saveScanToRepository(){ // TODO: when App is closed
+    suspend fun saveScanToRepository(){
         // Not used anymore, because manual scan is always when the app is open
         if (scanStart.value == LocalDateTime.MIN) { return }
         val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()
