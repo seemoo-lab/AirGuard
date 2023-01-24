@@ -159,4 +159,12 @@ object SharedPrefs {
         }set(value) {
         sharedPreferences.edit().putBoolean("survey_notification_sent", value).apply()
     }
+
+    var showConnectedDevices: Boolean
+        get() {
+            return sharedPreferences.getBoolean("show_connected_devices", false)
+        }
+        set(value) {
+            sharedPreferences.edit().putBoolean("show_connected_devices", value).apply()
+        }
 }

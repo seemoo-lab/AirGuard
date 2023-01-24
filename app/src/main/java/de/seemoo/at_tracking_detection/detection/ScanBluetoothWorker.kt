@@ -248,27 +248,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             saveBeacon(scanResult, discoveryDate, locId)
         }
 
-
-    /*
-    // TODO: remove
-    private fun checkBeacon(scanResult: ScanResult): Boolean? {
-        // returns true if a samsung beacon with this key exists
-        // returns false if no samsung beacon with this key exists
-        // returns null if scanResult is invalid
-
-        println("checkBeacon")
-        println(scanResult)
-
-        val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
-        val key: ByteArray = getPublicKey(scanResult) ?: return null
-        println(key[0])
-        beaconRepository.getSamsungBeaconWithKey(key)?: return false
-        println(beaconRepository.getSamsungBeaconWithKey(key)!!.beaconId)
-        return true
-    }
-
-     */
-
     private suspend fun saveBeacon(
             scanResult: ScanResult,
             discoveryDate: LocalDateTime,
@@ -310,7 +289,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
                 // Check if ConnectionState qualifies Device to be saved
                 // Only Save when Device is offline long enough
-                when(device.getConnectionState(scanResult)){
+                when(BaseDevice.getConnectionState(scanResult)){
                     ConnectionState.OVERMATURE_OFFLINE -> {}
                     // ConnectionState.OFFLINE -> {}
                     // ConnectionState.PREMATURE_OFFLINE -> {}

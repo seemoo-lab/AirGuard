@@ -101,20 +101,6 @@ data class BaseDevice(
 
     fun getFormattedLastSeenDate(): String = lastSeen.format(dateTimeFormatter)
 
-    fun getConnectionState(scanResult: ScanResult): ConnectionState {
-        return when (DeviceManager.getDeviceType(scanResult)) {
-            DeviceType.TILE -> Tile.getConnectionState(scanResult)
-            DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
-            DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
-            DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
-            DeviceType.AIRPODS -> AppleDevice.getConnectionState(scanResult)
-            DeviceType.FIND_MY -> AppleDevice.getConnectionState(scanResult)
-            DeviceType.AIRTAG -> AppleDevice.getConnectionState(scanResult)
-            DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
-            else -> ConnectionState.UNKNOWN
-        }
-    }
-
     companion object {
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
@@ -124,6 +110,18 @@ data class BaseDevice(
             }
         }
 
-
+        fun getConnectionState(scanResult: ScanResult): ConnectionState {
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.TILE -> Tile.getConnectionState(scanResult)
+                DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.AIRPODS -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.FIND_MY -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.AIRTAG -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+                else -> ConnectionState.UNKNOWN
+            }
+        }
     }
 }

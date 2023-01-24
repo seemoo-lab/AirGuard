@@ -50,8 +50,7 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 
 @BindingAdapter("setDeviceColor", requireAll = true)
 fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
-    val device = BaseDevice(scanResult)
-    when (device.getConnectionState(scanResult)) {
+    when (BaseDevice.getConnectionState(scanResult)) {
         ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-7829368)
         ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
         ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
@@ -74,9 +73,8 @@ fun setDeviceName (textView: TextView, scanResult: ScanResult) {
 
 @BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)
 fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
-    val baseDevice = BaseDevice(scanResult)
-    val device = baseDevice.device
-    if (device.isConnectable() && baseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
+    val device = BaseDevice(scanResult).device
+    if (device.isConnectable() && BaseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
         view.visibility = View.VISIBLE
     }else {
         view.visibility = View.GONE

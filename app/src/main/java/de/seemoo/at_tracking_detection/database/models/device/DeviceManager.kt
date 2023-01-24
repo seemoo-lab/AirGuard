@@ -6,13 +6,13 @@ import android.content.IntentFilter
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
-import de.seemoo.at_tracking_detection.util.Util.getBitsFromByte
 import kotlin.experimental.and
 
 object DeviceManager {
 
     val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
+    val savedConnectionStates = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Checking device type for ${scanResult.device.address}")
