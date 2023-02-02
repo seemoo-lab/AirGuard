@@ -114,7 +114,7 @@ class NotificationBuilder @Inject constructor(
             .setContentText(notifyText)
             .setPriority(getNotificationPriority())
             .setContentIntent(pendingNotificationIntent(bundle, notificationId))
-            .setCategory(Notification.CATEGORY_ALARM)
+            .setCategory(getNotificationCategory())
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
             .addAction(
@@ -184,7 +184,7 @@ class NotificationBuilder @Inject constructor(
             .setContentText(notificationText)
             .setPriority(getNotificationPriority())
             .setContentIntent(pendingIntent)
-            .setCategory(Notification.CATEGORY_ALARM)
+            .setCategory(getNotificationCategory())
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
             .addAction(
@@ -276,6 +276,14 @@ class NotificationBuilder @Inject constructor(
             NotificationCompat.PRIORITY_HIGH
         } else {
             NotificationCompat.PRIORITY_DEFAULT
+        }
+    }
+
+    private fun getNotificationCategory(): String {
+        return if (SharedPrefs.notificationPriorityHigh){
+            Notification.CATEGORY_ALARM
+        } else {
+            Notification.CATEGORY_STATUS
         }
     }
 }

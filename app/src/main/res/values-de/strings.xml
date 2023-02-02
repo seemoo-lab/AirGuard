@@ -189,8 +189,8 @@
     <string name="notification_title_vocal">Ein %s folgt dir</string>
     <string name="notification_title_consonant">Ein %s folgt dir</string>
     <string name="notification_title_multiple">%s folgen dir</string>
-    <string name="notification_text_single">Öffnen, um weitere Informationen zu erhalten. Die %s ist Dir für mindestens %d Stunden gefolgt.</string>
-    <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens %d Stunden gefolgt.</string>
+    <string name="notification_text_single">Öffnen, um weitere Informationen zu erhalten. Die %s ist Dir für mindestens %d Minuten gefolgt.</string>
+    <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens %d Minuten gefolgt.</string>
     <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens %d Minuten gefolgt.</string>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
     <string name="ignored_devices">Ignorierte Geräte</string>
