@@ -35,11 +35,9 @@ enum class DeviceType {
     }
 
     fun canBeIgnored(): Boolean {
+        // Only Devices with a constant identifier can be ignored
         return when (this) {
             TILE -> true
-            GALAXY_SMART_TAG_PLUS -> true
-            GALAXY_SMART_TAG -> true
-            APPLE -> true
             else -> false
         }
     }
