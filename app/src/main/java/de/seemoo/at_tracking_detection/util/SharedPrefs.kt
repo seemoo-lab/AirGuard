@@ -1,10 +1,7 @@
 package de.seemoo.at_tracking_detection.util
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -166,5 +163,24 @@ object SharedPrefs {
         }
         set(value) {
             sharedPreferences.edit().putBoolean("show_connected_devices", value).apply()
+        }
+
+    var riskSensitivity: Int // TODO: implement element in settings
+        // 0: Low
+        // 1: Medium
+        // 2: High
+        get() {
+            return sharedPreferences.getInt("risk_sensitivity", 1)
+        }
+        set(value) {
+            sharedPreferences.edit().putInt("risk_sensitivity", value).apply()
+        }
+
+    var notificationPriorityHigh: Boolean
+        get() {
+            return sharedPreferences.getBoolean("notification_priority_high", true)
+        }
+        set(value) {
+            sharedPreferences.edit().putBoolean("notification_priority_high", value).apply()
         }
 }

@@ -191,7 +191,7 @@
     <string name="notification_title_multiple">%s folgen dir</string>
     <string name="notification_text_single">Öffnen, um weitere Informationen zu erhalten. Die %s ist Dir für mindestens %d Stunden gefolgt.</string>
     <string name="notification_text_multiple">Öffnen, um weitere Informationen zu erhalten. Der %s ist Dir für mindestens %d Stunden gefolgt.</string>
-    <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens %d Stunden gefolgt.</string>
+    <string name="notification_text_base">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens %d Minuten gefolgt.</string>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
     <string name="ignored_devices">Ignorierte Geräte</string>
     <string name="airtags_found">Gefundene AirTags</string>
@@ -214,4 +214,6 @@
     <string name="onboarding_setting_summary">Immer den Einrichtungsdialog anzeigen</string>
     <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
     <string name="device_name_samsung_device">Samsung Gerät %s</string>
+    <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
+    <string name="settings_notification_priority_high">Benachrichtigungen werden erstellt, auch wenn das Smartphone stumm oder in \"Bitte nicht stören\" geschaltet wurde</string>
 </resources>

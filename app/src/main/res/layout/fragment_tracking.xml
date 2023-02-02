@@ -53,7 +53,7 @@
                 app:deviceBeaconCount="@{vm.amountBeacons}"
                 app:isClickable="@{false}" />
 
-            <include
+            <!-- <include
                 android:id="@+id/location_missing_hint"
                 layout="@layout/item_icon_text_row_color"
                 android:layout_width="match_parent"
@@ -63,6 +63,7 @@
                 app:iconDrawable="@{@drawable/ic_baseline_info_24}"
                 app:rowText="@{@string/tracking_missing_beacons_info}"
                 />
+            -->
 
             <LinearLayout
                 android:layout_width="match_parent"
