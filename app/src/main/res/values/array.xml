@@ -10,4 +10,14 @@
         <item>light</item>
         <item>system_default</item>
     </string-array>
+    <string-array name="riskSensitivityName">
+        <item>@string/settings_risk_sensitivity_low</item>
+        <item>@string/settings_risk_sensitivity_medium</item>
+        <item>@string/settings_risk_sensitivity_high</item>
+    </string-array>
+    <string-array name="riskSensitivityValue">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

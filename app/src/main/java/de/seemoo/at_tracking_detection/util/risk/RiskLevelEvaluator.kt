@@ -135,7 +135,7 @@ class RiskLevelEvaluator(
                         // No False Alarm (Join via Notification)
                         if (falseAlarms == 0) {
                             val minTrackingTime = device.device.deviceContext.minTrackingTime
-                            val beaconList = beaconRepository.getDeviceBeacons(device.address)
+                            val beaconList = beaconRepository.getDeviceBeaconsSince(device.address, relevantTrackingDate)
                             val timeDiff = maxTimeDiffBetweenBeacons(beaconList)
 
                             // Tracker was detected for at least the minimum Tracking Time

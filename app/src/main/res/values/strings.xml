@@ -185,6 +185,11 @@
     <string name="app_theme_dark">Dark</string>
     <string name="app_theme_light">Light</string>
     <string name="app_theme_system_default">System Default</string>
+    <string name="settings_risk_sensitivity_low">Low</string>
+    <string name="settings_risk_sensitivity_medium">Medium</string>
+    <string name="settings_risk_sensitivity_high">High</string>
+    <string name="settings_risk_sensitivity_title">Detection Sensitivity</string>
+    <string name="settings_risk_sensitivity_summary">This setting controls how sensitive the tracking detection is. A higher setting results in a faster but possibly more inaccurate detection</string>
     <string name="settings_app_theme_title">App Theme</string>
     <string name="settings_app_theme_summary">Choose a theme!</string>
     <string name="settings_metric_title">Metric System</string>
