@@ -65,10 +65,10 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2)")
     fun getCountForTypes(deviceType1: String, deviceType2: String, since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(DISTINCT(beacon.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND device.lastSeen >= :since")
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.locationId != null AND beacon.locationId != 0 AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND device.lastSeen >= :since")
     fun getNumberOfLocationsForDevice(deviceAddress: String, since: LocalDateTime): Int
 
-    @Query("SELECT COUNT(DISTINCT(beacon.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.locationId != null AND beacon.locationId != 0 AND beacon.deviceAddress = device.address AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
     fun getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int
 
     @Transaction

@@ -6,8 +6,8 @@
     <string name="title_settings">Settings</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
-    <string name="title_tracking">A device with this {deviceAddress} is following you</string>
-    <string name="title_devices_tracking">Device Bluetooth address: {deviceAddress}</string>
+    <string name="title_tracking">A device with this ID: {deviceAddress} is following you</string>
+    <string name="title_devices_tracking">Device ID: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
     <string name="title_devices">Devices</string>
 
@@ -26,8 +26,8 @@
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="devices_swipe">Swipe to remove</string>
-    <string name="devices_list_empty">Whenever the app detects an AirTag or another Find My device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
-    <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can ignore them, which will appear here. Remember: An AirTag changes its Bluetooth address once a day, so a known AirTag becomes a new one after a day.</string>
+    <string name="devices_list_empty">Whenever the app detects an AirTag or another tracking device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
+    <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new one after a day.</string>
     <string name="settings_use_location_summary">If enabled, more detailed tracking information can be provided when being tracked.</string>
     <string name="settings_use_location_title">Use Location</string>
     <string name="error_requesting_location_permission">Error requesting background Location permission.</string>
@@ -68,15 +68,15 @@
 
         We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous.</string>
 
-    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag or Find My capable device is tracking you.</string>
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, SmartTag or a Tile is tracking you.</string>
     <string name="location_permission_title">Location Permission</string>
-    <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Find My devices even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
+    <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Bluetooth Trackers even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
 
     <string name="onboarding_ignore_battery_optimization_title">Battery Optimization</string>
     <string name="onboarding_ignore_battery_optimization_description">In order to prevent the App from being stopped by Android in the background, we need to disable battery optimization.</string>
     <string name="onboarding_ignore_battery_optimization">Ignore Battery Optimization</string>
     <string name="onboarding_4_title">Background Location Permission</string>
-    <string name="onboarding_4_description">To get a more detailed location history in case you\'re being tracked, allow this app to use your location all the time. This app collects location data to enable us to save the location of an AirTag or Find My device even when the app is closed or not in use. This feature is optional and no location data will leave your device.</string>
+    <string name="onboarding_4_description">To get a more detailed location history in case you\'re being tracked, allow this app to use your location all the time. This app collects location data to enable us to save the location of an AirTag or other Bluetooth Tracker even when the app is closed or not in use. This feature is optional and no location data will leave your device.</string>
     <string name="onboarding_5_title">All set</string>
     <string name="settings_theme_system_default">System Default</string>
     <string name="settings_theme_dark">Dark</string>
@@ -115,9 +115,9 @@
     <string name="device_icon">Device icon</string>
     <string name="location_sample_image">Location sample image</string>
     <string name="permissions_location_title">Background Location</string>
-    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag or Find My device is tracking you. This permission is optional.</string>
+    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, SmartTag or Tile is tracking you. This permission is optional.</string>
     <string name="onboarding_2_title">Location Permission</string>
-    <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding AirTags via Bluetooth Low Energy. Without this permission, the app does not work and will not find any tracking devices. Your location data never leaves your device. </string>
+    <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding Trackers via Bluetooth Low Energy. Without this permission, the app does not work and will not find any tracking devices. Your location data never leaves your device. </string>
     <string name="devices_edit_title">Edit device name</string>
     <string name="cancel_button">Cancel</string>
     <string name="devices_alter_removed">"%s" removed!</string>
@@ -158,7 +158,7 @@
     <string name="i_got_a_notification_what_should_i_do">I got a notification, what should I do?</string>
 
     <string name="find_tracker_help">
-        • False alarms are possible. Because someone next to you might use an AirTag or someone in public transport\n<br />
+        • False alarms are possible. Because someone next to you might use a Tracker (e.g. someone in public transport)\n<br />
         • If you receive multiple notifications at different days, make sure to use the Play sound feature!
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
@@ -217,7 +217,7 @@
     <string name="notification_ignore_device">IGNORE DEVICE</string>
     <string name="notification_false_alarm">FALSE ALARM</string>
     <string name="last_scans">Last scans</string>
-    <string name="tip_airtag_testing"><b>Testing the app?</b> AirTags cannot be discovered when they are connected to a nearby iPhone / iPad. While connected they also do not track the location. AirTags need to be disconnected from Bluetooth and wait 15min to be discovered with the app.</string>
+    <string name="tip_airtag_testing"><b>Testing the app?</b> AirTags can only be discovered while they are connected to a nearby iPhone / iPad if this is enabled in the settings. Otherwise AirTags / SmartTags need to be disconnected from Bluetooth for 15min to be discovered within the app. AirGuard does not save connected trackers. </string>
     <string name="none">None</string>
     <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Mode</string>

@@ -6,8 +6,8 @@
     <string name="title_settings">Einstellungen</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
-    <string name="title_tracking">Gerät mit der Adresse {deviceAddress} folgt Dir</string>
-    <string name="title_devices_tracking">Gerät mit Adresse {deviceAddress}</string>
+    <string name="title_tracking">Gerät mit der ID {deviceAddress} folgt Dir</string>
+    <string name="title_devices_tracking">Gerät mit ID {deviceAddress}</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices">Geräte</string>
     <string name="mark_false_alarm">FEHLALARM</string>
@@ -22,8 +22,8 @@
     <string name="devices_swipe">Zum Entfernen wischen</string>
     <string name="channel_name">Tracking-Erkennung</string>
     <string name="channel_description">Warnt dich vor "Find My"-Geräten, die dich evtl. verfolgen</string>
-    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder ein anderes "Find My"-Gerät in Deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in Deiner Umgebung waren und dich nicht verfolgen. Du erhältst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
-    <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem AirTag, den Du besitzt) verfolgt wirst, dann kannst Du diese ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag. Ein bekannter AirTag wird also nach einem Tag als ein neuer angezeigt.</string>
+    <string name="devices_list_empty">Sobald AirGuard einen AirTag oder einen anderen Tracker in Deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in Deiner Umgebung waren und dich nicht verfolgen. Du erhältst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
+    <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem AirTag, den Du besitzt) verfolgt wirst, dann kannst Du dies als Fehlalarm kennzeichnen. Geräte, die ihre Bluetooth-Adresse nicht ändern (z.B. Tile) kannst Du auch ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag, kann also nicht ignoriert werden und wird am nächsten Tag als neuer AirTag angezeigt.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>
@@ -32,7 +32,7 @@
     <string name="tracking_locate_at_title">Ton abspielen</string>
     <string name="tracking_locate_at_subtitle">AirTag lokalisieren</string>
     <string name="permissions_location_title">Standort im Hintergrund</string>
-    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "Find My"-Gerät erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
+    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, "Find My"-Gerät, SmartTag oder Tile erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
@@ -58,14 +58,14 @@
         - Wir werden einige Informationen über die entdeckten Geräte sammeln, wie den <b>Gerätetyp</b>, den <b>RSSI-Wert</b> (Signalstärke) und das <b>Datum und die Uhrzeit</b> der Entdeckung \n\n
         - Wie viele <b>Benachrichtigungen</b> angezeigt wurden, das <b>Datum und die Uhrzeit</b> der Benachrichtigung sowie das <b>Benutzerfeedback</b>, das gegeben werden kann \n\n
         Wir werden <b>KEINE</b> Standorte oder Daten teilen, die es uns ermöglichen könnten, dich zu identifizieren</string>
-    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls Du von einem Airtag, "Find My"-Gerät oder Tile verfolgt wirst.</string>
+    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls Du von einem Airtag, "Find My"-Gerät, SmartTag oder Tile verfolgt wirst.</string>
     <string name="onboarding_2_title">Standortberechtigung</string>
-    <string name="onboarding_2_description">AirGuard benötigt die Berechtigung, auf Deinen Standort zuzugreifen, um über Bluetooth Low Energy (LE) nach umliegenden AirTags und Tiles suchen zu dürfen. Du musst diese Berechtigung erteilen, um AirGuard zu verwenden.</string>
+    <string name="onboarding_2_description">AirGuard benötigt die Berechtigung, auf Deinen Standort zuzugreifen, um über Bluetooth Low Energy (LE) nach umliegenden AirTags, SmartTags und Tiles suchen zu dürfen. Du musst diese Berechtigung erteilen, um AirGuard zu verwenden.</string>
     <string name="onboarding_ignore_battery_optimization_title">Batterie-Optimierung</string>
     <string name="onboarding_ignore_battery_optimization_description">Um zu verhindern, dass AirGuard im Hintergrund beendet wird, müssen wir die Batterieoptimierung deaktivieren!</string>
     <string name="onboarding_ignore_battery_optimization">Batterie-Optimierung deaktivieren</string>
     <string name="onboarding_4_title">Berechtigung für den Standort im Hintergrund</string>
-    <string name="onboarding_4_description">"Wenn Du einen detaillierteren Standortverlauf sehen möchtest, ist die Berechtigung erforderlich, im Hintergrund auf den Standort zugreifen zu dürfen. Dies ermöglicht AirGuard konstant auf den Standort zuzugreifen, auch wenn AirGuard gerade geschlossen ist. Die Funktion ist optional. AirGuard verwendet die Standortdaten nur lokal, sie verlassen das Gerät nicht."</string>
+    <string name="onboarding_4_description">"Wenn Du einen detaillierteren Standortverlauf sehen möchtest, ist die Berechtigung erforderlich, im Hintergrund auf den Standort zugreifen zu dürfen. Dies ermöglicht AirGuard konstant auf den Standort zuzugreifen, auch wenn AirGuard gerade geschlossen ist. Diese Funktion ist optional. AirGuard verwendet die Standortdaten nur lokal, sie verlassen das Gerät nicht."</string>
     <string name="onboarding_5_title">Fertig!</string>
     <string name="settings_theme_system_default">Systemstandard</string>
     <string name="settings_theme_dark">Dunkel</string>
@@ -97,7 +97,7 @@
     <string name="device_icon">Geräte-Icon</string>
     <string name="location_sample_image">Standortbeispiel-Bild</string>
     <string name="location_permission_title">Standortzugriff</string>
-    <string name="location_permission_message">Diese App benötigt die Berechtigung, auf Deinen Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und andere "Find My"-Geräte zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem kannst Du der App optional erlauben, einen Standortverlauf anzuzeigen, wenn Du verfolgt werden solltest.</string>
+    <string name="location_permission_message">Diese App benötigt die Berechtigung, auf Deinen Standort zugreifen zu dürfen, um Bluetooth-Scans für AirTags und Bluetooth Tracker zu ermöglichen, auch wenn die App geschlossen oder nicht in Gebrauch ist. Außerdem kannst Du der App optional erlauben, einen Standortverlauf anzuzeigen, wenn Du verfolgt werden solltest.</string>
     <string name="permissions_background_location_title">Standort im Hintergrund</string>
     <string name="permission_background_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag oder "Find My"-Gerät erhalten, welches dir folgt. Diese Berechtigung ist optional.</string>
     <string name="devices_edit_title">Namen ändern</string>
@@ -139,7 +139,7 @@
     <string name="i_got_a_notification_what_should_i_do">Ich habe eine Benachrichtigung bekommen, was soll ich machen?</string>
 
     <string name="find_tracker_help">
-        • Falsche Alarme sind möglich. Es kann sein, dass jemand in Deiner Nähe einen AirTag verwendet.  \n<br />
+        • Falsche Alarme sind möglich. Es kann sein, dass jemand in Deiner Nähe einen Tracker verwendet. \n<br />
         • Wenn Du mehrere Benachrichtigungen an verschiedenen Tagen erhalten hast, dann ist das Risiko hoch. Versuche den Tracker klingeln zu lassen.
     </string>
     <string name="how_does_airguard_work">Wie funktioniert AirGuard?</string>
@@ -188,7 +188,7 @@
     <string name="notification_ignore_device">GERÄT IGNORIEREN</string>
     <string name="notification_false_alarm">FEHLALARM</string>
     <string name="last_scans">Last scans</string>
-    <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nicht gefunden werden. Sie tracken dann auch keinen Standort. Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden.</string>
+    <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nur gefunden werden, sofern es in den Einstellungen erlaubt wurde. Standardmäßig gilt: Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden. Verbundene Tracker werden nicht gespeichert. </string>
     <string name="none">Keiner</string>
     <string name="already_scanning_warning">Die App scannt bereits im Hintergrund. Bitte warte 10s und starte dann den Scan erneut.</string>
     <string name="notification_title_vocal">Ein %s folgt dir</string>
