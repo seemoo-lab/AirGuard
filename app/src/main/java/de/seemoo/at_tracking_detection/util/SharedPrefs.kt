@@ -165,7 +165,7 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("show_connected_devices", value).apply()
         }
 
-    var riskSensitivity: Int // TODO: implement element in settings
+    var riskSensitivity: Int
         // 0: Low
         // 1: Medium
         // 2: High

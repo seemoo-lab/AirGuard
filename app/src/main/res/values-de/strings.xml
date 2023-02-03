@@ -75,6 +75,11 @@
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
     <string name="tracking_info">Scanne diesen AirTag mit Deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
     <string name="info">Informationen</string>
+    <string name="settings_risk_sensitivity_low">Niedrig</string>
+    <string name="settings_risk_sensitivity_medium">Mittel</string>
+    <string name="settings_risk_sensitivity_high">Hoch</string>
+    <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
+    <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Führt möglicherweise zu mehr Fehlalarmen</string>
     <string name="settings_app_theme_title">App-Design</string>
     <string name="settings_app_theme_summary">Wähle ein Design</string>
     <string name="settings_third_party_libraries_title">Drittanbieter-Bibliotheken</string>

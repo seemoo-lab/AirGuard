@@ -23,6 +23,15 @@
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title" />
 
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/riskSensitivityName"
+        android:entryValues="@array/riskSensitivityValue"
+        android:icon="@drawable/ic_baseline_list_24"
+        android:key="risk_sensitivity"
+        android:summary="@string/settings_risk_sensitivity_summary"
+        android:title="@string/settings_risk_sensitivity_title" />
+
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:icon="@drawable/ic_radar_tracking"
