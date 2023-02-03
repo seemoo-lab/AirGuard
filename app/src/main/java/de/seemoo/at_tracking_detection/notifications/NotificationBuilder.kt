@@ -154,7 +154,10 @@ class NotificationBuilder @Inject constructor(
 
     }
 
-    fun buildTrackingNotification(baseDevice: BaseDevice, notificationId: Int): Notification {
+    fun buildTrackingNotification(
+        baseDevice: BaseDevice,
+        notificationId: Int
+    ): Notification {
         Timber.d("Notification with id $notificationId for device ${baseDevice.address} has been build!")
         val deviceAddress = baseDevice.address
 
