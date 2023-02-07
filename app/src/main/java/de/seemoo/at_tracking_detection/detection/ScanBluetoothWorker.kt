@@ -32,7 +32,6 @@ import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
-import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.MAX_ACCURACY_FOR_LOCATIONS
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -350,14 +349,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     Timber.d("Add new Location to the database!")
                     location = LocationModel(discoveryDate, longitude, latitude, accuracy)
                     locationRepository.insert(location)
-                } else if ((location.accuracy != null && accuracy != null && accuracy < location.accuracy!! && location.accuracy!! > MAX_ACCURACY_FOR_LOCATIONS) || (location.accuracy == null && accuracy != null)) {
-                    // If Location is more accurate than the previous location and the previous location was very inaccurate, then update that location
-                    Timber.d("Inaccurate Version of Location already in the database... Updating the last seen date!")
-                    location.lastSeen = discoveryDate
-                    location.latitude = (location.latitude + latitude) / 2
-                    location.longitude = (location.longitude + longitude) / 2
-                    location.accuracy = accuracy
-                    locationRepository.update(location)
                 } else {
                     // If location is within the set limit, just use that location and update lastSeen
                     Timber.d("Location already in the database... Updating the last seen date!")

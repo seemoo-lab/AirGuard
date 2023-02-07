@@ -16,8 +16,8 @@
         <item>@string/settings_risk_sensitivity_high</item>
     </string-array>
     <string-array name="riskSensitivityValue">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
     </string-array>
 </resources>

@@ -8,6 +8,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -23,6 +24,7 @@ class RiskLevelEvaluator(
      * Evaluates the risk that the user is at. For this all notifications sent (equals trackers discovered) for the last `RELEVANT_DAYS` are checked and a risk score is evaluated
      */
     fun evaluateRiskLevel(): RiskLevel {
+        Timber.d("evaluateRiskLevel() called")
         // val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantTrackingDate)
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDate)
 
@@ -34,6 +36,7 @@ class RiskLevelEvaluator(
             var riskMediumCounterStatic = 0 // Counter for Devices with Risk Medium with a static MAC-Address (e.g. Tile)
             var riskMediumCounterDynamic = 0 // Counter for Devices with Risk Medium with a dynamic MAC-Address (e.g. Apple)
             for (baseDevice in baseDevices) {
+                val useLocation = SharedPrefs.useLocationInTrackingDetection
                 val deviceRiskLevel = checkRiskLevelForDevice(baseDevice, useLocation)
                 if (deviceRiskLevel == RiskLevel.HIGH) {
                     return RiskLevel.HIGH
@@ -49,16 +52,17 @@ class RiskLevelEvaluator(
             val riskMediumCounterAll = riskMediumCounterDynamic + riskMediumCounterStatic
 
             return if (riskMediumCounterAll == 0) {
+                Timber.d("Risk Level is Low")
                 RiskLevel.LOW
             } else if (riskMediumCounterDynamic >= MAX_NUMBER_MEDIUM_RISK) {
+                Timber.d("Risk Level is High")
                 RiskLevel.HIGH
             } else {
+                Timber.d("Risk Level is Medium")
                 RiskLevel.MEDIUM
             }
         }
     }
-
-    private val useLocation = SharedPrefs.useLocationInTrackingDetection
 
     /**
      * The date when a tracker has been discovered last
@@ -88,7 +92,7 @@ class RiskLevelEvaluator(
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
         private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3 // Number of beacons with locations before notification is created
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
-        const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
+        private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8 // Minimum time difference until next notification
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
         val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
@@ -105,9 +109,9 @@ class RiskLevelEvaluator(
 
         fun getMinutesAtLeastTrackedBeforeAlarm(): Long {
             return when (SharedPrefs.riskSensitivity) {
-                0 -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW
-                1 -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
-                2 -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH
+                "low" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW
+                "medium" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
+                "high" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH
                 else -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
             }
         }
@@ -119,6 +123,8 @@ class RiskLevelEvaluator(
             val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
             val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository!!
+
+            Timber.d("Checking Risk Level for Device: ${device.address}")
 
             // Not ignored
             // Tracker has been seen long enough

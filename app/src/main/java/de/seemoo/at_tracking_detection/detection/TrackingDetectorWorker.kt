@@ -48,6 +48,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         cleanedBeaconsPerDevice.forEach { mapEntry ->
             val device = deviceRepository.getDevice(mapEntry.key)
+            val useLocation = SharedPrefs.useLocationInTrackingDetection
 
             if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
                 // Send Notification
@@ -69,8 +70,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 .build()
         )
     }
-
-    private val useLocation = SharedPrefs.useLocationInTrackingDetection
 
     /**
      * Retrieves the devices detected during the last scan (last 15min)
