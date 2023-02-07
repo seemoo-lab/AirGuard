@@ -24,7 +24,7 @@
         android:title="@string/settings_use_low_power_ble_title" />
 
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"
         android:entryValues="@array/riskSensitivityValue"
         android:icon="@drawable/ic_baseline_list_24"

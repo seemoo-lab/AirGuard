@@ -165,15 +165,15 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("show_connected_devices", value).apply()
         }
 
-    var riskSensitivity: Int
+    var riskSensitivity: String
         // 0: Low
         // 1: Medium
         // 2: High
         get() {
-            return sharedPreferences.getInt("risk_sensitivity", 1)
+            return sharedPreferences.getString("risk_sensitivity", "medium")?:"medium"
         }
         set(value) {
-            sharedPreferences.edit().putInt("risk_sensitivity", value).apply()
+            sharedPreferences.edit().putString("risk_sensitivity", value).apply()
         }
 
     var notificationPriorityHigh: Boolean
