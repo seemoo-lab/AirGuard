@@ -27,6 +27,8 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.lang.Integer.max
+import java.lang.Integer.min
 
 object Util {
 
@@ -62,7 +64,10 @@ object Util {
     }
 
     fun checkBluetoothPermission(): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||  ActivityCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ActivityCompat.checkSelfPermission(
+            ATTrackingDetectionApplication.getAppContext(),
+            Manifest.permission.BLUETOOTH_SCAN
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun getBitsFromByte(value: Byte, position: Int): Boolean {
@@ -71,7 +76,7 @@ object Util {
     }
 
     fun enableMyLocationOverlay(
-        map:MapView
+        map: MapView
     ) {
         val context = ATTrackingDetectionApplication.getAppContext()
         val locationOverlay = MyLocationNewOverlay(map)
@@ -156,7 +161,8 @@ object Util {
             return false
         }
 
-        val myLocationOverlay = map.overlays.firstOrNull{ it is MyLocationNewOverlay} as? MyLocationNewOverlay
+        val myLocationOverlay =
+            map.overlays.firstOrNull { it is MyLocationNewOverlay } as? MyLocationNewOverlay
         myLocationOverlay?.disableFollowLocation()
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
 
@@ -183,6 +189,28 @@ object Util {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
+    fun rssiToPercentage(rssi: Int, bestRssi: Int = -30, worstRssi: Int = -100): Float {
+        val actual = max(min(rssi, bestRssi), worstRssi)
+        return (actual.toFloat() - worstRssi.toFloat()) / (bestRssi.toFloat() - worstRssi.toFloat())
+    }
+
+    fun rssiToQuality(percentage: Float): Int {
+        return when (percentage) {
+            in 0.75..1.0 -> {
+                3
+            }
+            in 0.5..0.75 -> {
+                2
+            }
+            in 0.25..0.5 -> {
+                1
+            }
+            else -> {
+                0
+            }
         }
     }
 }
