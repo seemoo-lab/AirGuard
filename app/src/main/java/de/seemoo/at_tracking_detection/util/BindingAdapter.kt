@@ -9,11 +9,13 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
+import de.seemoo.at_tracking_detection.util.Util.rssiToPercentage
+import de.seemoo.at_tracking_detection.util.Util.rssiToQuality
 import java.util.*
-import kotlin.math.pow
 
 @BindingAdapter("setAdapter")
 fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -23,24 +25,21 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     }
 }
 
-@SuppressLint("SetTextI18n")
-@BindingAdapter("setDistance", requireAll = true)
-fun setDistance(textView: TextView, scanResult: ScanResult) {
-    val useMetric = SharedPrefs.useMetricSystem
+@SuppressLint("UseCompatLoadingForDrawables")
+@BindingAdapter("setSignalStrengthDrawable", requireAll = true)
+fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
+    val rssi: Int = scanResult.rssi
+    val percentage = rssiToPercentage(rssi)
+    val quality = rssiToQuality(percentage)
 
-    var txPowerLevel = scanResult.scanRecord?.txPowerLevel
-    if (txPowerLevel == null || txPowerLevel == Int.MIN_VALUE) {
-        txPowerLevel = -69
+    when (quality) {
+        0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))
+        1 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_low))
+        2 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_high))
+        3 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_high))
     }
-    val distance = 10F.pow(((txPowerLevel - scanResult.rssi) / (10 * 2)))
-
-    if (!useMetric) {
-        textView.text = "%.1f FT".format(distance * 3.2808)
-    } else {
-        textView.text = "%.1f M".format(distance)
-    }
-
 }
+
 
 @BindingAdapter("setDeviceDrawable", requireAll = true)
 fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
