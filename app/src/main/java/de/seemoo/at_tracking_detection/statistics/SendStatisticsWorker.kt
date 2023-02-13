@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.statistics
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -13,7 +12,6 @@ import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @HiltWorker
 class SendStatisticsWorker @AssistedInject constructor(
@@ -63,7 +61,7 @@ class SendStatisticsWorker @AssistedInject constructor(
             }
         }
 
-        if (!api.donateData(token, devices).isSuccessful) {
+        if (!api.donateData(token = token, devices=devices).isSuccessful) {
             return Result.retry()
         }
 
