@@ -22,12 +22,11 @@ import de.seemoo.at_tracking_detection.database.repository.NotificationRepositor
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
-import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import de.seemoo.at_tracking_detection.util.ble.OpportunisticBLEScanner
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
@@ -136,6 +135,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             if (location != null) {
                 Timber.d("Using last known location")
             }
+
+            // Printing time zone and user agent
+            Timber.d("Timezone: ${Api.TIME_ZONE} useragent ${Api.USER_AGENT}")
         }
     }
 
