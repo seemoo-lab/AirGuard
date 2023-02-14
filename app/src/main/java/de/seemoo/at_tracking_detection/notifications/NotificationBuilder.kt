@@ -276,9 +276,9 @@ class NotificationBuilder @Inject constructor(
 
     private fun getNotificationPriority(): Int {
         return if (SharedPrefs.notificationPriorityHigh){
-            NotificationCompat.PRIORITY_HIGH
+            NotificationCompat.PRIORITY_MAX
         } else {
-            NotificationCompat.PRIORITY_DEFAULT
+            NotificationCompat.PRIORITY_HIGH
         }
     }
 

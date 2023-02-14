@@ -8,7 +8,7 @@ import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.Util
 
-class IgnoredDevicesFragment: DevicesFragment(showDevicesFound = false, showAllDevices = false ) {
+class IgnoredDevicesFragment: DevicesFragment(showDevicesFound = false, showAllDevices = true ) {
     override val deviceItemListener: DeviceAdapter.OnClickListener
         get() = DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
             if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
