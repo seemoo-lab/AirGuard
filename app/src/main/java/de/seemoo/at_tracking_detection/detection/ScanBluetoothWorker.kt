@@ -260,9 +260,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
             val beacons = beaconRepository.getDeviceBeaconsSince(
                 deviceAddress = uniqueIdentifier,
                 since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
-            )
+            ) // sorted by newest first
 
             if (beacons.isEmpty()) {
+                Timber.d("Add new Beacon to the database!")
                 beacon = if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
@@ -276,11 +277,15 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     )
                 }
                 beaconRepository.insert(beacon)
-            } else if ((beacons[0].locationId == null || beacons[0].locationId == null) && locId != null && locId != 0){
+            } else if (beacons[0].locationId == null && locId != null && locId != 0){
+                // Update beacon within the last TIME_BETWEEN_BEACONS minutes with location
+                Timber.d("Beacon already in the database... Adding Location")
                 beacon = beacons[0]
                 beacon.locationId = locId
                 beaconRepository.update(beacon)
             }
+
+            Timber.d("Beacon: $beacon")
 
             return beacon
         }

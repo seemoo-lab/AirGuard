@@ -98,8 +98,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showManualScan() {
-        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
+//        findNavController().navigate(directions)
     }
 
     private fun showDeviceList() {

@@ -51,15 +51,15 @@
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
                     app:cardBackgroundColorInt="@{@color/gray_card_background}"
-                    app:cardName="@{@string/ignored_devices}"
-                    app:cardNumber="@{viewModel.countIgnored}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.48"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:layout_marginStart="8dp"
+                    app:cardName="@{@string/ignored_devices}"
+                    app:cardNumber="@{viewModel.countIgnored}"
                     />
 
 
