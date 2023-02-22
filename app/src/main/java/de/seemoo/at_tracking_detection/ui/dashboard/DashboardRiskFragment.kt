@@ -103,11 +103,14 @@ class DashboardRiskFragment : Fragment() {
         viewModel.updateRiskLevel()
     }
 
+    /*
     private fun showManualScan() {
         val directions: NavDirections =
             DashboardRiskFragmentDirections.dashboardToScanFragment()
         findNavController().navigate(directions)
     }
+
+     */
 
     private fun participateInSurvey() {
         val intent = Intent(

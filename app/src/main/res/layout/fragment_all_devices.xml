@@ -33,31 +33,33 @@
 
                 <include
                     android:id="@+id/tracker_devices_card"
-                    android:layout_height="wrap_content"
+                    layout="@layout/include_number_card"
                     android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColorInt="@{viewModel.riskColor}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:cardName="@{@string/tracker_detected}"
-                    app:cardNumber="@{viewModel.countTracking}"
-                    app:cardBackgroundColorInt="@{viewModel.riskColor}"
-                    />
+                    app:cardNumber="@{viewModel.countTracking}" />
 
 
                 <include
-                    layout="@layout/include_number_card"
                     android:id="@+id/ignored_devices_card"
-                    android:layout_height="wrap_content"
+                    layout="@layout/include_number_card"
                     android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColorInt="@{@color/gray_card_background}"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintWidth_percent="0.48"
-                    android:layout_marginStart="8dp"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:cardName="@{@string/ignored_devices}"
                     app:cardNumber="@{viewModel.countIgnored}"
-                    app:cardBackgroundColorInt="@{@color/gray_card_background}"
                     />
 
 
@@ -81,22 +83,25 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintWidth_percent="0.48" />
 
                 <include
                     android:id="@+id/findmy_found_card"
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
                     app:cardName="@{@string/findmy_found}"
                     app:cardNumber="@{viewModel.countFindMy}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.48" />
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_marginStart="8dp"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -108,21 +113,23 @@
                 <include
                     android:id="@+id/tiles_found_card"
                     layout="@layout/include_number_card"
-                    android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_width="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
                     app:cardName="@{@string/tile_found}"
                     app:cardNumber="@{viewModel.countTile}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.48" />
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                    />
 
                 <include
                     android:id="@+id/smarttags_found_card"
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
                     app:cardName="@{@string/smarttag_found}"
                     app:cardNumber="@{viewModel.countSmartTag}"
@@ -144,14 +151,15 @@
                     android:id="@+id/all_devices_card"
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:cardName="@{@string/other_devices_found}"
                     app:cardNumber="@{viewModel.countNotTracking}"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.48" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
