@@ -25,6 +25,7 @@ class AllDevicesViewModel @Inject constructor(
     val countAirTags = deviceRepository.countForDeviceType(DeviceType.AIRTAG).asLiveData()
     val countFindMy = deviceRepository.countForDeviceType(DeviceType.FIND_MY).asLiveData()
     val countTile = deviceRepository.countForDeviceType(DeviceType.TILE).asLiveData()
+    val countChipolo = deviceRepository.countForDeviceType(DeviceType.CHIPOLO).asLiveData()
     val countSmartTag = deviceRepository.countForDeviceTypes(
         DeviceType.GALAXY_SMART_TAG, DeviceType.GALAXY_SMART_TAG_PLUS
     ).asLiveData()

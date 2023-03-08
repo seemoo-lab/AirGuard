@@ -221,4 +221,5 @@
     <string name="device_name_samsung_device">Samsung Gerät %s</string>
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
     <string name="settings_notification_priority_high">Benachrichtigungen werden erstellt, auch wenn das Smartphone stumm oder in \"Bitte nicht stören\" geschaltet wurde</string>
+    <string name="chipolo_found">Gefundene Chipolo Geräte</string>
 </resources>

@@ -84,6 +84,7 @@ data class BaseDevice(
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
+        DeviceType.CHIPOLO -> Chipolo(deviceId)
         DeviceType.SAMSUNG -> SamsungDevice(deviceId)
         DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
         DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
@@ -113,6 +114,7 @@ data class BaseDevice(
         fun getConnectionState(scanResult: ScanResult): ConnectionState {
             return when (DeviceManager.getDeviceType(scanResult)) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
+                DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
                 DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
