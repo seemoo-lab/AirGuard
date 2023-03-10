@@ -86,12 +86,11 @@ class AirPods(val id: Int) : Device(), Connectable {
                 }
             }
 
-
             @SuppressLint("MissingPermission")
             fun stopSoundOnAirPods(gatt: BluetoothGatt) {
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                       AIRPODS_SOUND_SERVICE
+                       AIRPODS_SOUND_SERVICE.lowercase()
                     )
                 }
 

@@ -79,11 +79,16 @@ class ScanViewModel @Inject constructor(
             getPublicKey(it) == uniqueIdentifier
         }
 
-        if (!SharedPrefs.showConnectedDevices && BaseDevice.getConnectionState(scanResult) !in DeviceManager.savedConnectionStates){
-            // Do not show connected devices when criteria is met
-            bluetoothDeviceListValue.remove(scanResult)
-        } else {
+        if (SharedPrefs.showConnectedDevices || BaseDevice.getConnectionState(scanResult) in DeviceManager.savedConnectionStates) {
+            // only add possible devices to list
             bluetoothDeviceListValue.add(scanResult)
+        }
+
+        if (!SharedPrefs.showConnectedDevices){
+            // Do not show connected devices when criteria is met
+            bluetoothDeviceListValue.removeIf {
+                BaseDevice.getConnectionState(it) !in DeviceManager.savedConnectionStates
+            }
         }
 
         bluetoothDeviceListValue.sortByDescending { it.rssi }
