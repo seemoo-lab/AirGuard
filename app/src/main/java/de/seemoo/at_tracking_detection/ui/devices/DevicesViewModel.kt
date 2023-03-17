@@ -1,22 +1,21 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -100,12 +99,21 @@ class DevicesViewModel @Inject constructor(
 
         if (activeFilter.containsKey(DeviceTypeFilter::class.toString())) {
             val deviceTypeFilter = activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
-            for (device in deviceTypeFilter.deviceTypes) {
-                filterStringBuilder.append(DeviceType.userReadableName(device))
-                filterStringBuilder.append(", ")
-            }
-            if (deviceTypeFilter.deviceTypes.count() > 0) {
-                filterStringBuilder.delete(filterStringBuilder.length-2, filterStringBuilder.length-1)
+
+            if (deviceTypeFilter.deviceTypes.count() == DeviceManager.devices.count()) {
+                filterStringBuilder.append(context.getString(R.string.title_device_map))
+            }else {
+
+                for (device in deviceTypeFilter.deviceTypes) {
+                    filterStringBuilder.append(DeviceType.userReadableName(device))
+                    filterStringBuilder.append(", ")
+                }
+                if (deviceTypeFilter.deviceTypes.count() > 0) {
+                    filterStringBuilder.delete(
+                        filterStringBuilder.length - 2,
+                        filterStringBuilder.length - 1
+                    )
+                }
             }
         }else {
             // All devices
