@@ -120,11 +120,6 @@ object Util {
                     }
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
-                    /*
-                    marker.infoWindow = DeviceMarkerInfo(
-                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
-                    )
-                     */
                     marker.position = geoPoint
                     marker.icon = ContextCompat.getDrawable(
                         context,
@@ -135,12 +130,7 @@ object Util {
                     markerList.add(marker)
 
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
-                        if (clickedMarker.isInfoWindowShown) {
-                            clickedMarker.closeInfoWindow()
-                        } else {
-                            // clickedMarker.showInfoWindow()
-                            clickedMarker.closeInfoWindow()
-                        }
+                        clickedMarker.closeInfoWindow()
                         false
                     }
                 }

@@ -151,9 +151,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             //Checks if the device has been found already
-            if (!scanResultDictionary.containsKey(scanResult.device.address)) {
+            if (!scanResultDictionary.containsKey(getPublicKey(scanResult))) {
                 Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-                scanResultDictionary[scanResult.device.address] =
+                scanResultDictionary[getPublicKey(scanResult)] =
                     DiscoveredDevice(scanResult, LocalDateTime.now())
             }
         }
