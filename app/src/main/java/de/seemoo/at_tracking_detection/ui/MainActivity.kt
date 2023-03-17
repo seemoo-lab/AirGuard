@@ -14,14 +14,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import org.osmdroid.config.Configuration
+import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
-import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -64,6 +63,18 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(appBarItems)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+        navView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.navigation_dashboard -> navController.navigate(R.id.navigation_dashboard)
+                R.id.navigation_manual_scan -> navController.navigate(R.id.navigation_manual_scan)
+                R.id.navigation_allDevicesFragment -> navController.navigate(R.id.navigation_allDevicesFragment)
+                R.id.navigation_settings -> navController.navigate(R.id.navigation_settings)
+                R.id.navigation_debug -> navController.navigate(R.id.navigation_debug)
+            }
+            return@setOnItemSelectedListener true
+        }
     }
 
     override fun onResume() {
