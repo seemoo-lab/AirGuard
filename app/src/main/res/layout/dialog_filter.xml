@@ -58,9 +58,11 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconSize="25dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/filter_summary_text"
+                app:layout_constraintBottom_toBottomOf="@id/filter_summary_text"
+                app:layout_constraintHeight="40dp"
+                app:layout_constraintWidth="40dp"
                 app:layout_constraintDimensionRatio="1.0"
                  />
 
