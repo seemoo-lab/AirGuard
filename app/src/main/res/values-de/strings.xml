@@ -23,16 +23,16 @@
     <string name="channel_name">Tracking-Erkennung</string>
     <string name="channel_description">Warnt dich vor "Find My"-Geräten, die dich evtl. verfolgen</string>
     <string name="devices_list_empty">Sobald AirGuard einen AirTag oder einen anderen Tracker in Deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in Deiner Umgebung waren und dich nicht verfolgen. Du erhältst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
-    <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem AirTag, den Du besitzt) verfolgt wirst, dann kannst Du dies als Fehlalarm kennzeichnen. Geräte, die ihre Bluetooth-Adresse nicht ändern (z.B. Tile) kannst Du auch ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag, kann also nicht ignoriert werden und wird am nächsten Tag als neuer AirTag angezeigt.</string>
+    <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem AirTag, den Du besitzt) verfolgt wirst, dann kannst Du dies als Fehlalarm kennzeichnen. Geräte, die ihre Bluetooth-Adresse nicht ändern (z.B. Tile oder Chipolo) kannst Du auch ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag, kann also nicht ignoriert werden und wird am nächsten Tag als neuer AirTag angezeigt.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>
     <string name="settings_show_connected_devices">Zeigt Geräte im Scan-Tab, welche mit ihrem Besitzergerät verbunden sind</string>
-    <string name="error_requesting_location_permission">Die Standortberechtigung konnte nicht angefragt werden.</string>
+    <string name="error_requesting_location_permission">Die Standortberechtigung konnte nicht angefragt werden</string>
     <string name="tracking_locate_at_title">Ton abspielen</string>
     <string name="tracking_locate_at_subtitle">AirTag lokalisieren</string>
     <string name="permissions_location_title">Standort im Hintergrund</string>
-    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, "Find My"-Gerät, SmartTag oder Tile erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
+    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, Find My-Gerät, SmartTag, Chipolo oder Tile erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
@@ -48,7 +48,7 @@
     <string name="feedback_close">Schließen</string>
     <string name="tracking_locate_at_playing_sound">Ton wird abgespielt…</string>
     <string name="permission_required">Berechtigung erforderlich</string>
-    <string name="permission_required_message">Die Berechtigung muss erteilt werden, damit man die App verwenden kann</string>
+    <string name="permission_required_message">Die Berechtigung muss erteilt werden, damit man die App verwenden kann.</string>
     <string name="rssi">RSSI</string>
     <string name="device_item_last_seen">Zuletzt gesehen</string>
     <string name="onboarding_share_data_title">Statistikdaten teilen</string>
@@ -58,7 +58,7 @@
         - Wir werden einige Informationen über die entdeckten Geräte sammeln, wie den <b>Gerätetyp</b>, den <b>RSSI-Wert</b> (Signalstärke) und das <b>Datum und die Uhrzeit</b> der Entdeckung \n\n
         - Wie viele <b>Benachrichtigungen</b> angezeigt wurden, das <b>Datum und die Uhrzeit</b> der Benachrichtigung sowie das <b>Benutzerfeedback</b>, das gegeben werden kann \n\n
         Wir werden <b>KEINE</b> Standorte oder Daten teilen, die es uns ermöglichen könnten, dich zu identifizieren</string>
-    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls Du von einem Airtag, "Find My"-Gerät, SmartTag oder Tile verfolgt wirst.</string>
+    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls Du von einem Airtag, Find My-Gerät, SmartTag, Chipolo oder Tile verfolgt wirst.</string>
     <string name="onboarding_2_title">Standortberechtigung</string>
     <string name="onboarding_2_description">AirGuard benötigt die Berechtigung, auf Deinen Standort zuzugreifen, um über Bluetooth Low Energy (LE) nach umliegenden AirTags, SmartTags und Tiles suchen zu dürfen. Du musst diese Berechtigung erteilen, um AirGuard zu verwenden.</string>
     <string name="onboarding_ignore_battery_optimization_title">Batterie-Optimierung</string>
@@ -70,7 +70,7 @@
     <string name="settings_theme_system_default">Systemstandard</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_theme_light">Hell</string>
-    <string name="settings_use_low_power_ble_summary">Diese Einstellung verwendet weniger Strom, führt aber auch zu einer langsameren und schlechteren Erkennung von Trackern.</string>
+    <string name="settings_use_low_power_ble_summary">Diese Einstellung verwendet weniger Strom, führt aber auch zu einer langsameren und schlechteren Erkennung von Trackern</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Modus</string>
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
     <string name="tracking_info">Scanne diesen AirTag mit Deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
@@ -79,7 +79,7 @@
     <string name="settings_risk_sensitivity_medium">Mittel</string>
     <string name="settings_risk_sensitivity_high">Hoch</string>
     <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
-    <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Führt möglicherweise zu mehr Fehlalarmen</string>
+    <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Eine hohe Empfindlichkeit führt möglicherweise zu mehr Fehlalarmen.</string>
     <string name="settings_app_theme_title">App-Design</string>
     <string name="settings_app_theme_summary">Wähle ein Design</string>
     <string name="settings_third_party_libraries_title">Drittanbieter-Bibliotheken</string>
@@ -118,7 +118,7 @@
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
     <string name="scan_title">Scan</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
-    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!\nWir scannen nur nach Apple Find My Trackern (AirTags), Galaxy SmartTags und Tile Trackern.</string>
+    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden. Du bist sicher!\nWir scannen nur nach Apple Find My Trackern (AirTags), Galaxy SmartTags, Chipolo Trackern und Tile Trackern.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="yes_button">Ja</string>
     <string name="scan_enable_bluetooth_title">Bluetooth Suche</string>
@@ -220,6 +220,6 @@
     <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
     <string name="device_name_samsung_device">Samsung Gerät %s</string>
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
-    <string name="settings_notification_priority_high">Benachrichtigungen werden erstellt, auch wenn das Smartphone stumm oder in \"Bitte nicht stören\" geschaltet wurde</string>
+    <string name="settings_notification_priority_high">Benachrichtigungen werden als Alarm mit hoher Priorität erstellt</string>
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
 </resources>

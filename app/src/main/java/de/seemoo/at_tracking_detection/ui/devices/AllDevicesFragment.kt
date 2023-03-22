@@ -36,7 +36,6 @@ class AllDevicesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_all_devices,
