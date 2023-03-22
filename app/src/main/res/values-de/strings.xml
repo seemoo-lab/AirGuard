@@ -222,4 +222,6 @@
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
     <string name="settings_notification_priority_high">Benachrichtigungen werden als Alarm mit hoher Priorität erstellt</string>
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
+    <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
+    <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
 </resources>
