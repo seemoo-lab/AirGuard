@@ -7,6 +7,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -136,7 +137,7 @@ class TrackingFragment : Fragment() {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
 
-                var locationList = arrayListOf<Location>()
+                val locationList = arrayListOf<Location>()
                 val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
 
                 it.filter { it.locationId != null && it.locationId != 0 }
@@ -164,6 +165,26 @@ class TrackingFragment : Fragment() {
                 }
             }
         }
+
+        addInteractions(view)
+    }
+
+    fun addInteractions(view: View) {
+        val button = view.findViewById<ImageButton>(R.id.open_map_button)
+
+
+        button.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+        val overlay = view.findViewById<View>(R.id.map_overlay)
+        overlay.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+
     }
 
     private fun toggleSound() {

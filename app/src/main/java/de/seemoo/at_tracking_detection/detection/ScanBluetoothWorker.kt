@@ -42,10 +42,7 @@ import kotlin.coroutines.suspendCoroutine
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
-    private val locationRepository: LocationRepository,
     private val locationProvider: LocationProvider,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
@@ -222,7 +219,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // Fallback if no location is fetched in time
             val maximumLocationDurationMillis = 60_000L
             handler.postDelayed(runnable, maximumLocationDurationMillis)
-
         }
     }
 

@@ -66,7 +66,9 @@ class RiskDetailFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.card_tracked_locations).setOnClickListener {
             val directions =
-                RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment()
+                RiskDetailFragmentDirections.actionRiskDetailFragmentToDeviceMapFragment(
+
+                )
             findNavController().navigate(directions)
         }
 
