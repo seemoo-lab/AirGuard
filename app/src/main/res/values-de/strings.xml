@@ -89,8 +89,6 @@
     <string name="onboarding_share_data_yes">Ja</string>
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
-    <string name="notification_text">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens 30 Minuten gefolgt.</string>
-    <string name="notification_title">Ein Tracker wurde entdeckt!</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
