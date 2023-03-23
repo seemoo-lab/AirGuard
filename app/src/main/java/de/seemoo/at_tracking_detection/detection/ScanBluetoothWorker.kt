@@ -86,7 +86,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 45_000L)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
         }
 
         //Starting BLE Scan
