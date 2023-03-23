@@ -182,11 +182,6 @@ object Util {
         }
     }
 
-    fun rssiToPercentage(rssi: Int, bestRssi: Int = -30, worstRssi: Int = -100): Float {
-        val actual = max(min(rssi, bestRssi), worstRssi)
-        return (actual.toFloat() - worstRssi.toFloat()) / (bestRssi.toFloat() - worstRssi.toFloat())
-    }
-
     fun rssiToQuality(percentage: Float): Int {
         return when (percentage) {
             in 0.75..1.0 -> {
