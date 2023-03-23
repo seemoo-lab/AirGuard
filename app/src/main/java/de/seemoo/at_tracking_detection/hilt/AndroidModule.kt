@@ -14,6 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.util.worker.WorkManagerProvider
 import javax.inject.Singleton
@@ -45,6 +46,7 @@ class AndroidModule {
     @Singleton
     fun riskLevelEvaluator(
         deviceRepository: DeviceRepository,
-        beaconRepository: BeaconRepository
-    ): RiskLevelEvaluator = RiskLevelEvaluator(deviceRepository, beaconRepository)
+        beaconRepository: BeaconRepository,
+        notificationRepository: NotificationRepository,
+    ): RiskLevelEvaluator = RiskLevelEvaluator(deviceRepository, beaconRepository, notificationRepository)
 }

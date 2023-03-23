@@ -14,6 +14,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
 import de.seemoo.at_tracking_detection.ui.scan.dialog.PlaySoundDialogFragment
 import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 
 class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentManager) :
     ListAdapter<ScanResult, BluetoothDeviceAdapter.ScanResultViewHolder>(Companion) {
@@ -38,7 +39,7 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
         val scanResult: ScanResult = getItem(position)
         holder.bind(scanResult)
 
-        holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener() {
+        holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener {
             val hasAllPermissions =
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
                     Manifest.permission.BLUETOOTH_CONNECT
@@ -54,7 +55,7 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
             oldItem == newItem
 
         override fun areItemsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean =
-            oldItem.device.address == newItem.device.address
+            getPublicKey(oldItem) == getPublicKey(newItem)
     }
 
 }

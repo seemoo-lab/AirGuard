@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Filter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -32,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
@@ -45,11 +47,16 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-class DevicesFragment : Fragment() {
+abstract class DevicesFragment(
+    var showDevicesFound: Boolean = true,
+    var showAllDevices: Boolean = false,
+    var deviceType: DeviceType?=null,
+    var deviceType2: DeviceType?=null,
+) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
-    private val safeArgs: DevicesFragmentArgs by navArgs()
+    private val dialogFragment = FilterDialogFragment()
 
     private lateinit var deviceAdapter: DeviceAdapter
 
@@ -66,7 +73,7 @@ class DevicesFragment : Fragment() {
         var deviceInfoText = R.string.info_text_all_devices
 
 
-        if (!safeArgs.showDevicesFound) {
+        if (!showDevicesFound) {
             activity?.setTitle(R.string.title_ignored_devices)
             emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -85,7 +92,7 @@ class DevicesFragment : Fragment() {
                 )
             )
             // If we show all devices immediately, we set the correct strings here
-            if (safeArgs.showAllDevices) {
+            if (showAllDevices) {
                 deviceInfoText = R.string.info_text_all_devices
                 emptyListText = R.string.empty_list_devices
             } else {
@@ -93,6 +100,14 @@ class DevicesFragment : Fragment() {
                 devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
                 deviceInfoText = R.string.info_text_only_trackers
                 emptyListText = R.string.empty_list_trackers
+            }
+        }
+
+        if (deviceType != null && deviceType != DeviceType.UNKNOWN) {
+            if (deviceType2 != null && deviceType2 != DeviceType.UNKNOWN) {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!, deviceType2!!)))
+            } else {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
             }
         }
 
@@ -127,10 +142,7 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         view.findViewById<RecyclerView>(R.id.devices_recycler_view)
             .doOnPreDraw { startPostponedEnterTransition() }
-        val filterFab = view.findViewById<FloatingActionButton>(R.id.filter_fab)
-        filterFab.setOnClickListener {
-            FilterDialogFragment().show(childFragmentManager, DIALOG_TAG)
-        }
+
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
             updateTexts()
@@ -147,20 +159,13 @@ class DevicesFragment : Fragment() {
             )
         }
 
+        //Adding the Filter fragment to the view
+        val transaction = childFragmentManager.beginTransaction().replace(R.id.filter_fragment, dialogFragment)
+        transaction.commit()
+
     }
 
-    private val deviceItemListener =
-        DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
-            if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                return@OnClickListener
-            }
-            val directions: NavDirections =
-                DevicesFragmentDirections.actionNavigationDevicesToTrackingFragment(
-                    baseDevice.address
-                )
-            val extras = FragmentNavigatorExtras(materialCardView to baseDevice.address)
-            findNavController().navigate(directions, extras)
-        }
+    abstract val deviceItemListener: DeviceAdapter.OnClickListener
 
 
     private fun updateTexts() {

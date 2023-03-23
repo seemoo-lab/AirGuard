@@ -54,6 +54,7 @@ class DashboardFragment : Fragment() {
         val lineGraphChart = view.findViewById<RallyLineGraphChart>(R.id.line_graph)
         val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
 
+        // TODO (re)move in future
         fabScan.setOnClickListener {
             val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -97,8 +98,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showManualScan() {
-        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
-        findNavController().navigate(directions)
+//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
+//        findNavController().navigate(directions)
     }
 
     private fun showDeviceList() {

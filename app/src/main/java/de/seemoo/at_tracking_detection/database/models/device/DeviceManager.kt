@@ -3,7 +3,6 @@ package de.seemoo.at_tracking_detection.database.models.device
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.content.IntentFilter
-import android.util.Log
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
@@ -11,39 +10,46 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo)
+    private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
+    val savedConnectionStates = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Checking device type for ${scanResult.device.address}")
-        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x004c) ?: return Unknown.deviceType
-        val statusByte: Byte = manufacturerData[2]
-        Timber.d("Status byte $statusByte, ${statusByte.toString(2)}")
-        // Get the correct int from the byte
-        val deviceTypeInt =  (statusByte.and(0x30).toInt() shr 4)
-        Timber.d("Device type int: $deviceTypeInt")
 
-        var deviceTypeFilter: DeviceType? = null
-        var deviceTypeCheck: DeviceType? = null
+        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x004c)
+        val services = scanResult.scanRecord?.serviceUuids
+        if (manufacturerData != null) {
+            val statusByte: Byte = manufacturerData[2]
+//            Timber.d("Status byte $statusByte, ${statusByte.toString(2)}")
+            // Get the correct int from the byte
+            val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
+//            Timber.d("Device type int: $deviceTypeInt")
 
-        for (device in devices) {
-            // Implementation of device detection is incorrect.
+            var deviceTypeCheck: DeviceType? = null
 
-            if (device.bluetoothFilter.matches(scanResult)) {
-                deviceTypeFilter = device.deviceType
+            for (device in appleDevices) {
+                // Implementation of device detection is incorrect.
+                if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
+                    deviceTypeCheck = device.deviceType
+                }
             }
-            if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
-                deviceTypeCheck = device.deviceType
+
+            return deviceTypeCheck ?: Unknown.deviceType
+        }else if (services != null) {
+            //Check if this device is a Tile
+            if (services.contains(Tile.offlineFindingServiceUUID)) {
+                return Tile.deviceType
             }
+            else if(services.contains(Chipolo.offlineFindingServiceUUID)){
+                return Chipolo.deviceType
+            }
+            else if(services.contains(SmartTag.offlineFindingServiceUUID)){
+                return SamsungDevice.getSamsungDeviceType(scanResult)
+            }
+
         }
-
-        if (deviceTypeCheck != deviceTypeFilter) {
-            Timber.d("Different device types detected: Check $deviceTypeCheck filter: $deviceTypeFilter")
-        }
-
-        val result = deviceTypeCheck ?: deviceTypeFilter ?: Unknown.deviceType
-
-        Timber.d("Result device check: $result")
-        return result
+        return Unknown.deviceType
     }
 
     val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }

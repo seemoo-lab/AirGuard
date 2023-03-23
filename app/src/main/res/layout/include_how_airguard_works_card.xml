@@ -33,17 +33,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_scan_icon}"
                 app:rowText="@{@string/airguard_scan_explanation}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_baseline_location_on_24}"
                 app:rowText="@{@string/airguard_detection_explanation}" />
 
             <include
-                layout="@layout/item_icon_text_row"
+                layout="@layout/item_icon_text_white"
                 app:iconDrawable="@{@drawable/ic_notifications}"
                 app:rowText="@{@string/airguard_notification_explanation}" />
 

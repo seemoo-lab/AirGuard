@@ -10,11 +10,14 @@
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.dashboard.RiskCardViewModel" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <ScrollView
             android:layout_width="match_parent"
@@ -25,7 +28,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:animateLayoutChanges="true"
+                >
 
                 <include
                     android:id="@+id/risk_card"
@@ -33,6 +38,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     bind:vm="@{vm}" />
+
+                <include
+                    layout="@layout/include_survey_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:visibility="@{vm.dismissSurveyInformation ? View.GONE : View.VISIBLE}"
+                    />
 
                 <include
                     layout="@layout/include_how_airguard_works_card"
@@ -61,6 +74,7 @@
 
         </ScrollView>
 
+        <!--
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/scan_fab"
             android:layout_width="wrap_content"
@@ -72,6 +86,6 @@
             app:icon="@drawable/ic_radar_tracking"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
-
+        -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

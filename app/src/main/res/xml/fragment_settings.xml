@@ -16,19 +16,51 @@
         android:summary="@string/settings_use_location_summary"
         android:title="@string/settings_use_location_title" />
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:icon="@drawable/ic_baseline_bluetooth_24"
         android:key="use_low_power_ble"
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title" />
 
-    <SwitchPreference
+    <ListPreference
+        android:defaultValue="medium"
+        android:entries="@array/riskSensitivityName"
+        android:entryValues="@array/riskSensitivityValue"
+        android:icon="@drawable/ic_baseline_list_24"
+        android:key="risk_sensitivity"
+        android:summary="@string/settings_risk_sensitivity_summary"
+        android:title="@string/settings_risk_sensitivity_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:icon="@drawable/ic_radar_tracking"
+        android:key="show_connected_devices"
+        android:summary="@string/settings_show_connected_devices"
+        android:title="@string/settings_show_connected_devices_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_notifications_active_24"
+        android:key="notification_priority_high"
+        android:summary="@string/settings_notification_priority_high"
+        android:title="@string/settings_notification_priority_high_title" />
+
+    <!--
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:icon="@drawable/ic_baseline_architecture_24"
         android:key="use_metric"
         android:summary="@string/settings_metric_summary"
         android:title="@string/settings_metric_title" />
+    -->
+
+    <!--<Preference
+        android:icon="@drawable/ic_group_48px"
+        android:key="survey"
+        android:summary="@string/survery_settings_summary"
+        android:title="@string/survey_settings_title" />
+    -->
 
     <ListPreference
         android:defaultValue="system_default"
@@ -59,8 +91,8 @@
 
     <SwitchPreferenceCompat
         android:key="show_onboarding"
-        android:summary="Will always show the app onboarding procedure"
-        android:title="Show Onboarding"
+        android:summary="@string/onboarding_setting_summary"
+        android:title="@string/onboarding_setting_title"
         app:isPreferenceVisible="@bool/debug" />
 
 </PreferenceScreen>

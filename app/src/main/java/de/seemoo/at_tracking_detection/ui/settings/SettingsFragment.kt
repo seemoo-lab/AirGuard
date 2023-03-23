@@ -14,6 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
@@ -57,13 +58,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
                 return@OnPreferenceClickListener true
             }
+
+        findPreference<Preference>("survey")?.setOnPreferenceClickListener {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
+            )
+            startActivity(intent)
+            return@setOnPreferenceClickListener true
+        }
     }
 
     private val sharedPreferenceListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
                 "share_data" -> {
-                    if (sharedPreferences.getBoolean("share_data", false)) {
+                    if (SharedPrefs.shareData) {
                         Timber.d("Enabled background statistics sharing!")
                         backgroundWorkScheduler.scheduleShareData()
                     } else {
@@ -71,7 +81,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
                 "use_location" -> {
-                    if (sharedPreferences.getBoolean("use_location", false)) {
+                    if (SharedPrefs.useLocationInTrackingDetection) {
                         Timber.d("Use location enabled!")
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             Util.checkAndRequestPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -81,7 +91,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "app_theme" -> {
                     Util.setSelectedTheme(sharedPreferences)
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                        ATTrackingDetectionApplication.getCurrentActivity().recreate()
+                        ATTrackingDetectionApplication.getCurrentActivity()?.recreate()
                     }
                 }
             }
@@ -100,10 +110,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 
-        if (locationPermissionState && backgroundPermissionState) {
-            sharedPreferences.edit().putBoolean("use_location", true).apply()
-        } else {
-            sharedPreferences.edit().putBoolean("use_location", false).apply()
-        }
+        SharedPrefs.useLocationInTrackingDetection = locationPermissionState && backgroundPermissionState
     }
 }

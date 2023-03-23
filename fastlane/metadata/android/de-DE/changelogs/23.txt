@@ -1,2 +1,0 @@
-AirGuard kann nun zwischen verschiedenen Gerätetypen unterscheiden. Die App kann AirTags, AirPods, Drittanbieter Geräte (z.B. Chipolo Tags) und offline Apple Geräte (z.B. MacBooks) erkennen. 
-Wir haben den Algorithmus für Warnungen angepasst an verschiedene, um Falschmeldungen zu reduzieren. Apple Geräte führen erst nach 2,5 Stunden zu einer Warnung. 

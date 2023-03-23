@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -25,17 +25,17 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.databinding.FragmentDebugBinding
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
-import de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragmentDirections
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
-import fr.bipi.tressence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -57,6 +57,7 @@ class DebugFragment : Fragment() {
 
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val devicesList: ArrayList<BluetoothDevice> = ArrayList()
+    private val scanResultMap: HashMap<String, ScanResult> = HashMap()
     private val displayList: ArrayList<String> = ArrayList()
     private lateinit var bluetoothList: ListView
     private var scanning = false
@@ -65,20 +66,24 @@ class DebugFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val bluetoothManager =
             ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothLeScanner = bluetoothManager.adapter?.bluetoothLeScanner
-        val root = inflater.inflate(R.layout.fragment_debug, container, false)
-        bluetoothList = root.findViewById(R.id.bluetoothList)
-        return root
+
+        val binding: FragmentDebugBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_debug, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = debugViewModel
+
+        bluetoothList = binding.root.findViewById(R.id.bluetoothList)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.button)?.setOnClickListener {
+        view.findViewById<Button>(R.id.start_ble_scanning)?.setOnClickListener {
             devicesList.clear()
             displayList.clear()
             scanLeDevice()
@@ -89,10 +94,12 @@ class DebugFragment : Fragment() {
         view.findViewById<ListView>(R.id.bluetoothList)
             .setOnItemClickListener { _, _, position, _ ->
                 debugViewModel.viewModelScope.launch {
-                    notificationService.sendTrackingNotification(devicesList[position].address)
+                    val bluetoothDevice = devicesList[position]
+                    val baseDevice = BaseDevice(scanResultMap[bluetoothDevice.address]!!)
+                    notificationService.sendTrackingNotification(baseDevice)
                 }
             }
-        view.findViewById<Button>(R.id.button3)?.setOnClickListener {
+        view.findViewById<Button>(R.id.donate_data)?.setOnClickListener {
             backgroundWorkScheduler.scheduleShareData()
         }
 
@@ -112,6 +119,14 @@ class DebugFragment : Fragment() {
                 DebugFragmentDirections.actionNavigationDebugToDebugLogFragment()
             findNavController().navigate(directions)
         }
+
+        view.findViewById<Button>(R.id.start_background_scan).setOnClickListener {
+            backgroundWorkScheduler.launch()
+        }
+
+        view.findViewById<Button>(R.id.button_debugScans).setOnClickListener {
+            findNavController().navigate(DebugFragmentDirections.actionNavigationDebugToDebugScansFragment())
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -123,10 +138,10 @@ class DebugFragment : Fragment() {
                     scanner.stopScan(leScanCallback)
                 }, SCAN_PERIOD)
                 scanning = true
-                scanner.startScan(buildFilter(), buildSettings(), leScanCallback)
+                BLEScanCallback.startScanning(scanner, DeviceManager.scanFilter, buildSettings(), leScanCallback)
             } else {
                 scanning = false
-                scanner.stopScan(leScanCallback)
+                BLEScanCallback.stopScanning(scanner)
             }
         }
     }
@@ -135,20 +150,9 @@ class DebugFragment : Fragment() {
         ScanSettings.Builder().setScanMode(getScanMode()).build()
 
     private fun getScanMode(): Int {
-        val useLowPower = sharedPreferences.getBoolean("use_low_power_ble", false)
-        return if (useLowPower) {
-            ScanSettings.SCAN_MODE_LOW_POWER
-        } else {
-            ScanSettings.SCAN_MODE_BALANCED
-        }
+        return ScanSettings.SCAN_MODE_LOW_LATENCY
     }
 
-    private fun buildFilter() =
-        mutableListOf<ScanFilter>(
-            ScanFilter.Builder()
-                .setManufacturerData(0x4C, byteArrayOf((0x12).toByte(), (0x19).toByte()))
-                .build()
-        )
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
@@ -168,13 +172,15 @@ class DebugFragment : Fragment() {
                 )
                 bluetoothList.adapter = arrayAdapter
             }
+
+            scanResultMap[result.device.address] = result
         }
     }
 
     @SuppressLint("MissingPermission")
     override fun onDestroyView() {
         super.onDestroyView()
-        bluetoothLeScanner?.stopScan(leScanCallback)
+        bluetoothLeScanner?.let { BLEScanCallback.stopScanning(it) }
     }
 
     companion object {

@@ -3,13 +3,16 @@ package de.seemoo.at_tracking_detection.database.repository
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.NotificationDao
 import de.seemoo.at_tracking_detection.database.models.Notification
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NotificationRepository @Inject constructor(private val notificationDao: NotificationDao) {
+class NotificationRepository @Inject constructor(
+    private val notificationDao: NotificationDao
+    ) {
 
     val totalCount: Flow<Int> = notificationDao.getTotalCount()
 
@@ -40,6 +43,12 @@ class NotificationRepository @Inject constructor(private val notificationDao: No
      * Returns a list with only the last notification
      */
     val last_notification: List<Notification> = notificationDao.getLastNotification()
+
+    fun notificationForDevice(device: BaseDevice) = notificationDao.getNotificationForDevice(device.address)
+
+    fun getNotificationForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getNotificationForDeviceSinceCount(deviceAddress, since)
+
+    fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getFalseAlarmForDeviceSinceCount(deviceAddress, since)
 
     @WorkerThread
     suspend fun insert(notification: Notification): Long {

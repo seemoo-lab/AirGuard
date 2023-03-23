@@ -19,7 +19,8 @@
         style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="85dp"
-        android:layout_margin="@dimen/card_margin">
+        android:layout_margin="@dimen/card_margin"
+        app:setDeviceColor="@{scanResult}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -64,6 +65,7 @@
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
                 app:setDeviceDrawable="@{scanResult}"
+                app:tint="?android:attr/textColorTertiary"
                 tools:src="@drawable/ic_airtag" />
 
             <TextView
@@ -97,30 +99,17 @@
                 tools:text="FF:FF:FF:FF:FF" />
 
             <ImageView
-                android:id="@+id/scan_result_location_image"
+                android:id="@+id/scan_signal_strength"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginVertical="16dp"
+                android:src="@drawable/ic_signal_low"
                 android:contentDescription="@string/scan_result_item_image_description"
-                android:src="@drawable/ic_baseline_location_on_45_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_middle"
-                app:layout_constraintRight_toLeftOf="@id/scan_result_distance"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/scan_result_distance"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:autoSizeTextType="uniform"
-                android:maxLines="1"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/scan_result_location_image"
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
                 app:layout_constraintTop_toTopOf="parent"
-                app:setDistance="@{scanResult}"
-                tools:text="1.2 M" />
+                app:setSignalStrengthDrawable="@{scanResult}" />
 
             <ImageView
                 android:id="@+id/scan_result_play_sound"
@@ -128,11 +117,12 @@
                 android:layout_height="0dp"
                 android:layout_marginVertical="12dp"
                 android:src="@{@drawable/ic_baseline_play_circle_outline_24}"
-                android:visibility="@{!scanResult.isConnectable() ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_right"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:hideWhenNoSoundPlayed="@{scanResult}"
+                app:tint="?android:attr/textColorHighlight"
                 tools:src="@drawable/ic_baseline_play_circle_outline_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

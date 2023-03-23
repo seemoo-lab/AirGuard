@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ATTrackingDetection" parent="Theme.Material3.Light">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/ThemeActionBar</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/ThemeActionBar</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

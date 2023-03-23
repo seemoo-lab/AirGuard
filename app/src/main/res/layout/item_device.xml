@@ -60,7 +60,7 @@
             <ImageView
                 android:id="@+id/imageFindMy"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginVertical="10dp"
                 android:contentDescription="@string/device_icon"
                 android:src="@{baseDevice.device.drawable}"
@@ -68,6 +68,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:attr/textColorTertiary"
                 tools:src="@drawable/ic_baseline_device_unknown_24" />
 
             <TextView
@@ -185,13 +186,26 @@
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/ignored_icon"
+                android:layout_width="20dp"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:contentDescription="@string/alert_sent_icon"
+                android:visibility="@{baseDevice.ignore ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintBottom_toTopOf="@+id/device_first_discovery"
+                app:layout_constraintEnd_toStartOf="@+id/device_guideline_middle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_alarm_off_24"
+                app:tint="@color/slate_gray" />
+
+            <ImageView
                 android:id="@+id/alert_icon"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_height="0dp"
                 android:contentDescription="@string/alert_sent_icon"
                 android:visibility="@{baseDevice.notificationSent ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toTopOf="@+id/device_first_discovery"
-                app:layout_constraintEnd_toStartOf="@+id/device_guideline_middle"
+                app:layout_constraintEnd_toStartOf="@+id/ignored_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_dialog_alert"
                 app:tint="@color/slate_gray" />

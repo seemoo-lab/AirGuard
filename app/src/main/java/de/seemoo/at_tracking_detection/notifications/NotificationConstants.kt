@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.notifications
 
 object NotificationConstants {
     const val CHANNEL_ID = "channel_id"
+    const val INFO_CHANNEL_ID = "info_channel"
     const val FALSE_ALARM_ACTION = "de.seemoo.at_tracking_detection.FALSE_ALARM"
     const val IGNORE_DEVICE_ACTION = "de.seemoo.at_tracking_detection.IGNORE_DEVICE"
     const val CLICKED_ACTION = "de.seemoo.at_tracking_detection.CLICKED_ACTION"
@@ -12,4 +13,5 @@ object NotificationConstants {
     const val DISMISSED_CODE = 4
     const val NOTIFICATION_CHANNEL_NAME = "Tracking Alarm"
     const val NOTIFICATION_CHANNEL_ERROR = "Error"
+    const val NOTIFICATION_CHANNEL_INFO = "General Information"
 }

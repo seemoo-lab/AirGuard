@@ -18,4 +18,5 @@
     <color name="risk_high">#8C1919</color>
     <color name="blue_card_background">#325B76</color>
     <color name="gray_card_background">#434343</color>
+    <color name="card_background_teal">#1B9CAE</color>
 </resources>

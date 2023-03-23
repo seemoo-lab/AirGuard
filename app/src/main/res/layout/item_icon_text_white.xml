@@ -19,7 +19,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp">
 
@@ -30,12 +30,12 @@
             android:layout_margin="5dp"
             android:src="@{iconDrawable}"
             app:layout_constraintBottom_toBottomOf="@id/risk_level_text"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/risk_level_text"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/risk_level_text"
             app:tint="@color/white"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_baseline_location_on_24" />
+            tools:src="@drawable/ic_baseline_location_on_24"
+            />
 
         <TextView
             android:id="@+id/risk_level_text"
@@ -46,8 +46,10 @@
             android:textAlignment="textStart"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/white"
-            app:layout_constraintLeft_toRightOf="@id/location_icon"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/location_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Some descriptive text added here" />
 

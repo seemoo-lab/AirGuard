@@ -4,30 +4,32 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Util
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DashboardRiskFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 @AndroidEntryPoint
 class DashboardRiskFragment : Fragment() {
 
@@ -56,6 +58,7 @@ class DashboardRiskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /*
         binding.scanFab.setOnClickListener {
             val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
                 .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -77,6 +80,7 @@ class DashboardRiskFragment : Fragment() {
                 showManualScan()
             }
         }
+        */
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
@@ -84,11 +88,60 @@ class DashboardRiskFragment : Fragment() {
                 DashboardRiskFragmentDirections.actionNavigationDashboardToRiskDetailFragment()
             findNavController().navigate(directions)
         }
+
+        view.findViewById<MaterialButton>(R.id.participate_button).setOnClickListener {
+            participateInSurvey()
+        }
+
+        view.findViewById<ImageButton>(R.id.hide_survey_card_button).setOnClickListener {
+            dismissSurveyCard()
+        }
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.updateRiskLevel()
+    }
+
+    /*
     private fun showManualScan() {
         val directions: NavDirections =
             DashboardRiskFragmentDirections.dashboardToScanFragment()
         findNavController().navigate(directions)
+    }
+
+     */
+
+    private fun participateInSurvey() {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
+        )
+        startActivity(intent)
+    }
+
+    private fun dismissSurveyCard() {
+
+
+        val dialogBuilder = context?.let { MaterialAlertDialogBuilder(it) }
+        dialogBuilder?.setTitle(R.string.survey_alert_title)
+        dialogBuilder?.setMessage(R.string.survey_alert_message)
+        dialogBuilder?.setPositiveButton(R.string.remind_later) { dialog, which ->
+            SharedPrefs.dismissSurveyInformation = true
+            ATTrackingDetectionApplication.getCurrentApp()?.notificationService?.scheduleSurveyNotification(true)
+        }
+
+        dialogBuilder?.setNegativeButton(R.string.show_not_again) { dialog, which ->
+            SharedPrefs.dismissSurveyInformation = true
+            viewModel.dismissSurveyInformation.postValue(true)
+        }
+
+        dialogBuilder?.setOnCancelListener {
+
+        }
+
+        val alert = dialogBuilder?.create()
+
+        alert?.show()
     }
 }

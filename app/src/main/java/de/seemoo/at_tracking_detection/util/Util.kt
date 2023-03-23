@@ -1,18 +1,20 @@
 package de.seemoo.at_tracking_detection.util
 
-import android.bluetooth.le.ScanFilter
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,13 +27,16 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.lang.Integer.max
+import java.lang.Integer.min
 
 object Util {
 
-    const val MAX_ZOOM_LEVEL = 19.5
+    private const val MAX_ZOOM_LEVEL = 19.5
+    private const val ZOOMED_OUT_LEVEL = 15.0
 
     fun checkAndRequestPermission(permission: String): Boolean {
-        val context = ATTrackingDetectionApplication.getCurrentActivity()
+        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: return false
         when {
             ContextCompat.checkSelfPermission(
                 context,
@@ -58,42 +63,63 @@ object Util {
         }
     }
 
-    suspend fun setGeoPointsFromList(
-        beaconList: List<Beacon>,
-        map: MapView,
-        connectWithPolyline: Boolean = false,
-        onMarkerWindowClick: ((beacon: Beacon) -> Unit)? = null
-    ): Boolean {
+    fun checkBluetoothPermission(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ActivityCompat.checkSelfPermission(
+            ATTrackingDetectionApplication.getAppContext(),
+            Manifest.permission.BLUETOOTH_SCAN
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun getBitsFromByte(value: Byte, position: Int): Boolean {
+        // This uses Little Endian
+        return ((value.toInt() shr position) and 1) == 1
+    }
+
+    fun enableMyLocationOverlay(
+        map: MapView
+    ) {
+        val context = ATTrackingDetectionApplication.getAppContext()
         val locationOverlay = MyLocationNewOverlay(map)
         val options = BitmapFactory.Options()
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val copyrightOverlay = CopyrightOverlay(context)
-
         val bitmapPerson =
             BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
         locationOverlay.setPersonIcon(bitmapPerson)
         locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
+        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
+        locationOverlay.enableMyLocation()
+        locationOverlay.enableFollowLocation()
+        map.overlays.add(locationOverlay)
+        map.controller.setZoom(ZOOMED_OUT_LEVEL)
+    }
+
+    suspend fun setGeoPointsFromListOfLocations(
+        locationList: List<LocationModel>,
+        map: MapView,
+        connectWithPolyline: Boolean = false,
+    ): Boolean {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val copyrightOverlay = CopyrightOverlay(context)
+
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
         val markerList = ArrayList<Marker>()
 
-        locationOverlay.enableMyLocation()
+
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
-        map.overlays.add(locationOverlay)
+
         map.overlays.add(copyrightOverlay)
 
-        // Causes crashes when the view gets destroyed and markers are still added. Will get fixed in the next Version!
         withContext(Dispatchers.Default) {
-            beaconList
-                .filter { it.latitude != null && it.longitude != null }
-                .map { beacon ->
+            locationList
+                .filter { it.locationId != 0 }
+                .map { location ->
+                    if (!map.isShown) {
+                        return@map
+                    }
                     val marker = Marker(map)
-                    val geoPoint = GeoPoint(beacon.longitude!!, beacon.latitude!!)
-                    marker.infoWindow = DeviceMarkerInfo(
-                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
-                    )
+                    val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint
                     marker.icon = ContextCompat.getDrawable(
                         context,
@@ -104,12 +130,8 @@ object Util {
                     markerList.add(marker)
 
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
-                        if (clickedMarker.isInfoWindowShown) {
-                            clickedMarker.closeInfoWindow()
-                        } else {
-                            clickedMarker.showInfoWindow()
-                        }
-                        true
+                        clickedMarker.closeInfoWindow()
+                        false
                     }
                 }
         }
@@ -123,11 +145,15 @@ object Util {
             line.infoWindow = null
             map.overlays.add(line)
         }
+
         if (geoPointList.isEmpty()) {
-            locationOverlay.enableFollowLocation()
             mapController.setZoom(MAX_ZOOM_LEVEL)
             return false
         }
+
+        val myLocationOverlay =
+            map.overlays.firstOrNull { it is MyLocationNewOverlay } as? MyLocationNewOverlay
+        myLocationOverlay?.disableFollowLocation()
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
 
         map.post {
@@ -142,16 +168,39 @@ object Util {
             }
         }
 
-//            map.zoomToBoundingBox(boundingBox, true)
+        // map.zoomToBoundingBox(boundingBox, true)
 
         return true
     }
+
 
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
+    fun rssiToPercentage(rssi: Int, bestRssi: Int = -30, worstRssi: Int = -100): Float {
+        val actual = max(min(rssi, bestRssi), worstRssi)
+        return (actual.toFloat() - worstRssi.toFloat()) / (bestRssi.toFloat() - worstRssi.toFloat())
+    }
+
+    fun rssiToQuality(percentage: Float): Int {
+        return when (percentage) {
+            in 0.75..1.0 -> {
+                3
+            }
+            in 0.5..0.75 -> {
+                2
+            }
+            in 0.25..0.5 -> {
+                1
+            }
+            else -> {
+                0
+            }
         }
     }
 }

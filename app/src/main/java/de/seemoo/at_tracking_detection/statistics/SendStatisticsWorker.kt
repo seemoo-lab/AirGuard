@@ -1,33 +1,33 @@
 package de.seemoo.at_tracking_detection.statistics
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.statistics.api.Api
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @HiltWorker
 class SendStatisticsWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val sharedPreferences: SharedPreferences,
     private val api: Api,
     private val deviceRepository: DeviceRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        var token = sharedPreferences.getString("token", null)
-        val lastDataDonation = sharedPreferences.getString(
-            "lastDataDonation",
-            null
-        )
+        if (BuildConfig.DEBUG) {
+            Timber.d("Not sending any data. Debug mode")
+            return Result.success()
+        }
+        var token = SharedPrefs.token
+        val lastDataDonation = SharedPrefs.lastDataDonation ?: LocalDateTime.MIN
 
         if (!api.ping().isSuccessful) {
             Timber.e("Server not available!")
@@ -37,13 +37,20 @@ class SendStatisticsWorker @AssistedInject constructor(
         if (token == null) {
             val response = api.getToken().body() ?: return Result.retry()
             token = response.token
-            with(sharedPreferences.edit()) {
-                putString("token", token)
-                apply()
-            }
+            SharedPrefs.token = token
         }
 
-        val devices = deviceRepository.getDeviceBeaconsSince(lastDataDonation)
+        val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
+        val uploadDateTime: LocalDateTime = if (lastDataDonation > oneWeekAgo) {
+                lastDataDonation
+            }else {
+                oneWeekAgo
+            }
+
+        val devices = deviceRepository.getDeviceBeaconsSinceDate(uploadDateTime)
+        // This makes sure that no devices will be sent twice. If the donation fails, then the app
+        // will upload newer data the next time.
+        SharedPrefs.lastDataDonation = LocalDateTime.now()
 
         if (devices.isEmpty()) {
             Timber.d("Nothing to send...")
@@ -54,25 +61,19 @@ class SendStatisticsWorker @AssistedInject constructor(
         devices.forEach {
             it.address = ""
             it.beacons.forEach { beacon ->
-                beacon.latitude = null
-                beacon.longitude = null
+                // beacon.latitude = null
+                // beacon.longitude = null
+                beacon.locationId = null
                 beacon.deviceAddress = ""
             }
         }
 
-        if (!api.donateData(token, devices).isSuccessful) {
+        if (!api.donateData(token = token, devices=devices).isSuccessful) {
             return Result.retry()
         }
 
         Timber.d("${devices.size} devices shared!")
 
-        with(sharedPreferences.edit()) {
-            putString(
-                "lastDataDonation",
-                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-            )
-            apply()
-        }
         return Result.success()
     }
 }

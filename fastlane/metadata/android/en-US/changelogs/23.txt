@@ -1,2 +1,0 @@
-AirGuard is now able to identify different FindMy devices reliably. It can identify AirTags,  AirPods, 3rd-party devices (e.g. Chipolo tags) and offline Apple devices (e.g. MacBooks). 
-Furthermore the notification algorithm has been update to handle different devices. Apple devices will notify later (about 2.5 hours after first detection) to reduce false alarms. 

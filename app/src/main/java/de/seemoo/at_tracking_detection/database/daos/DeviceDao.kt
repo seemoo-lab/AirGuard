@@ -20,7 +20,13 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
     fun getAllNotificationSince(since: LocalDateTime): List<BaseDevice>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY lastSeen DESC")
+    fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0")
+    fun getAllTrackingDevicesNotIgnoredSinceCount(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1")
     fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
@@ -41,11 +47,29 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device")
     fun getTotalCount(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0")
+    fun getCountNotTracking(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1")
+    fun getCountIgnored(): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since")
     fun getTotalCountChange(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since")
     fun getCurrentlyMonitored(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND deviceType = :deviceType")
+    fun getCountForType(deviceType: String, since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2)")
+    fun getCountForTypes(deviceType1: String, deviceType2: String, since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND device.lastSeen >= :since")
+    fun getNumberOfLocationsForDevice(deviceAddress: String, since: LocalDateTime): Int
+
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
+    fun getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
