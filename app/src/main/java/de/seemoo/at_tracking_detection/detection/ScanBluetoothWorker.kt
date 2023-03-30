@@ -22,13 +22,10 @@ import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.*
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
-import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
@@ -68,7 +65,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanMode = getScanMode()
         val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
 
-        if (!Util.checkBluetoothPermission()) {
+        if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
         }

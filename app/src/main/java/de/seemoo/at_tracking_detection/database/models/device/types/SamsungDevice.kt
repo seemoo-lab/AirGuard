@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.*
-import de.seemoo.at_tracking_detection.util.Util.getBitsFromByte
+import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
 import timber.log.Timber
 
 open class SamsungDevice(open val id: Int) : Device(){

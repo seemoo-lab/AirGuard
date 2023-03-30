@@ -16,7 +16,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
 
@@ -53,9 +53,9 @@ class DeviceMapFragment : Fragment() {
         ViewCompat.setTranslationZ(view, 100f)
         val map: MapView = view.findViewById(R.id.map)
 
-        Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
-        Util.enableMyLocationOverlay(map)
+        Utility.enableMyLocationOverlay(map)
 
         val deviceAddress = this.deviceAddress
         if (deviceAddress != null && !deviceAddress.isEmpty()) {
@@ -73,7 +73,7 @@ class DeviceMapFragment : Fragment() {
                             }
                         }
 
-                    Util.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
+                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
                 }.invokeOnCompletion {
                     viewModel.isMapLoading.postValue(false)
                 }
@@ -93,7 +93,7 @@ class DeviceMapFragment : Fragment() {
                             }
                         }
 
-                    Util.setGeoPointsFromListOfLocations(locationList.toList(), map)
+                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map)
                 }.invokeOnCompletion {
                     viewModel.isMapLoading.postValue(false)
                 }

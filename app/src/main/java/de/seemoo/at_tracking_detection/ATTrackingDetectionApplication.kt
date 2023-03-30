@@ -26,7 +26,7 @@ import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
@@ -100,7 +100,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
 
-        Util.setSelectedTheme(sharedPreferences)
+        Utility.setSelectedTheme(sharedPreferences)
 
         if (showOnboarding() or !hasPermissions()) {
             startOnboarding()

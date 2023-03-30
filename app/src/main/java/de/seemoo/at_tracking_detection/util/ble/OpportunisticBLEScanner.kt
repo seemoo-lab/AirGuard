@@ -19,13 +19,12 @@ import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
@@ -53,7 +52,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
         val applicationContext = ATTrackingDetectionApplication.getAppContext()
 
-        if (!Util.checkBluetoothPermission()) {
+        if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return
         }

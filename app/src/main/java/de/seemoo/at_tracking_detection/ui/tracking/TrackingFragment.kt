@@ -27,7 +27,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
@@ -115,7 +115,7 @@ class TrackingFragment : Fragment() {
         }
 
         playSoundCard.setOnClickListener {
-            if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+            if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
                 return@setOnClickListener
             }
 
@@ -131,7 +131,7 @@ class TrackingFragment : Fragment() {
             }
         }
 
-        Util.enableMyLocationOverlay(map)
+        Utility.enableMyLocationOverlay(map)
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
@@ -149,7 +149,7 @@ class TrackingFragment : Fragment() {
                     }
 
                 // This is the per Device View
-                Util.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
+                Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }
