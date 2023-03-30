@@ -164,7 +164,7 @@
             android:name="deviceAddress"
             app:argType="string"
             app:nullable="true"
-            android:defaultValue="null" />
+            android:defaultValue="@null" />
     </fragment>
 
     <!-- Individual Device -->
