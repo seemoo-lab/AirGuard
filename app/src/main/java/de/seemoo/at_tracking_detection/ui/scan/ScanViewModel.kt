@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
-import android.location.LocationManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,26 +12,22 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val scanRepository: ScanRepository,
-    private val deviceRepository: DeviceRepository,
-    private val locationRepository: LocationRepository,
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
     ) : ViewModel() {
@@ -43,8 +38,10 @@ class ScanViewModel @Inject constructor(
 
     val scanStart = MutableLiveData(LocalDateTime.MIN)
 
+    var bluetoothEnabled = MutableLiveData<Boolean>(true)
     init {
         bluetoothDeviceList.value = ArrayList()
+        bluetoothEnabled.value = BLEScanner.isBluetoothOn()
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

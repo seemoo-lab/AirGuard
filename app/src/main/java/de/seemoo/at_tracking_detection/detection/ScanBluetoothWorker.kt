@@ -42,10 +42,7 @@ import kotlin.coroutines.suspendCoroutine
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
-    private val locationRepository: LocationRepository,
     private val locationProvider: LocationProvider,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
@@ -89,7 +86,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 45_000L)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
         }
 
         //Starting BLE Scan
@@ -222,7 +219,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // Fallback if no location is fetched in time
             val maximumLocationDurationMillis = 60_000L
             handler.postDelayed(runnable, maximumLocationDurationMillis)
-
         }
     }
 

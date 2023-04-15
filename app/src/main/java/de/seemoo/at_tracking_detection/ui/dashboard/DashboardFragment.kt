@@ -52,29 +52,6 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val lineGraphChart = view.findViewById<RallyLineGraphChart>(R.id.line_graph)
-        val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
-
-        // TODO (re)move in future
-        fabScan.setOnClickListener {
-            val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
-                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
-            val isBluetoothEnabled = bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF
-            if (isBluetoothEnabled && hasScanPermission) {
-                AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.scan_enable_bluetooth_title))
-                    .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                    .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
-                        showManualScan()
-                    }
-                    .setNegativeButton(R.string.no_button, null).create().show()
-            } else {
-                showManualScan()
-            }
-        }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
             .observe(viewLifecycleOwner) { beaconList ->
@@ -91,26 +68,8 @@ class DashboardFragment : Fragment() {
                 Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
             }
 
-        view.findViewById<MaterialCardView>(R.id.statistics_number_beacons)
-            .setOnClickListener { showDeviceList() }
-        view.findViewById<MaterialCardView>(R.id.statistics_number_devices)
-            .setOnClickListener { showDeviceMap() }
     }
 
-    private fun showManualScan() {
-//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
-//        findNavController().navigate(directions)
-    }
-
-    private fun showDeviceList() {
-//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDevicesFragment(true)
-//        findNavController().navigate(directions)
-    }
-
-    private fun showDeviceMap() {
-//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDeviceMap()
-//        findNavController().navigate(directions)
-    }
 
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)

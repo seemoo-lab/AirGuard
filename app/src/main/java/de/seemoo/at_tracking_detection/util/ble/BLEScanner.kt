@@ -7,14 +7,17 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.os.Build
+import android.provider.Settings
+import androidx.core.content.ContextCompat.startActivity
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.util.Util
 import timber.log.Timber
+
 
 /***
  * BLE Scanner to be used for foreground scans when the app is opened
@@ -149,5 +152,19 @@ object BLEScanner {
         override fun receivedAccurateLocationUpdate(location: Location) {
             this@BLEScanner.lastLocation = location
         }
+    }
+
+    fun isBluetoothOn(): Boolean {
+        val adapter = bluetoothManager?.adapter
+        if (adapter != null && adapter.isEnabled) {
+            return true
+        }
+        return false
+    }
+
+    fun openBluetoothSettings(context: Context) {
+        val intentOpenBluetoothSettings = Intent()
+        intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
+        context.startActivity(intentOpenBluetoothSettings)
     }
 }

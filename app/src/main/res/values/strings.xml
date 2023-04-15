@@ -243,4 +243,6 @@
     <string name="onboarding_setting_summary">Will always show the app onboarding procedure</string>
     <string name="onboarding_setting_title">Show Onboarding</string>
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
+    <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
+    <string name="open_bluetooth_settings">Open Bluetooth settings</string>
 </resources>

@@ -58,29 +58,6 @@ class DashboardRiskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*
-        binding.scanFab.setOnClickListener {
-            val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
-                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
-            val isBluetoothEnabled = bluetoothManager.adapter?.state == BluetoothAdapter.STATE_ON
-
-            if (!isBluetoothEnabled || !hasScanPermission) {
-                MaterialAlertDialogBuilder(view.context)
-                    .setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.scan_enable_bluetooth_title))
-                    .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                    .setPositiveButton(getString(R.string.ok_button), null)
-                    .create()
-                    .show()
-            } else {
-                showManualScan()
-            }
-        }
-        */
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
@@ -89,13 +66,6 @@ class DashboardRiskFragment : Fragment() {
             findNavController().navigate(directions)
         }
 
-        view.findViewById<MaterialButton>(R.id.participate_button).setOnClickListener {
-            participateInSurvey()
-        }
-
-        view.findViewById<ImageButton>(R.id.hide_survey_card_button).setOnClickListener {
-            dismissSurveyCard()
-        }
     }
 
     override fun onStart() {
@@ -103,45 +73,4 @@ class DashboardRiskFragment : Fragment() {
         viewModel.updateRiskLevel()
     }
 
-    /*
-    private fun showManualScan() {
-        val directions: NavDirections =
-            DashboardRiskFragmentDirections.dashboardToScanFragment()
-        findNavController().navigate(directions)
-    }
-
-     */
-
-    private fun participateInSurvey() {
-        val intent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
-        )
-        startActivity(intent)
-    }
-
-    private fun dismissSurveyCard() {
-
-
-        val dialogBuilder = context?.let { MaterialAlertDialogBuilder(it) }
-        dialogBuilder?.setTitle(R.string.survey_alert_title)
-        dialogBuilder?.setMessage(R.string.survey_alert_message)
-        dialogBuilder?.setPositiveButton(R.string.remind_later) { dialog, which ->
-            SharedPrefs.dismissSurveyInformation = true
-            ATTrackingDetectionApplication.getCurrentApp()?.notificationService?.scheduleSurveyNotification(true)
-        }
-
-        dialogBuilder?.setNegativeButton(R.string.show_not_again) { dialog, which ->
-            SharedPrefs.dismissSurveyInformation = true
-            viewModel.dismissSurveyInformation.postValue(true)
-        }
-
-        dialogBuilder?.setOnCancelListener {
-
-        }
-
-        val alert = dialogBuilder?.create()
-
-        alert?.show()
-    }
 }
