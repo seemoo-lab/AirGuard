@@ -71,6 +71,15 @@ interface DeviceDao {
     @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
     fun getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int
 
+    @Query("SELECT riskLevel FROM device WHERE address = :deviceAddress")
+    fun getCachedRiskLevel(deviceAddress: String): Int
+
+    @Query("SELECT lastCalculatedRiskDate FROM device WHERE address = :deviceAddress")
+    fun getLastCachedRiskLevelDate(deviceAddress: String): LocalDateTime?
+
+    @Query("UPDATE device SET riskLevel = :riskLevel, lastCalculatedRiskDate = :lastCalculatedRiskDate WHERE address == :deviceAddress")
+    fun updateRiskLevelCache(deviceAddress: String, riskLevel: Int, lastCalculatedRiskDate: LocalDateTime)
+
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM device JOIN beacon ON beacon.deviceAddress = deviceAddress WHERE beacon.receivedAt >= :dateTime")
