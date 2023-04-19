@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="rssi"
+            type="Integer" />
+
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
+
+        <variable
+            name="adapter"
+            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/distance_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            android:text="@{rssi}" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

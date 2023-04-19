@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +38,13 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
     override fun onBindViewHolder(holder: ScanResultViewHolder, position: Int) {
         val scanResult: ScanResult = getItem(position)
         holder.bind(scanResult)
+
+        // TODO: both of these are not called, checked with Debugger
+
+        holder.itemView.findViewById<ImageView>(R.id.scan_signal_strength).setOnClickListener() {
+            val directions = ScanFragmentDirections.actionScanToScanDistance() // TODO: add argument here for public key
+            holder.itemView.findNavController().navigate(directions) // TODO: This does not work for some reason
+        }
 
         holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener() {
             val hasAllPermissions =

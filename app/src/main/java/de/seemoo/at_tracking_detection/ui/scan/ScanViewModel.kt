@@ -101,6 +101,7 @@ class ScanViewModel @Inject constructor(
 
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
 
+    /* TODO: remove in future
     suspend fun saveScanToRepository(){
         // Not used anymore, because manual scan is always when the app is open
         if (scanStart.value == LocalDateTime.MIN) { return }
@@ -108,4 +109,5 @@ class ScanViewModel @Inject constructor(
         val scan = Scan(endDate = LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, isManual = true, scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY, startDate = scanStart.value ?: LocalDateTime.now())
         scanRepository.insert(scan)
     }
+    */
 }

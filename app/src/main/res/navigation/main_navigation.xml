@@ -21,29 +21,29 @@
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard_risk">
-        <action
-            android:id="@+id/dashboardToScanFragment"
-            app:destination="@id/scanFragment"
-            app:enterAnim="@anim/slide_in_bottom"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpTo="@id/navigation_dashboard"
-            app:popUpToSaveState="true"
-            />
-        <action
-            android:id="@+id/action_navigation_dashboard_to_riskDetailFragment"
-            app:destination="@id/riskDetailFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim"
-            app:popUpTo="@id/navigation_dashboard"
-            app:popUpToSaveState="true"
-            />
-    </fragment>
+    <!--<action
+        android:id="@+id/dashboardToScanFragment"
+        app:destination="@id/scanFragment"
+        app:enterAnim="@anim/slide_in_bottom"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:popUpTo="@id/navigation_dashboard"
+        app:popUpToSaveState="true"
+        />-->
+    <action
+        android:id="@+id/action_navigation_dashboard_to_riskDetailFragment"
+        app:destination="@id/riskDetailFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/navigation_dashboard"
+        app:popUpToSaveState="true"
+        />
+</fragment>
 
-    <!-- Settings -->
+<!-- Settings -->
     <fragment
         android:id="@+id/navigation_settings"
         android:name="de.seemoo.at_tracking_detection.ui.settings.SettingsFragment"
@@ -66,6 +66,12 @@
         <action
             android:id="@+id/action_settings_to_about_libs"
             app:destination="@id/scanFragment"
+            app:popUpTo="@id/navigation_manual_scan"
+            app:popUpToSaveState="true"
+            />
+        <action
+            android:id="@+id/action_scan_to_scanDistance"
+            app:destination="@id/scanDistanceFragment"
             app:popUpTo="@id/navigation_manual_scan"
             app:popUpToSaveState="true"
             />
@@ -195,6 +201,11 @@
     <fragment
         android:id="@+id/scanFragment"
         android:name="de.seemoo.at_tracking_detection.ui.scan.ScanFragment"
+        android:label="@string/scan_title" />
+
+    <fragment
+        android:id="@+id/scanDistanceFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.scan.ScanDistanceFragment"
         android:label="@string/scan_title" />
 
     <fragment

@@ -67,12 +67,7 @@ class DashboardFragment : Fragment() {
                 AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
                     .setTitle(getString(R.string.scan_enable_bluetooth_title))
                     .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                    .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
-                        showManualScan()
-                    }
                     .setNegativeButton(R.string.no_button, null).create().show()
-            } else {
-                showManualScan()
             }
         }
 
@@ -90,26 +85,6 @@ class DashboardFragment : Fragment() {
                 lineGraphChart.addDataPoints(dataPoints.reversed())
                 Timber.d("Added ${dataPoints.size} new data points to the graph chart!")
             }
-
-        view.findViewById<MaterialCardView>(R.id.statistics_number_beacons)
-            .setOnClickListener { showDeviceList() }
-        view.findViewById<MaterialCardView>(R.id.statistics_number_devices)
-            .setOnClickListener { showDeviceMap() }
-    }
-
-    private fun showManualScan() {
-        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToScanFragment()
-        findNavController().navigate(directions)
-    }
-
-    private fun showDeviceList() {
-//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDevicesFragment(true)
-//        findNavController().navigate(directions)
-    }
-
-    private fun showDeviceMap() {
-//        val directions: NavDirections = DashboardRiskFragmentDirections.dashboardToDeviceMap()
-//        findNavController().navigate(directions)
     }
 
     companion object {

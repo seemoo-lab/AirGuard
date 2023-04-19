@@ -11,49 +11,32 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
+import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import timber.log.Timber
 
-@AndroidEntryPoint
-class ScanFragment : Fragment() {
+class ScanDistanceFragment : Fragment() {
+    private val scanDistanceViewModel: ScanDistanceViewModel by viewModels()
 
-    private val scanViewModel: ScanViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding: FragmentScanBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
-        val bluetoothDeviceAdapter = BluetoothDeviceAdapter(childFragmentManager)
-
-        binding.adapter = bluetoothDeviceAdapter
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = scanViewModel
-
-        scanViewModel.bluetoothDeviceList.observe(viewLifecycleOwner) {
-            bluetoothDeviceAdapter.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
-            bluetoothDeviceAdapter.notifyDataSetChanged()
-        }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        startBluetoothScan()
-    }
+    // TODO: does not work because not called via Navigation??? val safeArgs: ScanDistanceFragmentArgs by navArgs()
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             result?.let {
-                scanViewModel.addScanResult(it)
+                // TODO: we need here the public key from the previous fragment
+                val publicKey = "" // TODO: from navArgs???
+
+                if (getPublicKey(it) == publicKey){
+                    scanDistanceViewModel.setScanResult(it)
+                }
+
             }
         }
 
@@ -80,6 +63,7 @@ class ScanFragment : Fragment() {
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
 
+        /* TODO: modify or remove
         // Show to the user that no devices have been found
         Handler(Looper.getMainLooper()).postDelayed({
             // Stop scanning if no device was detected
@@ -87,7 +71,9 @@ class ScanFragment : Fragment() {
                 scanViewModel.scanFinished.postValue(true)
                 stopBluetoothScan()
             }
-        }, SCAN_DURATION)
+        }, ScanFragment.SCAN_DURATION)
+
+         */
     }
 
     private fun stopBluetoothScan() {
@@ -95,6 +81,31 @@ class ScanFragment : Fragment() {
         // until the app is closed / moved to background
         BLEScanner.unregisterCallback(this.scanCallback)
     }
+
+    /* TODO: check if this is correct
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val binding: FragmentScanDistanceBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_scan_distance, container, false)
+        val bluetoothDeviceAdapter = BluetoothDeviceAdapter(childFragmentManager) // TODO: check: should this be the same Adapter as in ScanFragment?
+
+        binding.adapter = bluetoothDeviceAdapter
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = scanDistanceViewModel
+
+        scanDistanceViewModel.bluetoothDevice.observe(viewLifecycleOwner) {
+            // TODO: definitily change this
+            bluetoothDeviceAdapter.submitList(it)
+            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
+            bluetoothDeviceAdapter.notifyDataSetChanged()
+        }
+
+        return inflater.inflate(R.layout.fragment_scan_distance, container, false)
+    }
+
+     */
 
     override fun onResume() {
         super.onResume()
@@ -114,4 +125,5 @@ class ScanFragment : Fragment() {
     companion object {
         private const val SCAN_DURATION = 15000L
     }
+
 }
