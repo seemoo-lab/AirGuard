@@ -27,10 +27,8 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
-import java.lang.Integer.max
-import java.lang.Integer.min
 
-object Util {
+object Utility {
 
     private const val MAX_ZOOM_LEVEL = 19.5
     private const val ZOOMED_OUT_LEVEL = 15.0

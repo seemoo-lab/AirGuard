@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.util.ble
 
-import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
@@ -9,13 +8,11 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.provider.Settings
-import androidx.core.content.ContextCompat.startActivity
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationRequester
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 
 
@@ -50,10 +47,7 @@ object BLEScanner {
 
         this.bluetoothManager?.let {
             val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
+            val hasScanPermission = Utility.checkBluetoothPermission()
 
             if (isBluetoothEnabled && hasScanPermission) {
                 val leScanner = it.adapter.bluetoothLeScanner
@@ -75,7 +69,7 @@ object BLEScanner {
         callbacks.clear()
         bluetoothManager?.let {
             if (it.adapter.state == BluetoothAdapter.STATE_ON) {
-                if (!Util.checkBluetoothPermission()) {return}
+                if (!Utility.checkBluetoothPermission()) {return}
 
                 it.adapter.bluetoothLeScanner.stopScan(ownScanCallback)
             }

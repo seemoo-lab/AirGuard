@@ -8,8 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 
 class FoundDevicesFragment: DevicesFragment(
     showDevicesFound = true
@@ -25,7 +24,7 @@ class FoundDevicesFragment: DevicesFragment(
 
     override val deviceItemListener: DeviceAdapter.OnClickListener
         get() = DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
-            if (!Util.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (!Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 return@OnClickListener
             }
             val directions: NavDirections =

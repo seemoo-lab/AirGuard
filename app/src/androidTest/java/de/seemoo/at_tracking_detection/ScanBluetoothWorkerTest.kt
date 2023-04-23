@@ -98,7 +98,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -136,7 +136,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -176,7 +176,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -216,7 +216,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()

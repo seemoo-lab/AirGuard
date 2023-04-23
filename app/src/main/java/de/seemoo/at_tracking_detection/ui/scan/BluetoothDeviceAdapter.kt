@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
 import de.seemoo.at_tracking_detection.ui.scan.dialog.PlaySoundDialogFragment
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 
 class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentManager) :
@@ -41,7 +41,7 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
 
         holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener {
             val hasAllPermissions =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Utility.checkAndRequestPermission(
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
             if (hasAllPermissions) {

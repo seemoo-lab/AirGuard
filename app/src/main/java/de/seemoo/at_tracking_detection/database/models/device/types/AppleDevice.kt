@@ -31,8 +31,8 @@ class AppleDevice(val id: Int) : Device() {
                     // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
                     // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
                     // All Devices:
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x00).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
+                    byteArrayOf((0x12).toByte(), (0x19).toByte()),
+                    byteArrayOf((0xFF).toByte(), (0x00).toByte())
                 )
                 .build()
 
