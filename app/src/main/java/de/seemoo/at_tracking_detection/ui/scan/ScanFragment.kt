@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -47,6 +48,17 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startBluetoothScan()
+
+        val bluetoothButton = view.findViewById<Button>(R.id.open_ble_settings_button)
+        bluetoothButton.setOnClickListener {
+            context?.let { BLEScanner.openBluetoothSettings(it) }
+
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
     }
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
@@ -112,6 +124,6 @@ class ScanFragment : Fragment() {
     }
 
     companion object {
-        private const val SCAN_DURATION = 15000L
+        private const val SCAN_DURATION = 60_000L
     }
 }

@@ -10,7 +10,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_android_components_ActivityComponent
 import de.seemoo.at_tracking_detection.database.AppDatabase
 import de.seemoo.at_tracking_detection.database.daos.*
 import de.seemoo.at_tracking_detection.database.repository.*
@@ -50,7 +49,7 @@ object DatabaseModule {
                 Timber.e("Could not create location ${e}")
             }
 
-            var sql: String = ""
+            var sql: String
             while (true) {
                 sql = "SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1"
                 val beacon = database.query(sql)

@@ -15,21 +15,62 @@
 
     </data>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".ui.tracking.TrackingFragment">
 
-        <include
-            android:id="@+id/tracking_map"
-            layout="@layout/include_map"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/map_container"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/tracking_tiles"
+            app:layout_constraintHeight_min="250dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            bind:loading="@{vm.isMapLoading}" />
+            >
+            <include
+                android:id="@+id/tracking_map"
+                layout="@layout/include_map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_min="250dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                bind:loading="@{vm.isMapLoading}" />
+
+            <View
+                android:id="@+id/map_overlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+            <ImageButton
+                android:id="@+id/open_map_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="20dp"
+                android:src="@drawable/ic_map_zoom"
+                android:padding="10dp"
+                android:backgroundTint="@color/cardview_light_background"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <LinearLayout
             android:id="@+id/tracking_tiles"
@@ -40,14 +81,15 @@
             app:layout_constraintBottom_toTopOf="@id/tracking_scan_airtag_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tracking_map">
+            app:layout_constraintTop_toBottomOf="@id/map_container">
 
 
             <include
                 android:id="@+id/device_item"
                 layout="@layout/item_device"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/devices_item_height"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/devices_item_height"
                 android:layout_margin="@dimen/card_margin"
                 app:baseDevice="@{vm.device}"
                 app:deviceBeaconCount="@{vm.amountBeacons}"
@@ -68,6 +110,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
 
@@ -75,9 +118,10 @@
                     android:id="@+id/tracking_play_sound"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/tracking_tile_height"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
                     android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
                     android:visibility="@{vm.connectable ? View.VISIBLE : View.GONE}"
                     bind:clickable="@{!vm.soundPlaying || !vm.connecting}"
                     bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
@@ -94,9 +138,10 @@
                     android:id="@+id/tracking_ignore_device"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/tracking_tile_height"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
                     android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
                     android:onClick="@{() -> vm.toggleIgnoreDevice()}"
                     android:visibility="@{vm.canBeIgnored ? View.VISIBLE : View.GONE}"
                     bind:checkable="@{true}"
@@ -111,33 +156,37 @@
                     />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
                 <include
                     android:id="@+id/tracking_feedback"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/tracking_tile_height"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
                     android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
                     android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
                     bind:clickable="@{true}"
                     bind:drawable="@{@drawable/ic_baseline_feedback_24}"
                     bind:imageDescription="@{@string/tracking_feedback_title}"
                     bind:subtitle="@{@string/tracking_feedback_subtitle}"
                     bind:title="@{@string/tracking_feedback_title}"
-                    bind:vm="@{vm}"
-                    />
+                    bind:vm="@{vm}" />
 
                 <include
                     android:id="@+id/tracking_false_alarm"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/tracking_tile_height"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
                     android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
                     android:onClick="@{() -> vm.toggleFalseAlarm()}"
                     android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
                     bind:checkable="@{true}"
@@ -155,8 +204,6 @@
         </LinearLayout>
 
 
-
-
         <TextView
             android:id="@+id/tracking_scan_airtag_text"
             android:layout_width="match_parent"
@@ -171,6 +218,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tracking_tiles" />
+            app:layout_constraintTop_toBottomOf="@id/tracking_tiles"
+            tools:targetApi="o" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

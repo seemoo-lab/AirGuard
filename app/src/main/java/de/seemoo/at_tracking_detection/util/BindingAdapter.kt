@@ -13,8 +13,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.util.Util.rssiToPercentage
-import de.seemoo.at_tracking_detection.util.Util.rssiToQuality
+import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import java.util.*
 
 @BindingAdapter("setAdapter")
@@ -29,8 +28,8 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
 @BindingAdapter("setSignalStrengthDrawable", requireAll = true)
 fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
     val rssi: Int = scanResult.rssi
-    val percentage = rssiToPercentage(rssi)
-    val quality = rssiToQuality(percentage)
+    val percentage = DbmToPercent.convert(rssi.toDouble(), perfectRssi = -30.0, worstRssi = -90.0).toDouble() / 100.0
+    val quality = Utility.rssiToQuality(percentage.toFloat())
 
     when (quality) {
         0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))

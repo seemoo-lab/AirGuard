@@ -4,8 +4,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
-import androidx.arch.core.executor.TaskExecutor
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
@@ -16,24 +14,16 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.*
 import androidx.work.impl.utils.taskexecutor.WorkManagerTaskExecutor
 import androidx.work.testing.TestForegroundUpdater
-import androidx.work.testing.TestListenableWorkerBuilder
 import androidx.work.testing.TestProgressUpdater
 import de.seemoo.at_tracking_detection.database.AppDatabase
-import de.seemoo.at_tracking_detection.database.models.Scan
-import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
-import de.seemoo.at_tracking_detection.database.viewmodel.NotificationViewModel
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.hilt.DatabaseModule
-import de.seemoo.at_tracking_detection.notifications.NotificationBuilder
-import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
 import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.worker.BackgroundWorkBuilder
-import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.*
 import org.junit.runner.RunWith
@@ -96,6 +86,7 @@ class ScanBluetoothWorkerTest {
             Collections.emptyList(),
             WorkerParameters.RuntimeExtras(),
             1,
+            1,
             // This is unused for ListenableWorker
             executor,
             WorkManagerTaskExecutor(executor),
@@ -107,7 +98,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -133,6 +124,7 @@ class ScanBluetoothWorkerTest {
             Collections.emptyList(),
             WorkerParameters.RuntimeExtras(),
             1,
+            1,
             // This is unused for ListenableWorker
             executor,
             WorkManagerTaskExecutor(executor),
@@ -144,7 +136,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -173,6 +165,7 @@ class ScanBluetoothWorkerTest {
             WorkerParameters.RuntimeExtras(),
             1,
             // This is unused for ListenableWorker
+            1,
             executor,
             WorkManagerTaskExecutor(executor),
             WorkerFactory.getDefaultWorkerFactory(),
@@ -183,7 +176,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -212,6 +205,7 @@ class ScanBluetoothWorkerTest {
             WorkerParameters.RuntimeExtras(),
             1,
             // This is unused for ListenableWorker
+            1,
             executor,
             WorkManagerTaskExecutor(executor),
             WorkerFactory.getDefaultWorkerFactory(),
@@ -222,7 +216,7 @@ class ScanBluetoothWorkerTest {
         val worker = ScanBluetoothWorker(
             context,
             params,
-            beaconRepository, deviceRepository, scanRepository, locationRepository, locationProvider, notificationService, backgroundWorkScheduler)
+            scanRepository, locationProvider, notificationService, backgroundWorkScheduler)
 
         runBlocking {
             val result = worker.doWork()
@@ -242,21 +236,26 @@ class ScanBluetoothWorkerTest {
     }
 }
 
-class TestLocationProvider(val lastLocationIsNull: Boolean, val locationDelayMillis: Long, locationManager: LocationManager, versionProvider: BuildVersionProvider) : LocationProvider(locationManager, versionProvider) {
-    override fun getLastLocation(): Location? {
+class TestLocationProvider(private val lastLocationIsNull: Boolean, private val locationDelayMillis: Long, locationManager: LocationManager, versionProvider: BuildVersionProvider) : LocationProvider(locationManager, versionProvider) {
+    override fun getLastLocation(checkRequirements: Boolean): Location? {
         if (lastLocationIsNull) {
             return null
         }
-        return super.getLastLocation()
+        return super.getLastLocation(checkRequirements)
     }
 
-    override fun getCurrentLocation(callback: (Location?) -> Unit) {
+    override fun lastKnownOrRequestLocationUpdates(
+        locationRequester: LocationRequester,
+        timeoutMillis: Long?
+    ): Location? {
         if (locationDelayMillis > 0) {
             val handler = Handler(Looper.getMainLooper())
             val runnable = Runnable {
-                super.getCurrentLocation(callback)
+                super.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis)
             }
             handler.postDelayed(runnable, locationDelayMillis)
         }
+
+        return null
     }
 }

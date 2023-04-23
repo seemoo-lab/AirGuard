@@ -7,6 +7,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -26,7 +27,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
@@ -114,7 +115,7 @@ class TrackingFragment : Fragment() {
         }
 
         playSoundCard.setOnClickListener {
-            if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+            if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
                 return@setOnClickListener
             }
 
@@ -130,13 +131,13 @@ class TrackingFragment : Fragment() {
             }
         }
 
-        Util.enableMyLocationOverlay(map)
+        Utility.enableMyLocationOverlay(map)
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
 
-                var locationList = arrayListOf<Location>()
+                val locationList = arrayListOf<Location>()
                 val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
 
                 it.filter { it.locationId != null && it.locationId != 0 }
@@ -148,7 +149,7 @@ class TrackingFragment : Fragment() {
                     }
 
                 // This is the per Device View
-                Util.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
+                Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }
@@ -164,6 +165,26 @@ class TrackingFragment : Fragment() {
                 }
             }
         }
+
+        addInteractions(view)
+    }
+
+    fun addInteractions(view: View) {
+        val button = view.findViewById<ImageButton>(R.id.open_map_button)
+
+
+        button.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+        val overlay = view.findViewById<View>(R.id.map_overlay)
+        overlay.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+
     }
 
     private fun toggleSound() {

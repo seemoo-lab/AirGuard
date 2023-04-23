@@ -1,18 +1,12 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.le.ScanFilter
 import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.*
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
-import java.util.*
 
 class Tile(val id: Int) : Device(){
     override val imageResource: Int

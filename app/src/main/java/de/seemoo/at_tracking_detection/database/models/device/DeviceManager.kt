@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
     val savedConnectionStates = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
 
@@ -40,6 +40,9 @@ object DeviceManager {
             //Check if this device is a Tile
             if (services.contains(Tile.offlineFindingServiceUUID)) {
                 return Tile.deviceType
+            }
+            else if(services.contains(Chipolo.offlineFindingServiceUUID)){
+                return Chipolo.deviceType
             }
             else if(services.contains(SmartTag.offlineFindingServiceUUID)){
                 return SamsungDevice.getSamsungDeviceType(scanResult)

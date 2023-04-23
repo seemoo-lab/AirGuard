@@ -27,10 +27,8 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
-import java.lang.Integer.max
-import java.lang.Integer.min
 
-object Util {
+object Utility {
 
     private const val MAX_ZOOM_LEVEL = 19.5
     private const val ZOOMED_OUT_LEVEL = 15.0
@@ -120,11 +118,6 @@ object Util {
                     }
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
-                    /*
-                    marker.infoWindow = DeviceMarkerInfo(
-                        R.layout.include_device_marker_window, map, beacon, onMarkerWindowClick
-                    )
-                     */
                     marker.position = geoPoint
                     marker.icon = ContextCompat.getDrawable(
                         context,
@@ -135,12 +128,7 @@ object Util {
                     markerList.add(marker)
 
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
-                        if (clickedMarker.isInfoWindowShown) {
-                            clickedMarker.closeInfoWindow()
-                        } else {
-                            // clickedMarker.showInfoWindow()
-                            clickedMarker.closeInfoWindow()
-                        }
+                        clickedMarker.closeInfoWindow()
                         false
                     }
                 }
@@ -190,11 +178,6 @@ object Util {
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
-    }
-
-    fun rssiToPercentage(rssi: Int, bestRssi: Int = -30, worstRssi: Int = -100): Float {
-        val actual = max(min(rssi, bestRssi), worstRssi)
-        return (actual.toFloat() - worstRssi.toFloat()) / (bestRssi.toFloat() - worstRssi.toFloat())
     }
 
     fun rssiToQuality(percentage: Float): Int {

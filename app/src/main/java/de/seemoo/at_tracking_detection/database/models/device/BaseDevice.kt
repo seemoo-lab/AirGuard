@@ -26,7 +26,9 @@ data class BaseDevice(
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
-    @ColumnInfo(name = "deviceType") val deviceType: DeviceType?
+    @ColumnInfo(name = "deviceType") val deviceType: DeviceType?,
+    @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
+    @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
 ) {
 
     constructor(
@@ -49,7 +51,9 @@ data class BaseDevice(
         lastSeen,
         false,
         null,
-        deviceType
+        deviceType,
+        0,
+        lastSeen,
     )
 
     constructor(scanResult: ScanResult) : this(
@@ -66,8 +70,13 @@ data class BaseDevice(
             }
         },
         scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
-        LocalDateTime.now(), LocalDateTime.now(), false, null,
-        DeviceManager.getDeviceType(scanResult)
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        false,
+        null,
+        DeviceManager.getDeviceType(scanResult),
+        0,
+        LocalDateTime.now(),
     )
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId
@@ -84,6 +93,7 @@ data class BaseDevice(
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
+        DeviceType.CHIPOLO -> Chipolo(deviceId)
         DeviceType.SAMSUNG -> SamsungDevice(deviceId)
         DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
         DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
@@ -113,6 +123,7 @@ data class BaseDevice(
         fun getConnectionState(scanResult: ScanResult): ConnectionState {
             return when (DeviceManager.getDeviceType(scanResult)) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
+                DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
                 DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)

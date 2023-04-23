@@ -21,27 +21,17 @@
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.DashboardRiskFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard_risk">
-    <!--<action
-        android:id="@+id/dashboardToScanFragment"
-        app:destination="@id/scanFragment"
-        app:enterAnim="@anim/slide_in_bottom"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"
-        app:popUpTo="@id/navigation_dashboard"
-        app:popUpToSaveState="true"
-        />-->
-    <action
-        android:id="@+id/action_navigation_dashboard_to_riskDetailFragment"
-        app:destination="@id/riskDetailFragment"
-        app:enterAnim="@anim/slide_in_right"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/navigation_dashboard"
-        app:popUpToSaveState="true"
-        />
-</fragment>
+        <action
+            android:id="@+id/action_navigation_dashboard_to_riskDetailFragment"
+            app:destination="@id/riskDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/navigation_dashboard"
+            app:popUpToSaveState="true"
+            />
+    </fragment>
 
 <!-- Settings -->
     <fragment
@@ -52,8 +42,6 @@
         <action
             android:id="@+id/action_settings_to_about_libs"
             app:destination="@id/about_libraries"
-            app:popUpTo="@id/navigation_settings"
-            app:popUpToSaveState="true"
             />
     </fragment>
 
@@ -115,7 +103,8 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpToSaveState="true"
+            app:popUpTo="@id/devices_found"
+            app:restoreState="true"
             />
         <argument
             android:name="deviceType"
@@ -146,7 +135,11 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpToSaveState="true" />
+            app:popUpTo="@id/devices_found"
+            app:popUpToSaveState="true"
+            app:popUpToInclusive="true"
+            app:restoreState="true"
+            />
         <argument
             android:name="deviceType"
             android:defaultValue="UNKNOWN"
@@ -162,17 +155,22 @@
         android:id="@+id/deviceMapFragment"
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.DeviceMapFragment"
         android:label="@string/title_device_map">
-        <action
+        <!--<action
             android:id="@+id/action_deviceMapFragment_to_trackingFragment"
             app:destination="@id/trackingFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_exit_anim" />
+            app:popExitAnim="@anim/nav_default_exit_anim" /> -->
         <argument
             android:name="showAllDevices"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="deviceAddress"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
     <!-- Individual Device -->
@@ -195,6 +193,14 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_trackingFragment_to_deviceMapFragment"
+            app:destination="@id/deviceMapFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            />
 
     </fragment>
 
@@ -244,7 +250,7 @@
     <fragment
         android:id="@+id/navigation_ignoredDevicesFragment"
         android:name="de.seemoo.at_tracking_detection.ui.devices.IgnoredDevicesFragment"
-        android:label="IgnoredDevicesFragment" >
+        android:label="@string/ignored_devices" >
         <action
             android:id="@+id/action_navigation_ignoredDevicesFragment_to_trackingFragment"
             app:destination="@id/trackingFragment"
@@ -252,8 +258,7 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="false"
+            app:popUpTo="@id/navigation_ignoredDevicesFragment"
             app:popUpToSaveState="true" />
     </fragment>
 
@@ -275,7 +280,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="false" />
+            app:popUpToSaveState="true" />
         <action
             android:id="@+id/action_navigation_allDevicesFragment_to_devices_found2"
             app:destination="@id/devices_found2"
@@ -284,7 +289,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/navigation_allDevicesFragment"
-            app:popUpToInclusive="false" />
+            app:popUpToSaveState="true" />
     </fragment>
 
 </navigation>

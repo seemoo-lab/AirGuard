@@ -1,9 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'androidx.navigation.safeargs.kotlin'
     id 'com.mikepenz.aboutlibraries.plugin'
 }
 
@@ -24,8 +24,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 35
-        versionName "1.4"
+        versionCode 37
+        versionName "2.0"
 
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]

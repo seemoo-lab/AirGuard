@@ -15,7 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentAllDevicesBinding
-import de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailFragmentDirections
 
 
 /**
@@ -37,7 +36,6 @@ class AllDevicesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_all_devices,
@@ -87,6 +85,11 @@ class AllDevicesFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.tiles_found_card).setOnClickListener {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.TILE)
+            findNavController().navigate(directions)
+        }
+
+        view.findViewById<MaterialCardView>(R.id.chipolos_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.CHIPOLO)
             findNavController().navigate(directions)
         }
 

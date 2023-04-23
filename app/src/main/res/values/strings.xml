@@ -27,10 +27,10 @@
     <string name="beacons">Beacons</string>
     <string name="devices_swipe">Swipe to remove</string>
     <string name="devices_list_empty">Whenever the app detects an AirTag or another tracking device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
-    <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new one after a day.</string>
+    <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile, Chipolo) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new one after a day.</string>
     <string name="settings_use_location_summary">If enabled, more detailed tracking information can be provided when being tracked.</string>
     <string name="settings_use_location_title">Use Location</string>
-    <string name="error_requesting_location_permission">Error requesting background Location permission.</string>
+    <string name="error_requesting_location_permission">Error requesting background Location permission</string>
     <string name="tracking_locate_at_title">Play Sound</string>
     <string name="tracking_locate_at_subtitle">Locate AirTag</string>
     <string name="permissions_background_location_title">Background Location</string>
@@ -68,7 +68,7 @@
 
         We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous.</string>
 
-    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, SmartTag or a Tile is tracking you.</string>
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, SmartTag, Chipolo or a Tile is tracking you.</string>
     <string name="location_permission_title">Location Permission</string>
     <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Bluetooth Trackers even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
 
@@ -90,7 +90,7 @@
     <string name="settings_show_connected_devices">Show devices that are connected to their owner devices in the scan tab</string>
 
     <string name="settings_notification_priority_high_title">High Priority Notifications</string>
-    <string name="settings_notification_priority_high">If enabled, notifications will be issued even when the phone is set to silent or do not disturb</string>
+    <string name="settings_notification_priority_high">If enabled, notifications will be issued as an alarm with high priority</string>
 
     <string name="settings_third_party_libraries_title">Third Party Libraries</string>
     <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
@@ -115,7 +115,7 @@
     <string name="device_icon">Device icon</string>
     <string name="location_sample_image">Location sample image</string>
     <string name="permissions_location_title">Background Location</string>
-    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, SmartTag or Tile is tracking you. This permission is optional.</string>
+    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, SmartTag, Chipolo or Tile is tracking you. This permission is optional.</string>
     <string name="onboarding_2_title">Location Permission</string>
     <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding Trackers via Bluetooth Low Energy. Without this permission, the app does not work and will not find any tracking devices. Your location data never leaves your device. </string>
     <string name="devices_edit_title">Edit device name</string>
@@ -136,7 +136,7 @@
     <string name="twitter">Twitter</string>
     <string name="scan_title">Scan</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags and Tiles.</string>
+    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -189,7 +189,7 @@
     <string name="settings_risk_sensitivity_medium">Medium</string>
     <string name="settings_risk_sensitivity_high">High</string>
     <string name="settings_risk_sensitivity_title">Detection Sensitivity</string>
-    <string name="settings_risk_sensitivity_summary">This setting controls how sensitive the tracking detection is. A higher setting results in a faster but possibly more inaccurate detection</string>
+    <string name="settings_risk_sensitivity_summary">This setting controls how sensitive the tracking detection is. A higher setting results in a faster but possibly more inaccurate detection.</string>
     <string name="settings_app_theme_title">App Theme</string>
     <string name="settings_app_theme_summary">Choose a theme!</string>
     <string name="settings_metric_title">Metric System</string>
@@ -225,6 +225,7 @@
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Find My Devices found</string>
     <string name="tile_found">Tiles found</string>
+    <string name="chipolo_found">Chipolos found</string>
     <string name="smarttag_found">SmartTags found</string>
     <string name="survey_card_title">We are doing a survey</string>
     <string name="survey_card_info_text">We are trying to find out how many people are experiencing stalking and location tracking attacks. We invite every user to participate in the survey, even if you are not a victim to any of these attacks. This survey is part of our research project at the Technical University of Darmstadt.</string>
@@ -241,4 +242,7 @@
     <string name="survey_settings_title">Survey on stalking and location tracking</string>
     <string name="onboarding_setting_summary">Will always show the app onboarding procedure</string>
     <string name="onboarding_setting_title">Show Onboarding</string>
+    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
+    <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
+    <string name="open_bluetooth_settings">Open Bluetooth settings</string>
 </resources>

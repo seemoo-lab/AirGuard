@@ -5,6 +5,7 @@ import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -19,6 +20,13 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun trackingDevicesNotIgnoredSince(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSince(since)
 
     fun trackingDevicesNotIgnoredSinceCount(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSinceCount(since)
+
+    fun getCachedRiskLevel(deviceAddress: String): Int = deviceDao.getCachedRiskLevel(deviceAddress)
+
+    fun getLastCachedRiskLevelDate(deviceAddress: String): LocalDateTime? = deviceDao.getLastCachedRiskLevelDate(deviceAddress)
+
+    fun updateRiskLevelCache(deviceAddress: String, riskLevel: Int, lastCalculatedRiskDate: LocalDateTime)
+            = deviceDao.updateRiskLevelCache(deviceAddress, riskLevel, lastCalculatedRiskDate)
 
     fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
 

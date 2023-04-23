@@ -22,13 +22,10 @@ import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.*
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
-import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
@@ -42,10 +39,7 @@ import kotlin.coroutines.suspendCoroutine
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
-    private val locationRepository: LocationRepository,
     private val locationProvider: LocationProvider,
     private val notificationService: NotificationService,
     var backgroundWorkScheduler: BackgroundWorkScheduler
@@ -71,7 +65,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanMode = getScanMode()
         val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
 
-        if (!Util.checkBluetoothPermission()) {
+        if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
         }
@@ -89,7 +83,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 45_000L)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
         }
 
         //Starting BLE Scan
@@ -151,9 +145,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             //Checks if the device has been found already
-            if (!scanResultDictionary.containsKey(scanResult.device.address)) {
+            if (!scanResultDictionary.containsKey(getPublicKey(scanResult))) {
                 Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-                scanResultDictionary[scanResult.device.address] =
+                scanResultDictionary[getPublicKey(scanResult)] =
                     DiscoveredDevice(scanResult, LocalDateTime.now())
             }
         }
@@ -222,7 +216,6 @@ class ScanBluetoothWorker @AssistedInject constructor(
             // Fallback if no location is fetched in time
             val maximumLocationDurationMillis = 60_000L
             handler.postDelayed(runnable, maximumLocationDurationMillis)
-
         }
     }
 
@@ -260,9 +253,10 @@ class ScanBluetoothWorker @AssistedInject constructor(
             val beacons = beaconRepository.getDeviceBeaconsSince(
                 deviceAddress = uniqueIdentifier,
                 since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
-            )
+            ) // sorted by newest first
 
             if (beacons.isEmpty()) {
+                Timber.d("Add new Beacon to the database!")
                 beacon = if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
@@ -276,11 +270,15 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     )
                 }
                 beaconRepository.insert(beacon)
-            } else if ((beacons[0].locationId == null || beacons[0].locationId == null) && locId != null && locId != 0){
+            } else if (beacons[0].locationId == null && locId != null && locId != 0){
+                // Update beacon within the last TIME_BETWEEN_BEACONS minutes with location
+                Timber.d("Beacon already in the database... Adding Location")
                 beacon = beacons[0]
                 beacon.locationId = locId
                 beaconRepository.update(beacon)
             }
+
+            Timber.d("Beacon: $beacon")
 
             return beacon
         }

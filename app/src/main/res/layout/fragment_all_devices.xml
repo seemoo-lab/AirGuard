@@ -51,15 +51,15 @@
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
                     app:cardBackgroundColorInt="@{@color/gray_card_background}"
-                    app:cardName="@{@string/ignored_devices}"
-                    app:cardNumber="@{viewModel.countIgnored}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.48"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:layout_marginStart="8dp"
+                    app:cardName="@{@string/ignored_devices}"
+                    app:cardNumber="@{viewModel.countIgnored}"
                     />
 
 
@@ -136,7 +136,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.48" />
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -148,18 +149,34 @@
                 android:orientation="horizontal">
 
                 <include
+                    android:id="@+id/chipolos_found_card"
+                    layout="@layout/include_number_card"
+                    android:layout_height="0dp"
+                    android:layout_width="0dp"
+                    app:cardBackgroundColorInt="@{@color/blue_card_background}"
+                    app:cardName="@{@string/chipolo_found}"
+                    app:cardNumber="@{viewModel.countChipolo}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                    />
+
+                <include
                     android:id="@+id/all_devices_card"
                     layout="@layout/include_number_card"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintWidth_percent="0.48"
-                    app:layout_constraintDimensionRatio="1:1"
                     app:cardName="@{@string/other_devices_found}"
                     app:cardNumber="@{viewModel.countNotTracking}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                     />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

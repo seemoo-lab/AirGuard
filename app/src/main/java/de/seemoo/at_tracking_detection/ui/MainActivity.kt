@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.ui
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,18 +11,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.elevation.SurfaceColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import org.osmdroid.config.Configuration
+import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
-import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
         val configuration = Configuration.getInstance()
         configuration.load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.activity_main)
@@ -64,6 +67,19 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(appBarItems)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.main_navigation, inclusive = true, saveState = false).setLaunchSingleTop(true).build()
+
+        navView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.navigation_dashboard -> navController.navigate(R.id.navigation_dashboard, args=null, navOptions = navOptions)
+                R.id.navigation_manual_scan -> navController.navigate(R.id.navigation_manual_scan, args=null, navOptions = navOptions)
+                R.id.navigation_allDevicesFragment -> navController.navigate(R.id.navigation_allDevicesFragment, args=null, navOptions = navOptions)
+                R.id.navigation_settings -> navController.navigate(R.id.navigation_settings, args=null, navOptions = navOptions)
+                R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, args=null, navOptions = navOptions)
+            }
+            return@setOnItemSelectedListener true
+        }
     }
 
     override fun onResume() {
