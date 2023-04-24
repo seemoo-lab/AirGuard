@@ -102,6 +102,7 @@ open class SamsungDevice(open val id: Int) : Device(){
             }
         }
 
+        // TODO: move to Base device
         fun getPublicKey(scanResult: ScanResult): String{
             val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 

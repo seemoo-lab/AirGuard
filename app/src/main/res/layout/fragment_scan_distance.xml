@@ -5,19 +5,10 @@
 
     <data>
         <variable
-            name="rssi"
-            type="Integer" />
-
-        <variable
             name="vm"
-            type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
-
-        <variable
-            name="adapter"
-            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
+            type="de.seemoo.at_tracking_detection.ui.scan.ScanDistanceViewModel" />
 
         <import type="android.view.View" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,13 +16,47 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/device_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.deviceAddress}"
+            android:textSize="24sp"
+            bind:layout_constraintBottom_toTopOf="@+id/distance_percentage"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/distance_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{vm.bluetoothRssi.toString()}"
+            android:textSize="24sp"
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintTop_toTopOf="parent"
-            android:text="@{rssi}" />
+            bind:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/connection_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.connectionState}"
+            android:textSize="24sp"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="@+id/distance_percentage" />
+
+        <TextView
+            android:id="@+id/battery_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.batteryState}"
+            android:textSize="24sp"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toBottomOf="@+id/connection_state" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

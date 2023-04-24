@@ -40,23 +40,25 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
         val scanResult: ScanResult = getItem(position)
         holder.bind(scanResult)
 
-        holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener {
-        // TODO: both of these are not called, checked with Debugger
-
-        holder.itemView.findViewById<ImageView>(R.id.scan_signal_strength).setOnClickListener() {
-            val directions = ScanFragmentDirections.actionScanToScanDistance() // TODO: add argument here for public key
-            holder.itemView.findNavController().navigate(directions) // TODO: This does not work for some reason
-        }
-
-        holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound).setOnClickListener() {
-            val hasAllPermissions =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Utility.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_CONNECT
-                )
-            if (hasAllPermissions) {
-                PlaySoundDialogFragment(scanResult).show(fragmentManager, null)
+        holder.itemView.findViewById<ImageView>(R.id.scan_signal_strength)
+            .setOnClickListener() {
+                val deviceAddress: String = getPublicKey(scanResult)
+                val directions =
+                    ScanFragmentDirections.actionScanToScanDistance(deviceAddress)
+                holder.itemView.findNavController()
+                    .navigate(directions)
             }
-        }
+
+        holder.itemView.findViewById<ImageView>(R.id.scan_result_play_sound)
+            .setOnClickListener() {
+                val hasAllPermissions =
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Utility.checkAndRequestPermission(
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    )
+                if (hasAllPermissions) {
+                    PlaySoundDialogFragment(scanResult).show(fragmentManager, null)
+                }
+            }
     }
 
     companion object : DiffUtil.ItemCallback<ScanResult>() {

@@ -3,8 +3,6 @@ package de.seemoo.at_tracking_detection.ui.scan
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,27 +12,34 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
-import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import timber.log.Timber
 
 class ScanDistanceFragment : Fragment() {
-    private val scanDistanceViewModel: ScanDistanceViewModel by viewModels()
+    private val viewModel: ScanDistanceViewModel by viewModels()
+    private val safeArgs: ScanDistanceFragmentArgs by navArgs()
 
-    // TODO: does not work because not called via Navigation??? val safeArgs: ScanDistanceFragmentArgs by navArgs()
+    private var deviceAddress: String? = null
+
+    private lateinit var binding: FragmentScanDistanceBinding
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             result?.let {
-                // TODO: we need here the public key from the previous fragment
-                val publicKey = "" // TODO: from navArgs???
+                val publicKey = safeArgs.deviceAddress
 
+                // TODO: handling if public Key is null
                 if (getPublicKey(it) == publicKey){
-                    scanDistanceViewModel.setScanResult(it)
+                    viewModel.bluetoothRssi.postValue(it.rssi)
+                    val connectionState = getConnectionStateAsString(it)
+                    viewModel.connectionState.postValue(connectionState)
+                    val batteryState = getBatteryStateAsString(it)
+                    viewModel.batteryState.postValue(batteryState)
                 }
 
             }
@@ -62,18 +67,6 @@ class ScanDistanceFragment : Fragment() {
 
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
-
-        /* TODO: modify or remove
-        // Show to the user that no devices have been found
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Stop scanning if no device was detected
-            if (scanViewModel.isListEmpty.value == true) {
-                scanViewModel.scanFinished.postValue(true)
-                stopBluetoothScan()
-            }
-        }, ScanFragment.SCAN_DURATION)
-
-         */
     }
 
     private fun stopBluetoothScan() {
@@ -82,30 +75,27 @@ class ScanDistanceFragment : Fragment() {
         BLEScanner.unregisterCallback(this.scanCallback)
     }
 
-    /* TODO: check if this is correct
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val binding: FragmentScanDistanceBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_scan_distance, container, false)
-        val bluetoothDeviceAdapter = BluetoothDeviceAdapter(childFragmentManager) // TODO: check: should this be the same Adapter as in ScanFragment?
-
-        binding.adapter = bluetoothDeviceAdapter
+    ): View {
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_scan_distance,
+            container,
+            false
+        )
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = scanDistanceViewModel
+        binding.vm = viewModel
 
-        scanDistanceViewModel.bluetoothDevice.observe(viewLifecycleOwner) {
-            // TODO: definitily change this
-            bluetoothDeviceAdapter.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
-            bluetoothDeviceAdapter.notifyDataSetChanged()
-        }
+        deviceAddress = safeArgs.deviceAddress
+        viewModel.deviceAddress.postValue(deviceAddress)
 
-        return inflater.inflate(R.layout.fragment_scan_distance, container, false)
+        startBluetoothScan()
+
+        return binding.root
     }
-
-     */
 
     override fun onResume() {
         super.onResume()
@@ -123,7 +113,7 @@ class ScanDistanceFragment : Fragment() {
     }
 
     companion object {
-        private const val SCAN_DURATION = 15000L
+        private const val SCAN_DURATION = 15000L // TODO: Necessary?
     }
 
 }

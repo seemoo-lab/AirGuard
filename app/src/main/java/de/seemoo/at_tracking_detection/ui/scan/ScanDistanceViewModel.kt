@@ -5,20 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 
 class ScanDistanceViewModel : ViewModel() {
-    private val bluetoothDevice = MutableLiveData<ScanResult>()
-
-    private val bluetoothRssi = MutableLiveData<Int>()
-
-    fun setScanResult(scanResult: ScanResult) {
-        val bluetoothDeviceValue = bluetoothDevice.value ?: return // TODO: Is this even necessary????
-        bluetoothDevice.postValue(bluetoothDeviceValue) // TODO: Is this even necessary????
-        bluetoothRssi.postValue(scanResult.rssi)
-    }
-
-    init {
-        bluetoothRssi.value = -1
-    }
+    var bluetoothRssi = MutableLiveData<Int>()
+    var deviceAddress = MutableLiveData<String>()
+    var connectionState = MutableLiveData<String>()
+    var batteryState = MutableLiveData<String>()
 
 }

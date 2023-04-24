@@ -40,24 +40,6 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val lineGraphChart = view.findViewById<RallyLineGraphChart>(R.id.line_graph)
-        val fabScan = view.findViewById<ExtendedFloatingActionButton>(R.id.dashboard_scan_fab)
-
-        // TODO (re)move in future
-        fabScan.setOnClickListener {
-            val bluetoothManager = ATTrackingDetectionApplication.getAppContext()
-                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
-            val isBluetoothEnabled = bluetoothManager.adapter.state == BluetoothAdapter.STATE_OFF
-            if (isBluetoothEnabled && hasScanPermission) {
-                AlertDialog.Builder(context).setIcon(R.drawable.ic_warning)
-                    .setTitle(getString(R.string.scan_enable_bluetooth_title))
-                    .setMessage(getString(R.string.scan_enable_bluetooth_message))
-                    .setNegativeButton(R.string.no_button, null).create().show()
-            }
-        }
 
         dashboardViewModel.getBeaconHistory(dateTime.minusDays(HISTORY_LENGTH))
             .observe(viewLifecycleOwner) { beaconList ->

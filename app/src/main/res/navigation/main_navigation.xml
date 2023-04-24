@@ -212,7 +212,13 @@
     <fragment
         android:id="@+id/scanDistanceFragment"
         android:name="de.seemoo.at_tracking_detection.ui.scan.ScanDistanceFragment"
-        android:label="@string/scan_title" />
+        android:label="@string/scan_title">
+        <argument
+            android:name="deviceAddress"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/riskDetailFragment"

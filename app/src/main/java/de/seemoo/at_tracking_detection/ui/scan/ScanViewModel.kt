@@ -88,7 +88,10 @@ class ScanViewModel @Inject constructor(
             }
         }
 
+        // TODO:
         bluetoothDeviceListValue.sortByDescending { it.rssi }
+        // bluetoothDeviceListValue.sortByDescending { it.device.address }
+
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(

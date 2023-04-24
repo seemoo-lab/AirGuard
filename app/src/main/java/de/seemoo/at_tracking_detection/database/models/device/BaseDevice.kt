@@ -134,5 +134,32 @@ data class BaseDevice(
                 else -> ConnectionState.UNKNOWN
             }
         }
+
+        fun getBatteryState(scanResult: ScanResult): BatteryState {
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                // TODO: implement
+                else -> BatteryState.UNKNOWN
+            }
+        }
+
+        fun getConnectionStateAsString(scanResult: ScanResult): String {
+            return when (getConnectionState(scanResult)) {
+                ConnectionState.OFFLINE -> "Offline"
+                ConnectionState.PREMATURE_OFFLINE -> "Premature Offline"
+                ConnectionState.OVERMATURE_OFFLINE -> "Overmature Offline"
+                ConnectionState.CONNECTED -> "Connected"
+                ConnectionState.UNKNOWN -> "Unknown"
+            }
+        }
+
+        fun getBatteryStateAsString(scanResult: ScanResult): String {
+            return when (getBatteryState(scanResult)) {
+                BatteryState.LOW -> "Low"
+                BatteryState.VERY_LOW -> "Very Low"
+                BatteryState.MEDIUM -> "Medium"
+                BatteryState.FULL -> "Full"
+                BatteryState.UNKNOWN -> "Unknown"
+            }
+        }
     }
 }
