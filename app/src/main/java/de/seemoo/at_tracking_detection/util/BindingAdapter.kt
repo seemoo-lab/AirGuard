@@ -28,8 +28,7 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
 @BindingAdapter("setSignalStrengthDrawable", requireAll = true)
 fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
     val rssi: Int = scanResult.rssi
-    val percentage = DbmToPercent.convert(rssi.toDouble(), perfectRssi = -30.0, worstRssi = -90.0).toDouble() / 100.0
-    val quality = Utility.rssiToQuality(percentage.toFloat())
+    val quality = Utility.dbmToQuality(rssi)
 
     when (quality) {
         0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))

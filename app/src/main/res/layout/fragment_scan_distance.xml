@@ -27,6 +27,17 @@
             bind:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/connection_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.connectionQuality.toString()}"
+            android:textSize="24sp"
+            bind:layout_constraintBottom_toTopOf="@+id/distance_percentage"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toBottomOf="@+id/device_address" />
+
+        <TextView
             android:id="@+id/distance_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,6 +47,17 @@
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/battery_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.batteryState}"
+            android:textSize="24sp"
+            bind:layout_constraintBottom_toTopOf="@+id/connection_state"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toBottomOf="@+id/distance_percentage" />
 
         <TextView
             android:id="@+id/connection_state"
@@ -48,15 +70,5 @@
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="@+id/distance_percentage" />
 
-        <TextView
-            android:id="@+id/battery_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{vm.batteryState}"
-            android:textSize="24sp"
-            bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintTop_toBottomOf="@+id/connection_state" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

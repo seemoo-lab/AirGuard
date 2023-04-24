@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
+import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -180,7 +181,16 @@ object Utility {
         }
     }
 
-    fun rssiToQuality(percentage: Float): Int {
+    fun dbmToQuality(rssi: Int): Int {
+        val percentage = dbmToPercent(rssi)
+        return rssiToQuality(percentage.toFloat())
+    }
+
+    fun dbmToPercent(rssi: Int, perfectRssi: Double = -30.0, worstRssi: Double = -90.0): Double {
+        return DbmToPercent.convert(rssi.toDouble(), perfectRssi = perfectRssi, worstRssi = worstRssi).toDouble() / 100.0
+    }
+
+    private fun rssiToQuality(percentage: Float): Int {
         return when (percentage) {
             in 0.75..1.0 -> {
                 3

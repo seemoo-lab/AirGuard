@@ -12,5 +12,6 @@ class ScanDistanceViewModel : ViewModel() {
     var deviceAddress = MutableLiveData<String>()
     var connectionState = MutableLiveData<String>()
     var batteryState = MutableLiveData<String>()
+    var connectionQuality = MutableLiveData<Double>()
 
 }

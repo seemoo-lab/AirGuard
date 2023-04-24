@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
+import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 
 class ScanDistanceFragment : Fragment() {
@@ -40,6 +41,8 @@ class ScanDistanceFragment : Fragment() {
                     viewModel.connectionState.postValue(connectionState)
                     val batteryState = getBatteryStateAsString(it)
                     viewModel.batteryState.postValue(batteryState)
+                    val connectionQuality = Utility.dbmToPercent(it.rssi)
+                    viewModel.connectionQuality.postValue(connectionQuality)
                 }
 
             }
