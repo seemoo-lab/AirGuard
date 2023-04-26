@@ -245,4 +245,16 @@
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
     <string name="open_bluetooth_settings">Open Bluetooth settings</string>
+
+    <string name="battery_full">Full</string>
+    <string name="battery_medium">Medium</string>
+    <string name="battery_low">Low</string>
+    <string name="battery_very_low">Very Low</string>
+    <string name="battery_unknown">Unknown</string>
+
+    <string name="connection_state_offline">Offline</string>
+    <string name="connection_state_overmature_offline">Overmature Offline</string>
+    <string name="connection_state_premature_offline">Premature Offline</string>
+    <string name="connection_state_connected">Connected</string>
+    <string name="connection_state_unknown">Unknown</string>
 </resources>

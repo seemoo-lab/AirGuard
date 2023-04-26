@@ -3,6 +3,8 @@ package de.seemoo.at_tracking_detection.database.models.device
 import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
@@ -153,21 +155,21 @@ data class BaseDevice(
 
         fun getConnectionStateAsString(scanResult: ScanResult): String {
             return when (getConnectionState(scanResult)) {
-                ConnectionState.OFFLINE -> "Offline"
-                ConnectionState.PREMATURE_OFFLINE -> "Premature Offline"
-                ConnectionState.OVERMATURE_OFFLINE -> "Overmature Offline"
-                ConnectionState.CONNECTED -> "Connected"
-                ConnectionState.UNKNOWN -> "Unknown"
+                ConnectionState.OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_offline)
+                ConnectionState.PREMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_premature_offline)
+                ConnectionState.OVERMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_overmature_offline)
+                ConnectionState.CONNECTED -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_connected)
+                ConnectionState.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_unknown)
             }
         }
 
         fun getBatteryStateAsString(scanResult: ScanResult): String {
             return when (getBatteryState(scanResult)) {
-                BatteryState.LOW -> "Low"
-                BatteryState.VERY_LOW -> "Very Low"
-                BatteryState.MEDIUM -> "Medium"
-                BatteryState.FULL -> "Full"
-                BatteryState.UNKNOWN -> "Unknown"
+                BatteryState.LOW -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_low)
+                BatteryState.VERY_LOW -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_very_low)
+                BatteryState.MEDIUM -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_medium)
+                BatteryState.FULL -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_full)
+                BatteryState.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_unknown)
             }
         }
     }

@@ -225,4 +225,14 @@
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
+    <string name="battery_full">Voll</string>
+    <string name="battery_medium">Mittel</string>
+    <string name="battery_low">Niedrig</string>
+    <string name="battery_very_low">Sehr Niedrig</string>
+    <string name="battery_unknown">Unbekannt</string>
+    <string name="connection_state_offline">Offline</string>
+    <string name="connection_state_overmature_offline">Overmature Offline</string>
+    <string name="connection_state_premature_offline">Premature Offline</string>
+    <string name="connection_state_connected">Verbunden</string>
+    <string name="connection_state_unknown">Unbekannt</string>
 </resources>
