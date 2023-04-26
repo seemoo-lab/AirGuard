@@ -12,8 +12,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import java.util.*
 
 @BindingAdapter("setAdapter")
@@ -59,7 +58,7 @@ fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-    val deviceFromDb = deviceRepository?.getDevice(SamsungDevice.getPublicKey(scanResult))
+    val deviceFromDb = deviceRepository?.getDevice(getPublicKey(scanResult))
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {

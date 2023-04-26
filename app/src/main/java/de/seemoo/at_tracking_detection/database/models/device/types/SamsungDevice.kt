@@ -54,7 +54,7 @@ open class SamsungDevice(open val id: Int) : Device(){
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
-            if (serviceData != null) {
+            if (serviceData != null && serviceData.isNotEmpty()) {
                 // Little Endian (5,6,7) --> (2,1,0)
                 val bit5 = getBitsFromByte(serviceData[0], 2)
                 val bit6 = getBitsFromByte(serviceData[0],1)
@@ -75,6 +75,43 @@ open class SamsungDevice(open val id: Int) : Device(){
             }
 
             return ConnectionState.UNKNOWN
+        }
+
+        override fun getBatteryState(scanResult: ScanResult): BatteryState {
+            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+            if (serviceData != null && serviceData.size >= 12) {
+                val bit6 = getBitsFromByte(serviceData[12],1)
+                val bit7 = getBitsFromByte(serviceData[12],0)
+
+                return if (bit6 && bit7) {
+                    Timber.d("Samsung Device Battery State: FULL")
+                    BatteryState.FULL
+                } else if (bit6 && !bit7) {
+                    Timber.d("Samsung Device Battery State: MEDIUM")
+                    BatteryState.MEDIUM
+                } else if (!bit6 && bit7) {
+                    Timber.d("Samsung Device Battery State: LOW")
+                    BatteryState.LOW
+                } else {
+                    Timber.d("Samsung Device Battery State: VERY_LOW")
+                    BatteryState.VERY_LOW
+                }
+            }
+
+            return BatteryState.UNKNOWN
+        }
+
+        override fun getPublicKey(scanResult: ScanResult): String{
+            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+
+            fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+
+            return if (serviceData == null || serviceData.size < 12) {
+                scanResult.device.address
+            } else {
+                byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
+            }
         }
 
         fun getSamsungDeviceType(scanResult: ScanResult): DeviceType{
@@ -99,19 +136,6 @@ open class SamsungDevice(open val id: Int) : Device(){
             } else {
                 Timber.d("Samsung Service Data is SmartTag")
                 SmartTag.deviceType
-            }
-        }
-
-        // TODO: move to Base device
-        fun getPublicKey(scanResult: ScanResult): String{
-            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
-
-            fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
-
-            return if (serviceData == null || serviceData.size < 12) {
-                scanResult.device.address
-            } else {
-                byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
             }
         }
     }

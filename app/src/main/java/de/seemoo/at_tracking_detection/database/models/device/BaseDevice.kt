@@ -4,7 +4,6 @@ import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.device.types.*
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -120,6 +119,15 @@ data class BaseDevice(
             }
         }
 
+        fun getPublicKey(scanResult: ScanResult): String{
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.SAMSUNG -> SamsungDevice.getPublicKey(scanResult)
+                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getPublicKey(scanResult)
+                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getPublicKey(scanResult)
+                else -> scanResult.device.address
+            }
+        }
+
         fun getConnectionState(scanResult: ScanResult): ConnectionState {
             return when (DeviceManager.getDeviceType(scanResult)) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
@@ -137,7 +145,8 @@ data class BaseDevice(
 
         fun getBatteryState(scanResult: ScanResult): BatteryState {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                // TODO: implement
+                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getBatteryState(scanResult)
+                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
             }
         }

@@ -1,16 +1,14 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
@@ -22,7 +20,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel

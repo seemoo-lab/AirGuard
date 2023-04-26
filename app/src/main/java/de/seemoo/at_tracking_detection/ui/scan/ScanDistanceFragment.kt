@@ -15,7 +15,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
