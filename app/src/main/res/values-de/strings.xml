@@ -235,4 +235,6 @@
     <string name="connection_state_premature_offline">Premature Offline</string>
     <string name="connection_state_connected">Verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
+    <string name="scan_start">Start</string>
+    <string name="scan_stop">Stop</string>
 </resources>

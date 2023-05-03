@@ -46,6 +46,10 @@ class ScanViewModel @Inject constructor(
     }
 
     fun addScanResult(scanResult: ScanResult) {
+        if (scanFinished.value == true) {
+            return
+        }
+
         val currentDate = LocalDateTime.now()
         val uniqueIdentifier = getPublicKey(scanResult) // either public key or MAC-Address
         if (beaconRepository.getNumberOfBeaconsAddress(

@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.animation.ValueAnimator
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
@@ -113,10 +114,6 @@ class ScanDistanceFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         stopBluetoothScan()
-    }
-
-    companion object {
-        private const val SCAN_DURATION = 15000L // TODO: Necessary?
     }
 
 }

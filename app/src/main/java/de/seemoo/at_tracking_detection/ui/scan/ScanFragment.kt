@@ -12,6 +12,7 @@ import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -42,6 +43,16 @@ class ScanFragment : Fragment() {
             // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
             bluetoothDeviceAdapter.notifyDataSetChanged()
         }
+
+        scanViewModel.scanFinished.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.buttonStartStopScan.setText(R.string.scan_start)
+            } else {
+                binding.buttonStartStopScan.setText(R.string.scan_stop)
+            }
+
+        }
+
         return binding.root
     }
 
@@ -52,6 +63,16 @@ class ScanFragment : Fragment() {
         val bluetoothButton = view.findViewById<Button>(R.id.open_ble_settings_button)
         bluetoothButton.setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
+
+        }
+
+        val startStopButton = view.findViewById<Button>(R.id.button_start_stop_scan)
+        startStopButton.setOnClickListener {
+            if (scanViewModel.scanFinished.value == true) {
+                startBluetoothScan()
+            } else {
+                stopBluetoothScan()
+            }
 
         }
     }
@@ -91,6 +112,7 @@ class ScanFragment : Fragment() {
 
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
+        scanViewModel.scanFinished.postValue(false)
 
         // Show to the user that no devices have been found
         Handler(Looper.getMainLooper()).postDelayed({
@@ -106,11 +128,14 @@ class ScanFragment : Fragment() {
         // We just unregister the callback, but keep the scanner running
         // until the app is closed / moved to background
         BLEScanner.unregisterCallback(this.scanCallback)
+        scanViewModel.scanFinished.postValue(true)
     }
 
     override fun onResume() {
         super.onResume()
-        startBluetoothScan()
+        if (scanViewModel.scanFinished.value == false) {
+            startBluetoothScan()
+        }
     }
 
     override fun onPause() {
