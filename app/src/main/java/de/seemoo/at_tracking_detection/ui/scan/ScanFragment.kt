@@ -9,10 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -50,7 +50,12 @@ class ScanFragment : Fragment() {
             } else {
                 binding.buttonStartStopScan.setText(R.string.scan_stop)
             }
+        }
 
+        scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
+            val bluetoothDeviceListValue = scanViewModel.bluetoothDeviceList.value ?: return@observe
+            scanViewModel.sortResults(bluetoothDeviceListValue)
+            scanViewModel.bluetoothDeviceList.postValue(bluetoothDeviceListValue)
         }
 
         return binding.root
@@ -73,7 +78,19 @@ class ScanFragment : Fragment() {
             } else {
                 stopBluetoothScan()
             }
+        }
 
+        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
+        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
+        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
+        sortBySignalStrength.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
+        }
+        sortByDetectionOrder.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
+        }
+        sortByAddress.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
         }
     }
 

@@ -21,17 +21,81 @@
         android:layout_height="match_parent"
         tools:context=".ui.scan.ScanFragment">
 
+        <HorizontalScrollView
+            android:id="@+id/sorting_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.isListEmpty ? View.GONE : View.VISIBLE, default=visible}"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_loading_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sort_option_signal_strength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="8dp"
+                    android:text="@string/scan_sorting_by_rssi"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/sort_option_order_detection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="8dp"
+                    android:text="@string/scan_sorting_by_recently"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/sort_option_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="8dp"
+                    android:text="@string/scan_sorting_by_address"
+                    android:textSize="18sp" />
+
+                <!-- <TextView
+                    android:id="@+id/sort_option_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="8dp"
+                    android:text="@string/scan_sorting_by_name"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/sort_option_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:padding="8dp"
+                    android:text="@string/scan_sorting_by_type"
+                    android:textSize="18sp" /> -->
+
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/scan_result_loading_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler"
+            app:layout_constraintBottom_toTopOf="@+id/scan_result_recycler"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toBottomOf="@id/sorting_options" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/scan_result_recycler"
@@ -43,7 +107,9 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
-            app:setAdapter="@{adapter}" />
+            app:setAdapter="@{adapter}" >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <com.github.ybq.android.spinkit.SpinKitView
             style="@style/SpinKitView.Large.DoubleBounce"

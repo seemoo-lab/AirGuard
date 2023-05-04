@@ -33,6 +33,8 @@ class ScanViewModel @Inject constructor(
 
     val scanFinished = MutableLiveData(false)
 
+    val sortingOrder = MutableLiveData<SortingOrder>(SortingOrder.SIGNAL_STRENGTH)
+
     val scanStart = MutableLiveData(LocalDateTime.MIN)
 
     var bluetoothEnabled = MutableLiveData<Boolean>(true)
@@ -89,9 +91,7 @@ class ScanViewModel @Inject constructor(
             }
         }
 
-        // TODO:
-        bluetoothDeviceListValue.sortByDescending { it.rssi }
-        // bluetoothDeviceListValue.sortByDescending { it.device.address }
+        sortResults(bluetoothDeviceListValue)
 
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
@@ -101,6 +101,15 @@ class ScanViewModel @Inject constructor(
             }"
         )
         Timber.d("Device list: ${bluetoothDeviceList.value?.count()}")
+    }
+
+    fun sortResults(bluetoothDeviceListValue: MutableList<ScanResult>) {
+        when(sortingOrder.value) {
+            SortingOrder.SIGNAL_STRENGTH -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+            SortingOrder.DETECTION_ORDER -> bluetoothDeviceListValue.sortByDescending { it.timestampNanos }
+            SortingOrder.ADDRESS -> bluetoothDeviceListValue.sortBy { it.device.address }
+            else -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+        }
     }
 
     val isListEmpty: LiveData<Boolean> = bluetoothDeviceList.map { it.isEmpty() }
