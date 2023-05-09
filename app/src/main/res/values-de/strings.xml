@@ -235,8 +235,7 @@
     <string name="connection_state_premature_offline">Premature Offline</string>
     <string name="connection_state_connected">Verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
-    <string name="scan_start">Start</string>
-    <string name="scan_stop">Stop</string>
+    <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
     <string name="scan_sorting_by_rssi">nach Signalstärke</string>
     <string name="scan_sorting_by_recently">zuletzt gesehen</string>
     <string name="scan_sorting_by_address">nach MAC-Adresse</string>

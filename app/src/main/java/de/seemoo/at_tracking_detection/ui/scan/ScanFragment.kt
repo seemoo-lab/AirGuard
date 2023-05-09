@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -46,9 +47,9 @@ class ScanFragment : Fragment() {
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
             if (it) {
-                binding.buttonStartStopScan.setText(R.string.scan_start)
+                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_play_arrow_24)
             } else {
-                binding.buttonStartStopScan.setText(R.string.scan_stop)
+                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_stop_24)
             }
         }
 
@@ -56,6 +57,22 @@ class ScanFragment : Fragment() {
             val bluetoothDeviceListValue = scanViewModel.bluetoothDeviceList.value ?: return@observe
             scanViewModel.sortResults(bluetoothDeviceListValue)
             scanViewModel.bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+
+            if (view != null) {
+                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
+                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
+                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
+
+                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+                when(it) {
+                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
+                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
+                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                }
+            }
+
         }
 
         return binding.root
@@ -71,7 +88,7 @@ class ScanFragment : Fragment() {
 
         }
 
-        val startStopButton = view.findViewById<Button>(R.id.button_start_stop_scan)
+        val startStopButton = view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan)
         startStopButton.setOnClickListener {
             if (scanViewModel.scanFinished.value == true) {
                 startBluetoothScan()
@@ -83,6 +100,11 @@ class ScanFragment : Fragment() {
         val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
         val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
         val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
+
+        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+
         sortBySignalStrength.setOnClickListener {
             scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
         }

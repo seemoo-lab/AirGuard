@@ -1,6 +1,9 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
+import android.widget.TextView
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -109,6 +112,16 @@ class ScanViewModel @Inject constructor(
             SortingOrder.DETECTION_ORDER -> bluetoothDeviceListValue.sortByDescending { it.timestampNanos }
             SortingOrder.ADDRESS -> bluetoothDeviceListValue.sortBy { it.device.address }
             else -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+        }
+    }
+
+    fun changeColorOf(sortOptions: List<TextView>, sortOption: TextView, color: Color = Color.Gray) {
+        sortOptions.forEach {
+            if(it == sortOption) {
+                it.setBackgroundColor(color.toArgb())
+            } else {
+                it.setBackgroundColor(Color.Transparent.toArgb())
+            }
         }
     }
 
