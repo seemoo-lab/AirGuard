@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 37
         versionName "2.0"
 
@@ -91,10 +91,10 @@ dependencies {
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.github.bastienpaulfr:Treessence:1.0.0'
-    implementation 'androidx.work:work-runtime-ktx:2.8.0'
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
@@ -119,7 +119,7 @@ dependencies {
 
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
-    implementation 'org.osmdroid:osmdroid-android:6.1.11'
+    implementation 'org.osmdroid:osmdroid-android:6.1.16'
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
