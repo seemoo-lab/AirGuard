@@ -264,4 +264,7 @@
     <string name="scan_sorting_by_address">by MAC-Address</string>
     <string name="scan_sorting_by_name">by Name</string>
     <string name="scan_sorting_by_type">by Type</string>
+
+    <string name="play_sound_description">Plays a sound on the tracking device</string>
+    <string name="bell_icon_description">This device has been identified as a tracker</string>
 </resources>

@@ -73,6 +73,22 @@ fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
     if (device.isConnectable() && BaseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
         view.visibility = View.VISIBLE
     }else {
-        view.visibility = View.GONE
+        view.visibility = View.INVISIBLE
+    }
+}
+
+@BindingAdapter("visibilityBellIcon", requireAll = true)
+fun visibilityBellIcon(view: View, scanResult: ScanResult) {
+    val deviceAddress = BaseDevice(scanResult).address
+    val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository
+
+    if (notificationRepository != null) {
+        if (notificationRepository.existsNotificationForDevice(deviceAddress)) {
+            view.visibility = View.VISIBLE
+        } else {
+            view.visibility = View.INVISIBLE
+        }
+    } else {
+        view.visibility = View.INVISIBLE
     }
 }

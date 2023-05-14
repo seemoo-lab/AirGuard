@@ -53,9 +53,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.85" />
+                app:layout_constraintGuide_percent="0.85224277" />
 
             <ImageView
+                android:id="@+id/scan_device_logo"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="12dp"
@@ -102,14 +103,29 @@
                 android:id="@+id/scan_signal_strength"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginVertical="16dp"
-                android:src="@drawable/ic_signal_low"
+                android:layout_marginVertical="12dp"
                 android:contentDescription="@string/scan_result_item_image_description"
+                android:src="@drawable/ic_signal_low"
+                app:tint="?android:attr/textColorTertiary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_middle"
-                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
+                app:layout_constraintRight_toLeftOf="@id/scan_bell_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:setSignalStrengthDrawable="@{scanResult}" />
+
+            <ImageView
+                android:id="@+id/scan_bell_icon"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/scan_result_guideline_right"
+                app:layout_constraintStart_toEndOf="@+id/scan_signal_strength"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:attr/textColorTertiary"
+                app:visibilityBellIcon="@{scanResult}"
+                android:src="@drawable/ic_baseline_notifications_active_24"
+                android:contentDescription="@string/bell_icon_description" />
 
             <ImageView
                 android:id="@+id/scan_result_play_sound"
@@ -118,12 +134,13 @@
                 android:layout_marginVertical="12dp"
                 android:src="@{@drawable/ic_baseline_play_circle_outline_24}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_right"
+                app:layout_constraintLeft_toRightOf="@id/scan_bell_icon"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:hideWhenNoSoundPlayed="@{scanResult}"
                 app:tint="?android:attr/textColorHighlight"
-                tools:src="@drawable/ic_baseline_play_circle_outline_24" />
+                tools:src="@drawable/ic_baseline_play_circle_outline_24"
+                android:contentDescription="@string/play_sound_description" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
