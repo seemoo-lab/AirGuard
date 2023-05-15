@@ -36,7 +36,7 @@
             android:id="@+id/connection_quality"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.connectionQuality.toString()}"
+            android:text="@{vm.connectionQuality.toString() + ` %`}"
             android:textSize="24sp"
             bind:layout_constraintBottom_toTopOf="@+id/distance_percentage"
             bind:layout_constraintEnd_toEndOf="parent"

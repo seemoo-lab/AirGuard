@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -7,6 +8,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
+import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,6 +31,9 @@ class ScanDistanceFragment : Fragment() {
 
     private var deviceAddress: String? = null
 
+    private var oldAnimationValue = 0f
+    private val animationDuration = 1000L
+
     private lateinit var binding: FragmentScanDistanceBinding
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
@@ -35,15 +42,29 @@ class ScanDistanceFragment : Fragment() {
             result?.let {
                 val publicKey = safeArgs.deviceAddress
 
-                // TODO: handling if public Key is null
+                if (publicKey == null) {
+                    // TODO: handling if public Key is null
+                }
+
                 if (getPublicKey(it) == publicKey){
                     viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionStateAsString(it)
                     viewModel.connectionState.postValue(connectionState)
                     val batteryState = getBatteryStateAsString(it)
                     viewModel.batteryState.postValue(batteryState)
-                    val connectionQuality = Utility.dbmToPercent(it.rssi)
-                    viewModel.connectionQuality.postValue(connectionQuality)
+                    val connectionQuality = Utility.dbmToPercent(it.rssi).toFloat()
+                    val displayedConnectionQuality = (connectionQuality * 100).toInt()
+                    viewModel.connectionQuality.postValue(displayedConnectionQuality)
+
+                    ObjectAnimator.ofFloat(binding.backgroundBar, "alpha", oldAnimationValue, connectionQuality).apply {
+                        cancel() // cancels any old animation
+                        duration = animationDuration
+                        addListener(onEnd = {
+                            // only changes the value after the animation is done
+                            oldAnimationValue = connectionQuality
+                        })
+                        start()
+                    }
                 }
 
             }
@@ -77,6 +98,24 @@ class ScanDistanceFragment : Fragment() {
         // We just unregister the callback, but keep the scanner running
         // until the app is closed / moved to background
         BLEScanner.unregisterCallback(this.scanCallback)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        /*
+        val animator = ValueAnimator.ofFloat(0f, 200f)
+        animator.duration = 1000
+        animator.start()
+        animator.addUpdateListener(object:ValueAnimator.AnimatorUpdateListener) {
+            override fun onAnimationUpdate(animation: ValueAnimator?) {
+                val animatedValue = animation.animatedValue as Float
+                background
+            }
+
+        }
+
+         */
     }
 
     override fun onCreateView(
