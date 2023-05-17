@@ -37,6 +37,8 @@
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
+    <string name="tracking_detail_scan_title">Detaillierter Scan</string>
+    <string name="tracking_detail_scan_subtitle">Zeigt Live Informationen über diesen Tracker</string>
     <string name="tracking_ignore_device_title">Gerät ignorieren</string>
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
     <string name="tracking_false_alarm_title">Fehlalarm</string>

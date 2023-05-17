@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 
 class ScanDistanceViewModel : ViewModel() {
     var bluetoothRssi = MutableLiveData<Int>()
@@ -10,4 +11,8 @@ class ScanDistanceViewModel : ViewModel() {
     var batteryState = MutableLiveData<String>()
     var connectionQuality = MutableLiveData<Int>()
 
+    var bluetoothEnabled = MutableLiveData(true)
+    init {
+        bluetoothEnabled.value = BLEScanner.isBluetoothOn()
+    }
 }

@@ -201,6 +201,40 @@
                     />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/tracking_detail_scan"
+                    layout="@layout/include_tracking_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
+                    android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
+                    android:visibility="@{vm.deviceAddress == null ? View.GONE : View.VISIBLE}"
+                    bind:clickable="@{true}"
+                    bind:drawable="@{@drawable/ic_scan_icon}"
+                    bind:imageDescription="@{@string/tracking_detail_scan_title}"
+                    bind:subtitle="@{@string/tracking_detail_scan_subtitle}"
+                    bind:title="@{@string/tracking_detail_scan_title}"
+                    bind:vm="@{vm}" />
+
+                <include
+                    android:id="@+id/tracking_placeholder"
+                    layout="@layout/include_tracking_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
+                    android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
+                    android:visibility="@{View.GONE}"
+                    />
+            </LinearLayout>
+
         </LinearLayout>
 
 

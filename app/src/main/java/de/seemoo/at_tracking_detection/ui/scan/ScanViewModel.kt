@@ -40,7 +40,7 @@ class ScanViewModel @Inject constructor(
 
     val scanStart = MutableLiveData(LocalDateTime.MIN)
 
-    var bluetoothEnabled = MutableLiveData<Boolean>(true)
+    var bluetoothEnabled = MutableLiveData(true)
     init {
         bluetoothDeviceList.value = ArrayList()
         bluetoothEnabled.value = BLEScanner.isBluetoothOn()
@@ -128,14 +128,4 @@ class ScanViewModel @Inject constructor(
     val isListEmpty: LiveData<Boolean> = bluetoothDeviceList.map { it.isEmpty() }
 
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
-
-    /* TODO: remove in future
-    suspend fun saveScanToRepository(){
-        // Not used anymore, because manual scan is always when the app is open
-        if (scanStart.value == LocalDateTime.MIN) { return }
-        val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()
-        val scan = Scan(endDate = LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, isManual = true, scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY, startDate = scanStart.value ?: LocalDateTime.now())
-        scanRepository.insert(scan)
-    }
-    */
 }

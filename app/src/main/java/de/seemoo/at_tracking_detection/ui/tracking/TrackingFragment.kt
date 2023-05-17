@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
@@ -106,11 +107,19 @@ class TrackingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
         val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
+        val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
         val map = view.findViewById<MapView>(R.id.map)
 
         feedbackButton.setOnClickListener {
             val directions: NavDirections =
                 TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
+            findNavController().navigate(directions)
+        }
+
+        trackingDetailButton.setOnClickListener {
+            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
+            val directions: NavDirections =
+                TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
             findNavController().navigate(directions)
         }
 
