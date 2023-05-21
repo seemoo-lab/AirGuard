@@ -202,7 +202,7 @@
             app:popExitAnim="@anim/nav_default_exit_anim"
             />
         <action
-            android:id="@+id/action_tracking_to_scanDistance"
+            android:id="@+id/actionTrackingToScanDistance"
             app:destination="@id/scanDistanceFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/nav_default_exit_anim"
