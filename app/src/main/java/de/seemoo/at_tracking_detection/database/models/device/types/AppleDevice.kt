@@ -5,10 +5,12 @@ import android.bluetooth.le.ScanResult
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
 
 class AppleDevice(val id: Int) : Device() {
     override val imageResource: Int
@@ -60,6 +62,40 @@ class AppleDevice(val id: Int) : Device() {
             }
 
             return ConnectionState.UNKNOWN
+        }
+
+        override fun getBatteryState(scanResult: ScanResult): BatteryState {
+            val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
+
+            println(mfg?.contentToString())
+            println(mfg?.size)
+            if (mfg != null && mfg.size >= 3) {
+                for (i in 0..7) {
+                    println(getBitsFromByte(mfg[2], i))
+                }
+
+                // TODO
+                // Real AirTag Data for Status: 00 00 10 00
+                // This deviates from the documentation
+
+                if (getBitsFromByte(mfg[2], 2)){
+                    // 11
+                    if (getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
+                        return BatteryState.FULL
+                    // 10
+                    } else if (getBitsFromByte(mfg[2], 6) && !getBitsFromByte(mfg[2], 7)) {
+                        return BatteryState.MEDIUM
+                    // 01
+                    } else if (!getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
+                        return BatteryState.LOW
+                    // 00
+                    } else {
+                        return BatteryState.VERY_LOW
+                    }
+                }
+            }
+
+            return BatteryState.UNKNOWN
         }
     }
 }

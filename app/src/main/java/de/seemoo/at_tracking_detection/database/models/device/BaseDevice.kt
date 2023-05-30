@@ -149,6 +149,10 @@ data class BaseDevice(
             return when (DeviceManager.getDeviceType(scanResult)) {
                 DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getBatteryState(scanResult)
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getBatteryState(scanResult)
+                DeviceType.FIND_MY -> AppleDevice.getBatteryState(scanResult)
+                DeviceType.AIRTAG -> AppleDevice.getBatteryState(scanResult)
+                DeviceType.AIRPODS -> AppleDevice.getBatteryState(scanResult)
+                DeviceType.APPLE -> AppleDevice.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
             }
         }
