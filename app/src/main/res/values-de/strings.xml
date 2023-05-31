@@ -7,7 +7,9 @@
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
     <string name="title_tracking">Gerät mit der ID {deviceAddress} folgt Dir</string>
-    <string name="title_devices_tracking">Gerät mit ID {deviceAddress}</string>
+    <string name="title_devices_tracking">Gerät mit ID: {deviceAddress}</string>
+    <string name="title_scan_detail">Detail Scan: {deviceAddress}</string>
+    <string name="title_scan">Scan</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices">Geräte</string>
     <string name="mark_false_alarm">FEHLALARM</string>
@@ -119,7 +121,6 @@
     <string name="onboarding_scan_description">Um die Umgebung nach Tracking-Geräten zu scannen, benötigen wir die Erlaubnis, nach Bluetooth-Geräten zu suchen!</string>
     <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
-    <string name="scan_title">Scan</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
     <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden.\nWir scannen nur nach Apple Find My Trackern (AirTags), Galaxy SmartTags, Chipolo Trackern und Tile Trackern.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
@@ -245,4 +246,7 @@
     <string name="scan_sorting_by_type">nach Gerätetyp</string>
     <string name="play_sound_description">Spielt einen Ton auf dem Tracker ab</string>
     <string name="bell_icon_description">Dieses Gerät wurde schon mal als Tracker erkannt</string>
+
+    <string name="searching_for_device">Suche nach Gerät</string>
+    <string name="battery_status_text">Batterie: </string>
 </resources>

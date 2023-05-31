@@ -1,15 +1,12 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Animation
 import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,10 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
@@ -43,28 +42,24 @@ class ScanDistanceFragment : Fragment() {
                 val publicKey = safeArgs.deviceAddress
 
                 if (publicKey == null) {
-                    // TODO: handling if public Key is null
+                    removeSearchMessage(false)
                 }
 
                 if (getPublicKey(it) == publicKey){
                     viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionStateAsString(it)
                     viewModel.connectionState.postValue(connectionState)
-                    val batteryState = getBatteryStateAsString(it)
-                    viewModel.batteryState.postValue(batteryState)
+                    val batteryState = getBatteryState(it)
+                    val batteryStateString = getBatteryStateAsString(it)
+                    viewModel.batteryState.postValue(batteryStateString)
                     val connectionQuality = Utility.dbmToPercent(it.rssi).toFloat()
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    ObjectAnimator.ofFloat(binding.backgroundBar, "alpha", oldAnimationValue, connectionQuality).apply {
-                        cancel() // cancels any old animation
-                        duration = animationDuration
-                        addListener(onEnd = {
-                            // only changes the value after the animation is done
-                            oldAnimationValue = connectionQuality
-                        })
-                        start()
-                    }
+                    setBattery(batteryState)
+                    setHeight(connectionQuality)
+
+                    removeSearchMessage(true)
                 }
 
             }
@@ -84,6 +79,58 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
+    private fun removeSearchMessage(value: Boolean) {
+        viewModel.foundFirstSignal.postValue(value)
+        if(value) {
+            binding.scanResultLoadingBar.visibility = View.GONE
+            binding.searchingForDevice.visibility = View.GONE
+            binding.connectionQuality.visibility = View.VISIBLE
+            binding.batteryLayout.visibility = View.VISIBLE
+        } else {
+            binding.scanResultLoadingBar.visibility = View.VISIBLE
+            binding.searchingForDevice.visibility = View.VISIBLE
+            binding.connectionQuality.visibility = View.GONE
+            binding.batteryLayout.visibility = View.GONE
+        }
+    }
+
+    private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
+        val viewHeight = binding.backgroundBar.height
+        val targetHeight: Float = connectionQuality * viewHeight * (-1) + viewHeight
+
+        ObjectAnimator.ofFloat(
+            binding.backgroundBar,
+            "translationY",
+            oldAnimationValue,
+            targetHeight
+        ).apply {
+            cancel() // cancels any old animation
+            duration = speed
+            addListener(onEnd = {
+                // only changes the value after the animation is done
+                oldAnimationValue = targetHeight
+            })
+            start()
+        }
+    }
+
+    private fun setBattery(batteryState: BatteryState) {
+        when(batteryState) {
+            BatteryState.FULL -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_full_24))
+            BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_medium_24))
+            BatteryState.LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_low_24))
+            BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
+            else -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_unknown_24))
+        }
+    }
+
+    private fun setInitialHeight() {
+        val viewHeight = binding.backgroundBar.height
+        val initialConnectionQuality: Float = viewModel.connectionQuality.value?.toFloat()?.div(100) ?: 0f
+        val targetHeight: Float = initialConnectionQuality * viewHeight * (-1) + viewHeight
+        binding.backgroundBar.translationY = targetHeight
+    }
+
     private fun startBluetoothScan() {
         // Start a scan if the BLEScanner is not already running
         if (!BLEScanner.isScanning) {
@@ -100,24 +147,6 @@ class ScanDistanceFragment : Fragment() {
         BLEScanner.unregisterCallback(this.scanCallback)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        /*
-        val animator = ValueAnimator.ofFloat(0f, 200f)
-        animator.duration = 1000
-        animator.start()
-        animator.addUpdateListener(object:ValueAnimator.AnimatorUpdateListener) {
-            override fun onAnimationUpdate(animation: ValueAnimator?) {
-                val animatedValue = animation.animatedValue as Float
-                background
-            }
-
-        }
-
-         */
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -132,8 +161,12 @@ class ScanDistanceFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = viewModel
 
+        // This is called deviceAddress but contains the ID
         deviceAddress = safeArgs.deviceAddress
         viewModel.deviceAddress.postValue(deviceAddress)
+
+        setInitialHeight()
+        removeSearchMessage(false)
 
         startBluetoothScan()
 
@@ -142,16 +175,20 @@ class ScanDistanceFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        setInitialHeight()
+        removeSearchMessage(false)
         startBluetoothScan()
     }
 
     override fun onPause() {
         super.onPause()
+        removeSearchMessage(false)
         stopBluetoothScan()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.foundFirstSignal.postValue(false)
         stopBluetoothScan()
     }
 

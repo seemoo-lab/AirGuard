@@ -23,7 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
@@ -57,6 +56,7 @@ class TrackingFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
         val notifId = safeArgs.notificationId
+        // This is called deviceAddress but contains the ID
         val deviceAddress = safeArgs.deviceAddress
         trackingViewModel.notificationId.postValue(notifId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)

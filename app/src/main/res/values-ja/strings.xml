@@ -119,7 +119,7 @@
     <string name="onboarding_connect_description">追跡デバイスが見つかった場合、AirGuardはその上でサウンドを再生する機能を提供します。このためには、このデバイスに接続するための許可が必要です。</string>
     <string name="twitter_description">私達のTwitterを見る</string>
     <string name="twitter">Twitter</string>
-    <string name="scan_title">手動スキャン</string>
+    <string name="title_scan">手動スキャン</string>
     <string name="scan_result_item_image_description">スキャン結果</string>
     <string name="scan_result_no_devices">安心してください。タグは見つかりませんでした</string>
     <string name="ble_service_connection_error">デバイスとの接続に失敗しました</string>
