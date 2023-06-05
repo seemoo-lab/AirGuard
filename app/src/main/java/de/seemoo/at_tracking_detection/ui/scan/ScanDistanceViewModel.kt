@@ -10,7 +10,7 @@ class ScanDistanceViewModel : ViewModel() {
     var connectionState = MutableLiveData<String>()
     var batteryState = MutableLiveData<String>()
     var connectionQuality = MutableLiveData<Int>()
-    var foundFirstSignal = MutableLiveData<Boolean>(false)
+    var isFirstScanCallback = MutableLiveData<Boolean>(true)
 
     var bluetoothEnabled = MutableLiveData(true)
     init {

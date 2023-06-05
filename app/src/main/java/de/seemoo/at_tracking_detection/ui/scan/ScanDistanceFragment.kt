@@ -42,7 +42,7 @@ class ScanDistanceFragment : Fragment() {
                 val publicKey = safeArgs.deviceAddress
 
                 if (publicKey == null) {
-                    removeSearchMessage(false)
+                    showSearchMessage()
                 }
 
                 if (getPublicKey(it) == publicKey){
@@ -56,10 +56,15 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
+                    println(viewModel.isFirstScanCallback.value!!)
+
                     setBattery(batteryState)
                     setHeight(connectionQuality)
 
-                    removeSearchMessage(true)
+                    if (viewModel.isFirstScanCallback.value!!) {
+                        viewModel.isFirstScanCallback.value = false
+                        removeSearchMessage()
+                    }
                 }
 
             }
@@ -79,19 +84,18 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    private fun removeSearchMessage(value: Boolean) {
-        viewModel.foundFirstSignal.postValue(value)
-        if(value) {
-            binding.scanResultLoadingBar.visibility = View.GONE
-            binding.searchingForDevice.visibility = View.GONE
-            binding.connectionQuality.visibility = View.VISIBLE
-            binding.batteryLayout.visibility = View.VISIBLE
-        } else {
-            binding.scanResultLoadingBar.visibility = View.VISIBLE
-            binding.searchingForDevice.visibility = View.VISIBLE
-            binding.connectionQuality.visibility = View.GONE
-            binding.batteryLayout.visibility = View.GONE
-        }
+    private fun removeSearchMessage() {
+        binding.scanResultLoadingBar.visibility = View.GONE
+        binding.searchingForDevice.visibility = View.GONE
+        binding.connectionQuality.visibility = View.VISIBLE
+        binding.batteryLayout.visibility = View.VISIBLE
+    }
+
+    private fun showSearchMessage() {
+        binding.scanResultLoadingBar.visibility = View.VISIBLE
+        binding.searchingForDevice.visibility = View.VISIBLE
+        binding.connectionQuality.visibility = View.GONE
+        binding.batteryLayout.visibility = View.GONE
     }
 
     private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
@@ -122,13 +126,6 @@ class ScanDistanceFragment : Fragment() {
             BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
             else -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_unknown_24))
         }
-    }
-
-    private fun setInitialHeight() {
-        val viewHeight = binding.backgroundBar.height
-        val initialConnectionQuality: Float = viewModel.connectionQuality.value?.toFloat()?.div(100) ?: 0f
-        val targetHeight: Float = initialConnectionQuality * viewHeight * (-1) + viewHeight
-        binding.backgroundBar.translationY = targetHeight
     }
 
     private fun startBluetoothScan() {
@@ -165,8 +162,8 @@ class ScanDistanceFragment : Fragment() {
         deviceAddress = safeArgs.deviceAddress
         viewModel.deviceAddress.postValue(deviceAddress)
 
-        setInitialHeight()
-        removeSearchMessage(false)
+        viewModel.isFirstScanCallback.postValue(true)
+        showSearchMessage()
 
         startBluetoothScan()
 
@@ -175,20 +172,19 @@ class ScanDistanceFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        setInitialHeight()
-        removeSearchMessage(false)
+        viewModel.isFirstScanCallback.postValue(true)
+        showSearchMessage()
         startBluetoothScan()
     }
 
     override fun onPause() {
         super.onPause()
-        removeSearchMessage(false)
+        showSearchMessage()
         stopBluetoothScan()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.foundFirstSignal.postValue(false)
         stopBluetoothScan()
     }
 
