@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,10 +17,12 @@ import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
@@ -47,7 +50,9 @@ class ScanDistanceFragment : Fragment() {
 
                 if (getPublicKey(it) == publicKey){
                     viewModel.bluetoothRssi.postValue(it.rssi)
-                    val connectionState = getConnectionStateAsString(it)
+                    val connectionState = getConnectionState(it)
+                    val connectionStateString = getConnectionStateAsString(it)
+                    viewModel.connectionStateString.postValue(connectionStateString)
                     viewModel.connectionState.postValue(connectionState)
                     val batteryState = getBatteryState(it)
                     val batteryStateString = getBatteryStateAsString(it)
@@ -89,6 +94,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.VISIBLE
         binding.batteryLayout.visibility = View.VISIBLE
+        binding.connectionStateLayout.visibility = View.VISIBLE
     }
 
     private fun showSearchMessage() {
@@ -96,6 +102,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.VISIBLE
         binding.connectionQuality.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
+        binding.connectionStateLayout.visibility = View.GONE
     }
 
     private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
@@ -166,6 +173,21 @@ class ScanDistanceFragment : Fragment() {
         showSearchMessage()
 
         startBluetoothScan()
+
+        val infoButton = binding.infoButton
+        infoButton.setOnClickListener {
+            val text = when (viewModel.connectionState.value!!){
+                ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
+                ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
+                ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
+                ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
+                ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
+            }
+            val duration = Toast.LENGTH_SHORT
+
+            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
+            toast.show()
+        }
 
         return binding.root
     }

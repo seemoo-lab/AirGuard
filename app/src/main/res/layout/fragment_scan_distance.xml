@@ -73,6 +73,37 @@
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintLeft_toRightOf="@id/battery_text"
                 bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="TODO" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/connection_state_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintTop_toTopOf="@id/battery_layout"
+            bind:layout_constraintLeft_toLeftOf="parent"
+            bind:layout_constraintRight_toRightOf="parent">
+
+            <TextView
+                android:id="@+id/connection_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.connectionStateString}"
+                bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"
+                bind:layout_constraintLeft_toLeftOf="parent"
+                bind:layout_constraintRight_toLeftOf="@id/info_button"/>
+
+            <ImageView
+                android:id="@+id/info_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                bind:srcCompat="@drawable/ic_baseline_info_24"
+                bind:layout_constraintRight_toRightOf="parent"
+                bind:layout_constraintLeft_toRightOf="@id/connection_state"
+                bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -86,51 +117,6 @@
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="parent" />
-
-<!--        <TextView-->
-<!--            android:id="@+id/distance_percentage"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@{vm.bluetoothRssi.toString()}"-->
-<!--            android:textSize="24sp"-->
-<!--            bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--            bind:layout_constraintEnd_toEndOf="parent"-->
-<!--            bind:layout_constraintStart_toStartOf="parent"-->
-<!--            bind:layout_constraintTop_toTopOf="parent" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/battery_state"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@{vm.batteryState}"-->
-<!--            android:textSize="24sp"-->
-<!--            bind:layout_constraintBottom_toTopOf="@+id/connection_state"-->
-<!--            bind:layout_constraintEnd_toEndOf="parent"-->
-<!--            bind:layout_constraintStart_toStartOf="parent"-->
-<!--            bind:layout_constraintTop_toBottomOf="@+id/distance_percentage" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/connection_state"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@{vm.connectionState}"-->
-<!--            android:textSize="24sp"-->
-<!--            bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--            bind:layout_constraintEnd_toEndOf="parent"-->
-<!--            bind:layout_constraintStart_toStartOf="parent"-->
-<!--            bind:layout_constraintTop_toTopOf="@+id/distance_percentage" />-->
-
-<!--        <include-->
-<!--            android:id="@+id/include_bluetooth_disabled"-->
-<!--            layout="@layout/include_bluetooth_disabled"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            bind:layout_constraintTop_toTopOf="parent"-->
-<!--            bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--            bind:layout_constraintStart_toStartOf="parent"-->
-<!--            bind:layout_constraintEnd_toEndOf="parent"-->
-<!--            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"-->
-<!--            />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

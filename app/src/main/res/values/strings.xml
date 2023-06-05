@@ -256,10 +256,16 @@
     <string name="battery_unknown">Unknown</string>
 
     <string name="connection_state_offline">Offline</string>
+    <string name="connection_state_offline_explanation">Device has not been connected for more than 15 minutes</string>
     <string name="connection_state_overmature_offline">Overmature Offline</string>
+    <string name="connection_state_overmature_offline_explanation">Device has not been connected to an owner device for a few hours</string>
     <string name="connection_state_premature_offline">Premature Offline</string>
+    <string name="connection_state_premature_offline_explanation">Device has been connected in the last 15 minutes</string>
     <string name="connection_state_connected">Connected</string>
+    <string name="connection_state_connected_explanation">Device is currently connected to owner</string>
     <string name="connection_state_unknown">Unknown</string>
+    <string name="connection_state_content_description">Information about the connection State of the device</string>
+
 
     <string name="scan_accessibility">Starts or Stops the Scan</string>
     <string name="scan_sorting_by_rssi">by Signal Strength</string>
@@ -273,4 +279,5 @@
 
     <string name="searching_for_device">Searching for device</string>
     <string name="battery_status_text">Battery: </string>
+    <string name="connection_state_unknown_explanation">Connection State cannot be determined</string>
 </resources>
