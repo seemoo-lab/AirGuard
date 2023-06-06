@@ -181,6 +181,13 @@ object Utility {
         }
     }
 
+    fun getSelectedTheme(): Boolean {
+        return when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> false // Dark mode
+            else -> true // Light mode or system default
+        }
+    }
+
     fun dbmToQuality(rssi: Int): Int {
         val percentage = dbmToPercent(rssi)
         return rssiToQuality(percentage.toFloat())

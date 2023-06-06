@@ -54,7 +54,7 @@ class AppleDevice(val id: Int) : Device() {
             val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
 
             if (mfg != null && mfg.size > 2) {
-                return if (mfg[1] == (0x19).toByte()){
+                return if (mfg[1] == (0x19).toByte()) {
                     ConnectionState.OVERMATURE_OFFLINE
                 } else {
                     ConnectionState.CONNECTED
@@ -70,32 +70,76 @@ class AppleDevice(val id: Int) : Device() {
             println(mfg?.contentToString())
             println(mfg?.size)
             if (mfg != null && mfg.size >= 3) {
-                for (i in 0..7) {
-                    println(getBitsFromByte(mfg[2], i))
-                }
+//                for (i in 0..7) {
+//                    println(getBitsFromByte(mfg[2], i))
+//                }
 
                 // TODO
                 // Real AirTag Data for Status: 00 00 10 00
                 // This deviates from the documentation
 
-                if (getBitsFromByte(mfg[2], 2)){
-                    // 11
-                    if (getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
-                        return BatteryState.FULL
-                    // 10
-                    } else if (getBitsFromByte(mfg[2], 6) && !getBitsFromByte(mfg[2], 7)) {
-                        return BatteryState.MEDIUM
-                    // 01
-                    } else if (!getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
-                        return BatteryState.LOW
-                    // 00
-                    } else {
-                        return BatteryState.VERY_LOW
+                if (mfg != null && mfg.size >= 3) {
+                    val status = mfg[2] // Extract the status byte
+
+                    if (getBitsFromByte(status, 2)) {
+                        // Bits 6-7: Battery level
+                        val batteryLevel = (status.toInt() shr 6) and 0x03
+
+                        when (batteryLevel) {
+                            0x03 -> return BatteryState.FULL
+                            0x02 -> return BatteryState.MEDIUM
+                            0x01 -> return BatteryState.LOW
+                            0x00 -> return BatteryState.VERY_LOW
+                        }
                     }
                 }
+
+//                if (getBitsFromByte(mfg[2], 2)){
+//                    // 11
+//                    if (getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
+//                        return BatteryState.FULL
+//                    // 10
+//                    } else if (getBitsFromByte(mfg[2], 6) && !getBitsFromByte(mfg[2], 7)) {
+//                        return BatteryState.MEDIUM
+//                    // 01
+//                    } else if (!getBitsFromByte(mfg[2], 6) && getBitsFromByte(mfg[2], 7)) {
+//                        return BatteryState.LOW
+//                    // 00
+//                    } else {
+//                        return BatteryState.VERY_LOW
+//                    }
+//                }
             }
 
             return BatteryState.UNKNOWN
         }
+//        override fun getBatteryState(scanResult: ScanResult): BatteryState {
+//            fun getBitsFromByte2(value: Int, position: Int): Boolean {
+//                // This uses Little Endian
+//                return ((value shr position) and 1) == 1
+//            }
+//            val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
+//
+//            println(mfg?.contentToString())
+//            println(mfg?.size)
+//
+//            if (mfg != null && mfg.size >= 3) {
+//                val status = mfg[2].toInt() // Extract the status byte
+//
+//                if (getBitsFromByte2(status, 2)) {
+//                    // Bits 6-7: Battery level
+//                    val batteryLevel = (status shr 6) and 0x03
+//
+//                    when (batteryLevel) {
+//                        0x03 -> return BatteryState.FULL
+//                        0x02 -> return BatteryState.MEDIUM
+//                        0x01 -> return BatteryState.LOW
+//                        0x00 -> return BatteryState.VERY_LOW
+//                    }
+//                }
+//            }
+//
+//            return BatteryState.UNKNOWN
+//        }
     }
 }
