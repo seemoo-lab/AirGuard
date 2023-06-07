@@ -158,7 +158,7 @@
     <string name="title_risk_detail">Risikobewertung</string>
     <string name="show_all">Alle anzeigen</string>
     <string name="tracker_detected">Tracker erkannt</string>
-    <string name="locations_tracked">Verfolgte Standorte</string>
+    <string name="locations_tracked">Alle verfolgten Standorte</string>
     <string name="filter">Filter öffnen</string>
     <string name="filter_ignored">ignoriert</string>
     <string name="filter_notified">Tracker die dir folgen</string>
@@ -228,6 +228,7 @@
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
+    <string name="battery_text">"Batterie Status: "</string>
     <string name="battery_full">Voll</string>
     <string name="battery_medium">Mittel</string>
     <string name="battery_low">Niedrig</string>

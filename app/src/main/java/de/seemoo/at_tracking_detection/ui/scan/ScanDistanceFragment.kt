@@ -56,7 +56,8 @@ class ScanDistanceFragment : Fragment() {
                     viewModel.connectionState.postValue(connectionState)
                     val batteryState = getBatteryState(it)
                     val batteryStateString = getBatteryStateAsString(it)
-                    viewModel.batteryState.postValue(batteryStateString)
+                    viewModel.batteryStateString.postValue(batteryStateString)
+                    viewModel.batteryState.postValue(batteryState)
                     val connectionQuality = Utility.dbmToPercent(it.rssi).toFloat()
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
@@ -182,6 +183,21 @@ class ScanDistanceFragment : Fragment() {
                 ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
                 ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
                 ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
+            }
+            val duration = Toast.LENGTH_SHORT
+
+            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
+            toast.show()
+        }
+
+        val batterySymbol = binding.batterySymbol
+        batterySymbol.setOnClickListener {
+            val text = when (viewModel.batteryState.value!!){
+                BatteryState.FULL -> R.string.battery_full
+                BatteryState.MEDIUM -> R.string.battery_medium
+                BatteryState.VERY_LOW -> R.string.battery_very_low
+                BatteryState.LOW -> R.string.battery_low
+                else -> R.string.battery_unknown
             }
             val duration = Toast.LENGTH_SHORT
 

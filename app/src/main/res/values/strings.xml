@@ -176,7 +176,7 @@
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
-    <string name="locations_tracked">Locations tracked</string>
+    <string name="locations_tracked">All tracked locations</string>
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
@@ -249,6 +249,7 @@
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
     <string name="open_bluetooth_settings">Open Bluetooth settings</string>
 
+    <string name="battery_text">Battery Level: </string>
     <string name="battery_full">Full</string>
     <string name="battery_medium">Medium</string>
     <string name="battery_low">Low</string>
