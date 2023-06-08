@@ -256,4 +256,5 @@
     <string name="battery_status_text">Batterie: </string>
     <string name="connection_state_unknown_explanation">Verbindungsstatus kann nicht bestimmt werden</string>
     <string name="connection_state_content_description">Informationen über den Verbindungsstatus des Geräts</string>
+    <string name="scan_not_in_range">Gerät ist nicht in Reichweite</string>
 </resources>

@@ -114,8 +114,21 @@
             android:text="@string/searching_for_device"
             android:textSize="24sp"
             bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintLeft_toLeftOf="parent"
+            bind:layout_constraintRight_toRightOf="parent"
+            bind:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_not_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_not_in_range"
+            android:textSize="24sp"
+            android:visibility="gone"
+            android:maxLines="3"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintLeft_toLeftOf="parent"
+            bind:layout_constraintRight_toRightOf="parent"
             bind:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

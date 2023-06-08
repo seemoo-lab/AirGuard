@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,6 +98,7 @@ class ScanDistanceFragment : Fragment() {
         binding.connectionQuality.visibility = View.VISIBLE
         binding.batteryLayout.visibility = View.VISIBLE
         binding.connectionStateLayout.visibility = View.VISIBLE
+        binding.deviceNotFound.visibility = View.GONE
     }
 
     private fun showSearchMessage() {
@@ -104,6 +107,18 @@ class ScanDistanceFragment : Fragment() {
         binding.connectionQuality.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
+        binding.deviceNotFound.visibility = View.GONE
+    }
+
+    private fun deviceNotFound() {
+        binding.scanResultLoadingBar.visibility = View.GONE
+        binding.searchingForDevice.visibility = View.GONE
+        binding.connectionQuality.visibility = View.GONE
+        binding.batteryLayout.visibility = View.GONE
+        binding.connectionStateLayout.visibility = View.GONE
+        binding.deviceNotFound.visibility = View.VISIBLE
+
+        setHeight(1f, 100L)
     }
 
     private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
@@ -144,6 +159,15 @@ class ScanDistanceFragment : Fragment() {
 
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
+
+        // Show to the user that no devices have been found
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Stop scanning if no device was detected
+            if(viewModel.isFirstScanCallback.value!!) {
+                stopBluetoothScan()
+                deviceNotFound()
+            }
+        }, SCAN_DURATION)
     }
 
     private fun stopBluetoothScan() {
@@ -224,6 +248,10 @@ class ScanDistanceFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         stopBluetoothScan()
+    }
+
+    companion object {
+        private const val SCAN_DURATION = 30_000L
     }
 
 }
