@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 
 enum class DeviceType {
     UNKNOWN,
@@ -29,6 +30,30 @@ enum class DeviceType {
                 GALAXY_SMART_TAG_PLUS -> SmartTagPlus.defaultDeviceName
             }
         }
+
+        fun getAllowedDeviceTypesFromSettings(): List<DeviceType> {
+            val validDeviceTypes = SharedPrefs.devicesFilter.toList()
+            val allowedDeviceTypes = mutableListOf<DeviceType>()
+
+            for (validDeviceType in validDeviceTypes) {
+                when (validDeviceType) {
+                    "airpods" -> allowedDeviceTypes.add(AIRPODS)
+                    "airtags" -> allowedDeviceTypes.add(AIRTAG)
+                    "apple_devices" -> allowedDeviceTypes.add(APPLE)
+                    "chipolos" -> allowedDeviceTypes.add(CHIPOLO)
+                    "find_my_devices" -> allowedDeviceTypes.add(FIND_MY)
+                    "samsung_devices" -> allowedDeviceTypes.add(SAMSUNG)
+                    "smart_tags" -> {
+                        allowedDeviceTypes.add(GALAXY_SMART_TAG)
+                        allowedDeviceTypes.add(GALAXY_SMART_TAG_PLUS)
+                    }
+                    "tiles" -> allowedDeviceTypes.add(TILE)
+                }
+            }
+
+            return allowedDeviceTypes
+        }
+
     }
 
     fun canBeIgnored(): Boolean {

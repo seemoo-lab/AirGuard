@@ -9,11 +9,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
@@ -55,6 +55,13 @@ class ScanViewModel @Inject constructor(
 
     fun addScanResult(scanResult: ScanResult) {
         if (scanFinished.value == true) {
+            return
+        }
+
+        val deviceType = getDeviceType(scanResult)
+        val validDeviceTypes = getAllowedDeviceTypesFromSettings()
+
+        if (deviceType !in validDeviceTypes) {
             return
         }
 

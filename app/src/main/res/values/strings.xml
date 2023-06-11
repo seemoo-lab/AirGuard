@@ -102,6 +102,11 @@
     <string name="settings_privacy_policy_title">Privacy Policy</string>
     <string name="settings_privacy_policy_summary">View our short and simple privacy policy</string>
 
+    <string name="settings_device_filter_title">Filter by device types</string>
+    <string name="settings_device_filter_dialog_title">Choose device types</string>
+    <string name="settings_device_filter_summary">Choose which device types AirGuard should observe</string>
+
+
     <string name="onboarding_share_data_no">No</string>
     <string name="onboarding_share_data_yes">Yes</string>
     <string name="onboarding_share_data_dialog">Please decide if you want to participate or not. All data shared is completely anonymous.</string>
@@ -282,4 +287,13 @@
     <string name="searching_for_device">Searching for device</string>
     <string name="battery_status_text">Battery: </string>
     <string name="connection_state_unknown_explanation">Connection State cannot be determined</string>
+
+    <string name="airtag" translatable="false">Airtag</string>
+    <string name="airpods" translatable="false">Airpods</string>
+    <string name="apple_device">Apple Devices</string>
+    <string name="chipolo" translatable="false">Chipolo</string>
+    <string name="find_my_device">FindMy Devices</string>
+    <string name="samsung_device">Samsung Devices</string>
+    <string name="smart_tag" translatable="false">SmartTags</string>
+    <string name="tile" translatable="false">Tiles</string>
 </resources>

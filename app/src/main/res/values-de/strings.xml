@@ -83,6 +83,12 @@
     <string name="settings_risk_sensitivity_low">Niedrig</string>
     <string name="settings_risk_sensitivity_medium">Mittel</string>
     <string name="settings_risk_sensitivity_high">Hoch</string>
+    <string name="settings_device_filter_title">Gerätetypen filtern</string>
+    <string name="settings_device_filter_dialog_title">Gerätetypen auswählen</string>
+    <string name="settings_device_filter_summary">Auf welche Gerätentypen AirGuard scannen soll</string>
+
+
+
     <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
     <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Eine hohe Empfindlichkeit führt möglicherweise zu mehr Fehlalarmen.</string>
     <string name="settings_app_theme_title">App-Design</string>
@@ -257,4 +263,8 @@
     <string name="connection_state_unknown_explanation">Verbindungsstatus kann nicht bestimmt werden</string>
     <string name="connection_state_content_description">Informationen über den Verbindungsstatus des Geräts</string>
     <string name="scan_not_in_range">Gerät ist nicht in Reichweite</string>
+
+    <string name="apple_device">Apple Geräte</string>
+    <string name="find_my_device">FindMy Geräte</string>
+    <string name="samsung_device">Samsung Geräte</string>
 </resources>

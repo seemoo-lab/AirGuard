@@ -32,6 +32,17 @@
         android:summary="@string/settings_risk_sensitivity_summary"
         android:title="@string/settings_risk_sensitivity_title" />
 
+    <MultiSelectListPreference
+        android:key="devices_filter"
+        android:title="@string/settings_device_filter_title"
+        android:dialogTitle="@string/settings_device_filter_dialog_title"
+        android:summary="@string/settings_device_filter_summary"
+        android:icon="@drawable/ic_baseline_devices_other_24"
+        android:entries="@array/devicesFilter"
+        android:entryValues="@array/devicesFilterValue"
+        android:defaultValue="@array/devicesFilterValue"
+        />
+
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:icon="@drawable/ic_radar_tracking"
