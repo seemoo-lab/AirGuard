@@ -62,6 +62,7 @@ class ScanViewModel @Inject constructor(
         val validDeviceTypes = getAllowedDeviceTypesFromSettings()
 
         if (deviceType !in validDeviceTypes) {
+            // If device not selected in settings then do not add ScanResult to list or database
             return
         }
 

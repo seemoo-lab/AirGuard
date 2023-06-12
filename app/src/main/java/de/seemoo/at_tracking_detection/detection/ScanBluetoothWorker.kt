@@ -9,6 +9,7 @@ import android.content.Context
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract.Intents.Insert
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -107,15 +108,21 @@ class ScanBluetoothWorker @AssistedInject constructor(
             location = locationProvider.getLastLocation(checkRequirements = false)
         }
 
+        val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
+
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
-            insertScanResult(
-                discoveredDevice.scanResult,
-                location?.latitude,
-                location?.longitude,
-                location?.accuracy,
-                discoveredDevice.discoveryDate,
-            )
+            val deviceType = DeviceManager.getDeviceType(discoveredDevice.scanResult)
+
+            if (deviceType in validDeviceTypes) {
+                insertScanResult(
+                    discoveredDevice.scanResult,
+                    location?.latitude,
+                    location?.longitude,
+                    location?.accuracy,
+                    discoveredDevice.discoveryDate,
+                )
+            }
         }
 
         SharedPrefs.lastScanDate = LocalDateTime.now()
