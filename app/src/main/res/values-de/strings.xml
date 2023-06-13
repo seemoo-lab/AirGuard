@@ -255,6 +255,8 @@
     <string name="scan_sorting_by_address">nach MAC-Adresse</string>
     <string name="scan_sorting_by_name">nach Name</string>
     <string name="scan_sorting_by_type">nach Gerätetyp</string>
+    <string name="scan_battery_icon_description">Diese Grafik zeigt den Akkustand des Trackers</string>
+    <string name="scan_state_info_icon_description">Beim Klick auf dieses Icon wird eine Erklärung des Verbindungsstatus angezeigt</string>
     <string name="play_sound_description">Spielt einen Ton auf dem Tracker ab</string>
     <string name="bell_icon_description">Dieses Gerät wurde schon mal als Tracker erkannt</string>
 

@@ -74,7 +74,8 @@
                 bind:layout_constraintLeft_toRightOf="@id/battery_text"
                 bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="TODO" />
+                android:contentDescription="@string/scan_battery_icon_description"
+                bind:tint="?attr/colorControlNormal" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,7 +105,8 @@
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintLeft_toRightOf="@id/connection_state"
                 bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent" />
+                bind:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/scan_state_info_icon_description"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

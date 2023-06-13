@@ -280,6 +280,8 @@
     <string name="scan_sorting_by_name">by Name</string>
     <string name="scan_sorting_by_type">by Type</string>
     <string name="scan_not_in_range">Device is not in range</string>
+    <string name="scan_battery_icon_description">This icon shows the battery status of the tracker</string>
+    <string name="scan_state_info_icon_description">Clicking on this icon shows an explanation for the connection status</string>
 
     <string name="play_sound_description">Plays a sound on the tracking device</string>
     <string name="bell_icon_description">This device has been identified as a tracker</string>
