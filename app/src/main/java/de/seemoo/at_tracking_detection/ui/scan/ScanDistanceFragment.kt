@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
@@ -25,6 +26,8 @@ import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
@@ -51,7 +54,7 @@ class ScanDistanceFragment : Fragment() {
                 }
 
                 if (getPublicKey(it) == publicKey){
-                    viewModel.bluetoothRssi.postValue(it.rssi)
+                    // viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionState(it)
                     val connectionStateString = getConnectionStateAsString(it)
                     viewModel.connectionStateString.postValue(connectionStateString)
@@ -64,8 +67,8 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    println(viewModel.isFirstScanCallback.value!!)
-
+                    val deviceType = DeviceManager.getDeviceType(it)
+                    setDeviceType(deviceType)
                     setBattery(batteryState)
                     setHeight(connectionQuality)
 
@@ -97,6 +100,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.VISIBLE
         binding.batteryLayout.visibility = View.VISIBLE
+        binding.deviceTypeLayout.visibility = View.VISIBLE
         binding.connectionStateLayout.visibility = View.VISIBLE
         binding.deviceNotFound.visibility = View.GONE
     }
@@ -106,6 +110,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.VISIBLE
         binding.connectionQuality.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
+        binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
         binding.deviceNotFound.visibility = View.GONE
     }
@@ -115,6 +120,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
+        binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
         binding.deviceNotFound.visibility = View.VISIBLE
 
@@ -149,6 +155,12 @@ class ScanDistanceFragment : Fragment() {
             BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
             else -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_unknown_24))
         }
+    }
+
+    private fun setDeviceType(deviceType: DeviceType) {
+        val drawable = resources.getDrawable(DeviceType.getImageDrawable(deviceType))
+        binding.deviceTypeSymbol.setImageDrawable(drawable)
+        binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
     }
 
     private fun startBluetoothScan() {
