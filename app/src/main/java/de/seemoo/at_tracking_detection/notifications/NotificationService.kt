@@ -30,6 +30,8 @@ class NotificationService @Inject constructor(
     private val notificationViewModel: NotificationViewModel
 ) {
 
+    // TODO: new notification permission handling
+
     suspend fun sendTrackingNotification(deviceAddress: String) {
         val notificationId = notificationViewModel.insert(deviceAddress)
         with(notificationManagerCompat) {
