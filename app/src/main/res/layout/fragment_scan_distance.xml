@@ -165,5 +165,17 @@
             bind:layout_constraintRight_toRightOf="parent"
             bind:layout_constraintTop_toTopOf="parent" />
 
+        <include
+            android:id="@+id/include_bluetooth_disabled"
+            layout="@layout/include_bluetooth_disabled"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            bind:layout_constraintTop_toTopOf="parent"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

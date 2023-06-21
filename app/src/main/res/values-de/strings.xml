@@ -164,7 +164,7 @@
     <string name="title_risk_detail">Risikobewertung</string>
     <string name="show_all">Alle anzeigen</string>
     <string name="tracker_detected">Tracker erkannt</string>
-    <string name="locations_tracked">Alle verfolgten Standorte</string>
+    <string name="locations_tracked">Alle Standorte</string>
     <string name="filter">Filter öffnen</string>
     <string name="filter_ignored">ignoriert</string>
     <string name="filter_notified">Tracker die dir folgen</string>

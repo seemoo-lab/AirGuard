@@ -34,7 +34,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:layout_constraintVertical_bias="1.0">
 
                 <TextView
                     android:id="@+id/trackers_found_text"
@@ -92,7 +93,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:layout_constraintVertical_bias="1.0">
 
                 <TextView
                     android:id="@+id/locations_tracked_text"

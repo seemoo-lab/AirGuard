@@ -181,7 +181,7 @@
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
-    <string name="locations_tracked">All tracked locations</string>
+    <string name="locations_tracked">All locations</string>
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
