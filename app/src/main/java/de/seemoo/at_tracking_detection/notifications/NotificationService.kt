@@ -64,17 +64,17 @@ class NotificationService @Inject constructor(
         }
     }
 
-    fun sendSurveyInfoNotification() {
-        with(notificationManagerCompat) {
-
-            notify(
-                SURVEY_INFO_TAG,
-                -101,
-                notificationBuilder.buildSurveyInfoNotification()
-            )
-        }
-        SharedPrefs.surveyNotficationSent = true
-    }
+//    fun sendSurveyInfoNotification() {
+//        with(notificationManagerCompat) {
+//
+//            notify(
+//                SURVEY_INFO_TAG,
+//                -101,
+//                notificationBuilder.buildSurveyInfoNotification()
+//            )
+//        }
+//        SharedPrefs.surveyNotficationSent = true
+//    }
 
     fun sendDebugNotificationFoundDevice(scanResult: ScanResult) {
         with(notificationManagerCompat) {
