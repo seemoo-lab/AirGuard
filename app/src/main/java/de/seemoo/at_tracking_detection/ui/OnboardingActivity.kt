@@ -45,6 +45,7 @@ class OnboardingActivity : AppIntro() {
                 Manifest.permission.BLUETOOTH_SCAN -> scanSlide(1)
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION -> backgroundLocationSlide(1)
                 Manifest.permission.BLUETOOTH_CONNECT -> connectSlide(1)
+                Manifest.permission.POST_NOTIFICATIONS -> notificationSlide(1)
             }
         } else {
             buildSlides()
@@ -90,6 +91,25 @@ class OnboardingActivity : AppIntro() {
 
     override fun onUserDisabledPermission(permissionName: String) {
         handleRequiredPermission(permissionName)
+    }
+
+    private fun notificationSlide(slideNumber: Int): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            addSlide(
+                AppIntroFragment.newInstance(
+                    title = getString(R.string.onboarding_notification_title),
+                    description = getString(R.string.onboarding_notification_description),
+                    imageDrawable = R.drawable.ic_signal_searching // TODO: new image
+                )
+            )
+            askForPermissions(
+                permissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                slideNumber = slideNumber,
+                required = false
+            )
+            return true
+        }
+        return false
     }
 
     private fun scanSlide(slideNumber: Int): Boolean {
@@ -199,6 +219,8 @@ class OnboardingActivity : AppIntro() {
         locationSlide(slideNumber + 1)
 
         backgroundLocationSlide(slideNumber + 2)
+
+        notificationSlide(slideNumber + 3)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             addSlide(IgnoreBatteryOptimizationFragment.newInstance())
