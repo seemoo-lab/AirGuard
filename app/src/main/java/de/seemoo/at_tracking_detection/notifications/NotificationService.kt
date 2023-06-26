@@ -12,13 +12,11 @@ import androidx.core.app.NotificationManagerCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.viewmodel.NotificationViewModel
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -32,35 +30,44 @@ class NotificationService @Inject constructor(
 
     // TODO: new notification permission handling
 
+    @SuppressLint("MissingPermission")
     suspend fun sendTrackingNotification(deviceAddress: String) {
         val notificationId = notificationViewModel.insert(deviceAddress)
         with(notificationManagerCompat) {
-            notify(
-                TRACKING_NOTIFICATION_TAG,
-                notificationId,
-                notificationBuilder.buildTrackingNotification(deviceAddress, notificationId)
-            )
+            if (this.areNotificationsEnabled()) {
+                notify(
+                    TRACKING_NOTIFICATION_TAG,
+                    notificationId,
+                    notificationBuilder.buildTrackingNotification(deviceAddress, notificationId)
+                )
+            }
         }
     }
 
+    @SuppressLint("MissingPermission")
     suspend fun sendTrackingNotification(baseDevice: BaseDevice) {
         val notificationId = notificationViewModel.insert(deviceAddress = baseDevice.address)
         with(notificationManagerCompat) {
-            notify(
-                TRACKING_NOTIFICATION_TAG,
-                notificationId,
-                notificationBuilder.buildTrackingNotification(baseDevice, notificationId)
-            )
+            if (this.areNotificationsEnabled()) {
+                notify(
+                    TRACKING_NOTIFICATION_TAG,
+                    notificationId,
+                    notificationBuilder.buildTrackingNotification(baseDevice, notificationId)
+                )
+            }
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun sendBLEErrorNotification() {
         with(notificationManagerCompat) {
-            notify(
-                BLE_SCAN_ERROR_TAG,
-                -100,
-                notificationBuilder.buildBluetoothErrorNotification()
-            )
+            if (this.areNotificationsEnabled()) {
+                notify(
+                    BLE_SCAN_ERROR_TAG,
+                    -100,
+                    notificationBuilder.buildBluetoothErrorNotification()
+                )
+            }
         }
     }
 
@@ -76,13 +83,16 @@ class NotificationService @Inject constructor(
 //        SharedPrefs.surveyNotficationSent = true
 //    }
 
+    @SuppressLint("MissingPermission")
     fun sendDebugNotificationFoundDevice(scanResult: ScanResult) {
         with(notificationManagerCompat) {
-            notify(
-                BLE_SCAN_ERROR_TAG,
-                Random.nextInt(),
-                notificationBuilder.buildDebugFoundDeviceNotification(scanResult)
+            if (this.areNotificationsEnabled()) {
+                notify(
+                    BLE_SCAN_ERROR_TAG,
+                    Random.nextInt(),
+                    notificationBuilder.buildDebugFoundDeviceNotification(scanResult)
                 )
+            }
         }
     }
 
@@ -151,6 +161,6 @@ class NotificationService @Inject constructor(
             "de.seemoo.at_tracking_detection.tracking_notification"
         const val BLE_SCAN_ERROR_TAG =
             "de.seemoo.at_tracking_detection.ble_scan_error_notification"
-        const val SURVEY_INFO_TAG = "de.seemoo.at_tracking_detection.survey_info"
+        // const val SURVEY_INFO_TAG = "de.seemoo.at_tracking_detection.survey_info"
     }
 }
