@@ -1,4 +1,0 @@
-• We are conducting a survey about stalking and how AirGuard can protect users better against these attacks.
-• Tracking detection has been enhanced.
-• We enhanced the navigation of the app. You can now find all discovered devices in the devices tab. 
-• Device filters have been enhanced. They are now easier to discover and to understand. 
