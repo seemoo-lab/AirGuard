@@ -15,7 +15,7 @@ import javax.inject.Inject
 class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
 ) : ViewModel() {
 
     val deviceAddress = MutableLiveData<String>()
@@ -45,7 +45,7 @@ class TrackingViewModel @Inject constructor(
 
     val beaconsHaveMissingLocation: LiveData<Boolean> = Transformations.map(markerLocations) {
         it.any { beacon ->
-            beacon.latitude == null || beacon.longitude == null
+            beacon.locationId == null
         }
     }
 

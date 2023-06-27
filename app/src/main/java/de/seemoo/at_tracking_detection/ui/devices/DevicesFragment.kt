@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
-import android.Manifest
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Filter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -19,15 +17,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import androidx.navigation.NavDirections
-import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -40,14 +32,18 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
-import de.seemoo.at_tracking_detection.util.Util
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDate
 
 
 @AndroidEntryPoint
-abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllDevices: Boolean = false, var deviceType: DeviceType?=null) : Fragment() {
+abstract class DevicesFragment(
+    var showDevicesFound: Boolean = true,
+    var showAllDevices: Boolean = false,
+    var deviceType: DeviceType?=null,
+    var deviceType2: DeviceType?=null,
+) : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels()
 
@@ -99,7 +95,11 @@ abstract class DevicesFragment(var showDevicesFound: Boolean = true,var showAllD
         }
 
         if (deviceType != null && deviceType != DeviceType.UNKNOWN) {
-            devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
+            if (deviceType2 != null && deviceType2 != DeviceType.UNKNOWN) {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!, deviceType2!!)))
+            } else {
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
+            }
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)

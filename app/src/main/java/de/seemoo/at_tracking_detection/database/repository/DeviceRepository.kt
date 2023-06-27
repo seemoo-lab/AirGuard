@@ -16,7 +16,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun trackingDevicesSince(since: LocalDateTime) = deviceDao.getAllNotificationSince(since)
 
-    fun trackingDevicesSinceFlow(since: LocalDateTime) = deviceDao.getAllNotificationSinceFlow(since)
+    fun trackingDevicesNotIgnoredSince(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSince(since)
+
+    fun trackingDevicesNotIgnoredSinceCount(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSinceCount(since)
 
     fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
 
@@ -42,6 +44,11 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val countIgnored = deviceDao.getCountIgnored()
 
     fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDate)
+    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDate)
+
+    fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
+
+    fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
 
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {

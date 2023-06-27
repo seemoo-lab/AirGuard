@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.util.ble
 
 import android.bluetooth.le.*
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
@@ -13,7 +13,7 @@ object BLEScanCallback {
     private var scanCallback: WeakReference<ScanCallback>? = null
 
     fun startScanning(leScanner: BluetoothLeScanner, filters: List<ScanFilter>, settings: ScanSettings, callback: ScanCallback) {
-        if (Util.checkBluetoothPermission() == false) {
+        if (!Utility.checkBluetoothPermission()) {
             Timber.e("NO BLE SCAN PERMISSION")
             return
         }
@@ -24,7 +24,7 @@ object BLEScanCallback {
     }
 
     fun stopScanning(leScanner: BluetoothLeScanner) {
-        if (Util.checkBluetoothPermission() == false) {return}
+        if (!Utility.checkBluetoothPermission()) {return}
 
         leScanner.stopScan(objectScanCallback)
         scanCallback?.clear()

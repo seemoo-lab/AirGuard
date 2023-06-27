@@ -48,6 +48,12 @@ interface NotificationDao {
     @Query("SELECT * FROM notification WHERE deviceAddress == :deviceAddress ORDER BY createdAt DESC")
     fun getNotificationForDevice(deviceAddress: String): List<Notification>
 
+    @Query("SELECT COUNT(*) FROM notification WHERE deviceAddress == :deviceAddress AND createdAt >= :since")
+    fun getNotificationForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int
+
+    @Query("SELECT COUNT(*) FROM notification WHERE deviceAddress == :deviceAddress AND createdAt >= :since AND falseAlarm = 1")
+    fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int
+
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM notification")

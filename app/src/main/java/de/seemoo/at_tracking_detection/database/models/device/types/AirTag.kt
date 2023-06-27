@@ -6,13 +6,11 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.Connectable
-import de.seemoo.at_tracking_detection.database.models.device.Device
-import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import java.util.*
@@ -126,8 +124,12 @@ class AirTag(val id: Int) : Device(), Connectable {
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
+                    // Only Offline Devices:
+                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
+                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                    // All Devices:
                     byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                    byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
                 )
                 .build()
 

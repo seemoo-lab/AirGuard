@@ -35,10 +35,4 @@ platform :android do
     gradle(task: "clean assembleRelease")
     upload_to_play_store
   end
-
-  desc "Fetch Screenshots and metadata from Google Play"
-  lane :update_metadta do 
-    download_from_play_store
-  end 
-
 end

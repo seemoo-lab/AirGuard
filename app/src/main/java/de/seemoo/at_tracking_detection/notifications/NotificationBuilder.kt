@@ -17,6 +17,8 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
+import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.Instant
 import java.time.ZoneId
@@ -102,13 +104,17 @@ class NotificationBuilder @Inject constructor(
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val notifyText = context.getString(R.string.notification_text_base)
-        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+        val notifyText = context.getString(
+            R.string.notification_text_base,
+            RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
+        )
+
+        var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_base))
             .setContentText(notifyText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(getNotificationPriority())
             .setContentIntent(pendingNotificationIntent(bundle, notificationId))
-            .setCategory(Notification.CATEGORY_ALARM)
+            .setCategory(getNotificationCategory())
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
             .addAction(
@@ -119,7 +125,13 @@ class NotificationBuilder @Inject constructor(
                     NotificationConstants.FALSE_ALARM_ACTION,
                     NotificationConstants.FALSE_ALARM_CODE
                 )
-            ).addAction(
+            )
+
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+        val device = deviceRepository.getDevice(deviceAddress)
+
+        if (device?.deviceType != null && device.deviceType.canBeIgnored()) {
+            notification = notification.addAction(
                 R.drawable.ic_warning,
                 context.getString(R.string.notification_ignore_device),
                 buildPendingIntent(
@@ -127,17 +139,25 @@ class NotificationBuilder @Inject constructor(
                     NotificationConstants.IGNORE_DEVICE_ACTION,
                     NotificationConstants.IGNORE_DEVICE_CODE
                 )
-            ).setDeleteIntent(
-                buildPendingIntent(
-                    bundle,
-                    NotificationConstants.DISMISSED_ACTION,
-                    NotificationConstants.DISMISSED_CODE
-                )
-            ).setAutoCancel(true).build()
+            )
+        }
+
+        notification = notification.setDeleteIntent(
+            buildPendingIntent(
+                bundle,
+                NotificationConstants.DISMISSED_ACTION,
+                NotificationConstants.DISMISSED_CODE
+            )
+        ).setAutoCancel(true)
+
+        return notification.build()
 
     }
 
-    fun buildTrackingNotification(baseDevice: BaseDevice, notificationId: Int): Notification {
+    fun buildTrackingNotification(
+        baseDevice: BaseDevice,
+        notificationId: Int
+    ): Notification {
         Timber.d("Notification with id $notificationId for device ${baseDevice.address} has been build!")
         val deviceAddress = baseDevice.address
 
@@ -148,26 +168,26 @@ class NotificationBuilder @Inject constructor(
         when (baseDevice.deviceType ?: DeviceType.UNKNOWN) {
             DeviceType.AIRTAG, DeviceType.APPLE, DeviceType.AIRPODS, DeviceType.UNKNOWN -> {
                 notificationTitle = context.getString(R.string.notification_title_vocal, device.deviceContext.defaultDeviceName )
-                if (baseDevice.deviceType == DeviceType.AIRPODS) {
-                    notificationText =  context.getString(R.string.notification_text_multiple, device.deviceContext.defaultDeviceName)
+                notificationText = if (baseDevice.deviceType == DeviceType.AIRPODS) {
+                    context.getString(R.string.notification_text_multiple, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
                 }else {
-                    notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
+                    context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
                 }
             }
             else -> {
                 notificationTitle = context.getString(R.string.notification_title_consonant, device.deviceContext.defaultDeviceName )
-                notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName)
+                notificationText =  context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
             }
         }
 
         val pendingIntent = pendingNotificationIntent(bundle, notificationId)
 
-        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+        var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(getNotificationPriority())
             .setContentIntent(pendingIntent)
-            .setCategory(Notification.CATEGORY_ALARM)
+            .setCategory(getNotificationCategory())
             .setSmallIcon(R.drawable.ic_warning)
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
             .addAction(
@@ -178,7 +198,10 @@ class NotificationBuilder @Inject constructor(
                     NotificationConstants.FALSE_ALARM_ACTION,
                     NotificationConstants.FALSE_ALARM_CODE
                 )
-            ).addAction(
+            )
+
+        if (baseDevice.deviceType != null && baseDevice.deviceType.canBeIgnored()) {
+            notification = notification.addAction(
                 R.drawable.ic_warning,
                 context.getString(R.string.notification_ignore_device),
                 buildPendingIntent(
@@ -186,13 +209,18 @@ class NotificationBuilder @Inject constructor(
                     NotificationConstants.IGNORE_DEVICE_ACTION,
                     NotificationConstants.IGNORE_DEVICE_CODE
                 )
-            ).setDeleteIntent(
-                buildPendingIntent(
-                    bundle,
-                    NotificationConstants.DISMISSED_ACTION,
-                    NotificationConstants.DISMISSED_CODE
-                )
-            ).setAutoCancel(true).build()
+            )
+        }
+
+        notification = notification.setDeleteIntent(
+            buildPendingIntent(
+                bundle,
+                NotificationConstants.DISMISSED_ACTION,
+                NotificationConstants.DISMISSED_CODE
+            )
+        ).setAutoCancel(true)
+
+        return notification.build()
     }
 
     fun buildBluetoothErrorNotification(): Notification {
@@ -201,7 +229,7 @@ class NotificationBuilder @Inject constructor(
 
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_ble_error))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(getNotificationPriority())
             .setContentIntent(pendingNotificationIntent(bundle, notificationId))
             .setCategory(Notification.CATEGORY_ERROR)
             .setSmallIcon(R.drawable.ic_scan_icon)
@@ -221,7 +249,7 @@ class NotificationBuilder @Inject constructor(
         return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
             .setContentTitle("Discovered ${deviceType.name} | ${scanResult.device.address}")
             .setContentText("Received at ${eventDate.toString()}")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(getNotificationPriority())
             .setCategory(Notification.CATEGORY_STATUS)
             .setSmallIcon(R.drawable.ic_scan_icon)
             .setAutoCancel(true)
@@ -244,5 +272,21 @@ class NotificationBuilder @Inject constructor(
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setAutoCancel(true)
             .build()
+    }
+
+    private fun getNotificationPriority(): Int {
+        return if (SharedPrefs.notificationPriorityHigh){
+            NotificationCompat.PRIORITY_MAX
+        } else {
+            NotificationCompat.PRIORITY_HIGH
+        }
+    }
+
+    private fun getNotificationCategory(): String {
+        return if (SharedPrefs.notificationPriorityHigh){
+            Notification.CATEGORY_ALARM
+        } else {
+            Notification.CATEGORY_STATUS
+        }
     }
 }

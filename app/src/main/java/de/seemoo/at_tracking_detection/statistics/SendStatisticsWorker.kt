@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.statistics
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -13,7 +12,6 @@ import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @HiltWorker
 class SendStatisticsWorker @AssistedInject constructor(
@@ -29,7 +27,7 @@ class SendStatisticsWorker @AssistedInject constructor(
             return Result.success()
         }
         var token = SharedPrefs.token
-        val lastDataDonation = SharedPrefs.lastDataDonation
+        val lastDataDonation = SharedPrefs.lastDataDonation ?: LocalDateTime.MIN
 
         if (!api.ping().isSuccessful) {
             Timber.e("Server not available!")
@@ -42,7 +40,14 @@ class SendStatisticsWorker @AssistedInject constructor(
             SharedPrefs.token = token
         }
 
-        val devices = deviceRepository.getDeviceBeaconsSinceDate(lastDataDonation)
+        val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
+        val uploadDateTime: LocalDateTime = if (lastDataDonation > oneWeekAgo) {
+                lastDataDonation
+            }else {
+                oneWeekAgo
+            }
+
+        val devices = deviceRepository.getDeviceBeaconsSinceDate(uploadDateTime)
         // This makes sure that no devices will be sent twice. If the donation fails, then the app
         // will upload newer data the next time.
         SharedPrefs.lastDataDonation = LocalDateTime.now()
@@ -56,13 +61,14 @@ class SendStatisticsWorker @AssistedInject constructor(
         devices.forEach {
             it.address = ""
             it.beacons.forEach { beacon ->
-                beacon.latitude = null
-                beacon.longitude = null
+                // beacon.latitude = null
+                // beacon.longitude = null
+                beacon.locationId = null
                 beacon.deviceAddress = ""
             }
         }
 
-        if (!api.donateData(token, devices).isSuccessful) {
+        if (!api.donateData(token = token, devices=devices).isSuccessful) {
             return Result.retry()
         }
 

@@ -15,19 +15,20 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Scan
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -38,8 +39,6 @@ import kotlin.coroutines.suspendCoroutine
 class ScanBluetoothWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository,
     private val scanRepository: ScanRepository,
     private val locationProvider: LocationProvider,
     private val notificationService: NotificationService,
@@ -66,7 +65,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val scanMode = getScanMode()
         val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
 
-        if (!Util.checkBluetoothPermission()) {
+        if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return Result.retry()
         }
@@ -83,19 +82,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
-            val lastLocation = locationProvider.getLastLocation()
-
-            if (lastLocation != null) {
-                // Location matches the requirement. No need to request a new one
-                location = lastLocation
-                Timber.d("Using last location")
-            }else {
-                //Getting the most accurate location here
-                locationProvider.getCurrentLocation { loc ->
-                    this.location = loc
-                    Timber.d("Updated to current location")
-                }
-            }
+            // Returns the last known location if this matches our requirements or starts new location updates
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
         }
 
         //Starting BLE Scan
@@ -112,8 +100,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
         //Waiting for updated location to come in
-        val fetchedLocation = this.waitForRequestedLocation()
-        Timber.d("Fetched location? ${fetchedLocation}")
+        val fetchedLocation = waitForRequestedLocation()
+        Timber.d("Fetched location? $fetchedLocation")
+        if (location == null) {
+            // Get the last location no matter if the requirements match or not
+            location = locationProvider.getLastLocation(checkRequirements = false)
+        }
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
@@ -121,7 +113,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 discoveredDevice.scanResult,
                 location?.latitude,
                 location?.longitude,
-                discoveredDevice.discoveryDate
+                location?.accuracy,
+                discoveredDevice.discoveryDate,
             )
         }
 
@@ -152,9 +145,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             //Checks if the device has been found already
-            if (!scanResultDictionary.containsKey(scanResult.device.address)) {
+            if (!scanResultDictionary.containsKey(getPublicKey(scanResult))) {
                 Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-                scanResultDictionary[scanResult.device.address] =
+                scanResultDictionary[getPublicKey(scanResult)] =
                     DiscoveredDevice(scanResult, LocalDateTime.now())
             }
         }
@@ -168,39 +161,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun insertScanResult(
-        scanResult: ScanResult,
-        latitude: Double?,
-        longitude: Double?,
-        discoveryDate: LocalDateTime
-    ) {
-        var device = deviceRepository.getDevice(scanResult.device.address)
-        if (device == null) {
-            device = BaseDevice(scanResult)
-            deviceRepository.insert(device)
-        } else {
-            Timber.d("Device already in the database... Updating the last seen date!")
-            device.lastSeen = discoveryDate
-            deviceRepository.update(device)
+    private val locationRequester: LocationRequester = object : LocationRequester() {
+        override fun receivedAccurateLocationUpdate(location: Location) {
+            this@ScanBluetoothWorker.location = location
+            this@ScanBluetoothWorker.locationRetrievedCallback?.let { it() }
         }
-
-        Timber.d("Device: $device")
-
-        val uuids =  scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
-        val beacon = if (BuildConfig.DEBUG) {
-            // Save the manufacturer data to the beacon
-            Beacon(
-                discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                scanResult.scanRecord?.bytes, uuids
-            )
-        } else {
-            Beacon(
-                discoveryDate, scanResult.rssi, scanResult.device.address, latitude, longitude,
-                null, uuids
-            )
-        }
-
-        beaconRepository.insert(beacon)
     }
 
     private fun getScanMode(): Int {
@@ -222,7 +187,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     }
 
     private suspend fun waitForRequestedLocation(): Boolean {
-        if (location != null || SharedPrefs.useLocationInTrackingDetection == false) {
+        if (location != null || !SharedPrefs.useLocationInTrackingDetection) {
             //Location already there. Just return
             return true
         }
@@ -249,10 +214,150 @@ class ScanBluetoothWorker @AssistedInject constructor(
             }
 
             // Fallback if no location is fetched in time
-            handler.postDelayed(runnable, 8000)
-
+            val maximumLocationDurationMillis = 60_000L
+            handler.postDelayed(runnable, maximumLocationDurationMillis)
         }
     }
 
-    class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime) {}
+    class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime)
+
+    companion object {
+        const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
+        const val TIME_BETWEEN_BEACONS: Long = 15 // 15 minutes until the same beacon gets saved again in the db
+
+        suspend fun insertScanResult(
+            scanResult: ScanResult,
+            latitude: Double?,
+            longitude: Double?,
+            accuracy: Float?,
+            discoveryDate: LocalDateTime,
+        ) {
+            saveDevice(scanResult, discoveryDate) ?: return // return when device does not qualify to be saved
+
+            // set locationId to null if gps location could not be retrieved
+            val locId: Int? = saveLocation(latitude, longitude, discoveryDate, accuracy)?.locationId
+
+            saveBeacon(scanResult, discoveryDate, locId)
+        }
+
+    private suspend fun saveBeacon(
+            scanResult: ScanResult,
+            discoveryDate: LocalDateTime,
+            locId: Int?
+        ): Beacon? {
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+            val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
+            val uniqueIdentifier = getPublicKey(scanResult)
+
+            var beacon: Beacon? = null
+            val beacons = beaconRepository.getDeviceBeaconsSince(
+                deviceAddress = uniqueIdentifier,
+                since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
+            ) // sorted by newest first
+
+            if (beacons.isEmpty()) {
+                Timber.d("Add new Beacon to the database!")
+                beacon = if (BuildConfig.DEBUG) {
+                    // Save the manufacturer data to the beacon
+                    Beacon(
+                        discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
+                        scanResult.scanRecord?.bytes, uuids
+                    )
+                } else {
+                    Beacon(
+                        discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
+                        null, uuids
+                    )
+                }
+                beaconRepository.insert(beacon)
+            } else if (beacons[0].locationId == null && locId != null && locId != 0){
+                // Update beacon within the last TIME_BETWEEN_BEACONS minutes with location
+                Timber.d("Beacon already in the database... Adding Location")
+                beacon = beacons[0]
+                beacon.locationId = locId
+                beaconRepository.update(beacon)
+            }
+
+            Timber.d("Beacon: $beacon")
+
+            return beacon
+        }
+
+        private suspend fun saveDevice(
+            scanResult: ScanResult,
+            discoveryDate: LocalDateTime
+        ): BaseDevice? {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+
+            val deviceAddress = getPublicKey(scanResult)
+
+            // Checks if Device already exists in device database
+            var device = deviceRepository.getDevice(deviceAddress)
+            if (device == null) {
+                // Do not Save Samsung Devices
+                device = BaseDevice(scanResult)
+
+                // Check if ConnectionState qualifies Device to be saved
+                // Only Save when Device is offline long enough
+                when(BaseDevice.getConnectionState(scanResult)){
+                    ConnectionState.OVERMATURE_OFFLINE -> {}
+                    // ConnectionState.OFFLINE -> {}
+                    // ConnectionState.PREMATURE_OFFLINE -> {}
+                    ConnectionState.UNKNOWN -> {}
+                    else -> return null
+                }
+
+                Timber.d("Add new Device to the database!")
+                deviceRepository.insert(device)
+            } else {
+                Timber.d("Device already in the database... Updating the last seen date!")
+                device.lastSeen = discoveryDate
+                deviceRepository.update(device)
+            }
+
+            Timber.d("Device: $device")
+            return device
+        }
+
+        private suspend fun saveLocation(
+            latitude: Double?,
+            longitude: Double?,
+            discoveryDate: LocalDateTime,
+            accuracy: Float?
+        ): LocationModel? {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
+            // set location to null if gps location could not be retrieved
+            var location: LocationModel? = null
+
+            if (latitude != null && longitude != null) {
+                // Get closest location from database
+                location = locationRepository.closestLocation(latitude, longitude)
+
+                var distanceBetweenLocations: Float = Float.MAX_VALUE
+
+                if (location != null) {
+                    val locationA = getLocation(latitude, longitude)
+                    val locationB = getLocation(location.latitude, location.longitude)
+                    distanceBetweenLocations = locationA.distanceTo(locationB)
+                }
+
+                if (location == null || distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
+                    // Create new location entry
+                    Timber.d("Add new Location to the database!")
+                    location = LocationModel(discoveryDate, longitude, latitude, accuracy)
+                    locationRepository.insert(location)
+                } else {
+                    // If location is within the set limit, just use that location and update lastSeen
+                    Timber.d("Location already in the database... Updating the last seen date!")
+                    location.lastSeen = discoveryDate
+                    locationRepository.update(location)
+
+                }
+
+                Timber.d("Location: $location")
+            }
+            return location
+        }
+    }
 }

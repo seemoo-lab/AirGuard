@@ -13,8 +13,10 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -27,12 +29,13 @@ class TrackingDetectorWorker @AssistedInject constructor(
     private val notificationService: NotificationService,
     private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository,
+    private val notificationRepository: NotificationRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
         Timber.d("Tracking detection background job started!")
+        // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
-
 
         // All beacons in the last 14 days for devices detected during the last scan
         val latestBeaconsPerDevice = getLatestBeaconsPerDevice()
@@ -41,63 +44,32 @@ class TrackingDetectorWorker @AssistedInject constructor(
             !ignoredDevices.map { it.address }.contains(address)
         }
 
-        var notificaitonsSent = 0
+        var notificationsSent = 0
 
-        //TODO: Can we do this in parallel?
         cleanedBeaconsPerDevice.forEach { mapEntry ->
             val device = deviceRepository.getDevice(mapEntry.key)
-            //Double check that this device is not ignored
-            if (device?.ignore == true) {
-                return@forEach
-            }
+            val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            //Check that we found enough beacons
-            if (mapEntry.value.size < MAX_BEACONS_BEFORE_ALARM) {
-                return@forEach
-            }
-
-            //Checks if the time difference between received beacons is large enough
-            if (!isTrackingForEnoughTime(device, mapEntry.value)) {
-                return@forEach
-            }
-
-            //Check that we do not send notifications too often (one notification every 8 hours)
-            if (device?.lastNotificationSent != null) {
-                val hoursPassed =
-                    device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
-                if (hoursPassed < 8) {
-                    return@forEach
-                }
-            }
-
-            //Check if the beacon have travelled far enough
-            if (useLocation && !hasMinBeaconDistance(mapEntry.value)) {
-                return@forEach
-            }
-
-            Timber.d("Found more than $MAX_BEACONS_BEFORE_ALARM beacons per device... Sending Notification!")
-
-            if (device != null) {
+            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+                // Send Notification
+                Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
-            }else {
-                notificationService.sendTrackingNotification(mapEntry.key)
+                device.notificationSent = true
+                device.lastNotificationSent = LocalDateTime.now()
+                device.let { d -> deviceRepository.update(d) }
+                notificationsSent += 1
+            } else {
+                return@forEach
             }
-
-            device?.notificationSent = true
-            device?.lastNotificationSent = LocalDateTime.now()
-            device?.let { d -> deviceRepository.update(d) }
-            notificaitonsSent += 1
         }
 
-        Timber.d("Tracking detector worker finished. Sent $notificaitonsSent notifications")
+        Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
         return Result.success(
             Data.Builder()
-                .putInt("sentNotifications", notificaitonsSent)
+                .putInt("sentNotifications", notificationsSent)
                 .build()
         )
     }
-
-    private val useLocation = SharedPrefs.useLocationInTrackingDetection
 
     /**
      * Retrieves the devices detected during the last scan (last 15min)
@@ -116,72 +88,22 @@ class TrackingDetectorWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val MAX_BEACONS_BEFORE_ALARM = 3
-
-        /// Minimum tracking time
-        const val MIN_TRACKING_TIME_SECONDS = 30 * 60
-        const val MIN_DISTANCE_BETWEEN_BEACONS = 400
-
-        //Moving some functions to the companion object to make them testable
-
-        /**
-         * Gets a list of beacons and checks if the user is beeing tracked for the minimum amount of
-         * time before a notification is sent.
-         * @param beacons
-         * @param baseDevice
-         * @return
-         */
-        fun isTrackingForEnoughTime(baseDevice: BaseDevice?, beacons: List<Beacon>): Boolean {
-            if (beacons.isEmpty()) {
-                return false
-            }
-
-            //Sort the list by received at
-            //Last beacon received is last at the list
-            val beaconsSorted = beacons.sortedBy { it.receivedAt }
-
-            val firstBeacon = beaconsSorted.first()
-            val lastBeacon = beaconsSorted.last()
-            val timeDiff = ChronoUnit.SECONDS.between(firstBeacon.receivedAt, lastBeacon.receivedAt)
-            val minTrackingTime =
-                baseDevice?.device?.deviceContext?.minTrackingTime ?: MIN_TRACKING_TIME_SECONDS
-
-            return timeDiff >= minTrackingTime
-        }
-
-        private fun hasMinBeaconDistance(beacons: List<Beacon>): Boolean {
-
-            var distanceReached = false
-
-            // Check first if any beacons meet the minimal distance requirement
-            beacons.forEach { first ->
-                beacons.forEach { second ->
-                    if (
-                        first.latitude != null && first.longitude != null &&
-                        second.latitude != null && second.longitude != null
-                    ) {
-                        val firstLocation = getLocation(first.latitude!!, first.longitude!!)
-                        val secondLocation = getLocation(second.latitude!!, second.longitude!!)
-
-                        // Return true if any beacon pair full fills the minimal distance requirement
-                        if (firstLocation.distanceTo(secondLocation) >= MIN_DISTANCE_BETWEEN_BEACONS) {
-                            distanceReached = true
-                        }
-                    }
-                }
-            }
-
-            return distanceReached
-        }
-
-
-        private fun getLocation(latitude: Double, longitude: Double): Location {
+        fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
             location.latitude = latitude
             location.longitude = longitude
             return location
         }
 
+        private fun checkLastNotification(device: BaseDevice): Boolean {
+            return if (device.lastNotificationSent != null) {
+                val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
+                // Last Notification longer than 8 hours
+                hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
+            } else{
+                true
+            }
+        }
     }
 
 }

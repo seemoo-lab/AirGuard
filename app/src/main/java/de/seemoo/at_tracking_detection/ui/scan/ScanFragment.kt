@@ -1,42 +1,28 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
-import de.seemoo.at_tracking_detection.util.Util
-import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
-import kotlinx.coroutines.launch
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import timber.log.Timber
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
-
-    private var bluetoothManager: BluetoothManager? = null
-    private var isScanning = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +47,17 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startBluetoothScan()
+
+        val bluetoothButton = view.findViewById<Button>(R.id.open_ble_settings_button)
+        bluetoothButton.setOnClickListener {
+            context?.let { BLEScanner.openBluetoothSettings(it) }
+
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
     }
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
@@ -86,48 +83,28 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
-        if (isScanning || scanViewModel.isScanningInBackground) { return }
-        bluetoothManager =
-            ATTrackingDetectionApplication.getAppContext()
-                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val scanSettings =
-            ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
-
-        bluetoothManager?.let {
-            val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
-            val hasScanPermission =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S || Util.checkAndRequestPermission(
-                    Manifest.permission.BLUETOOTH_SCAN
-                )
-            if (isBluetoothEnabled && hasScanPermission) {
-                BLEScanCallback.startScanning(it.adapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, scanCallback)
-                isScanning = true
-                scanViewModel.scanStart.postValue(LocalDateTime.now())
-
-                Handler(Looper.getMainLooper()).postDelayed({
-                    // Stop scanning if no device was detected
-                    if (scanViewModel.isListEmpty.value == true) {
-                        scanViewModel.scanFinished.postValue(true)
-                        stopBluetoothScan()
-                    }
-                }, SCAN_DURATION)
-            }
+        // Start a scan if the BLEScanner is not already running
+        if (!BLEScanner.isScanning) {
+            BLEScanner.startBluetoothScan(this.requireContext())
         }
+
+        // Register the current fragment as a callback
+        BLEScanner.registerCallback(this.scanCallback)
+
+        // Show to the user that no devices have been found
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Stop scanning if no device was detected
+            if (scanViewModel.isListEmpty.value == true) {
+                scanViewModel.scanFinished.postValue(true)
+                stopBluetoothScan()
+            }
+        }, SCAN_DURATION)
     }
 
     private fun stopBluetoothScan() {
-        if (!isScanning) { return }
-
-        bluetoothManager?.let {
-            if (it.adapter.state == BluetoothAdapter.STATE_ON) {
-                BLEScanCallback.stopScanning(it.adapter.bluetoothLeScanner)
-                isScanning = false
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            scanViewModel.saveScanToRepository()
-        }
+        // We just unregister the callback, but keep the scanner running
+        // until the app is closed / moved to background
+        BLEScanner.unregisterCallback(this.scanCallback)
     }
 
     override fun onResume() {
@@ -146,6 +123,6 @@ class ScanFragment : Fragment() {
     }
 
     companion object {
-        private const val SCAN_DURATION = 15000L
+        private const val SCAN_DURATION = 60_000L
     }
 }

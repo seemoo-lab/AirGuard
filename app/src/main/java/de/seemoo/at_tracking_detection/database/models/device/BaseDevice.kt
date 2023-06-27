@@ -4,6 +4,7 @@ import android.bluetooth.le.ScanResult
 import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -54,8 +55,8 @@ data class BaseDevice(
     constructor(scanResult: ScanResult) : this(
         0,
         UUID.randomUUID().toString(),
-        scanResult.device.address,
-        scanResult.scanRecord?.deviceName,
+        getPublicKey(scanResult),
+        getDeviceName(scanResult),
         false,
         scanResult.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -83,6 +84,10 @@ data class BaseDevice(
         DeviceType.AIRPODS -> AirPods(deviceId)
         DeviceType.FIND_MY -> FindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
+        DeviceType.CHIPOLO -> Chipolo(deviceId)
+        DeviceType.SAMSUNG -> SamsungDevice(deviceId)
+        DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
+        DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {
@@ -96,4 +101,29 @@ data class BaseDevice(
     fun getFormattedDiscoveryDate(): String = firstDiscovery.format(dateTimeFormatter)
 
     fun getFormattedLastSeenDate(): String = lastSeen.format(dateTimeFormatter)
+
+    companion object {
+        fun getDeviceName(scanResult: ScanResult): String? {
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.GALAXY_SMART_TAG_PLUS -> null
+                DeviceType.GALAXY_SMART_TAG -> null
+                else -> scanResult.scanRecord?.deviceName
+            }
+        }
+
+        fun getConnectionState(scanResult: ScanResult): ConnectionState {
+            return when (DeviceManager.getDeviceType(scanResult)) {
+                DeviceType.TILE -> Tile.getConnectionState(scanResult)
+                DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
+                DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.AIRPODS -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.FIND_MY -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.AIRTAG -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+                else -> ConnectionState.UNKNOWN
+            }
+        }
+    }
 }

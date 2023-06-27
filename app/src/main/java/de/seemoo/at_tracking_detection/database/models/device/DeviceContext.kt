@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
 
 interface DeviceContext {
     val bluetoothFilter: ScanFilter
@@ -14,4 +15,8 @@ interface DeviceContext {
         get() = 30 * 60
 
     val statusByteDeviceType: UInt
+
+    fun getConnectionState(scanResult: ScanResult): ConnectionState {
+        return ConnectionState.UNKNOWN
+    }
 }

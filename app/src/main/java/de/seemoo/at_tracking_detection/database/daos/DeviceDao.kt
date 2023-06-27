@@ -2,8 +2,6 @@ package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -22,7 +20,13 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
     fun getAllNotificationSince(since: LocalDateTime): List<BaseDevice>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY lastSeen DESC")
+    fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0")
+    fun getAllTrackingDevicesNotIgnoredSinceCount(since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1")
     fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
@@ -57,6 +61,15 @@ interface DeviceDao {
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND deviceType = :deviceType")
     fun getCountForType(deviceType: String, since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2)")
+    fun getCountForTypes(deviceType1: String, deviceType2: String, since: LocalDateTime): Flow<Int>
+
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND device.lastSeen >= :since")
+    fun getNumberOfLocationsForDevice(deviceAddress: String, since: LocalDateTime): Int
+
+    @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND accuracy is not NULL AND accuracy <= :maxAccuracy AND device.lastSeen >= :since")
+    fun getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns

@@ -7,6 +7,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -21,11 +22,12 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
-import de.seemoo.at_tracking_detection.util.Util
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
@@ -72,8 +74,8 @@ class TrackingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val activity = ATTrackingDetectionApplication.getCurrentActivity()
-        if (activity == null) {return}
+        val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
+
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
@@ -113,7 +115,7 @@ class TrackingFragment : Fragment() {
         }
 
         playSoundCard.setOnClickListener {
-            if (!Util.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+            if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
                 return@setOnClickListener
             }
 
@@ -129,12 +131,25 @@ class TrackingFragment : Fragment() {
             }
         }
 
-        Util.enableMyLocationOverlay(map)
+        Utility.enableMyLocationOverlay(map)
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
-                Util.setGeoPointsFromList(it, map, true)
+
+                val locationList = arrayListOf<Location>()
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
+                it.filter { it.locationId != null && it.locationId != 0 }
+                    .map {
+                        val location = locationRepository.getLocationWithId(it.locationId!!)
+                        if (location != null) {
+                            locationList.add(location)
+                        }
+                    }
+
+                // This is the per Device View
+                Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
             }.invokeOnCompletion {
                 trackingViewModel.isMapLoading.postValue(false)
             }
@@ -150,6 +165,26 @@ class TrackingFragment : Fragment() {
                 }
             }
         }
+
+        addInteractions(view)
+    }
+
+    fun addInteractions(view: View) {
+        val button = view.findViewById<ImageButton>(R.id.open_map_button)
+
+
+        button.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+        val overlay = view.findViewById<View>(R.id.map_overlay)
+        overlay.setOnClickListener {
+            val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
+            findNavController().navigate(direction)
+        }
+
+
     }
 
     private fun toggleSound() {

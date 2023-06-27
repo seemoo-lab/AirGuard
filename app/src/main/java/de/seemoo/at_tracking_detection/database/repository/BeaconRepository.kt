@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.repository
 
+import android.os.ParcelUuid
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -11,6 +12,8 @@ import javax.inject.Inject
 class BeaconRepository @Inject constructor(
     private val beaconDao: BeaconDao
 ) {
+    val allBeacons: List<Beacon> = beaconDao.getAllBeacons()
+
     val totalCount: Flow<Int> = beaconDao.getTotalCount()
 
     val locationCount: Flow<Int> = beaconDao.getTotalLocationCount()
@@ -38,6 +41,10 @@ class BeaconRepository @Inject constructor(
     fun getDeviceBeaconsSince(deviceAddress: String, since: LocalDateTime): List<Beacon> =
         beaconDao.getDeviceBeaconsSince(deviceAddress, since)
 
+    fun getNumberOfBeaconsAddress(deviceAddress: String, since: LocalDateTime): Int = beaconDao.getNumberOfBeaconsAddress(deviceAddress, since)
+
+    fun getNumberOfBeaconsAddressAndLocation(deviceAddress: String, locationId: Int, since: LocalDateTime): Int = beaconDao.getNumberOfBeaconsAddressAndLocation(deviceAddress, locationId, since)
+
     fun getBeaconsForDevices(baseDevices: List<BaseDevice>): List<Beacon> {
         return baseDevices.map {
             beaconDao.getDeviceBeacons(it.address)
@@ -46,4 +53,9 @@ class BeaconRepository @Inject constructor(
 
     @WorkerThread
     suspend fun insert(beacon: Beacon): Long = beaconDao.insert(beacon)
+
+    @WorkerThread
+    suspend fun update(beacon: Beacon) {
+        beaconDao.update(beacon)
+    }
 }

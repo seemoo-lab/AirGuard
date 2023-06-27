@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.DrawableRes
@@ -16,7 +17,6 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
-import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import timber.log.Timber
 import java.util.*
 
@@ -24,7 +24,7 @@ class FindMy(val id: Int) : Device(), Connectable {
 
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_baseline_device_unknown_24
+        get() = R.drawable.ic_chipolo
 
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device)
@@ -78,11 +78,19 @@ class FindMy(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val characteristic = service.getCharacteristic(FindMy.FINDMY_SOUND_CHARACTERISTIC)
+                val characteristic = service.getCharacteristic(FINDMY_SOUND_CHARACTERISTIC)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = FINDMY_START_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, FINDMY_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    }else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = FINDMY_START_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
                     broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
                 }
@@ -106,8 +114,16 @@ class FindMy(val id: Int) : Device(), Connectable {
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = FINDMY_STOP_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, FINDMY_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    }else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = FINDMY_STOP_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Stopping sound on Find My device with ${it.uuid}")
 
                 }
@@ -151,8 +167,12 @@ class FindMy(val id: Int) : Device(), Connectable {
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
+                    // Only Offline Devices:
+                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
+                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                    // All Devices:
                     byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
+                    byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
                 )
                 .build()
 

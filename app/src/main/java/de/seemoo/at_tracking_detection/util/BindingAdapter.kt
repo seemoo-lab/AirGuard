@@ -6,15 +6,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.Connectable
-import de.seemoo.at_tracking_detection.database.models.device.Device
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
+import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import java.util.*
-import kotlin.math.pow
 
 @BindingAdapter("setAdapter")
 fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -24,24 +24,21 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     }
 }
 
-@SuppressLint("SetTextI18n")
-@BindingAdapter("setDistance", requireAll = true)
-fun setDistance(textView: TextView, scanResult: ScanResult) {
-    val useMetric = SharedPrefs.useMetricSystem
+@SuppressLint("UseCompatLoadingForDrawables")
+@BindingAdapter("setSignalStrengthDrawable", requireAll = true)
+fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
+    val rssi: Int = scanResult.rssi
+    val percentage = DbmToPercent.convert(rssi.toDouble(), perfectRssi = -30.0, worstRssi = -90.0).toDouble() / 100.0
+    val quality = Utility.rssiToQuality(percentage.toFloat())
 
-    var txPowerLevel = scanResult.scanRecord?.txPowerLevel
-    if (txPowerLevel == null || txPowerLevel == Int.MIN_VALUE) {
-        txPowerLevel = -69
+    when (quality) {
+        0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))
+        1 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_low))
+        2 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_high))
+        3 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_high))
     }
-    val distance = 10F.pow(((txPowerLevel - scanResult.rssi) / (10 * 2)))
-
-    if (!useMetric) {
-        textView.text = "%.1f FT".format(distance * 3.2808)
-    } else {
-        textView.text = "%.1f M".format(distance)
-    }
-
 }
+
 
 @BindingAdapter("setDeviceDrawable", requireAll = true)
 fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
@@ -49,16 +46,33 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
     imageView.setImageDrawable(device.getDrawable())
 }
 
+@BindingAdapter("setDeviceColor", requireAll = true)
+fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
+    when (BaseDevice.getConnectionState(scanResult)) {
+        ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
+        ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(0)
+        ConnectionState.UNKNOWN -> materialCardView.setCardBackgroundColor(0)
+    }
+}
+
 @BindingAdapter("setDeviceName", requireAll = true)
-fun setDeviceName(textView: TextView, scanResult: ScanResult) {
-    val device =  BaseDevice(scanResult).device
-    textView.text = device.deviceContext.defaultDeviceName
+fun setDeviceName (textView: TextView, scanResult: ScanResult) {
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+    val deviceFromDb = deviceRepository?.getDevice(SamsungDevice.getPublicKey(scanResult))
+    if (deviceFromDb?.name != null) {
+        textView.text = deviceFromDb.getDeviceNameWithID()
+    } else {
+        val device =  BaseDevice(scanResult).device
+        textView.text = device.deviceContext.defaultDeviceName
+    }
 }
 
 @BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)
 fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
     val device = BaseDevice(scanResult).device
-    if (device.isConnectable()) {
+    if (device.isConnectable() && BaseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
         view.visibility = View.VISIBLE
     }else {
         view.visibility = View.GONE
