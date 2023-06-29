@@ -50,14 +50,20 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val device = deviceRepository.getDevice(mapEntry.key)
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
-                // Send Notification
-                Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
-                notificationService.sendTrackingNotification(device)
-                device.notificationSent = true
-                device.lastNotificationSent = LocalDateTime.now()
-                device.let { d -> deviceRepository.update(d) }
-                notificationsSent += 1
+            if (device != null) {
+                checkObservation(device)
+
+                if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+                    // Send Notification
+                    Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
+                    notificationService.sendTrackingNotification(device)
+                    device.notificationSent = true
+                    device.lastNotificationSent = LocalDateTime.now()
+                    device.let { d -> deviceRepository.update(d) }
+                    notificationsSent += 1
+                } else {
+                    return@forEach
+                }
             } else {
                 return@forEach
             }
@@ -87,6 +93,28 @@ class TrackingDetectorWorker @AssistedInject constructor(
         return beaconsPerDevice
     }
 
+    private suspend fun checkObservation(device: BaseDevice) {
+        val nextObservationNotification = device.nextObservationNotification
+        val currentObservationDuration = device.currentObservationDuration
+
+        if (nextObservationNotification != null && currentObservationDuration != null) {
+            if (nextObservationNotification >= LocalDateTime.now()) {
+                val lastSeen = device.lastSeen
+                // TODO not a good solution
+                val observationPositive = (lastSeen >= nextObservationNotification.minusMinutes(observationDelta) && lastSeen <= nextObservationNotification.plusMinutes(currentObservationDuration))
+
+                // Send Notification
+                Timber.d("Observation for device ${device.address} is over... Sending Notification!")
+                device.nextObservationNotification = null
+                device.currentObservationDuration = null
+                notificationService.sendObserveTrackerNotification(device.address, currentObservationDuration, observationPositive)
+
+                // Update device
+                device.let { d -> deviceRepository.update(d) }
+            }
+        }
+    }
+
     companion object {
         fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
@@ -104,6 +132,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 true
             }
         }
+
+        val observationDelta: Long = 30L // The time in minutes in which the tracker has to be seen last for it to be considered as still around
     }
 
 }

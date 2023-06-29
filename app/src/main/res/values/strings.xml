@@ -112,6 +112,11 @@
     <string name="onboarding_share_data_dialog">Please decide if you want to participate or not. All data shared is completely anonymous.</string>
     <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device">Find My Device %s</string>
+
+    <string name="notification_observe_tracker_title_base">Your observed tracker</string>
+    <string name="notification_observe_tracker_positive">A tracker you observed has been following you for at least %d minutes.</string>
+    <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
+
     <string name="notification_text_base">Open the notification to get more info. A tracker has followed you for at least %d minutes.</string>
     <string name="notification_title_base">A tracker has been following you</string>
     <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least %d minutes.</string>

@@ -127,6 +127,9 @@
     <string name="onboarding_scan_description">Um die Umgebung nach Tracking-Geräten zu scannen, benötigen wir die Erlaubnis, nach Bluetooth-Geräten zu suchen!</string>
     <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
+    <string name="notification_observe_tracker_title_base">Dein beobachteter Tracker</string>
+    <string name="notification_observe_tracker_positive">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Minuten.</string>
+    <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
     <string name="onboarding_notification_description">Um Benachrichtigungen zu senden, wenn ein Gerät gefunden wurde, benötigen wir die Berechtigung Benachrichtigungen zu verschicken.</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
