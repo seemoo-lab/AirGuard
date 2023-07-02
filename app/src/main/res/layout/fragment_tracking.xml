@@ -224,14 +224,19 @@
                     bind:vm="@{vm}" />
 
                 <include
-                    android:id="@+id/tracking_placeholder"
+                    android:id="@+id/tracking_observation"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/tracking_tile_height"
                     android:layout_margin="@dimen/card_margin"
                     android:layout_weight="1"
-                    android:visibility="@{View.GONE}"
+                    android:visibility="@{View.VISIBLE}"
+                    bind:drawable="@{@drawable/ic_clock}"
+                    bind:imageDescription="@{@string/tracking_observe_tracker_title}"
+                    bind:subtitle="@{@string/tracking_observe_tracker_subtitle}"
+                    bind:title="@{@string/tracking_observe_tracker_title}"
+                    bind:vm="@{vm}"
                     />
             </LinearLayout>
 
