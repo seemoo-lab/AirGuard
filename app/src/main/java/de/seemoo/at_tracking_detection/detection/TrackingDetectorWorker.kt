@@ -110,7 +110,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 notificationService.sendObserveTrackerNotification(device.address, currentObservationDuration, observationPositive)
 
                 // Update device
-                device.let { d -> deviceRepository.update(d) }
+                deviceRepository.update(device)
             }
         }
     }

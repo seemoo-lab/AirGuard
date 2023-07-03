@@ -37,6 +37,7 @@
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toBottomOf="@+id/headline"
             bind:srcCompat="@drawable/ic_clock"
+            bind:tint="?attr/colorControlNormal"
             android:contentDescription="TODO" />
 
         <TextView

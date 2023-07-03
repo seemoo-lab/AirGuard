@@ -233,6 +233,8 @@
                     android:layout_weight="1"
                     android:visibility="@{View.VISIBLE}"
                     bind:drawable="@{@drawable/ic_clock}"
+                    bind:tint="?attr/colorControlNormal"
+                    bind:clickable="@{true}"
                     bind:imageDescription="@{@string/tracking_observe_tracker_title}"
                     bind:subtitle="@{@string/tracking_observe_tracker_subtitle}"
                     bind:title="@{@string/tracking_observe_tracker_title}"
