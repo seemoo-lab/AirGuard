@@ -211,13 +211,15 @@ open class LocationProvider @Inject constructor(
                 handler.looper
             )
 
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                MIN_UPDATE_TIME_MS,
-                MIN_DISTANCE_METER,
-                this,
-                handler.looper
-            )
+            if (networkProviderEnabled){
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    MIN_UPDATE_TIME_MS,
+                    MIN_DISTANCE_METER,
+                    this,
+                    handler.looper
+                )
+            }
 
         } else if (networkProviderEnabled) {
             locationManager.requestLocationUpdates(
