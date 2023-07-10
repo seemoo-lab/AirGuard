@@ -63,6 +63,12 @@
             app:popUpTo="@id/navigation_manual_scan"
             app:popUpToSaveState="true"
             />
+        <action
+            android:id="@+id/action_scan_to_trackingFragment"
+            app:destination="@id/trackingFragment"
+            app:popUpTo="@id/navigation_manual_scan"
+            app:popUpToSaveState="true"
+            />
     </fragment>
 
     <include app:graph="@navigation/aboutlibs_navigation" />
