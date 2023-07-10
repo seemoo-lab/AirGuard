@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
 import de.seemoo.at_tracking_detection.ui.scan.dialog.PlaySoundDialogFragment
@@ -40,11 +41,18 @@ class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentMa
         val scanResult: ScanResult = getItem(position)
         holder.bind(scanResult)
 
+        holder.itemView.findViewById<MaterialCardView>(R.id.scan_result_item_card)
+            .setOnClickListener() {
+                val deviceAddress: String = getPublicKey(scanResult)
+                val directions = ScanFragmentDirections.actionScanToTrackingFragment(deviceAddress)
+                holder.itemView.findNavController()
+                    .navigate(directions)
+            }
+
         holder.itemView.findViewById<ImageView>(R.id.scan_signal_strength)
             .setOnClickListener() {
                 val deviceAddress: String = getPublicKey(scanResult)
-                val directions =
-                    ScanFragmentDirections.actionScanToScanDistance(deviceAddress)
+                val directions = ScanFragmentDirections.actionScanToScanDistance(deviceAddress)
                 holder.itemView.findNavController()
                     .navigate(directions)
             }
