@@ -150,6 +150,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
             requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         for (permission in requiredPermissions) {
             val granted = ContextCompat.checkSelfPermission(
@@ -184,6 +187,6 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
         //TODO: Add real survey URL
         val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
-        val SURVEY_IS_RUNNING = true
+        val SURVEY_IS_RUNNING = false
     }
 }
