@@ -43,8 +43,6 @@
     <string name="tracking_feedback_subtitle">Provide some insights</string>
     <string name="tracking_detail_scan_title">Detailed Scan</string>
     <string name="tracking_detail_scan_subtitle">Shows live Information about this tracker</string>
-    <string name="tracking_observe_tracker_title">Observe Tracker</string>
-    <string name="tracking_observe_tracker_subtitle">Observes this tracker for a fixed time</string>
     <string name="tracking_ignore_device_title">Ignore Device</string>
     <string name="tracking_ignore_device_subtitle">Mute notifications for this device</string>
     <string name="tracking_false_alarm_title">False Alarm</string>
@@ -308,6 +306,12 @@
     <string name="samsung_device">Samsung Devices</string>
     <string name="smart_tag" translatable="false">SmartTags</string>
     <string name="tile" translatable="false">Tiles</string>
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="observe_tracker_title">Observe Tracker</string>
+    <string name="observe_tracker_clock_description">Image of a clock</string>
+    <string name="observe_tracker_start_observation">Start Observation</string>
+    <string name="observe_tracker_explanation">If you are not sure if this tracker follows you, you can manually observe it. \n\nIn one hour, AirGuard will search for this tracker and deliver a notification immediately, even if you did not move with this tracker. If the tracker is not around anymore, you will receive a notification about that as well.</string>
+    <string name="tracking_observe_tracker_subtitle">Find out if this tracker is following you</string>
+    <string name="observe_tracker_success">Observation started</string>
+    <string name="observe_tracker_failure">You are already observing this tracker</string>
 </resources>

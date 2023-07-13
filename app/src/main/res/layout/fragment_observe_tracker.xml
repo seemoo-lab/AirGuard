@@ -21,15 +21,16 @@
             android:padding="16dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:text="Observe Tracker"
+            android:text="@string/observe_tracker_title"
+            android:gravity="center"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/clock_icon"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:layout_gravity="center"
             android:padding="16dp"
             bind:layout_constraintBottom_toTopOf="@+id/explanation_text"
@@ -38,15 +39,16 @@
             bind:layout_constraintTop_toBottomOf="@+id/headline"
             bind:srcCompat="@drawable/ic_clock"
             bind:tint="?attr/colorControlNormal"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/observe_tracker_clock_description" />
 
         <TextView
             android:id="@+id/explanation_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:textSize="16sp"
-            android:text="Explanation Text Here"
+            android:textSize="18sp"
+            android:text="@string/observe_tracker_explanation"
+            android:gravity="center"
             bind:layout_constraintBottom_toTopOf="@+id/start_observation_button"
             tools:layout_editor_absoluteX="-27dp" />
 
@@ -55,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Start Observation"
+            android:text="@string/observe_tracker_start_observation"
             android:textSize="18sp"
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"

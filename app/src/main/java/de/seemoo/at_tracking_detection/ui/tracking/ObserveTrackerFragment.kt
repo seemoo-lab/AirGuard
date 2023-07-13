@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -18,6 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+
 
 class ObserveTrackerFragment: Fragment() {
     private val viewModel: ObserveTrackerViewModel by viewModels()
@@ -27,39 +32,67 @@ class ObserveTrackerFragment: Fragment() {
 
     private lateinit var binding: FragmentObserveTrackerBinding
 
-    // TODO: check if an observation already takes place
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val observationButton = view.findViewById<Button>(R.id.start_observation_button)
-        observationButton.setOnClickListener{
+        observationButton.setOnClickListener {
             // TODO: safety checks
             val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
 
             val coroutineScope = CoroutineScope(Dispatchers.Main)
 
             // Because update is a suspend function, we need a coroutine
-            coroutineScope.launch {
-                withContext(Dispatchers.IO) {
-                    val device = deviceRepository.getDevice(deviceAddress!!)!!
+            val coroutine = coroutineScope.launch {
+                var settingObservationSuccessful = false // Flag to indicate the condition
 
-                    val duration = 60L // in minutes
+                try {
+                    withContext(Dispatchers.IO) {
+                        val device = deviceRepository.getDevice(deviceAddress!!)!!
 
-                    device.nextObservationNotification = LocalDateTime.now().plusMinutes(duration)
-                    device.currentObservationDuration = duration
+                        if (device.nextObservationNotification == null) {
+                            val observationDuration = 60L // in minutes
 
-                    deviceRepository.update(device)
+                            device.nextObservationNotification = LocalDateTime.now().plusMinutes(observationDuration)
+                            device.currentObservationDuration = observationDuration
+
+                            deviceRepository.update(device)
+
+                            settingObservationSuccessful = true // Set flag to true
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Handle any exceptions here
+                    e.printStackTrace()
+                }
+
+                // Perform actions outside the coroutine based on the flag
+                if (settingObservationSuccessful) {
+                    val text = R.string.observe_tracker_success
+                    val toastDuration = Toast.LENGTH_SHORT
+                    val toast = Toast.makeText(requireContext(), text, toastDuration)
+                    withContext(Dispatchers.Main) {
+                        toast.show()
+                    }
+
+                    findNavController().popBackStack()
+                } else {
+                    val text = R.string.observe_tracker_failure
+                    val toastDuration = Toast.LENGTH_SHORT
+                    val toast = Toast.makeText(requireContext(), text, toastDuration)
+                    withContext(Dispatchers.Main) {
+                        toast.show()
+                    }
                 }
             }
 
-            val text = "Observation started" // TODO: fixed string
-            val duration = Toast.LENGTH_SHORT
-            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
-            toast.show()
-
-            // TODO: Crashes when we re enter the View after this pop
-            requireActivity().supportFragmentManager.popBackStack()
+            // Ensure coroutine cancellation if needed
+            viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    coroutine.cancel()
+                }
+            })
         }
     }
 
