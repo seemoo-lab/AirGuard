@@ -233,10 +233,16 @@ class NotificationBuilder @Inject constructor(
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
 
         val notifyText = if (observationPositive) {
-            context.getString(
-                R.string.notification_observe_tracker_positive,
-                observationDuration
-            )
+            if (observationDuration == 1L) {
+                context.getString(
+                    R.string.notification_observe_tracker_positive_singular,
+                )
+            } else {
+                context.getString(
+                    R.string.notification_observe_tracker_positive_plural,
+                    observationDuration
+                )
+            }
         } else {
             context.getString(
                 R.string.notification_observe_tracker_negative,
@@ -282,14 +288,14 @@ class NotificationBuilder @Inject constructor(
 
         val deviceType = DeviceManager.getDeviceType(scanResult)
 
-        val milisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
-        val timeOfEvent = System.currentTimeMillis() - milisecondsSinceEvent
+        val millisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
+        val timeOfEvent = System.currentTimeMillis() - millisecondsSinceEvent
         val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
 
 
         return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
             .setContentTitle("Discovered ${deviceType.name} | ${scanResult.device.address}")
-            .setContentText("Received at ${eventDate.toString()}")
+            .setContentText("Received at $eventDate")
             .setPriority(getNotificationPriority())
             .setCategory(Notification.CATEGORY_STATUS)
             .setSmallIcon(R.drawable.ic_scan_icon)

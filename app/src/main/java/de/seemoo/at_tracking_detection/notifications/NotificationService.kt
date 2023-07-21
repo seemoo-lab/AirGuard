@@ -78,7 +78,7 @@ class NotificationService @Inject constructor(
                 notify(
                     OBSERVE_TRACKER_NOTIFICATION_TAG,
                     notificationId,
-                    notificationBuilder.buildTrackingNotification(baseDevice, notificationId)// TODO
+                    notificationBuilder.buildTrackingNotification(baseDevice, notificationId)
                 )
             }
         }
@@ -156,7 +156,7 @@ class NotificationService @Inject constructor(
             val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-            Timber.d("Scheduled a survey reminder notificaiton at $dateForNotification")
+            Timber.d("Scheduled a survey reminder notification at $dateForNotification")
         }
     }
 

@@ -22,6 +22,7 @@ import java.time.LocalDateTime
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import de.seemoo.at_tracking_detection.worker.ScheduleWorkersReceiver
 
 
 class ObserveTrackerFragment: Fragment() {
@@ -51,12 +52,13 @@ class ObserveTrackerFragment: Fragment() {
                         val device = deviceRepository.getDevice(deviceAddress!!)!!
 
                         if (device.nextObservationNotification == null) {
-                            val observationDuration = 60L // in minutes
+                            val observationDuration = ScheduleWorkersReceiver.OBSERVATION_DURATION
 
-                            device.nextObservationNotification = LocalDateTime.now().plusMinutes(observationDuration)
+                            device.nextObservationNotification = LocalDateTime.now().plusHours(observationDuration)
                             device.currentObservationDuration = observationDuration
 
                             deviceRepository.update(device)
+                            ScheduleWorkersReceiver.scheduleWorker(requireContext(), device.address)
 
                             settingObservationSuccessful = true // Set flag to true
                         }
