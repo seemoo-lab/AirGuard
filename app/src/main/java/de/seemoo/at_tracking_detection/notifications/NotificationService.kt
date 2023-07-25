@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -56,8 +57,8 @@ class NotificationService @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun sendObserveTrackerNotification(deviceAddress: String, observationDuration: Long, observationPositive: Boolean) {
-        val notificationId = notificationViewModel.insert(deviceAddress)
+    fun sendObserveTrackerNotification(deviceAddress: String, observationDuration: Long, observationPositive: Boolean) {
+        val notificationId = generateNotificationId()
         with(notificationManagerCompat) {
             if (this.areNotificationsEnabled()) {
                 notify(
@@ -193,5 +194,9 @@ class NotificationService @Inject constructor(
         const val OBSERVE_TRACKER_NOTIFICATION_TAG =
             "de.seemoo.at_tracking_detection.observe_tracker_notification"
         // const val SURVEY_INFO_TAG = "de.seemoo.at_tracking_detection.survey_info"
+
+        fun generateNotificationId(): Int {
+            return UUID.randomUUID().hashCode()
+        }
     }
 }
