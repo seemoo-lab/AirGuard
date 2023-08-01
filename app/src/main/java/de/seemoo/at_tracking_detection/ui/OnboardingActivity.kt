@@ -99,7 +99,7 @@ class OnboardingActivity : AppIntro() {
                 AppIntroFragment.newInstance(
                     title = getString(R.string.onboarding_notification_title),
                     description = getString(R.string.onboarding_notification_description),
-                    imageDrawable = R.drawable.ic_signal_searching // TODO: new image
+                    imageDrawable = R.drawable.ic_onboarding_notification
                 )
             )
             askForPermissions(

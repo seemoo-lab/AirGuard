@@ -271,4 +271,6 @@
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_device">Samsung Geräte</string>
+    <string name="settings_attributions_title">Attributionen</string>
+    <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
 </resources>
