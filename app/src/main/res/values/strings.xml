@@ -100,6 +100,9 @@
     <string name="settings_third_party_libraries_title">Third Party Libraries</string>
     <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
 
+    <string name="settings_attributions_title">Attributions</string>
+    <string name="settings_attributions_summary">Show a list of attributions</string>
+
     <string name="settings_privacy_policy_title">Privacy Policy</string>
     <string name="settings_privacy_policy_summary">View our short and simple privacy policy</string>
 

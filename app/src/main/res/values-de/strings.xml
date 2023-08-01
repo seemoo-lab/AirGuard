@@ -284,4 +284,6 @@
     <string name="title_observe_tracker">Beobachten: {deviceAddress}</string>
     <string name="observe_tracker_success">Beobachtung gestartet</string>
     <string name="observe_tracker_failure">Dieser Tracker wird bereits beobachtet</string>
+    <string name="settings_attributions_title">Attributionen</string>
+    <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
 </resources>

@@ -39,6 +39,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreference<Preference>("attributions")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_attributions)
+                true
+            }
+
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 val intent = Intent(
