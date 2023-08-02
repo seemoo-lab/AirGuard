@@ -59,7 +59,7 @@ class DashboardViewModel @Inject constructor(
     val isMapLoading = MutableLiveData(false)
 
     val isScanning: LiveData<Boolean> =
-        Transformations.map(backgroundWorkScheduler.getState(WorkerConstants.PERIODIC_SCAN_WORKER)) {
+        backgroundWorkScheduler.getState(WorkerConstants.PERIODIC_SCAN_WORKER).map {
             it == WorkInfo.State.RUNNING
         }
 

@@ -105,6 +105,9 @@
     <string name="settings_privacy_policy_title">Privacy Policy</string>
     <string name="settings_privacy_policy_summary">View our short and simple privacy policy</string>
 
+    <string name="settings_information_contact_title">Information &amp; Contact</string>
+    <string name="settings_information_contact_summary">Get information about us</string>
+
     <string name="settings_device_filter_title">Filter by device types</string>
     <string name="settings_device_filter_dialog_title">Choose device types</string>
     <string name="settings_device_filter_summary">Choose which device types AirGuard should observe. Not selected device types will not show up in the manual scan and you will not be notified if such a device follows you.</string>

@@ -33,17 +33,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.fragment_settings, rootKey)
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
-        findPreference<Preference>("third_party_libraries")?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                view?.findNavController()?.navigate(R.id.action_settings_to_about_libs)
-                true
-            }
-
-        findPreference<Preference>("attributions")?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                view?.findNavController()?.navigate(R.id.action_settings_to_attributions)
-                true
-            }
+// TODO
+//        findPreference<Preference>("third_party_libraries")?.onPreferenceClickListener =
+//            Preference.OnPreferenceClickListener {
+//                view?.findNavController()?.navigate(R.id.action_settings_to_about_libs)
+//                true
+//            }
+// TODO
+//        findPreference<Preference>("attributions")?.onPreferenceClickListener =
+//            Preference.OnPreferenceClickListener {
+//                view?.findNavController()?.navigate(R.id.action_settings_to_attributions)
+//                true
+//            }
 
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
@@ -55,15 +56,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 return@OnPreferenceClickListener true
             }
 
-        findPreference<Preference>("twitter")?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/AirGuardAndroid")
-                )
-                startActivity(intent)
-                return@OnPreferenceClickListener true
-            }
+// TODO
+//        findPreference<Preference>("twitter")?.onPreferenceClickListener =
+//            Preference.OnPreferenceClickListener {
+//                val intent = Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://twitter.com/AirGuardAndroid")
+//                )
+//                startActivity(intent)
+//                return@OnPreferenceClickListener true
+//            }
 
         findPreference<Preference>("survey")?.setOnPreferenceClickListener {
             val intent = Intent(
