@@ -275,4 +275,7 @@
     <string name="samsung_device">Samsung Geräte</string>
     <string name="settings_attributions_title">Attributionen</string>
     <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
+    <string name="airguard_for_android">AirGuard für Android</string>
+    <string name="version_number">Version %s</string>
+    <string name="contact_us">Kontaktiere uns</string>
 </resources>

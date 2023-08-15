@@ -306,4 +306,8 @@
     <string name="samsung_device">Samsung Devices</string>
     <string name="smart_tag" translatable="false">SmartTags</string>
     <string name="tile" translatable="false">Tiles</string>
+    <string name="airguard_for_android">AirGuard for Android</string>
+    <string name="version_number">Version %s</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="e_mail_address" translatable="false">airguard@seemoo.tu-darmstadt.de</string>
 </resources>

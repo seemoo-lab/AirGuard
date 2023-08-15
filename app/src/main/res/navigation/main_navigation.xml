@@ -39,14 +39,26 @@
         android:name="de.seemoo.at_tracking_detection.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@xml/fragment_settings">
-<!--        <action-->
-<!--            android:id="@+id/action_settings_to_about_libs"-->
-<!--            app:destination="@id/about_libraries"-->
-<!--            />-->
+        <action
+            android:id="@+id/action_settings_to_information"
+            app:destination="@id/information"
+            />
+    </fragment>
+
+    <!-- Information -->
+    <fragment
+        android:id="@+id/information"
+        android:name="de.seemoo.at_tracking_detection.ui.settings.InformationFragment"
+        android:label="@string/settings_information_contact_title"
+        tools:layout="@layout/fragment_information">
+        <action
+            android:id="@+id/action_settings_to_about_libs"
+            app:destination="@id/about_libraries"
+        />
         <action
             android:id="@+id/action_settings_to_attributions"
             app:destination="@id/attributions"
-            />
+        />
     </fragment>
 
     <!-- Attributions -->
