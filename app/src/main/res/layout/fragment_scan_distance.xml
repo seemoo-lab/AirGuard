@@ -7,7 +7,6 @@
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.scan.ScanDistanceViewModel" />
-
         <import type="android.view.View" />
     </data>
 

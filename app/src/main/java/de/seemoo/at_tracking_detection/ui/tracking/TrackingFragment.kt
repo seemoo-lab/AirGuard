@@ -108,6 +108,7 @@ class TrackingFragment : Fragment() {
         val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
         val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
         val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
+        val observeTrackerButton = view.findViewById<CardView>(R.id.tracking_observation)
         val map = view.findViewById<MapView>(R.id.map)
 
         feedbackButton.setOnClickListener {
@@ -120,6 +121,13 @@ class TrackingFragment : Fragment() {
             val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
             val directions: NavDirections =
                 TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
+            findNavController().navigate(directions)
+        }
+
+        observeTrackerButton.setOnClickListener {
+            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
+            val directions: NavDirections =
+                TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
             findNavController().navigate(directions)
         }
 

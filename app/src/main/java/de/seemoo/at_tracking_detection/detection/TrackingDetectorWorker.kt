@@ -50,14 +50,18 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val device = deviceRepository.getDevice(mapEntry.key)
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
-                // Send Notification
-                Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
-                notificationService.sendTrackingNotification(device)
-                device.notificationSent = true
-                device.lastNotificationSent = LocalDateTime.now()
-                device.let { d -> deviceRepository.update(d) }
-                notificationsSent += 1
+            if (device != null) {
+                if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+                    // Send Notification
+                    Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
+                    notificationService.sendTrackingNotification(device)
+                    device.notificationSent = true
+                    device.lastNotificationSent = LocalDateTime.now()
+                    device.let { d -> deviceRepository.update(d) }
+                    notificationsSent += 1
+                } else {
+                    return@forEach
+                }
             } else {
                 return@forEach
             }

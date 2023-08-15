@@ -223,6 +223,53 @@ class NotificationBuilder @Inject constructor(
         return notification.build()
     }
 
+    fun buildObserveTrackerNotification(
+        deviceAddress: String,
+        notificationId: Int,
+        observationDuration: Long,
+        observationPositive: Boolean
+    ): Notification {
+        Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
+        val bundle: Bundle = packBundle(deviceAddress, notificationId)
+
+        val notifyText = if (observationPositive) {
+            if (observationDuration == 1L) {
+                context.getString(
+                    R.string.notification_observe_tracker_positive_singular,
+                )
+            } else {
+                context.getString(
+                    R.string.notification_observe_tracker_positive_plural,
+                    observationDuration
+                )
+            }
+        } else {
+            context.getString(
+                R.string.notification_observe_tracker_negative,
+            )
+        }
+
+        var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.notification_observe_tracker_title_base))
+            .setContentText(notifyText)
+            .setPriority(getNotificationPriority())
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
+            .setCategory(getNotificationCategory())
+            .setSmallIcon(R.drawable.ic_warning)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
+
+        notification = notification.setDeleteIntent(
+            buildPendingIntent(
+                bundle,
+                NotificationConstants.DISMISSED_ACTION,
+                NotificationConstants.DISMISSED_CODE
+            )
+        ).setAutoCancel(true)
+
+        return notification.build()
+
+    }
+
     fun buildBluetoothErrorNotification(): Notification {
         val notificationId = -100
         val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
@@ -241,14 +288,14 @@ class NotificationBuilder @Inject constructor(
 
         val deviceType = DeviceManager.getDeviceType(scanResult)
 
-        val milisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
-        val timeOfEvent = System.currentTimeMillis() - milisecondsSinceEvent
+        val millisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
+        val timeOfEvent = System.currentTimeMillis() - millisecondsSinceEvent
         val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
 
 
         return NotificationCompat.Builder(context, NotificationConstants.INFO_CHANNEL_ID)
             .setContentTitle("Discovered ${deviceType.name} | ${scanResult.device.address}")
-            .setContentText("Received at ${eventDate.toString()}")
+            .setContentText("Received at $eventDate")
             .setPriority(getNotificationPriority())
             .setCategory(Notification.CATEGORY_STATUS)
             .setSmallIcon(R.drawable.ic_scan_icon)
@@ -256,6 +303,7 @@ class NotificationBuilder @Inject constructor(
             .build()
     }
 
+    /*
     fun buildSurveyInfoNotification(): Notification {
         val context = ATTrackingDetectionApplication.getAppContext()
         val text = context.getString(R.string.survey_info_1) + " " + context.getString(R.string.survey_info_2) + " " + context.getString(R.string.survey_info_3)
@@ -273,6 +321,7 @@ class NotificationBuilder @Inject constructor(
             .setAutoCancel(true)
             .build()
     }
+     */
 
     private fun getNotificationPriority(): Int {
         return if (SharedPrefs.notificationPriorityHigh){

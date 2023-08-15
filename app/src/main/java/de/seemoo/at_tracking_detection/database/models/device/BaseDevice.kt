@@ -30,6 +30,8 @@ data class BaseDevice(
     @ColumnInfo(name = "deviceType") val deviceType: DeviceType?,
     @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
+    @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
+    @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
 ) {
 
     constructor(
@@ -55,6 +57,8 @@ data class BaseDevice(
         deviceType,
         0,
         lastSeen,
+        null,
+        null,
     )
 
     constructor(scanResult: ScanResult) : this(
@@ -78,6 +82,8 @@ data class BaseDevice(
         DeviceManager.getDeviceType(scanResult),
         0,
         LocalDateTime.now(),
+        null,
+        null,
     )
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId

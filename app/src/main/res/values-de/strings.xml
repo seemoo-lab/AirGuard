@@ -129,6 +129,10 @@
     <string name="onboarding_scan_description">Um die Umgebung nach Tracking-Geräten zu scannen, benötigen wir die Erlaubnis, nach Bluetooth-Geräten zu suchen!</string>
     <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
+    <string name="notification_observe_tracker_title_base">Dein beobachteter Tracker</string>
+    <string name="notification_observe_tracker_positive_singular">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</string>
+    <string name="notification_observe_tracker_positive_plural">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</string>
+    <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
     <string name="onboarding_notification_description">Um Benachrichtigungen zu senden, wenn ein Gerät gefunden wurde, benötigen wir die Berechtigung Benachrichtigungen zu verschicken.</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
@@ -273,6 +277,15 @@
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_device">Samsung Geräte</string>
+
+    <string name="observe_tracker_title">Tracker beobachten</string>
+    <string name="observe_tracker_clock_description">Piktogramm einer Uhr</string>
+    <string name="observe_tracker_start_observation">Beobachtung Starten</string>
+    <string name="observe_tracker_explanation">Wenn Sie nicht sicher sind, ob dieser Tracker Ihnen folgt, können Sie ihn manuell beobachten. \n\nIn einer Stunde wird AirGuard nach diesem Tracker suchen und Ihnen sofort eine Benachrichtigung zukommen lassen, auch wenn Sie sich nicht mit diesem Tracker bewegt haben. Wenn der Tracker nicht mehr in der Nähe ist, erhalten Sie auch darüber eine Benachrichtigung.</string>
+    <string name="tracking_observe_tracker_subtitle">Finde heraus ob dieser Tracker dir folgt</string>
+    <string name="title_observe_tracker">Beobachten: {deviceAddress}</string>
+    <string name="observe_tracker_success">Beobachtung gestartet</string>
+    <string name="observe_tracker_failure">Dieser Tracker wird bereits beobachtet</string>
     <string name="settings_attributions_title">Attributionen</string>
     <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
     <string name="airguard_for_android">AirGuard für Android</string>

@@ -59,6 +59,14 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_exit_anim"
             />
+        <action
+            android:id="@+id/actionTrackingToObserveTracker"
+            app:destination="@id/observationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            />
     </fragment>
     <fragment
         android:id="@+id/feedbackFragment"
@@ -72,6 +80,16 @@
         android:id="@+id/scanDistanceFragment"
         android:name="de.seemoo.at_tracking_detection.ui.scan.ScanDistanceFragment"
         android:label="@string/title_scan_detail">
+        <argument
+            android:name="deviceAddress"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/observationFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.tracking.ObserveTrackerFragment"
+        android:label="@string/title_observe_tracker">
         <argument
             android:name="deviceAddress"
             android:defaultValue="null"
