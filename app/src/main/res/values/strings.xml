@@ -325,4 +325,5 @@
     <string name="tracking_observe_tracker_subtitle">Find out if this tracker is following you</string>
     <string name="observe_tracker_success">Observation started</string>
     <string name="observe_tracker_failure">You are already observing this tracker</string>
+    <string name="credits">Credits</string>
 </resources>

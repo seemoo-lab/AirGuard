@@ -1,78 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <ImageView
-                android:id="@+id/appLogo"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:src="@mipmap/ic_launcher"
-                android:background="@drawable/rounded_corners"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
-
-            <TextView
-                android:id="@+id/appTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/airguard_for_android"
-                android:textSize="20sp"
-                android:gravity="center"/>
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-            <TextView
-                android:id="@+id/versionNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/version_number"
-                android:textSize="20sp"
-                android:gravity="center"/>
+                <ImageView
+                    android:id="@+id/appLogo"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:src="@mipmap/ic_launcher" />
 
-<!--            <include-->
-<!--                layout="@layout/include_information_link"-->
-<!--                bind:leftIconRes="@{drawable.ic_mail}"-->
-<!--                bind:text="@{string.contact_us}"-->
-<!--                bind:link="@{string.e_mail_address}"/>-->
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
 
-<!--            <TextView-->
-<!--                android:id="@+id/textView6"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Credits" />-->
+                <TextView
+                    android:id="@+id/appTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/airguard_for_android"
+                    android:textSize="20sp"
+                    android:gravity="center"/>
 
-<!--            <TextView-->
-<!--                android:id="@+id/textView7"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Developer: Dennis Arndt" />-->
+                <TextView
+                    android:id="@+id/versionNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/version_number"
+                    android:textSize="20sp"
+                    android:gravity="center"/>
 
-<!--            <TextView-->
-<!--                android:id="@+id/textView8"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Maintainer: Alexander Heinrich" />-->
+                <include
+                    android:id="@+id/contact"
+                    layout="@layout/include_information_link"
+                    app:leftIconRes="@{@drawable/ic_mail}"
+                    app:text="@{@string/contact_us}"
+                    app:link="@{@string/e_mail_address}"/>
 
-        </LinearLayout>
-    </ScrollView>
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credits" />
 
+                <include
+                    android:id="@+id/attributions"
+                    layout="@layout/fragment_attributions" />
 
-
-</LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>
