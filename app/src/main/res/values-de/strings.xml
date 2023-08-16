@@ -85,6 +85,8 @@
     <string name="settings_risk_sensitivity_high">Hoch</string>
     <string name="settings_information_contact_title">Information &amp; Kontakt</string>
     <string name="settings_information_contact_summary">Bekomme Informationen über uns</string>
+    <string name="settings_delete_study_data_title">Studiendaten löschen</string>
+    <string name="settings_delete_study_data_summary">Anfrage der Löschung der Studiendaten</string>
     <string name="settings_device_filter_title">Gerätetypen filtern</string>
     <string name="settings_device_filter_dialog_title">Gerätetypen auswählen</string>
     <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard scannen soll. Nicht markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
@@ -101,6 +103,7 @@
     <string name="onboarding_share_data_yes">Ja</string>
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
+    <string name="title_data_deletion">Datenlöschung anfragen</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
@@ -292,4 +295,6 @@
     <string name="version_number">Version %s</string>
     <string name="contact_us">Kontaktiere uns</string>
     <string name="credits">Credits</string>
+    <string name="delete_data_button">Datenlöschung anfragen</string>
+    <string name="delete_data_explanation">Platzhalter: Hier Erklärtext</string>
 </resources>

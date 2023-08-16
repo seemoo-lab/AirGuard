@@ -52,6 +52,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreference<Preference>("delete_study_data")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_data_deletion)
+                true
+            }
+
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 val intent = Intent(

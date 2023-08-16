@@ -43,6 +43,18 @@
             android:id="@+id/action_settings_to_information"
             app:destination="@id/information"
             />
+        <action
+            android:id="@+id/action_settings_to_data_deletion"
+            app:destination="@id/data_deletion"
+            />
+    </fragment>
+
+    <!-- Data Deletion -->
+    <fragment
+        android:id="@+id/data_deletion"
+        android:name="de.seemoo.at_tracking_detection.ui.settings.DataDeletionFragment"
+        android:label="@string/title_data_deletion"
+        tools:layout="@layout/fragment_data_deletion">
     </fragment>
 
     <!-- Information -->

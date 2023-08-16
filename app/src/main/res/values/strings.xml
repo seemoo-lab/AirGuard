@@ -13,6 +13,7 @@
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
     <string name="title_devices">Devices</string>
+    <string name="title_data_deletion">Data deletion request</string>
 
     <string name="map_empty_text">No devices have been found yet. Every time a device is discovered, a location on the map will be shown where this occurred. This does not mean that someone has tracked you at every location. In most cases you will find devices from others in public transport or from one of your neighbors.</string>
 
@@ -108,6 +109,9 @@
 
     <string name="settings_information_contact_title">Information &amp; Contact</string>
     <string name="settings_information_contact_summary">Get information about us</string>
+
+    <string name="settings_delete_study_data_title">Delete study data</string>
+    <string name="settings_delete_study_data_summary">Request deletion of study data</string>
 
     <string name="settings_device_filter_title">Filter by device types</string>
     <string name="settings_device_filter_dialog_title">Choose device types</string>
@@ -326,4 +330,7 @@
     <string name="observe_tracker_success">Observation started</string>
     <string name="observe_tracker_failure">You are already observing this tracker</string>
     <string name="credits">Credits</string>
+
+    <string name="delete_data_button">Request deletion of Data</string>
+    <string name="delete_data_explanation">Placeholder: Explanation what is happening etc.</string>
 </resources>
