@@ -320,7 +320,6 @@
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">Version %s</string>
     <string name="contact_us">Contact Us</string>
-    <string name="e_mail_address" translatable="false">airguard@seemoo.tu-darmstadt.de</string>
 
     <string name="observe_tracker_title">Observe Tracker</string>
     <string name="observe_tracker_clock_description">Image of a clock</string>
@@ -333,4 +332,7 @@
 
     <string name="delete_data_button">Request deletion of Data</string>
     <string name="delete_data_explanation">Placeholder: Explanation what is happening etc.</string>
+    <string name="copyright">Copyright</string>
+    <string name="developer">Developer: %s</string>
+    <string name="maintainer">Maintainer: %s</string>
 </resources>

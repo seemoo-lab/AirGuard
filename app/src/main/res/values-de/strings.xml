@@ -297,4 +297,7 @@
     <string name="credits">Credits</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
     <string name="delete_data_explanation">Platzhalter: Hier Erklärtext</string>
+    <string name="copyright">Copyright</string>
+    <string name="developer">Entwickler: %s</string>
+    <string name="maintainer">Maintainer: %s</string>
 </resources>

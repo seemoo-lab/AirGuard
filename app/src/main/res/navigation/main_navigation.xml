@@ -64,21 +64,9 @@
         android:label="@string/settings_information_contact_title"
         tools:layout="@layout/fragment_information">
         <action
-            android:id="@+id/action_settings_to_about_libs"
+            android:id="@+id/action_information_to_about_libs"
             app:destination="@id/about_libraries"
         />
-        <action
-            android:id="@+id/action_settings_to_attributions"
-            app:destination="@id/attributions"
-        />
-    </fragment>
-
-    <!-- Attributions -->
-    <fragment
-        android:id="@+id/attributions"
-        android:name="de.seemoo.at_tracking_detection.ui.settings.AttributionsFragment"
-        android:label="@string/settings_attributions_title"
-        tools:layout="@layout/fragment_attributions">
     </fragment>
 
     <!-- Manual Scan -->

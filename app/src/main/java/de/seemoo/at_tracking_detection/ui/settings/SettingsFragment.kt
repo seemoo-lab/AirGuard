@@ -39,12 +39,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 //                view?.findNavController()?.navigate(R.id.action_settings_to_about_libs)
 //                true
 //            }
-// TODO
-//        findPreference<Preference>("attributions")?.onPreferenceClickListener =
-//            Preference.OnPreferenceClickListener {
-//                view?.findNavController()?.navigate(R.id.action_settings_to_attributions)
-//                true
-//            }
 
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
