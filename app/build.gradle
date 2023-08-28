@@ -127,6 +127,8 @@ dependencies {
 
     implementation 'com.mikepenz:aboutlibraries:10.8.3'
 
+    implementation 'io.noties.markwon:core:4.6.2'
+
 
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
