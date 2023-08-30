@@ -67,7 +67,7 @@ class InformationFragment : Fragment() {
             composeEmail(emailAddress)
         }
         developer.setOnClickListener {
-            val emailAddress = "darndt@seemoo.informatik.tu-darmstadt.de"
+            val emailAddress = "darndt@seemoo.tu-darmstadt.de"
             composeEmail(emailAddress)
         }
         maintainer.setOnClickListener {
