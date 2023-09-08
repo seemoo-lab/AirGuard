@@ -120,7 +120,7 @@ class RiskLevelEvaluator(
         fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean): RiskLevel {
             Timber.d("Checking Risk Level for Device: ${device.address}")
 
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository ?: return RiskLevel.LOW
 
             // Not ignored
             // Tracker has been seen long enough
@@ -129,7 +129,7 @@ class RiskLevelEvaluator(
 
                 // Detected at least 3 Times
                 if (numberOfBeacons >= NUMBER_OF_BEACONS_BEFORE_ALARM) {
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return RiskLevel.LOW
 
                     val cachedRiskLevel = deviceRepository.getCachedRiskLevel(device.address)
                     val lastCalculatedRiskLevel = deviceRepository.getLastCachedRiskLevelDate(device.address)
@@ -154,7 +154,7 @@ class RiskLevelEvaluator(
 
                     // Detected at at least 3 different locations
                     if (!useLocation || numberOfLocations >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
-                        val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository!!
+                        val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository ?: return RiskLevel.LOW
                         val falseAlarms = notificationRepository.getFalseAlarmForDeviceSinceCount(device.address, relevantTrackingDate)
 
                         // No False Alarm (Join via Notification)

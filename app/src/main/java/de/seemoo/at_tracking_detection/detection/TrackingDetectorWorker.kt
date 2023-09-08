@@ -48,21 +48,17 @@ class TrackingDetectorWorker @AssistedInject constructor(
         var notificationsSent = 0
 
         cleanedBeaconsPerDevice.forEach { mapEntry ->
-            val device = deviceRepository.getDevice(mapEntry.key)
+            val device = deviceRepository.getDevice(mapEntry.key) ?: return@forEach
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (device != null) {
-                if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
-                    // Send Notification
-                    Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
-                    notificationService.sendTrackingNotification(device)
-                    device.notificationSent = true
-                    device.lastNotificationSent = LocalDateTime.now()
-                    device.let { d -> deviceRepository.update(d) }
-                    notificationsSent += 1
-                } else {
-                    return@forEach
-                }
+            if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+                // Send Notification
+                Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
+                notificationService.sendTrackingNotification(device)
+                device.notificationSent = true
+                device.lastNotificationSent = LocalDateTime.now()
+                device.let { d -> deviceRepository.update(d) }
+                notificationsSent += 1
             } else {
                 return@forEach
             }
@@ -100,14 +96,13 @@ class TrackingDetectorWorker @AssistedInject constructor(
             return location
         }
 
+        /**
+         * Checks if the last notification was sent more than x hours ago
+         */
         private fun checkLastNotification(device: BaseDevice): Boolean {
-            return if (device.lastNotificationSent != null) {
-                val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
-                // Last Notification longer than 8 hours
-                hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
-            } else{
-                true
-            }
+            device.lastNotificationSent ?: return true
+            val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
+            return hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
         }
     }
 
