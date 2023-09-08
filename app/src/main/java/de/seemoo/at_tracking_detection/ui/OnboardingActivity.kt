@@ -66,11 +66,7 @@ class OnboardingActivity : AppIntro() {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 
-        if (locationPermissionState && backgroundPermissionState) {
-            SharedPrefs.useLocationInTrackingDetection = true
-        } else {
-            SharedPrefs.useLocationInTrackingDetection = false
-        }
+        SharedPrefs.useLocationInTrackingDetection = locationPermissionState && backgroundPermissionState
 
 
         if (permission == null) {

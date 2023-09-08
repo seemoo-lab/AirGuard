@@ -24,8 +24,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 33
         compileSdk 33
-        versionCode 37
-        versionName "2.0"
+        versionCode 38
+        versionName "2.1"
 
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]

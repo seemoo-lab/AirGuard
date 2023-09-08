@@ -21,6 +21,7 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.ConcurrentHashMap
 
 @HiltWorker
 class TrackingDetectorWorker @AssistedInject constructor(
@@ -79,8 +80,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
      * Retrieves the devices detected during the last scan (last 15min)
      * @return a HashMap with the device address as key and the list of beacons as value (all beacons in the relevant interval)
      */
-    private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
-        val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
+    private fun getLatestBeaconsPerDevice(): ConcurrentHashMap<String, List<Beacon>> {
+        val beaconsPerDevice: ConcurrentHashMap<String, List<Beacon>> = ConcurrentHashMap()
         val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
