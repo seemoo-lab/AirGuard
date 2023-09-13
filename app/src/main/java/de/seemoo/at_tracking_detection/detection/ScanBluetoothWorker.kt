@@ -9,7 +9,6 @@ import android.content.Context
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
-import android.provider.ContactsContract.Intents.Insert
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -33,6 +32,7 @@ import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companio
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -49,7 +49,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private lateinit var bluetoothAdapter: BluetoothAdapter
 
-    private var scanResultDictionary: HashMap<String, DiscoveredDevice> = HashMap()
+    private var scanResultDictionary: ConcurrentHashMap<String, DiscoveredDevice> = ConcurrentHashMap()
 
     var location: Location? = null
         set(value) {
@@ -79,7 +79,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             return Result.retry()
         }
 
-        scanResultDictionary = HashMap()
+        scanResultDictionary = ConcurrentHashMap()
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
