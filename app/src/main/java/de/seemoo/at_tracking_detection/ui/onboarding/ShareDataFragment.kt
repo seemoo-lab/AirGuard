@@ -69,8 +69,10 @@ class ShareDataFragment : Fragment(), SlidePolicy {
         get() = buttonPressed
 
     override fun onUserIllegallyRequestedNextPage() {
-        Timber.d("User illegally requested the next page!")
-        Snackbar.make(requireView(), R.string.onboarding_share_data_dialog, Snackbar.LENGTH_SHORT)
-            .show()
+        if (!buttonPressed) {
+            Timber.d("User illegally requested the next page!")
+            Snackbar.make(requireView(), R.string.onboarding_share_data_dialog, Snackbar.LENGTH_SHORT)
+                .show()
+        }
     }
 }
