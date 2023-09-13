@@ -84,7 +84,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L)
         }
 
         //Starting BLE Scan
@@ -187,9 +187,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private fun getScanDuration(): Long {
         val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
-            15000L
+            30_000L
         } else {
-            8000L
+            20_000L
         }
     }
 
@@ -221,7 +221,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             }
 
             // Fallback if no location is fetched in time
-            val maximumLocationDurationMillis = 60_000L
+            val maximumLocationDurationMillis = LOCATION_UPDATE_MAX_TIME_MS
             handler.postDelayed(runnable, maximumLocationDurationMillis)
         }
     }
@@ -231,6 +231,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     companion object {
         const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
         const val TIME_BETWEEN_BEACONS: Long = 15 // 15 minutes until the same beacon gets saved again in the db
+        const val LOCATION_UPDATE_MAX_TIME_MS: Long = 122_000L // Wait maximum 122s to get a location update
 
         suspend fun insertScanResult(
             scanResult: ScanResult,
