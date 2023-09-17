@@ -105,6 +105,7 @@ class TrackingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
         val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
         val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
@@ -173,6 +174,7 @@ class TrackingFragment : Fragment() {
                 trackingViewModel.isMapLoading.postValue(false)
             }
         }
+
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
             if (!it) {
                 try {

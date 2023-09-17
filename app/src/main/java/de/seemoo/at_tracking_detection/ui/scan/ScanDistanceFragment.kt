@@ -71,7 +71,7 @@ class ScanDistanceFragment : Fragment() {
                     setBattery(batteryState)
                     setHeight(connectionQuality)
 
-                    if (viewModel.isFirstScanCallback.value!!) {
+                    if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
                         removeSearchMessage()
                     }
@@ -174,7 +174,7 @@ class ScanDistanceFragment : Fragment() {
         // Show to the user that no devices have been found
         Handler(Looper.getMainLooper()).postDelayed({
             // Stop scanning if no device was detected
-            if(viewModel.isFirstScanCallback.value!!) {
+            if(viewModel.isFirstScanCallback.value as Boolean) {
                 stopBluetoothScan()
                 deviceNotFound()
             }
@@ -212,7 +212,7 @@ class ScanDistanceFragment : Fragment() {
 
         val infoButton = binding.infoButton
         infoButton.setOnClickListener {
-            val text = when (viewModel.connectionState.value!!){
+            val text = when (viewModel.connectionState.value as ConnectionState){
                 ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
                 ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
                 ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
@@ -227,7 +227,7 @@ class ScanDistanceFragment : Fragment() {
 
         val batterySymbol = binding.batterySymbol
         batterySymbol.setOnClickListener {
-            val text = when (viewModel.batteryState.value!!){
+            val text = when (viewModel.batteryState.value as BatteryState){
                 BatteryState.FULL -> R.string.battery_full
                 BatteryState.MEDIUM -> R.string.battery_medium
                 BatteryState.VERY_LOW -> R.string.battery_very_low

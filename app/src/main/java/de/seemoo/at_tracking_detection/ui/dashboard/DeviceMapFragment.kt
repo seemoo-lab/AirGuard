@@ -58,12 +58,11 @@ class DeviceMapFragment : Fragment() {
         Utility.enableMyLocationOverlay(map)
 
         val deviceAddress = this.deviceAddress
-        if (deviceAddress != null && !deviceAddress.isEmpty()) {
+        if (!deviceAddress.isNullOrEmpty()) {
             viewModel.markerLocations.observe(viewLifecycleOwner) {
                 lifecycleScope.launch {
                     val locationList = arrayListOf<Location>()
-                    val locationRepository =
-                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+                    val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
 
                     it.filter { it.locationId != null && it.locationId != 0 }
                         .map {
@@ -83,7 +82,7 @@ class DeviceMapFragment : Fragment() {
                 lifecycleScope.launch {
                     val locationList = arrayListOf<Location>()
                     val locationRepository =
-                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
 
                     it.filter { it.locationId != null && it.locationId != 0 }
                         .map {

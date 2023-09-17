@@ -32,7 +32,7 @@ class DevicesViewModel @Inject constructor(
     fun getDeviceBeaconsCount(deviceAddress: String): String =
         beaconRepository.getDeviceBeaconsCount(deviceAddress).toString()
 
-    fun getDevice(deviceAddress: String): BaseDevice = deviceRepository.getDevice(deviceAddress)!!
+    fun getDevice(deviceAddress: String): BaseDevice? = deviceRepository.getDevice(deviceAddress)
 
     fun getMarkerLocations(deviceAddress: String): List<Beacon> =
         beaconRepository.getDeviceBeacons(deviceAddress)
@@ -108,7 +108,7 @@ class DevicesViewModel @Inject constructor(
                     filterStringBuilder.append(DeviceType.userReadableName(device))
                     filterStringBuilder.append(", ")
                 }
-                if (deviceTypeFilter.deviceTypes.count() > 0) {
+                if (deviceTypeFilter.deviceTypes.isNotEmpty()) {
                     filterStringBuilder.delete(
                         filterStringBuilder.length - 2,
                         filterStringBuilder.length - 1

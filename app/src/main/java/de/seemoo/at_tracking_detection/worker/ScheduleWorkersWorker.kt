@@ -14,8 +14,8 @@ class ScheduleWorkersWorker(
     override suspend fun doWork(): Result {
         Timber.d("ScheduleWorkersWorker doWork() called")
         // Perform the work you need to do after the delay here
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
-        val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService!!
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return Result.failure()
+        val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService ?: return Result.failure()
 
         val inputData = inputData
         val deviceAddress = inputData.getString(DEVICE_ADDRESS_PARAM)

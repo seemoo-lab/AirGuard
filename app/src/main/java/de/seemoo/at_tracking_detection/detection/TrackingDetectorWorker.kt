@@ -100,8 +100,12 @@ class TrackingDetectorWorker @AssistedInject constructor(
          * Checks if the last notification was sent more than x hours ago
          */
         private fun checkLastNotification(device: BaseDevice): Boolean {
-            device.lastNotificationSent ?: return true
-            val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
+            val lastNotificationSent = device.lastNotificationSent
+            return lastNotificationSent == null || isTimeToNotify(lastNotificationSent)
+        }
+
+        private fun isTimeToNotify(lastNotificationSent: LocalDateTime): Boolean {
+            val hoursPassed = lastNotificationSent.until(LocalDateTime.now(), ChronoUnit.HOURS)
             return hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
         }
     }

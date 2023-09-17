@@ -253,7 +253,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             discoveryDate: LocalDateTime,
             locId: Int?
         ): Beacon? {
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository ?: return null
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val uniqueIdentifier = getPublicKey(scanResult)
 
@@ -295,7 +295,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             scanResult: ScanResult,
             discoveryDate: LocalDateTime
         ): BaseDevice? {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return null
 
             val deviceAddress = getPublicKey(scanResult)
 
@@ -333,7 +333,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             discoveryDate: LocalDateTime,
             accuracy: Float?
         ): LocationModel? {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return null
 
             // set location to null if gps location could not be retrieved
             var location: LocationModel? = null

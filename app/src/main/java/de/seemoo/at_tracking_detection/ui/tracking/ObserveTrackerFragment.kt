@@ -38,8 +38,7 @@ class ObserveTrackerFragment: Fragment() {
 
         val observationButton = view.findViewById<Button>(R.id.start_observation_button)
         observationButton.setOnClickListener {
-            // TODO: safety checks
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return@setOnClickListener
 
             val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -49,7 +48,7 @@ class ObserveTrackerFragment: Fragment() {
 
                 try {
                     withContext(Dispatchers.IO) {
-                        val device = deviceRepository.getDevice(deviceAddress!!)!!
+                        val device = deviceRepository.getDevice(deviceAddress ?: return@withContext) ?: return@withContext
 
                         if (device.nextObservationNotification == null) {
                             val observationDuration = ScheduleWorkersReceiver.OBSERVATION_DURATION
