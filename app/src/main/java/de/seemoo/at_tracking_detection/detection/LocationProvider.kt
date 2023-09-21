@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.util.BuildVersionProvider
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -17,7 +18,8 @@ import javax.inject.Singleton
 
 @Singleton
 open class LocationProvider @Inject constructor(
-    private val locationManager: LocationManager): LocationListener {
+    private val locationManager: LocationManager,
+    private val versionProvider: BuildVersionProvider): LocationListener {
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var bestLastLocation: Location? = null
