@@ -61,6 +61,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private var locationRetrievedCallback: (() -> Unit)? = null
 
+    private var locationFetchStarted: Long? = null
+
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
         val scanMode = getScanMode()
@@ -84,6 +86,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
+            locationFetchStarted = System.currentTimeMillis()
             location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L)
         }
 
@@ -170,6 +173,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private val locationRequester: LocationRequester = object : LocationRequester() {
         override fun receivedAccurateLocationUpdate(location: Location) {
+            val started = locationFetchStarted ?: System.currentTimeMillis()
+            Timber.d("Got location in ${(System.currentTimeMillis()-started)/1000}s")
             this@ScanBluetoothWorker.location = location
             this@ScanBluetoothWorker.locationRetrievedCallback?.let { it() }
         }
