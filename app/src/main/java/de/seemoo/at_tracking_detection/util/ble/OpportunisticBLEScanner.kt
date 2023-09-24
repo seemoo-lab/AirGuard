@@ -8,7 +8,6 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
 import android.os.SystemClock
 import androidx.core.content.getSystemService
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -17,7 +16,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
-import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
@@ -39,7 +37,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
         val context = ATTrackingDetectionApplication.getAppContext()
         val locationManager = context.getSystemService<LocationManager>()
         if (locationManager != null) {
-            locationProvider = LocationProvider(locationManager, DefaultBuildVersionProvider())
+            locationProvider = LocationProvider(locationManager)
         }
     }
 
@@ -78,27 +76,13 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
         this.bluetoothAdapter?.bluetoothLeScanner?.let { BLEScanCallback.stopScanning(it) }
     }
 
-    fun scanSettings(): ScanSettings? {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                val scanSettings = ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_OPPORTUNISTIC)
-                    .setLegacy(true)
-                    .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-                    .setReportDelay(0)
-                    .build()
-                return scanSettings
-            }
-
-            val scanSettings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_OPPORTUNISTIC)
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-//                .setReportDelay(0)
-                .build()
-            return scanSettings
-        }
-
-        return null
+    private fun scanSettings(): ScanSettings? {
+        return ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_OPPORTUNISTIC)
+            .setLegacy(true)
+            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+            .setReportDelay(0)
+            .build()
     }
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
@@ -108,10 +92,10 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
             if (SharedPrefs.isScanningInBackground) {
                 Timber.d("Scan received during background scan")
             }else {
-                Timber.d("Scan outside of background scan ${scanResult}")
+                Timber.d("Scan outside of background scan $scanResult")
                 scanResult.timestampNanos
-                val milisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
-                val timeOfEvent = System.currentTimeMillis() - milisecondsSinceEvent
+                val millisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
+                val timeOfEvent = System.currentTimeMillis() - millisecondsSinceEvent
                 val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
                 Timber.d("Scan received at ${eventDate.toString()}")
                 if (BuildConfig.DEBUG) {
@@ -140,8 +124,8 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
 
             if (lastLocation != null) {
                 val millisecondsSinceLocation = (SystemClock.elapsedRealtimeNanos() - lastLocation.elapsedRealtimeNanos) / 1000000L
-                val timeOfLocationevent = System.currentTimeMillis() - millisecondsSinceLocation
-                val locationDate = Instant.ofEpochMilli(timeOfLocationevent).atZone(ZoneId.systemDefault()).toLocalDateTime()
+                val timeOfLocationEvent = System.currentTimeMillis() - millisecondsSinceLocation
+                val locationDate = Instant.ofEpochMilli(timeOfLocationEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
                 val timeDiff = ChronoUnit.SECONDS.between(locationDate, LocalDateTime.now())
 
                 if (timeDiff <= LocationProvider.MAX_AGE_SECONDS && lastLocation.accuracy <= LocationProvider.MIN_ACCURACY_METER) {
@@ -166,7 +150,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
         }
     }
 
-    fun fetchCurrentLocation() {
+    private fun fetchCurrentLocation() {
         //Getting the most accurate location here
         isUpdatingLocation = true
         val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester, 45_000L)
