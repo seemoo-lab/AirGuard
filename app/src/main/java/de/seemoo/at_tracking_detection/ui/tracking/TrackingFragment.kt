@@ -55,14 +55,14 @@ class TrackingFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
-        val notifId = safeArgs.notificationId
+        val notificationId = safeArgs.notificationId
         // This is called deviceAddress but contains the ID
         val deviceAddress = safeArgs.deviceAddress
-        trackingViewModel.notificationId.postValue(notifId)
+        trackingViewModel.notificationId.postValue(notificationId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)
         trackingViewModel.loadDevice(safeArgs.deviceAddress)
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
-            notificationId = it
+            this.notificationId = it
         }
 
         sharedElementEnterTransition =
@@ -106,12 +106,12 @@ class TrackingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
-        val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
-        val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
+        val feedbackButton: CardView = view.findViewById(R.id.tracking_feedback)
+        val playSoundCard: CardView = view.findViewById(R.id.tracking_play_sound)
+        val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
         // TODO: include when finished
-        // val observeTrackerButton = view.findViewById<CardView>(R.id.tracking_observation)
-        val map = view.findViewById<MapView>(R.id.map)
+        // val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
+        val map: MapView = view.findViewById(R.id.map)
 
         feedbackButton.setOnClickListener {
             val directions: NavDirections =
@@ -190,7 +190,7 @@ class TrackingFragment : Fragment() {
         addInteractions(view)
     }
 
-    fun addInteractions(view: View) {
+    private fun addInteractions(view: View) {
         val button = view.findViewById<ImageButton>(R.id.open_map_button)
 
 

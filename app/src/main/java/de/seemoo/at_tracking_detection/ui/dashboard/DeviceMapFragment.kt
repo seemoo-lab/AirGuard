@@ -98,8 +98,5 @@ class DeviceMapFragment : Fragment() {
                 }
             }
         }
-
-
     }
-
 }
