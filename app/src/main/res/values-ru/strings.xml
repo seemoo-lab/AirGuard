@@ -9,7 +9,7 @@
     <string name="title_tracking">Устройство с ID: {deviceAddress} следует за вами</string>
     <string name="title_devices_tracking">ID устройства: {deviceAddress}</string>
     <string name="title_device_map">Все устройства</string>
-    <string name="title_devices">Devices</string>
+    <string name="title_devices">Устройства</string>
 
     <string name="map_empty_text">Никаких устройств обнаружено не было. Каждый раз, когда обнаруживается устройство, на карте будет показано местоположение, где это произошло. Это не означает, что кто-то отслеживал вас в каждом месте. В большинстве случаев вы обнаружите устройства у других людей в общественном транспорте или у кого-то из ваших соседей.</string>
 
@@ -24,7 +24,7 @@
     <string name="settings_share_data_summary">Поддержите проект, отправляю статистические данные</string>
     <string name="settings_share_data_title">Участвовать в исследовании</string>
     <string name="device_item_first_discovery">Обнаружено:</string>
-    <string name="beacons">Beacons</string>
+    <string name="beacons">Маяки</string>
     <string name="devices_swipe">Проведите, чтобы удалить</string>
     <string name="devices_list_empty">Всякий раз, когда приложение обнаруживает AirTag или другое устройство слежения, они будут перечислены здесь. Скорее всего, в списке будут устройства, которые вас не отслеживали. Если устройства отслеживают вас, вы получите уведомление.</string>
     <string name="ignored_device_list_empty">Всякий раз, когда вы получаете уведомление о том, что вас отслеживает известное устройство (например, принадлежащий вам AirTag), вы можете пометить его как ложное срабатывание. Устройства, которые не меняют свой Bluetooth адрес (например Tile, Chipolo), также можно игнорировать. Эти устройства будут перечислены здесь. Помните: AirTag меняет свой Bluetooth адрес один раз в день, поэтому, даже если вы пометите его как ложное срабатывание, через день срабатывание может повториться.</string>
