@@ -34,10 +34,10 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
 
         fun scheduleWorker(context: Context, deviceAddress: String) {
             val inputData = Data.Builder()
-                .putString(ScheduleWorkersWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
+                .putString(ObserveTrackerWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
                 .build()
 
-            val workRequest = OneTimeWorkRequestBuilder<ScheduleWorkersWorker>()
+            val workRequest = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
                 .setInputData(inputData)
                 .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
                 .build()

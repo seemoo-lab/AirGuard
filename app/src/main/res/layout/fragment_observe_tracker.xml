@@ -57,10 +57,27 @@
                 android:text="@string/observe_tracker_explanation"
                 android:gravity="center"
                 android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                bind:layout_constraintBottom_toTopOf="@+id/changing_id_text"
+                bind:layout_constraintTop_toBottomOf="@+id/clock_icon"/>
+
+            <!-- Explanation text about id changing -->
+            <TextView
+                android:id="@+id/changing_id_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/observe_tracker_changing_id"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                bind:layout_constraintBottom_toTopOf="@+id/start_observation_button" />
+                android:textColor="#FF0000"
+                bind:layout_constraintBottom_toTopOf="@+id/start_observation_button"
+                bind:layout_constraintTop_toBottomOf="@+id/explanation_text"
+                tools:layout_editor_absoluteX="0dp" />
 
             <!-- Start observation button -->
             <Button

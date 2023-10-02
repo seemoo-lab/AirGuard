@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -35,6 +36,11 @@ class ObserveTrackerFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        if (deviceAddress != null) {
+//            val text = view.findViewById<TextView>(R.id.changing_id_text)
+//            text.visibility = View.VISIBLE
+//        }
 
         val observationButton = view.findViewById<Button>(R.id.start_observation_button)
         observationButton.setOnClickListener {
