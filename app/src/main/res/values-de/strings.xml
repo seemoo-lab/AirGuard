@@ -136,6 +136,7 @@
     <string name="notification_observe_tracker_positive_singular">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</string>
     <string name="notification_observe_tracker_positive_plural">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</string>
     <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
+    <string name="notification_observe_tracker_error">Es ist ein Fehler aufgetreten. Versuche es nochmal.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
     <string name="onboarding_notification_description">Um Benachrichtigungen zu senden, wenn ein Gerät gefunden wurde, benötigen wir die Berechtigung Benachrichtigungen zu verschicken.</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>

@@ -90,11 +90,7 @@ class NotificationBuilder @Inject constructor(
             context,
             code,
             intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.FLAG_IMMUTABLE
-            } else {
-                PendingIntent.FLAG_UPDATE_CURRENT
-            }
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
@@ -268,6 +264,20 @@ class NotificationBuilder @Inject constructor(
 
         return notification.build()
 
+    }
+
+    fun buildObserveTrackerFailedNotification(notificationId: Int): Notification {
+        val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+
+        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.notification_observe_tracker_title_base))
+            .setContentText(context.getString(R.string.notification_observe_tracker_error))
+            .setPriority(getNotificationPriority())
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
+            .setCategory(Notification.CATEGORY_ERROR)
+            .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
     }
 
     fun buildBluetoothErrorNotification(): Notification {

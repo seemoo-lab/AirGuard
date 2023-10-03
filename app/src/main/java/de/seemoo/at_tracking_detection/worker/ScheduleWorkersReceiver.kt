@@ -37,12 +37,17 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
                 .putString(ObserveTrackerWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
                 .build()
 
-            val workRequest = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
+            val workRequestObserveTracker = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
                 .setInputData(inputData)
                 .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
                 .build()
 
-            WorkManager.getInstance(context).enqueue(workRequest)
+            val workRequestBluetoothScan = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
+                .setInitialDelay(OBSERVATION_DURATION*60-5, TimeUnit.MINUTES) // make a scan 5 minutes before the observation ends
+                .build()
+
+            WorkManager.getInstance(context).enqueue(workRequestBluetoothScan)
+            WorkManager.getInstance(context).enqueue(workRequestObserveTracker)
         }
     }
 }

@@ -20,11 +20,10 @@ class ObserveTrackerWorker(
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return Result.failure()
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService ?: return Result.failure()
 
-        // Call ScanBluetoothWorker to scan for
+        // Call ScanBluetoothWorker to scan for devices
         val workRequest = OneTimeWorkRequest.Builder(ScanBluetoothWorker::class.java)
             .build()
         WorkManager.getInstance(applicationContext).enqueue(workRequest)
-        // TODO: val workInfoLiveData = WorkManager.getInstance(applicationContext).getWorkInfoByIdLiveData(workRequest.id)
 
         val inputData = inputData
         val deviceAddress = inputData.getString(DEVICE_ADDRESS_PARAM)
@@ -46,8 +45,14 @@ class ObserveTrackerWorker(
 
                     // Update device
                     deviceRepository.update(device)
+                } else {
+                    notificationService.sendObserveTrackerFailedNotification()
                 }
+            } else {
+                notificationService.sendObserveTrackerFailedNotification()
             }
+        } else {
+            notificationService.sendObserveTrackerFailedNotification()
         }
         return Result.success()
     }

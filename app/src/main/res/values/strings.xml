@@ -128,6 +128,7 @@
     <string name="notification_observe_tracker_positive_singular">A tracker you observed has been following you for at least an hour.</string>
     <string name="notification_observe_tracker_positive_plural">A tracker you observed has been following you for at least %d hours.</string>
     <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
+    <string name="notification_observe_tracker_error">An error occurred while observing this tracker. Please try again.</string>
 
     <string name="notification_text_base">Open the notification to get more info. A tracker has followed you for at least %d minutes.</string>
     <string name="notification_title_base">A tracker has been following you</string>
