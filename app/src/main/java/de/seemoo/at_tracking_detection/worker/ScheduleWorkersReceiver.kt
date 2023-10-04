@@ -7,6 +7,7 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -42,7 +43,7 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
                 .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
                 .build()
 
-            val workRequestBluetoothScan = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
+            val workRequestBluetoothScan = OneTimeWorkRequestBuilder<ScanBluetoothWorker>()
                 .setInitialDelay(OBSERVATION_DURATION*60-5, TimeUnit.MINUTES) // make a scan 5 minutes before the observation ends
                 .build()
 

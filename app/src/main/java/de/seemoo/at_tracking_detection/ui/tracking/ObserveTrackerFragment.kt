@@ -37,10 +37,19 @@ class ObserveTrackerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        if (deviceAddress != null) {
-//            val text = view.findViewById<TextView>(R.id.changing_id_text)
-//            text.visibility = View.VISIBLE
-//        }
+        if (deviceAddress != null) {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()!!.deviceRepository
+            deviceRepository.let {
+                val baseDevice = deviceRepository.getDevice(deviceAddress!!)
+                if (baseDevice?.deviceType != null) {
+                    val canBeIgnored = baseDevice.deviceType.canBeIgnored()
+                    if (!canBeIgnored) {
+                        val text = view.findViewById<TextView>(R.id.changing_id_text)
+                        text.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
 
         val observationButton = view.findViewById<Button>(R.id.start_observation_button)
         observationButton.setOnClickListener {
@@ -56,7 +65,7 @@ class ObserveTrackerFragment: Fragment() {
                     withContext(Dispatchers.IO) {
                         val device = deviceRepository.getDevice(deviceAddress ?: return@withContext) ?: return@withContext
 
-                        if (device.nextObservationNotification == null) {
+                        if (device.nextObservationNotification == null || device.nextObservationNotification!!.isBefore(LocalDateTime.now())) {
                             val observationDuration = ScheduleWorkersReceiver.OBSERVATION_DURATION
 
                             device.nextObservationNotification = LocalDateTime.now().plusHours(observationDuration)
