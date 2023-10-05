@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TrackingViewModel @Inject constructor(
@@ -28,6 +29,7 @@ class TrackingViewModel @Inject constructor(
 
     val falseAlarm = MutableLiveData(false)
     val deviceIgnored = MutableLiveData(false)
+    val trackerObserved = MutableLiveData(false)
 
     val soundPlaying = MutableLiveData(false)
     val connecting = MutableLiveData(false)
@@ -59,6 +61,9 @@ class TrackingViewModel @Inject constructor(
         deviceRepository.getDevice(address).also { it ->
             device.postValue(it)
             if (it != null) {
+                val deviceObserved = it.nextObservationNotification != null && it.nextObservationNotification!!.isAfter(
+                    LocalDateTime.now())
+                trackerObserved.postValue(deviceObserved)
                 deviceIgnored.postValue(it.ignore)
                 noLocationsYet.postValue(false)
                 connectable.postValue(it.device is Connectable)

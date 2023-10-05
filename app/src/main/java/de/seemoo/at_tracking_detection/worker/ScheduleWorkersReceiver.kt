@@ -50,5 +50,12 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
             WorkManager.getInstance(context).enqueue(workRequestBluetoothScan)
             WorkManager.getInstance(context).enqueue(workRequestObserveTracker)
         }
+
+//        fun cancelWorker(context: Context, deviceAddress: String) {
+//            val workManager = WorkManager.getInstance(context)
+//            val workRequests = workManager.getWorkInfosByTag(deviceAddress)
+//
+//
+//        }
     }
 }

@@ -37,78 +37,109 @@ class ObserveTrackerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val observationButton = view.findViewById<Button>(R.id.start_observation_button)
+
         if (deviceAddress != null) {
             val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()!!.deviceRepository
             deviceRepository.let {
                 val baseDevice = deviceRepository.getDevice(deviceAddress!!)
-                if (baseDevice?.deviceType != null) {
-                    val canBeIgnored = baseDevice.deviceType.canBeIgnored()
-                    if (!canBeIgnored) {
-                        val text = view.findViewById<TextView>(R.id.changing_id_text)
-                        text.visibility = View.VISIBLE
+
+                if (baseDevice?.nextObservationNotification != null && baseDevice.nextObservationNotification!!.isAfter(LocalDateTime.now())) {
+                    val explanationText = view.findViewById<TextView>(R.id.explanation_text)
+                    explanationText.text = getString(R.string.observe_tracker_stop_observation_explanation)
+
+                    observationButton.text = getString(R.string.observe_tracker_stop_observation)
+
+                    observationButton.setOnClickListener {
+                        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+                        // Because update is a suspend function, we need a coroutine
+                        val coroutine = coroutineScope.launch {
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    val device = deviceRepository.getDevice(deviceAddress ?: return@withContext) ?: return@withContext
+
+                                    device.nextObservationNotification = null
+                                    device.currentObservationDuration = null
+
+                                    deviceRepository.update(device)
+                                    // ScheduleWorkersReceiver.cancelWorker(requireContext(), device.address)
+                                }
+                            } catch (e: Exception) {
+                                // Handle any exceptions here
+                                e.printStackTrace()
+                            }
+
+                            val text = R.string.observe_tracker_stopped
+                            val toastDuration = Toast.LENGTH_SHORT
+                            val toast = Toast.makeText(requireContext(), text, toastDuration)
+                            withContext(Dispatchers.Main) {
+                                toast.show()
+                            }
+
+                            findNavController().popBackStack()
+                        }
+
+                        // Ensure coroutine cancellation if needed
+                        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                            fun onDestroy() {
+                                coroutine.cancel()
+                            }
+                        })
                     }
-                }
-            }
-        }
-
-        val observationButton = view.findViewById<Button>(R.id.start_observation_button)
-        observationButton.setOnClickListener {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return@setOnClickListener
-
-            val coroutineScope = CoroutineScope(Dispatchers.Main)
-
-            // Because update is a suspend function, we need a coroutine
-            val coroutine = coroutineScope.launch {
-                var settingObservationSuccessful = false // Flag to indicate the condition
-
-                try {
-                    withContext(Dispatchers.IO) {
-                        val device = deviceRepository.getDevice(deviceAddress ?: return@withContext) ?: return@withContext
-
-                        if (device.nextObservationNotification == null || device.nextObservationNotification!!.isBefore(LocalDateTime.now())) {
-                            val observationDuration = ScheduleWorkersReceiver.OBSERVATION_DURATION
-
-                            device.nextObservationNotification = LocalDateTime.now().plusHours(observationDuration)
-                            device.currentObservationDuration = observationDuration
-
-                            deviceRepository.update(device)
-                            ScheduleWorkersReceiver.scheduleWorker(requireContext(), device.address)
-
-                            settingObservationSuccessful = true // Set flag to true
+                } else {
+                    if (baseDevice?.deviceType != null) {
+                        val canBeIgnored = baseDevice.deviceType.canBeIgnored()
+                        if (!canBeIgnored) {
+                            val text = view.findViewById<TextView>(R.id.changing_id_text)
+                            text.visibility = View.VISIBLE
                         }
                     }
-                } catch (e: Exception) {
-                    // Handle any exceptions here
-                    e.printStackTrace()
+
+                    observationButton.setOnClickListener {
+                        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+                        // Because update is a suspend function, we need a coroutine
+                        val coroutine = coroutineScope.launch {
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    val device = deviceRepository.getDevice(deviceAddress ?: return@withContext) ?: return@withContext
+
+                                    val observationDuration = ScheduleWorkersReceiver.OBSERVATION_DURATION
+
+                                    device.nextObservationNotification = LocalDateTime.now().plusHours(observationDuration)
+                                    device.currentObservationDuration = observationDuration
+
+                                    deviceRepository.update(device)
+                                    ScheduleWorkersReceiver.scheduleWorker(requireContext(), device.address)
+                                }
+                            } catch (e: Exception) {
+                                // Handle any exceptions here
+                                e.printStackTrace()
+                            }
+
+                            val text = R.string.observe_tracker_success
+                            val toastDuration = Toast.LENGTH_SHORT
+                            val toast = Toast.makeText(requireContext(), text, toastDuration)
+                            withContext(Dispatchers.Main) {
+                                toast.show()
+                            }
+
+                            findNavController().popBackStack()
+                        }
+
+                        // Ensure coroutine cancellation if needed
+                        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                            fun onDestroy() {
+                                coroutine.cancel()
+                            }
+                        })
+                    }
                 }
 
-                // Perform actions outside the coroutine based on the flag
-                if (settingObservationSuccessful) {
-                    val text = R.string.observe_tracker_success
-                    val toastDuration = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(requireContext(), text, toastDuration)
-                    withContext(Dispatchers.Main) {
-                        toast.show()
-                    }
-
-                    findNavController().popBackStack()
-                } else {
-                    val text = R.string.observe_tracker_failure
-                    val toastDuration = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(requireContext(), text, toastDuration)
-                    withContext(Dispatchers.Main) {
-                        toast.show()
-                    }
-                }
             }
-
-            // Ensure coroutine cancellation if needed
-            viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    coroutine.cancel()
-                }
-            })
         }
     }
 

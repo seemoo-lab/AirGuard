@@ -16,7 +16,6 @@ class ObserveTrackerWorker(
 
     override suspend fun doWork(): Result {
         Timber.d("ObserveTrackerWorker doWork() called")
-        // Perform the work you need to do after the delay here
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return Result.failure()
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService ?: return Result.failure()
 
@@ -45,8 +44,6 @@ class ObserveTrackerWorker(
 
                     // Update device
                     deviceRepository.update(device)
-                } else {
-                    notificationService.sendObserveTrackerFailedNotification()
                 }
             } else {
                 notificationService.sendObserveTrackerFailedNotification()

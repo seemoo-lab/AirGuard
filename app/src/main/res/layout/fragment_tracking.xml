@@ -232,6 +232,8 @@
                     android:layout_margin="@dimen/card_margin"
                     android:layout_weight="1"
                     android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
+                    bind:checkable="@{true}"
+                    bind:checked="@{vm.trackerObserved}"
                     bind:drawable="@{@drawable/ic_clock}"
                     bind:clickable="@{true}"
                     bind:imageDescription="@{@string/observe_tracker_title}"

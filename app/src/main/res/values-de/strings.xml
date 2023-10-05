@@ -283,6 +283,9 @@
     <string name="samsung_device">Samsung Geräte</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
+    <string name="observe_tracker_stop_observation">Beobachtung stoppen</string>
+    <string name="observe_tracker_stop_observation_explanation">Dieser Tracker wird zur Zeit beobachtet.</string>
+    <string name="observe_tracker_stopped">Beobachtung beendet</string>
     <string name="observe_tracker_clock_description">Piktogramm einer Uhr</string>
     <string name="observe_tracker_start_observation">Beobachtung Starten</string>
     <string name="observe_tracker_explanation">Wenn Sie nicht sicher sind, ob dieser Tracker Ihnen folgt, können Sie ihn manuell beobachten. \n\nIn einer Stunde wird AirGuard nach diesem Tracker suchen und Ihnen sofort eine Benachrichtigung zukommen lassen, auch wenn Sie sich nicht mit diesem Tracker bewegt haben. Wenn der Tracker nicht mehr in der Nähe ist, erhalten Sie auch darüber eine Benachrichtigung.</string>
