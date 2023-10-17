@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import com.mukesh.MarkDown
+//import com.mukesh.MarkDown
 import de.seemoo.at_tracking_detection.R
 import java.net.URL
 
@@ -39,15 +39,15 @@ class ArticleFragment : Fragment() {
             - Lightweight
             """.trimIndent()
 
-        composeView.apply {
-            // Dispose of the Composition when the view's LifecycleOwner is destroyed
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MarkDown(
-                    text = markdown,
-                )
-            }
-        }
+//        composeView.apply {
+//            // Dispose of the Composition when the view's LifecycleOwner is destroyed
+//            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+//            setContent {
+//                MarkDown(
+//                    text = markdown,
+//                )
+//            }
+//        }
 
         return view
     }

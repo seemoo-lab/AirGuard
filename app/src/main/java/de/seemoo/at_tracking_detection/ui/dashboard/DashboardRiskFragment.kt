@@ -43,11 +43,17 @@ class DashboardRiskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
             val directions: NavDirections =
                 DashboardRiskFragmentDirections.actionNavigationDashboardToRiskDetailFragment()
+            findNavController().navigate(directions)
+        }
+
+        val articleCard: MaterialCardView = view.findViewById(R.id.article_card)
+        articleCard.setOnClickListener {
+            val directions: NavDirections =
+                DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment()
             findNavController().navigate(directions)
         }
 

@@ -48,6 +48,7 @@
 <!--                    />-->
 
                 <include
+                    android:id="@+id/article_card"
                     layout="@layout/include_how_airguard_works_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
