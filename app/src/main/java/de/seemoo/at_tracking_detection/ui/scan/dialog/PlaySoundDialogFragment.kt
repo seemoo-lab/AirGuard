@@ -20,7 +20,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogPlaySoundBinding
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
-import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
 class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetDialogFragment() {
@@ -83,9 +82,11 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     }
 
     private fun dismissWithDelay() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            dismiss()
-        }, DIALOG_CLOSE_DELAY)
+        if (isAdded) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                dismiss()
+            }, DIALOG_CLOSE_DELAY)
+        }
     }
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
