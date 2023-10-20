@@ -77,8 +77,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".worker.ScheduleWorkersWorker" />
-
         <receiver android:name=".notifications.ScheduledNotificationReceiver"/>
 
         <activity
