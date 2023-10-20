@@ -21,6 +21,7 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.ConcurrentHashMap
 
 @HiltWorker
 class TrackingDetectorWorker @AssistedInject constructor(
@@ -47,10 +48,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
         var notificationsSent = 0
 
         cleanedBeaconsPerDevice.forEach { mapEntry ->
-            val device = deviceRepository.getDevice(mapEntry.key)
+            val device = deviceRepository.getDevice(mapEntry.key) ?: return@forEach
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (device != null && RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+            if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
                 // Send Notification
                 Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
@@ -75,8 +76,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
      * Retrieves the devices detected during the last scan (last 15min)
      * @return a HashMap with the device address as key and the list of beacons as value (all beacons in the relevant interval)
      */
-    private fun getLatestBeaconsPerDevice(): HashMap<String, List<Beacon>> {
-        val beaconsPerDevice: HashMap<String, List<Beacon>> = HashMap()
+    private fun getLatestBeaconsPerDevice(): ConcurrentHashMap<String, List<Beacon>> {
+        val beaconsPerDevice: ConcurrentHashMap<String, List<Beacon>> = ConcurrentHashMap()
         val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
@@ -95,14 +96,17 @@ class TrackingDetectorWorker @AssistedInject constructor(
             return location
         }
 
+        /**
+         * Checks if the last notification was sent more than x hours ago
+         */
         private fun checkLastNotification(device: BaseDevice): Boolean {
-            return if (device.lastNotificationSent != null) {
-                val hoursPassed = device.lastNotificationSent!!.until(LocalDateTime.now(), ChronoUnit.HOURS)
-                // Last Notification longer than 8 hours
-                hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
-            } else{
-                true
-            }
+            val lastNotificationSent = device.lastNotificationSent
+            return lastNotificationSent == null || isTimeToNotify(lastNotificationSent)
+        }
+
+        private fun isTimeToNotify(lastNotificationSent: LocalDateTime): Boolean {
+            val hoursPassed = lastNotificationSent.until(LocalDateTime.now(), ChronoUnit.HOURS)
+            return hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
         }
     }
 

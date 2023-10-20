@@ -39,13 +39,13 @@
                     android:layout_height="wrap_content"
                     bind:vm="@{vm}" />
 
-                <include
-                    layout="@layout/include_survey_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp"
-                    android:visibility="@{vm.dismissSurveyInformation ? View.GONE : View.VISIBLE}"
-                    />
+<!--                <include-->
+<!--                    layout="@layout/include_survey_card"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="22dp"-->
+<!--                    android:visibility="@{vm.dismissSurveyInformation ? View.GONE : View.VISIBLE}"-->
+<!--                    />-->
 
                 <include
                     layout="@layout/include_how_airguard_works_card"

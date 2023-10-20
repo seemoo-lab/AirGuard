@@ -7,7 +7,9 @@
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
     <string name="title_tracking">Gerät mit der ID {deviceAddress} folgt Dir</string>
-    <string name="title_devices_tracking">Gerät mit ID {deviceAddress}</string>
+    <string name="title_devices_tracking">Gerät mit ID: {deviceAddress}</string>
+    <string name="title_scan_detail">Detail Scan: {deviceAddress}</string>
+    <string name="title_scan">Scan</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices">Geräte</string>
     <string name="mark_false_alarm">FEHLALARM</string>
@@ -37,6 +39,8 @@
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
+    <string name="tracking_detail_scan_title">Detaillierter Scan</string>
+    <string name="tracking_detail_scan_subtitle">Zeigt Live Informationen über diesen Tracker</string>
     <string name="tracking_ignore_device_title">Gerät ignorieren</string>
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
     <string name="tracking_false_alarm_title">Fehlalarm</string>
@@ -79,6 +83,16 @@
     <string name="settings_risk_sensitivity_low">Niedrig</string>
     <string name="settings_risk_sensitivity_medium">Mittel</string>
     <string name="settings_risk_sensitivity_high">Hoch</string>
+    <string name="settings_information_contact_title">Information &amp; Kontakt</string>
+    <string name="settings_information_contact_summary">Bekomme Informationen über uns</string>
+    <string name="settings_delete_study_data_title">Studiendaten löschen</string>
+    <string name="settings_delete_study_data_summary">Anfrage der Löschung der Studiendaten</string>
+    <string name="settings_device_filter_title">Gerätetypen filtern</string>
+    <string name="settings_device_filter_dialog_title">Gerätetypen auswählen</string>
+    <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard scannen soll. Nicht markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
+
+
+
     <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
     <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Eine hohe Empfindlichkeit führt möglicherweise zu mehr Fehlalarmen.</string>
     <string name="settings_app_theme_title">App-Design</string>
@@ -89,6 +103,7 @@
     <string name="onboarding_share_data_yes">Ja</string>
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
+    <string name="title_data_deletion">Datenlöschung anfragen</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
@@ -117,7 +132,12 @@
     <string name="onboarding_scan_description">Um die Umgebung nach Tracking-Geräten zu scannen, benötigen wir die Erlaubnis, nach Bluetooth-Geräten zu suchen!</string>
     <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
-    <string name="scan_title">Scan</string>
+    <string name="notification_observe_tracker_title_base">Dein beobachteter Tracker</string>
+    <string name="notification_observe_tracker_positive_singular">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</string>
+    <string name="notification_observe_tracker_positive_plural">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</string>
+    <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
+    <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
+    <string name="onboarding_notification_description">Um Benachrichtigungen zu senden, wenn ein Gerät gefunden wurde, benötigen wir die Berechtigung Benachrichtigungen zu verschicken.</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
     <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden.\nWir scannen nur nach Apple Find My Trackern (AirTags), Galaxy SmartTags, Chipolo Trackern und Tile Trackern.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
@@ -155,7 +175,7 @@
     <string name="title_risk_detail">Risikobewertung</string>
     <string name="show_all">Alle anzeigen</string>
     <string name="tracker_detected">Tracker erkannt</string>
-    <string name="locations_tracked">Verfolgte Standorte</string>
+    <string name="locations_tracked">Alle Standorte</string>
     <string name="filter">Filter öffnen</string>
     <string name="filter_ignored">ignoriert</string>
     <string name="filter_notified">Tracker die dir folgen</string>
@@ -225,4 +245,59 @@
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
+    <string name="battery_text">"Batterie Status: "</string>
+    <string name="battery_full">Voll</string>
+    <string name="battery_medium">Mittel</string>
+    <string name="battery_low">Niedrig</string>
+    <string name="battery_very_low">Sehr Niedrig</string>
+    <string name="battery_unknown">Unbekannt</string>
+    <string name="connection_state_offline">Offline</string>
+    <string name="connection_state_offline_explanation">Gerät war in den letzten 15 Minuten nicht verbunden</string>
+    <string name="connection_state_overmature_offline">Overmature Offline</string>
+    <string name="connection_state_premature_offline">Premature Offline</string>
+    <string name="connection_state_overmature_offline_explanation">Gerät war für mehrere Stunden nicht verbunden</string>
+    <string name="connection_state_connected">Verbunden</string>
+    <string name="connection_state_connected_explanation">Gerät ist verbunden mit Besitzer</string>
+    <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten verbunden</string>
+    <string name="connection_state_unknown">Unbekannt</string>
+    <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
+    <string name="scan_sorting_by_rssi">nach Signalstärke</string>
+    <string name="scan_sorting_by_recently">zuletzt gesehen</string>
+    <string name="scan_sorting_by_address">nach MAC-Adresse</string>
+    <string name="scan_sorting_by_name">nach Name</string>
+    <string name="scan_sorting_by_type">nach Gerätetyp</string>
+    <string name="scan_battery_icon_description">Diese Grafik zeigt den Akkustand des Trackers</string>
+    <string name="scan_state_info_icon_description">Beim Klick auf dieses Icon wird eine Erklärung des Verbindungsstatus angezeigt</string>
+    <string name="play_sound_description">Spielt einen Ton auf dem Tracker ab</string>
+    <string name="bell_icon_description">Dieses Gerät wurde schon mal als Tracker erkannt</string>
+
+    <string name="searching_for_device">Suche nach Gerät</string>
+    <string name="battery_status_text">Batterie: </string>
+    <string name="connection_state_unknown_explanation">Verbindungsstatus kann nicht bestimmt werden</string>
+    <string name="connection_state_content_description">Informationen über den Verbindungsstatus des Geräts</string>
+    <string name="scan_not_in_range">Gerät ist nicht in Reichweite</string>
+
+    <string name="apple_device">Apple Geräte</string>
+    <string name="find_my_device">FindMy Geräte</string>
+    <string name="samsung_device">Samsung Geräte</string>
+
+    <string name="observe_tracker_title">Tracker beobachten</string>
+    <string name="observe_tracker_clock_description">Piktogramm einer Uhr</string>
+    <string name="observe_tracker_start_observation">Beobachtung Starten</string>
+    <string name="observe_tracker_explanation">Wenn Sie nicht sicher sind, ob dieser Tracker Ihnen folgt, können Sie ihn manuell beobachten. \n\nIn einer Stunde wird AirGuard nach diesem Tracker suchen und Ihnen sofort eine Benachrichtigung zukommen lassen, auch wenn Sie sich nicht mit diesem Tracker bewegt haben. Wenn der Tracker nicht mehr in der Nähe ist, erhalten Sie auch darüber eine Benachrichtigung.</string>
+    <string name="tracking_observe_tracker_subtitle">Finde heraus ob dieser Tracker dir folgt</string>
+    <string name="title_observe_tracker">Beobachten: {deviceAddress}</string>
+    <string name="observe_tracker_success">Beobachtung gestartet</string>
+    <string name="observe_tracker_failure">Dieser Tracker wird bereits beobachtet</string>
+    <string name="settings_attributions_title">Attributionen</string>
+    <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
+    <string name="airguard_for_android">AirGuard für Android</string>
+    <string name="version_number">Version %s</string>
+    <string name="contact_us">Kontaktiere uns</string>
+    <string name="credits">Credits</string>
+    <string name="delete_data_button">Datenlöschung anfragen</string>
+    <string name="delete_data_explanation">Platzhalter: Hier Erklärtext</string>
+    <string name="copyright">Copyright</string>
+    <string name="developer">Entwickler: %s</string>
+    <string name="maintainer">Maintainer: %s</string>
 </resources>

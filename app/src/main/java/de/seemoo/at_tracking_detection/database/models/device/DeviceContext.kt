@@ -19,4 +19,12 @@ interface DeviceContext {
     fun getConnectionState(scanResult: ScanResult): ConnectionState {
         return ConnectionState.UNKNOWN
     }
+
+    fun getBatteryState(scanResult: ScanResult): BatteryState {
+        return BatteryState.UNKNOWN
+    }
+
+    fun getPublicKey(scanResult: ScanResult): String{
+        return scanResult.device.address
+    }
 }

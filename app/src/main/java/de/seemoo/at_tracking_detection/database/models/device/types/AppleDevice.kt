@@ -52,7 +52,7 @@ class AppleDevice(val id: Int) : Device() {
             val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
 
             if (mfg != null && mfg.size > 2) {
-                return if (mfg[1] == (0x19).toByte()){
+                return if (mfg[1] == (0x19).toByte()) {
                     ConnectionState.OVERMATURE_OFFLINE
                 } else {
                     ConnectionState.CONNECTED

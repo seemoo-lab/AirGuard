@@ -88,10 +88,10 @@
     <string name="onboarding_share_data_yes">はい</string>
     <string name="onboarding_share_data_dialog">匿名化されたデータを共有するかどうかを決定する必要があります</string>
     <string name="device_name_find_my_device">Find My デバイス %s</string>
-    <string name="notification_text_base">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
+    <string name="notification_text_base">詳細については、通知を開いてください。追跡タグが少なくとも%d分間あなたを追跡しています。</string>
     <string name="notification_title_base">追跡タグが発見されました!</string>
-    <string name="notification_text_single">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
-    <string name="notification_text_multiple">詳細については、通知を開いてください。追跡タグが少なくとも30分間あなたを追跡しています。</string>
+    <string name="notification_text_single">詳細については、通知を開いてください。%sが少なくとも%d分間あなたを追跡しています。</string>
+    <string name="notification_text_multiple">詳細については、通知を開いてください。%sが少なくとも%d分間あなたをフォローしています。</string>
     <string name="notification_title_vocal">%s があなたを追跡しています</string>
     <string name="notification_title_consonant">%s があなたを追跡しています</string>
     <string name="notification_title_multiple">%s があなたを追跡しています</string>
@@ -119,7 +119,7 @@
     <string name="onboarding_connect_description">追跡デバイスが見つかった場合、AirGuardはその上でサウンドを再生する機能を提供します。このためには、このデバイスに接続するための許可が必要です。</string>
     <string name="twitter_description">私達のTwitterを見る</string>
     <string name="twitter">Twitter</string>
-    <string name="scan_title">手動スキャン</string>
+    <string name="title_scan">手動スキャン</string>
     <string name="scan_result_item_image_description">スキャン結果</string>
     <string name="scan_result_no_devices">安心してください。タグは見つかりませんでした</string>
     <string name="ble_service_connection_error">デバイスとの接続に失敗しました</string>

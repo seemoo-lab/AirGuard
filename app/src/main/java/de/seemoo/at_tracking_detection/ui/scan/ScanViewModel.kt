@@ -1,28 +1,31 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
+import android.widget.TextView
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,9 +39,11 @@ class ScanViewModel @Inject constructor(
 
     val scanFinished = MutableLiveData(false)
 
+    val sortingOrder = MutableLiveData<SortingOrder>(SortingOrder.SIGNAL_STRENGTH)
+
     val scanStart = MutableLiveData(LocalDateTime.MIN)
 
-    var bluetoothEnabled = MutableLiveData<Boolean>(true)
+    var bluetoothEnabled = MutableLiveData(true)
     init {
         bluetoothDeviceList.value = ArrayList()
         bluetoothEnabled.value = BLEScanner.isBluetoothOn()
@@ -49,6 +54,18 @@ class ScanViewModel @Inject constructor(
     }
 
     fun addScanResult(scanResult: ScanResult) {
+        if (scanFinished.value == true) {
+            return
+        }
+
+        val deviceType = getDeviceType(scanResult)
+        val validDeviceTypes = getAllowedDeviceTypesFromSettings()
+
+        if (deviceType !in validDeviceTypes) {
+            // If device not selected in settings then do not add ScanResult to list or database
+            return
+        }
+
         val currentDate = LocalDateTime.now()
         val uniqueIdentifier = getPublicKey(scanResult) // either public key or MAC-Address
         if (beaconRepository.getNumberOfBeaconsAddress(
@@ -88,7 +105,8 @@ class ScanViewModel @Inject constructor(
             }
         }
 
-        bluetoothDeviceListValue.sortByDescending { it.rssi }
+        sortResults(bluetoothDeviceListValue)
+
         bluetoothDeviceList.postValue(bluetoothDeviceListValue)
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(
@@ -99,15 +117,32 @@ class ScanViewModel @Inject constructor(
         Timber.d("Device list: ${bluetoothDeviceList.value?.count()}")
     }
 
+    fun sortResults(bluetoothDeviceListValue: MutableList<ScanResult>) {
+        when(sortingOrder.value) {
+            SortingOrder.SIGNAL_STRENGTH -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+            SortingOrder.DETECTION_ORDER -> bluetoothDeviceListValue.sortByDescending { it.timestampNanos }
+            SortingOrder.ADDRESS -> bluetoothDeviceListValue.sortBy { it.device.address }
+            else -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+        }
+    }
+
+    fun changeColorOf(sortOptions: List<TextView>, sortOption: TextView) {
+        val theme = Utility.getSelectedTheme()
+        var color = Color.Gray
+        if (theme){
+            color = Color.LightGray
+        }
+
+        sortOptions.forEach {
+            if(it == sortOption) {
+                it.setBackgroundColor(color.toArgb())
+            } else {
+                it.setBackgroundColor(Color.Transparent.toArgb())
+            }
+        }
+    }
+
     val isListEmpty: LiveData<Boolean> = bluetoothDeviceList.map { it.isEmpty() }
 
     val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
-
-    suspend fun saveScanToRepository(){
-        // Not used anymore, because manual scan is always when the app is open
-        if (scanStart.value == LocalDateTime.MIN) { return }
-        val duration: Int  = ChronoUnit.SECONDS.between(scanStart.value, LocalDateTime.now()).toInt()
-        val scan = Scan(endDate = LocalDateTime.now(), bluetoothDeviceList.value?.size ?: 0, duration, isManual = true, scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY, startDate = scanStart.value ?: LocalDateTime.now())
-        scanRepository.insert(scan)
-    }
 }

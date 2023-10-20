@@ -12,8 +12,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import java.util.*
 
 @BindingAdapter("setAdapter")
@@ -28,8 +27,7 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
 @BindingAdapter("setSignalStrengthDrawable", requireAll = true)
 fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
     val rssi: Int = scanResult.rssi
-    val percentage = DbmToPercent.convert(rssi.toDouble(), perfectRssi = -30.0, worstRssi = -90.0).toDouble() / 100.0
-    val quality = Utility.rssiToQuality(percentage.toFloat())
+    val quality = Utility.dbmToQuality(rssi)
 
     when (quality) {
         0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))
@@ -60,7 +58,7 @@ fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-    val deviceFromDb = deviceRepository?.getDevice(SamsungDevice.getPublicKey(scanResult))
+    val deviceFromDb = deviceRepository?.getDevice(getPublicKey(scanResult))
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {
@@ -75,6 +73,22 @@ fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
     if (device.isConnectable() && BaseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
         view.visibility = View.VISIBLE
     }else {
-        view.visibility = View.GONE
+        view.visibility = View.INVISIBLE
+    }
+}
+
+@BindingAdapter("visibilityBellIcon", requireAll = true)
+fun visibilityBellIcon(view: View, scanResult: ScanResult) {
+    val deviceAddress = BaseDevice(scanResult).address
+    val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository
+
+    if (notificationRepository != null) {
+        if (notificationRepository.existsNotificationForDevice(deviceAddress)) {
+            view.visibility = View.VISIBLE
+        } else {
+            view.visibility = View.INVISIBLE
+        }
+    } else {
+        view.visibility = View.INVISIBLE
     }
 }

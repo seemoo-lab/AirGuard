@@ -58,7 +58,6 @@ class DashboardFragment : Fragment() {
 
     }
 
-
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
         private const val HISTORY_LENGTH = 14L

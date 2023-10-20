@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -25,7 +27,8 @@ class ScanFragment : Fragment() {
     private val scanViewModel: ScanViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding: FragmentScanBinding =
@@ -41,6 +44,37 @@ class ScanFragment : Fragment() {
             // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
             bluetoothDeviceAdapter.notifyDataSetChanged()
         }
+
+        scanViewModel.scanFinished.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+            } else {
+                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_stop_24)
+            }
+        }
+
+        scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
+            val bluetoothDeviceListValue = scanViewModel.bluetoothDeviceList.value ?: return@observe
+            scanViewModel.sortResults(bluetoothDeviceListValue)
+            scanViewModel.bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+
+            if (view != null) {
+                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
+                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
+                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
+
+                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+                when(it) {
+                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
+                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
+                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                }
+            }
+
+        }
+
         return binding.root
     }
 
@@ -52,6 +86,33 @@ class ScanFragment : Fragment() {
         bluetoothButton.setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
 
+        }
+
+        val startStopButton = view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan)
+        startStopButton.setOnClickListener {
+            if (scanViewModel.scanFinished.value == true) {
+                startBluetoothScan()
+            } else {
+                stopBluetoothScan()
+            }
+        }
+
+        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
+        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
+        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
+
+        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+
+        sortBySignalStrength.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
+        }
+        sortByDetectionOrder.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
+        }
+        sortByAddress.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
         }
     }
 
@@ -90,6 +151,7 @@ class ScanFragment : Fragment() {
 
         // Register the current fragment as a callback
         BLEScanner.registerCallback(this.scanCallback)
+        scanViewModel.scanFinished.postValue(false)
 
         // Show to the user that no devices have been found
         Handler(Looper.getMainLooper()).postDelayed({
@@ -105,11 +167,14 @@ class ScanFragment : Fragment() {
         // We just unregister the callback, but keep the scanner running
         // until the app is closed / moved to background
         BLEScanner.unregisterCallback(this.scanCallback)
+        scanViewModel.scanFinished.postValue(true)
     }
 
     override fun onResume() {
         super.onResume()
-        startBluetoothScan()
+        if (scanViewModel.scanFinished.value == false) {
+            startBluetoothScan()
+        }
     }
 
     override fun onPause() {

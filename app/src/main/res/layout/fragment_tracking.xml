@@ -28,6 +28,7 @@
             android:id="@+id/map_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toTopOf="@id/tracking_tiles"
             app:layout_constraintHeight_min="250dp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -89,6 +90,7 @@
                 layout="@layout/item_device"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
                 android:minHeight="@dimen/devices_item_height"
                 android:layout_margin="@dimen/card_margin"
                 app:baseDevice="@{vm.device}"
@@ -199,6 +201,46 @@
                     bind:vm="@{vm}"
 
                     />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/tracking_detail_scan"
+                    layout="@layout/include_tracking_tile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/tracking_tile_height"
+                    android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
+                    android:visibility="@{vm.deviceAddress == null ? View.GONE : View.VISIBLE}"
+                    bind:clickable="@{true}"
+                    bind:drawable="@{@drawable/ic_scan_icon}"
+                    bind:imageDescription="@{@string/tracking_detail_scan_title}"
+                    bind:subtitle="@{@string/tracking_detail_scan_subtitle}"
+                    bind:title="@{@string/tracking_detail_scan_title}"
+                    bind:vm="@{vm}" />
+
+<!--                <include-->
+<!--                    android:id="@+id/tracking_observation"-->
+<!--                    layout="@layout/include_tracking_tile"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:minHeight="@dimen/tracking_tile_height"-->
+<!--                    android:layout_margin="@dimen/card_margin"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"-->
+<!--                    bind:drawable="@{@drawable/ic_clock}"-->
+<!--                    bind:clickable="@{true}"-->
+<!--                    bind:imageDescription="@{@string/observe_tracker_title}"-->
+<!--                    bind:subtitle="@{@string/tracking_observe_tracker_subtitle}"-->
+<!--                    bind:title="@{@string/observe_tracker_title}"-->
+<!--                    bind:vm="@{vm}"-->
+<!--                    />-->
             </LinearLayout>
 
         </LinearLayout>

@@ -64,4 +64,7 @@ interface NotificationDao {
 
     @Update
     suspend fun update(notification: Notification)
+
+    @Query("SELECT COUNT(*) FROM notification WHERE deviceAddress == :deviceAddress AND falseAlarm = 0 LIMIT 1")
+    fun existsNotificationForDevice(deviceAddress: String): Boolean
 }

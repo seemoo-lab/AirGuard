@@ -5,7 +5,6 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
@@ -33,15 +32,15 @@ class RiskLevelEvaluator(
         if (totalTrackers == 0) {
             return RiskLevel.LOW
         } else {
-            var riskMediumCounterStatic = 0 // Counter for Devices with Risk Medium with a static MAC-Address (e.g. Tile)
-            var riskMediumCounterDynamic = 0 // Counter for Devices with Risk Medium with a dynamic MAC-Address (e.g. Apple)
+            var riskMediumCounterStatic = 0 // Counter for Devices with Risk Medium with a static MAC-Address (e.g. Tile, Chipolo)
+            var riskMediumCounterDynamic = 0 // Counter for Devices with Risk Medium with a dynamic MAC-Address (e.g. Apple, Samsung)
             for (baseDevice in baseDevices) {
                 val useLocation = SharedPrefs.useLocationInTrackingDetection
                 val deviceRiskLevel = checkRiskLevelForDevice(baseDevice, useLocation)
                 if (deviceRiskLevel == RiskLevel.HIGH) {
                     return RiskLevel.HIGH
                 } else if (deviceRiskLevel == RiskLevel.MEDIUM) {
-                    if (baseDevice.deviceType == DeviceType.TILE) {
+                    if ((baseDevice.deviceType != null) && baseDevice.deviceType.canBeIgnored()) {
                         riskMediumCounterStatic += 1
                     } else {
                         riskMediumCounterDynamic += 1
@@ -119,12 +118,9 @@ class RiskLevelEvaluator(
         // Checks if BaseDevice is a tracking device
         // Goes through all the criteria
         fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean): RiskLevel {
-            // get Repositories
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
-            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository!!
-
             Timber.d("Checking Risk Level for Device: ${device.address}")
+
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository ?: return RiskLevel.LOW
 
             // Not ignored
             // Tracker has been seen long enough
@@ -133,10 +129,32 @@ class RiskLevelEvaluator(
 
                 // Detected at least 3 Times
                 if (numberOfBeacons >= NUMBER_OF_BEACONS_BEFORE_ALARM) {
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return RiskLevel.LOW
+
+                    val cachedRiskLevel = deviceRepository.getCachedRiskLevel(device.address)
+                    val lastCalculatedRiskLevel = deviceRepository.getLastCachedRiskLevelDate(device.address)
+
+                    if (lastCalculatedRiskLevel != null) {
+                        if (lastCalculatedRiskLevel >= LocalDateTime.now().minusMinutes(15)) {
+                            fun cachedRiskIntToRisk(cachedRiskInt: Int): RiskLevel {
+                                return when (cachedRiskInt) {
+                                    0 -> RiskLevel.LOW
+                                    1 -> RiskLevel.MEDIUM
+                                    2 -> RiskLevel.HIGH
+                                    else -> RiskLevel.LOW
+                                }
+                            }
+
+                            return cachedRiskIntToRisk(cachedRiskLevel)
+                        }
+                    }
+
+
                     val numberOfLocations = deviceRepository.getNumberOfLocationsForDeviceSince(device.address, relevantTrackingDate)
 
                     // Detected at at least 3 different locations
                     if (!useLocation || numberOfLocations >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                        val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository ?: return RiskLevel.LOW
                         val falseAlarms = notificationRepository.getFalseAlarmForDeviceSinceCount(device.address, relevantTrackingDate)
 
                         // No False Alarm (Join via Notification)
@@ -153,8 +171,10 @@ class RiskLevelEvaluator(
                                 // High Risk: High Number of Notifications and Accurate Locations
                                 // Medium Risk: Low Number of Notifications or only inaccurate Location Reports
                                 return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                                    deviceRepository.updateRiskLevelCache(device.address, 2, LocalDateTime.now())
                                     RiskLevel.HIGH
                                 } else{
+                                    deviceRepository.updateRiskLevelCache(device.address, 1, LocalDateTime.now())
                                     RiskLevel.MEDIUM
                                 }
                             }

@@ -141,5 +141,26 @@ class AirTag(val id: Int) : Device(), Connectable {
 
         override val statusByteDeviceType: UInt
             get() = 1u
+
+        override fun getBatteryState(scanResult: ScanResult): BatteryState {
+            val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
+
+            if (mfg != null && mfg.size >= 3) {
+                val status = mfg[2] // Extract the status byte
+
+                // Bits 6-7: Battery level
+                val batteryLevel = (status.toInt() shr 6) and 0x03
+
+                // Full: 0, Medium 1, Low 2, Very Low 3
+                when (batteryLevel) {
+                    0x00 -> return BatteryState.FULL
+                    0x01 -> return BatteryState.MEDIUM
+                    0x02 -> return BatteryState.LOW
+                    0x03 -> return BatteryState.VERY_LOW
+                }
+            }
+
+            return BatteryState.UNKNOWN
+        }
     }
 }

@@ -10,8 +10,6 @@ import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -149,7 +147,7 @@ open class LocationProvider @Inject constructor(
 
         // The fused location provider does not work reliably with Samsung + Android 12
         // We just stay with the legacy location, because this just works
-        requestLegacyLocationUpdatesFromAnyProvider()
+        requestLocationUpdatesFromAnyProvider()
 
         if (timeoutMillis != null) {
             setTimeoutForLocationUpdate(requester =  locationRequester, timeoutMillis= timeoutMillis)
@@ -191,7 +189,8 @@ open class LocationProvider @Inject constructor(
         Timber.d("Location request timeout set to $timeoutMillis")
     }
 
-    private fun requestLegacyLocationUpdatesFromAnyProvider() {
+
+    private fun requestLocationUpdatesFromAnyProvider() {
         if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
@@ -200,6 +199,26 @@ open class LocationProvider @Inject constructor(
         val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val networkProviderEnabled =
             locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                LocationManager.FUSED_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
+        }
+        
+        if (networkProviderEnabled) {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                MIN_UPDATE_TIME_MS,
+                MIN_DISTANCE_METER,
+                this,
+                handler.looper
+            )
+        }
 
         if (gpsProviderEnabled) {
             // Using GPS and Network provider, because the GPS provider does notwork indoors (it will never call the callback)
@@ -210,25 +229,20 @@ open class LocationProvider @Inject constructor(
                 this,
                 handler.looper
             )
+        }
 
-            if (networkProviderEnabled){
-                locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    MIN_UPDATE_TIME_MS,
-                    MIN_DISTANCE_METER,
-                    this,
-                    handler.looper
-                )
+        if (!networkProviderEnabled && !gpsProviderEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+                    // Error
+                    Timber.e("ERROR: No location provider available")
+                    stopLocationUpdates()
+                    }
+            }else {
+                //Error
+                Timber.e("ERROR: No location provider available")
+                stopLocationUpdates()
             }
-
-        } else if (networkProviderEnabled) {
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                MIN_UPDATE_TIME_MS,
-                MIN_DISTANCE_METER,
-                this,
-                handler.looper
-            )
         }
     }
 
@@ -275,7 +289,6 @@ open class LocationProvider @Inject constructor(
         const val MIN_DISTANCE_METER = 0.0F
         const val MAX_AGE_SECONDS = 120L
         const val MIN_ACCURACY_METER = 120L
-        const val MAX_LOCATION_DURATION = 60_000L /// Time until the location fetching will be stopped automatically
     }
 
 }

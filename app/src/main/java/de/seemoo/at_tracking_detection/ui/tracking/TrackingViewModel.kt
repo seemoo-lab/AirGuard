@@ -22,6 +22,8 @@ class TrackingViewModel @Inject constructor(
 
     val notificationId = MutableLiveData<Int>()
 
+    val noLocationsYet = MutableLiveData(true)
+
     val error = MutableLiveData(false)
 
     val falseAlarm = MutableLiveData(false)
@@ -31,33 +33,34 @@ class TrackingViewModel @Inject constructor(
     val connecting = MutableLiveData(false)
 
     val device = MutableLiveData<BaseDevice>()
-    val connectable = MutableLiveData<Boolean>(false)
+    val connectable = MutableLiveData(false)
 
-    val canBeIgnored = MutableLiveData<Boolean>(false)
+    val canBeIgnored = MutableLiveData(false)
 
-    val showNfcHint = MutableLiveData<Boolean>(false)
+    val showNfcHint = MutableLiveData(false)
 
     val isMapLoading = MutableLiveData(false)
 
-    val markerLocations: LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
+    val markerLocations: LiveData<List<Beacon>> = deviceAddress.map {
         beaconRepository.getDeviceBeacons(it)
     }
 
-    val beaconsHaveMissingLocation: LiveData<Boolean> = Transformations.map(markerLocations) {
+    val beaconsHaveMissingLocation: LiveData<Boolean> = markerLocations.map {
         it.any { beacon ->
             beacon.locationId == null
         }
     }
 
-    val amountBeacons: LiveData<String> = Transformations.map(markerLocations) {
+    val amountBeacons: LiveData<String> = markerLocations.map {
         it.size.toString()
     }
 
     fun loadDevice(address: String) =
-        deviceRepository.getDevice(address).also {
+        deviceRepository.getDevice(address).also { it ->
             device.postValue(it)
             if (it != null) {
                 deviceIgnored.postValue(it.ignore)
+                noLocationsYet.postValue(false)
                 connectable.postValue(it.device is Connectable)
                 showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
                 val deviceType = it.deviceType
@@ -66,6 +69,8 @@ class TrackingViewModel @Inject constructor(
                 }
                 val notification = notificationRepository.notificationForDevice(it).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
+            } else {
+                noLocationsYet.postValue(true)
             }
         }
 

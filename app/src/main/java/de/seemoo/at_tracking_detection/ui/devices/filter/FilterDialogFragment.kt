@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,6 +60,9 @@ class FilterDialogFragment :
     }
 
     private fun filterAdaptions() {
+        val devicesViewModel = devicesViewModel // Assuming devicesViewModel is not frequently changing
+
+        // Initialize filter chips
         binding.filterIgnoreChip.isChecked =
             devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())
         binding.filterNotifiedChip.isChecked =
@@ -75,17 +77,16 @@ class FilterDialogFragment :
                 DeviceTypeFilter::class.toString(), defaultDeviceTypeFilter
             ) as DeviceTypeFilter
 
-        for (device in DeviceManager.devices) {
-            val chip =
-                IncludeFilterChipBinding.inflate(LayoutInflater.from(context))
+        // Create and add device type filter chips
+        DeviceManager.devices.forEach { device ->
+            val chip = IncludeFilterChipBinding.inflate(LayoutInflater.from(context))
             chip.text = device.defaultDeviceName
-            if (activeDeviceTypeFilter.contains(device.deviceType)) {
-                chip.filterDeviceTypeChip.isChecked = true
-            }
+            val isChecked = activeDeviceTypeFilter.contains(device.deviceType)
+            chip.filterDeviceTypeChip.isChecked = isChecked
 
             chip.filterDeviceTypeChip.id = (device.deviceType.toString() + ".chip").hashCode()
 
-                chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
+            chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     activeDeviceTypeFilter.add(device.deviceType)
                 } else {
@@ -96,6 +97,7 @@ class FilterDialogFragment :
             binding.filterDeviceTypes.addView(chip.root)
         }
 
+        // Set click listeners for filter chips
         binding.filterIgnoreChip.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(
                 IgnoredFilter.build(), !binding.filterIgnoreChip.isChecked
@@ -106,6 +108,8 @@ class FilterDialogFragment :
                 NotifiedFilter.build(), !binding.filterNotifiedChip.isChecked
             )
         }
+
+        // Date range picker click listener
         binding.filterDateRangeInput.setOnClickListener {
             var datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker()
                 .setTitleText(getString(R.string.filter_date_range_picker_title))
@@ -125,6 +129,8 @@ class FilterDialogFragment :
                 )
             }
         }
+
+        // Clear date range filter
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
             devicesViewModel.addOrRemoveFilter(DateRangeFilter.build(), true)

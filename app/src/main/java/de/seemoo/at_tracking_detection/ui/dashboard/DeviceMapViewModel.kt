@@ -4,8 +4,6 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import javax.inject.Inject
 
@@ -15,7 +13,7 @@ class DeviceMapViewModel @Inject constructor(
 
     val deviceAddress = MutableLiveData<String>()
 
-    val markerLocations: LiveData<List<Beacon>> = Transformations.map(deviceAddress) {
+    val markerLocations: LiveData<List<Beacon>> = deviceAddress.map {
         beaconRepository.getDeviceBeacons(it)
     }
 

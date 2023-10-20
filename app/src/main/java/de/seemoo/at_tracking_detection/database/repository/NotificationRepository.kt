@@ -50,6 +50,8 @@ class NotificationRepository @Inject constructor(
 
     fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getFalseAlarmForDeviceSinceCount(deviceAddress, since)
 
+    fun existsNotificationForDevice(deviceAddress: String): Boolean = notificationDao.existsNotificationForDevice(deviceAddress)
+
     @WorkerThread
     suspend fun insert(notification: Notification): Long {
         return notificationDao.insert(notification)

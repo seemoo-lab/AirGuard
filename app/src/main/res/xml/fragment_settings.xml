@@ -10,6 +10,12 @@
         android:summary="@string/settings_share_data_summary"
         app:title="@string/settings_share_data_title" />
 
+<!--    <Preference-->
+<!--        android:icon="@drawable/ic_delete"-->
+<!--        android:key="delete_study_data"-->
+<!--        android:summary="@string/settings_delete_study_data_summary"-->
+<!--        android:title="@string/settings_delete_study_data_title" />-->
+
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_location_on_24"
         android:key="use_location"
@@ -31,6 +37,17 @@
         android:key="risk_sensitivity"
         android:summary="@string/settings_risk_sensitivity_summary"
         android:title="@string/settings_risk_sensitivity_title" />
+
+    <MultiSelectListPreference
+        android:key="devices_filter"
+        android:title="@string/settings_device_filter_title"
+        android:dialogTitle="@string/settings_device_filter_dialog_title"
+        android:summary="@string/settings_device_filter_summary"
+        android:icon="@drawable/ic_baseline_devices_other_24"
+        android:entries="@array/devicesFilter"
+        android:entryValues="@array/devicesFilterValue"
+        android:defaultValue="@array/devicesFilterValue"
+        />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
@@ -71,23 +88,35 @@
         android:summary="@string/settings_app_theme_summary"
         android:title="@string/settings_app_theme_title" />
 
-    <Preference
-        android:icon="@drawable/ic_baseline_library_books_24"
-        android:key="third_party_libraries"
-        android:summary="@string/settings_third_party_libraries_summary"
-        android:title="@string/settings_third_party_libraries_title" />
+<!--    <Preference-->
+<!--        android:icon="@drawable/ic_baseline_library_books_24"-->
+<!--        android:key="third_party_libraries"-->
+<!--        android:summary="@string/settings_third_party_libraries_summary"-->
+<!--        android:title="@string/settings_third_party_libraries_title" />-->
+
+<!--    <Preference-->
+<!--        android:icon="@drawable/ic_baseline_library_books_24"-->
+<!--        android:key="attributions"-->
+<!--        android:summary="@string/settings_attributions_summary"-->
+<!--        android:title="@string/settings_attributions_title" />-->
 
     <Preference
-        android:icon="@drawable/ic_baseline_library_books_24"
+        android:icon="@drawable/ic_baseline_privacy_tip_24"
+        android:key="information_contact"
+        android:summary="@string/settings_information_contact_summary"
+        android:title="@string/settings_information_contact_title" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_info_24"
         android:key="privacy_policy"
         android:summary="@string/settings_privacy_policy_summary"
         android:title="@string/settings_privacy_policy_title" />
 
-    <Preference
-        android:icon="@drawable/ic_twitter"
-        android:key="twitter"
-        android:summary="@string/twitter_description"
-        android:title="@string/twitter" />
+<!--    <Preference-->
+<!--        android:icon="@drawable/ic_twitter"-->
+<!--        android:key="twitter"-->
+<!--        android:summary="@string/twitter_description"-->
+<!--        android:title="@string/twitter" />-->
 
     <SwitchPreferenceCompat
         android:key="show_onboarding"

@@ -10,9 +10,9 @@
 
     <item
         android:id="@+id/navigation_manual_scan"
-        android:contentDescription="@string/scan_title"
+        android:contentDescription="@string/title_scan"
         android:icon="@drawable/ic_radar_tracking"
-        android:title="@string/scan_title" />
+        android:title="@string/title_scan" />
 
     <item
         android:id="@+id/navigation_allDevicesFragment"

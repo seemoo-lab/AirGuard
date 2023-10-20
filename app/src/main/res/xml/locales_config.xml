@@ -1,0 +1,10 @@
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- English -->
+    <locale android:name="en" />
+
+    <!-- German -->
+    <locale android:name="de" />
+
+    <!-- Japanese -->
+    <locale android:name="ja" />
+</locale-config>

@@ -12,7 +12,6 @@ class ScheduledNotificationReceiver: BroadcastReceiver() {
         Timber.d("Broadcast received ${intent?.action}")
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService
-        SharedPrefs.dismissSurveyInformation = false
-        notificationService?.sendSurveyInfoNotification()
+        SharedPrefs.dismissSurveyInformation = true
     }
 }

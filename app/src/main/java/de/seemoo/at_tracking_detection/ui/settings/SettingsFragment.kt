@@ -33,9 +33,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.fragment_settings, rootKey)
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
-        findPreference<Preference>("third_party_libraries")?.onPreferenceClickListener =
+
+        findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                view?.findNavController()?.navigate(R.id.action_settings_to_about_libs)
+                view?.findNavController()?.navigate(R.id.action_settings_to_information)
+                true
+            }
+
+        findPreference<Preference>("delete_study_data")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_data_deletion)
                 true
             }
 
@@ -44,16 +51,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html")
-                )
-                startActivity(intent)
-                return@OnPreferenceClickListener true
-            }
-
-        findPreference<Preference>("twitter")?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/AirGuardAndroid")
                 )
                 startActivity(intent)
                 return@OnPreferenceClickListener true

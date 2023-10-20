@@ -8,8 +8,12 @@
     <string name="title_feedback">Feedback</string>
     <string name="title_tracking">A device with this ID: {deviceAddress} is following you</string>
     <string name="title_devices_tracking">Device ID: {deviceAddress}</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_scan_detail">Detailed scan: {deviceAddress}</string>
+    <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
     <string name="title_devices">Devices</string>
+    <string name="title_data_deletion">Data deletion request</string>
 
     <string name="map_empty_text">No devices have been found yet. Every time a device is discovered, a location on the map will be shown where this occurred. This does not mean that someone has tracked you at every location. In most cases you will find devices from others in public transport or from one of your neighbors.</string>
 
@@ -38,6 +42,8 @@
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Provide some insights</string>
+    <string name="tracking_detail_scan_title">Detailed Scan</string>
+    <string name="tracking_detail_scan_subtitle">Shows live Information about this tracker</string>
     <string name="tracking_ignore_device_title">Ignore Device</string>
     <string name="tracking_ignore_device_subtitle">Mute notifications for this device</string>
     <string name="tracking_false_alarm_title">False Alarm</string>
@@ -95,14 +101,34 @@
     <string name="settings_third_party_libraries_title">Third Party Libraries</string>
     <string name="settings_third_party_libraries_summary">Show a list of all used third party libraries and their licenses</string>
 
+    <string name="settings_attributions_title">Attributions</string>
+    <string name="settings_attributions_summary">Show a list of attributions</string>
+
     <string name="settings_privacy_policy_title">Privacy Policy</string>
     <string name="settings_privacy_policy_summary">View our short and simple privacy policy</string>
+
+    <string name="settings_information_contact_title">Information &amp; Contact</string>
+    <string name="settings_information_contact_summary">Get information about us</string>
+
+    <string name="settings_delete_study_data_title">Delete study data</string>
+    <string name="settings_delete_study_data_summary">Request deletion of study data</string>
+
+    <string name="settings_device_filter_title">Filter by device types</string>
+    <string name="settings_device_filter_dialog_title">Choose device types</string>
+    <string name="settings_device_filter_summary">Choose which device types AirGuard should observe. Not selected device types will not show up in the manual scan and you will not be notified if such a device follows you.</string>
+
 
     <string name="onboarding_share_data_no">No</string>
     <string name="onboarding_share_data_yes">Yes</string>
     <string name="onboarding_share_data_dialog">Please decide if you want to participate or not. All data shared is completely anonymous.</string>
     <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device">Find My Device %s</string>
+
+    <string name="notification_observe_tracker_title_base">Your observed tracker</string>
+    <string name="notification_observe_tracker_positive_singular">A tracker you observed has been following you for at least an hour.</string>
+    <string name="notification_observe_tracker_positive_plural">A tracker you observed has been following you for at least %d hours.</string>
+    <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
+
     <string name="notification_text_base">Open the notification to get more info. A tracker has followed you for at least %d minutes.</string>
     <string name="notification_title_base">A tracker has been following you</string>
     <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least %d minutes.</string>
@@ -132,9 +158,10 @@
     <string name="onboarding_scan_description">To scan your surrounding for tracking devices, we need the permission to scan for Bluetooth devices!</string>
     <string name="onboarding_connect_title">Bluetooth Connect</string>
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
+    <string name="onboarding_notification_title">Sending Notifications</string>
+    <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
     <string name="twitter_description">Check out our Twitter account</string>
     <string name="twitter">Twitter</string>
-    <string name="scan_title">Scan</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
     <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
@@ -173,7 +200,7 @@
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
-    <string name="locations_tracked">Locations tracked</string>
+    <string name="locations_tracked">All locations</string>
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
@@ -245,4 +272,67 @@
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
     <string name="open_bluetooth_settings">Open Bluetooth settings</string>
+
+    <string name="battery_text">Battery Level: </string>
+    <string name="battery_full">Full</string>
+    <string name="battery_medium">Medium</string>
+    <string name="battery_low">Low</string>
+    <string name="battery_very_low">Very Low</string>
+    <string name="battery_unknown">Unknown</string>
+
+    <string name="connection_state_offline">Offline</string>
+    <string name="connection_state_offline_explanation">Device has not been connected for more than 15 minutes</string>
+    <string name="connection_state_overmature_offline">Overmature Offline</string>
+    <string name="connection_state_overmature_offline_explanation">Device has not been connected to an owner device for a few hours</string>
+    <string name="connection_state_premature_offline">Premature Offline</string>
+    <string name="connection_state_premature_offline_explanation">Device has been connected in the last 15 minutes</string>
+    <string name="connection_state_connected">Connected</string>
+    <string name="connection_state_connected_explanation">Device is currently connected to owner</string>
+    <string name="connection_state_unknown">Unknown</string>
+    <string name="connection_state_content_description">Information about the connection State of the device</string>
+
+
+    <string name="scan_accessibility">Starts or Stops the Scan</string>
+    <string name="scan_sorting_by_rssi">by Signal Strength</string>
+    <string name="scan_sorting_by_recently">by recently detected</string>
+    <string name="scan_sorting_by_address">by MAC-Address</string>
+    <string name="scan_sorting_by_name">by Name</string>
+    <string name="scan_sorting_by_type">by Type</string>
+    <string name="scan_not_in_range">Device is not in range</string>
+    <string name="scan_battery_icon_description">This icon shows the battery status of the tracker</string>
+    <string name="scan_state_info_icon_description">Clicking on this icon shows an explanation for the connection status</string>
+
+    <string name="play_sound_description">Plays a sound on the tracking device</string>
+    <string name="bell_icon_description">This device has been identified as a tracker</string>
+
+    <string name="searching_for_device">Searching for device</string>
+    <string name="battery_status_text">Battery: </string>
+    <string name="connection_state_unknown_explanation">Connection State cannot be determined</string>
+
+    <string name="airtag" translatable="false">Airtag</string>
+    <string name="airpods" translatable="false">Airpods</string>
+    <string name="apple_device">Apple Devices</string>
+    <string name="chipolo" translatable="false">Chipolo</string>
+    <string name="find_my_device">FindMy Devices</string>
+    <string name="samsung_device">Samsung Devices</string>
+    <string name="smart_tag" translatable="false">SmartTags</string>
+    <string name="tile" translatable="false">Tiles</string>
+    <string name="airguard_for_android">AirGuard for Android</string>
+    <string name="version_number">Version %s</string>
+    <string name="contact_us">Contact Us</string>
+
+    <string name="observe_tracker_title">Observe Tracker</string>
+    <string name="observe_tracker_clock_description">Image of a clock</string>
+    <string name="observe_tracker_start_observation">Start Observation</string>
+    <string name="observe_tracker_explanation">If you are not sure if this tracker follows you, you can manually observe it. \n\nIn one hour, AirGuard will search for this tracker and deliver a notification immediately, even if you did not move with this tracker. If the tracker is not around anymore, you will receive a notification about that as well.</string>
+    <string name="tracking_observe_tracker_subtitle">Find out if this tracker is following you</string>
+    <string name="observe_tracker_success">Observation started</string>
+    <string name="observe_tracker_failure">You are already observing this tracker</string>
+    <string name="credits">Credits</string>
+
+    <string name="delete_data_button">Request deletion of Data</string>
+    <string name="delete_data_explanation">Placeholder: Explanation what is happening etc.</string>
+    <string name="copyright">Copyright</string>
+    <string name="developer">Developer: %s</string>
+    <string name="maintainer">Maintainer: %s</string>
 </resources>

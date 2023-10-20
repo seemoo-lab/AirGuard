@@ -56,6 +56,7 @@ class TrackingFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
         val notifId = safeArgs.notificationId
+        // This is called deviceAddress but contains the ID
         val deviceAddress = safeArgs.deviceAddress
         trackingViewModel.notificationId.postValue(notifId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)
@@ -104,8 +105,12 @@ class TrackingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
         val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
+        val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
+        // TODO: include when finished
+        // val observeTrackerButton = view.findViewById<CardView>(R.id.tracking_observation)
         val map = view.findViewById<MapView>(R.id.map)
 
         feedbackButton.setOnClickListener {
@@ -113,6 +118,21 @@ class TrackingFragment : Fragment() {
                 TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
             findNavController().navigate(directions)
         }
+
+        trackingDetailButton.setOnClickListener {
+            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
+            val directions: NavDirections =
+                TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
+            findNavController().navigate(directions)
+        }
+
+        // TODO: include when finished
+//        observeTrackerButton.setOnClickListener {
+//            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
+//            val directions: NavDirections =
+//                TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
+//            findNavController().navigate(directions)
+//        }
 
         playSoundCard.setOnClickListener {
             if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
@@ -154,6 +174,7 @@ class TrackingFragment : Fragment() {
                 trackingViewModel.isMapLoading.postValue(false)
             }
         }
+
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
             if (!it) {
                 try {

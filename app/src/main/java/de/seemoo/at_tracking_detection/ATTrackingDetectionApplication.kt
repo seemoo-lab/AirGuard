@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -20,9 +19,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
-import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.notifications.NotificationService
-import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -32,7 +29,6 @@ import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
-import java.util.*
 import javax.inject.Inject
 
 
@@ -121,23 +117,23 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
 
         if (BuildConfig.DEBUG) {
-            // Get a location for testing
-            Timber.d("Request location")
-            val startTime = Date()
-            val locationRequester: LocationRequester = object  : LocationRequester() {
-                override fun receivedAccurateLocationUpdate(location: Location) {
-                    val endTime = Date()
-                    val duration = (endTime.time - startTime.time) / 1000
-                    Timber.d("Got location $location after $duration s")
-                }
-            }
-            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, 20_000L)
-            if (location != null) {
-                Timber.d("Using last known location")
-            }
-
-            // Printing time zone and user agent
-            Timber.d("Timezone: ${Api.TIME_ZONE} useragent ${Api.USER_AGENT}")
+//            // Get a location for testing
+//            Timber.d("Request location")
+//            val startTime = Date()
+//            val locationRequester: LocationRequester = object  : LocationRequester() {
+//                override fun receivedAccurateLocationUpdate(location: Location) {
+//                    val endTime = Date()
+//                    val duration = (endTime.time - startTime.time) / 1000
+//                    Timber.d("Got location $location after $duration s")
+//                }
+//            }
+//            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, 20_000L)
+//            if (location != null) {
+//                Timber.d("Using last known location")
+//            }
+//
+//            // Printing time zone and user agent
+//            Timber.d("Timezone: ${Api.TIME_ZONE} useragent ${Api.USER_AGENT}")
         }
     }
 
@@ -149,6 +145,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
             requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
         }
 
         for (permission in requiredPermissions) {
@@ -184,6 +183,6 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
         //TODO: Add real survey URL
         val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
-        val SURVEY_IS_RUNNING = true
+        val SURVEY_IS_RUNNING = false
     }
 }

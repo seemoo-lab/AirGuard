@@ -20,7 +20,7 @@ import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.*
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
@@ -32,6 +32,7 @@ import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companio
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -48,7 +49,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private lateinit var bluetoothAdapter: BluetoothAdapter
 
-    private var scanResultDictionary: HashMap<String, DiscoveredDevice> = HashMap()
+    private var scanResultDictionary: ConcurrentHashMap<String, DiscoveredDevice> = ConcurrentHashMap()
 
     var location: Location? = null
         set(value) {
@@ -59,6 +60,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
         }
 
     private var locationRetrievedCallback: (() -> Unit)? = null
+
+    private var locationFetchStarted: Long? = null
 
     override suspend fun doWork(): Result {
         Timber.d("Bluetooth scanning worker started!")
@@ -78,12 +81,13 @@ class ScanBluetoothWorker @AssistedInject constructor(
             return Result.retry()
         }
 
-        scanResultDictionary = HashMap()
+        scanResultDictionary = ConcurrentHashMap()
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = 60_000L)
+            locationFetchStarted = System.currentTimeMillis()
+            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L)
         }
 
         //Starting BLE Scan
@@ -107,15 +111,21 @@ class ScanBluetoothWorker @AssistedInject constructor(
             location = locationProvider.getLastLocation(checkRequirements = false)
         }
 
+        val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
+
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
-            insertScanResult(
-                discoveredDevice.scanResult,
-                location?.latitude,
-                location?.longitude,
-                location?.accuracy,
-                discoveredDevice.discoveryDate,
-            )
+            val deviceType = DeviceManager.getDeviceType(discoveredDevice.scanResult)
+
+            if (deviceType in validDeviceTypes) {
+                insertScanResult(
+                    discoveredDevice.scanResult,
+                    location?.latitude,
+                    location?.longitude,
+                    location?.accuracy,
+                    discoveredDevice.discoveryDate,
+                )
+            }
         }
 
         SharedPrefs.lastScanDate = LocalDateTime.now()
@@ -163,6 +173,8 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     private val locationRequester: LocationRequester = object : LocationRequester() {
         override fun receivedAccurateLocationUpdate(location: Location) {
+            val started = locationFetchStarted ?: System.currentTimeMillis()
+            Timber.d("Got location in ${(System.currentTimeMillis()-started)/1000}s")
             this@ScanBluetoothWorker.location = location
             this@ScanBluetoothWorker.locationRetrievedCallback?.let { it() }
         }
@@ -180,9 +192,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
     private fun getScanDuration(): Long {
         val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
-            15000L
+            30_000L
         } else {
-            8000L
+            20_000L
         }
     }
 
@@ -214,7 +226,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             }
 
             // Fallback if no location is fetched in time
-            val maximumLocationDurationMillis = 60_000L
+            val maximumLocationDurationMillis = LOCATION_UPDATE_MAX_TIME_MS
             handler.postDelayed(runnable, maximumLocationDurationMillis)
         }
     }
@@ -224,6 +236,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
     companion object {
         const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
         const val TIME_BETWEEN_BEACONS: Long = 15 // 15 minutes until the same beacon gets saved again in the db
+        const val LOCATION_UPDATE_MAX_TIME_MS: Long = 122_000L // Wait maximum 122s to get a location update
 
         suspend fun insertScanResult(
             scanResult: ScanResult,
@@ -245,7 +258,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             discoveryDate: LocalDateTime,
             locId: Int?
         ): Beacon? {
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository!!
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository ?: return null
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val uniqueIdentifier = getPublicKey(scanResult)
 
@@ -287,7 +300,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             scanResult: ScanResult,
             discoveryDate: LocalDateTime
         ): BaseDevice? {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return null
 
             val deviceAddress = getPublicKey(scanResult)
 
@@ -325,7 +338,7 @@ class ScanBluetoothWorker @AssistedInject constructor(
             discoveryDate: LocalDateTime,
             accuracy: Float?
         ): LocationModel? {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return null
 
             // set location to null if gps location could not be retrieved
             var location: LocationModel? = null

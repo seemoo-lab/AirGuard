@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.util
 
 import androidx.preference.PreferenceManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -176,6 +177,17 @@ object SharedPrefs {
             sharedPreferences.edit().putString("risk_sensitivity", value).apply()
         }
 
+    var devicesFilter: Set<String>
+        // 0: Low
+        // 1: Medium
+        // 2: High
+        get() {
+            return sharedPreferences.getStringSet("devices_filter", getDefaultDevicesFilterSet())?:getDefaultDevicesFilterSet()
+        }
+        set(value) {
+            sharedPreferences.edit().putStringSet("devices_filter", value).apply()
+        }
+
     var notificationPriorityHigh: Boolean
         get() {
             return sharedPreferences.getBoolean("notification_priority_high", true)
@@ -183,4 +195,9 @@ object SharedPrefs {
         set(value) {
             sharedPreferences.edit().putBoolean("notification_priority_high", value).apply()
         }
+
+    private fun getDefaultDevicesFilterSet(): Set<String> {
+        val defaultValues = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
+        return defaultValues.toSet()
+    }
 }
