@@ -1,4 +1,0 @@
-• Wir führen eine Umfrage über Stalking durch und wollen herausfinden, wie Nutzer:innen besser vor diesen Attacken geschützt werden können. 
-• Die Tracking Erkennung wurde verbessert. 
-• Wir haben die Navigation in der App verbessert. Du findest nun alle gefundenen Geräte im entsprechenden Tab, 
-• Gerätefilter wurden verbessert. Sie sind nun einfacher zu erkennen und zu verstehen. 
