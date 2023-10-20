@@ -209,7 +209,7 @@ open class LocationProvider @Inject constructor(
                 handler.looper
             )
         }
-
+        
         if (networkProviderEnabled) {
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
