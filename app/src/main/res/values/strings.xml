@@ -332,6 +332,10 @@
 
     <string name="delete_data_button">Request deletion of Data</string>
     <string name="delete_data_explanation">Placeholder: Explanation what is happening etc.</string>
+    <string name="delete_data_success">Data deletion successful</string>
+    <string name="delete_data_error">Something went wrong</string>
+    <string name="delete_data_no_data">No data to delete</string>
+
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>

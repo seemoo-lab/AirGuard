@@ -297,6 +297,9 @@
     <string name="credits">Credits</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
     <string name="delete_data_explanation">Platzhalter: Hier Erklärtext</string>
+    <string name="delete_data_success">Datenlöschung erfolgreich</string>
+    <string name="delete_data_error">Etwas ist schief gelaufen</string>
+    <string name="delete_data_no_data">Keine Daten zum Löschen vorhanden</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
