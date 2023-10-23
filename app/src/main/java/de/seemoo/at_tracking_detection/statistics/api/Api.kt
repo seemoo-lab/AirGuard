@@ -32,7 +32,7 @@ interface Api {
      * Deletes the study data related to the given token.
      */
     @Headers("Authorization: Api-Key $API_KEY")
-    @GET("delete_study_data")
+    @DELETE("delete_study_data")
     suspend fun deleteStudyData(
         @Header("token") token: String,
         @Header("X-Timezone") timezone: String = TIME_ZONE,
