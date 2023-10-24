@@ -14,7 +14,12 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentShareDataBinding
+import de.seemoo.at_tracking_detection.statistics.api.Api
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,6 +31,9 @@ class ShareDataFragment : Fragment(), SlidePolicy {
 
     @Inject
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
+    @Inject
+    lateinit var api: Api
 
     private var buttonPressed: Boolean = false
 
@@ -52,6 +60,15 @@ class ShareDataFragment : Fragment(), SlidePolicy {
             it.setBackgroundColor(Color.GREEN)
             noButton.setBackgroundColor(Color.TRANSPARENT)
             sharedPreferences.edit().putBoolean("share_data", true).apply()
+
+            var token = SharedPrefs.token
+            if (token == null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val response = api.getToken().body() ?: return@launch
+                    token = response.token
+                    SharedPrefs.token = token
+                }
+            }
         }
         noButton.setOnClickListener {
             buttonPressed = true

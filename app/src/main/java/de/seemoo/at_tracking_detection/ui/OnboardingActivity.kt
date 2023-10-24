@@ -218,9 +218,7 @@ class OnboardingActivity : AppIntro() {
 
         notificationSlide(slideNumber + 3)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            addSlide(IgnoreBatteryOptimizationFragment.newInstance())
-        }
+        addSlide(IgnoreBatteryOptimizationFragment.newInstance())
 
         addSlide(ShareDataFragment.newInstance())
 
