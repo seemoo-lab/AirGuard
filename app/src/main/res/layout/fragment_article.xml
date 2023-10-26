@@ -46,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/article_author" />
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/markdown"
+        android:id="@+id/markdown_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"

@@ -49,7 +49,15 @@
         android:name="de.seemoo.at_tracking_detection.ui.dashboard.ArticleFragment"
         android:label="@string/title_article"
         tools:layout="@layout/fragment_article">
-        <!-- TODO: Add Argument for Article -->
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="author"
+            app:argType="string" />
+        <argument
+            android:name="filename"
+            app:argType="string" />
     </fragment>
 
     <!-- Settings -->

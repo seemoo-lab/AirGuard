@@ -126,9 +126,6 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
 
-    implementation 'io.noties.markwon:core:4.6.2'
-//    implementation 'org.commonmark:commonmark-java:0.30.0'
-//    implementation 'com.mikepenz:multiplatform-markdown-renderer-android:0.8.0'
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
 
 
