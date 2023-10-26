@@ -342,6 +342,8 @@
     <string name="delete_data_error">Something went wrong</string>
     <string name="delete_data_no_data">No data to delete</string>
 
+    <string name="article_reading_time">Reading time: %d min</string>
+
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>

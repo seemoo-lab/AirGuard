@@ -1,21 +1,18 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -86,9 +83,14 @@ class DashboardRiskFragment : Fragment() {
             val layout = LayoutInflater.from(context).inflate(R.layout.include_article_card, null)
             val textViewTitle = layout.findViewById<TextView>(R.id.card_title)
             val textViewPreviewText = layout.findViewById<TextView>(R.id.card_text_preview)
+            val materialCard = layout.findViewById<MaterialCardView>(R.id.material_card)
 
             textViewTitle.text = article.title
-            textViewPreviewText.text = article.title
+            textViewPreviewText.text = article.previewText
+
+            // TODO: for some reason not picking correct color
+            val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
+            materialCard.setBackgroundColor(colorResourceId)
 
             articleCard.addView(layout)
             Timber.tag("CardAdded").d("Article card added: %s", article.title)
@@ -103,7 +105,8 @@ class DashboardRiskFragment : Fragment() {
                     DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(
                         author = article.author,
                         title = article.title,
-                        filename = article.filename
+                        filename = article.filename,
+                        readingTime = article.readingTime
                     )
                 findNavController().navigate(directions)
             }

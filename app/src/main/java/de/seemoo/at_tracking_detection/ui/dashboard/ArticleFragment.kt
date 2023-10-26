@@ -41,14 +41,14 @@ class ArticleFragment : Fragment() {
 
         val title = arguments?.getString("title")
         val author = arguments?.getString("author")
+        val readingTime = arguments?.getInt("readingTime")
         val filename = arguments?.getString("filename")
 
-        // val url = getURL(filename!!)
-        val url = getURL("test.md")
+        val url = getURL(filename!!)
 
         titleTextView.text = title
         authorTextView.text = author
-        // articleReadingTimeView.text = calculateReadingTime(url).toString() + " min" // TODO strings
+        articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
         markdownView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {

@@ -58,6 +58,9 @@
         <argument
             android:name="filename"
             app:argType="string" />
+        <argument
+            android:name="readingTime"
+            app:argType="integer" />
     </fragment>
 
     <!-- Settings -->

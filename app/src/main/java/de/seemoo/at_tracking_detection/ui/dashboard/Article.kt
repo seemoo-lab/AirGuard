@@ -9,6 +9,9 @@ import java.net.URL
 data class Article(
     val title: String,
     val author: String,
+    val readingTime: Int,
+    val previewText: String,
+    val cardColor: String,
     val filename: String
 )
 
@@ -31,38 +34,78 @@ fun getURL(filename: String): URL {
 //}
 
 fun downloadJson(url: String): String {
-    return try {
-        val connection = URL(url).openConnection()
-        connection.setRequestProperty("Accept", "application/json")
-        connection.connectTimeout = 1000
+    return """
+        {
+            "article1": {
+                "title": "Airguard Article Test 1",
+                "author": "Alexander Heinrich",
+                "readingTime": 5,
+                "previewText": "Preview Text 1",
+                "cardColor": "blue",
+                "filename": "test.md"
+            },
+            "article2": {
+                "title": "Airguard Article Test 2",
+                "author": "Dennis Arndt",
+                "readingTime": 2,
+                "previewText": "Preview Text 2",
+                "cardColor": "grey",
+                "filename": "test.md"
+            },
+            "article3": {
+                "title": "Airguard Article Test 3",
+                "author": "Leon Böttger",
+                "readingTime": 4,
+                "previewText": "Preview Text 3",
+                "cardColor": "grey",
+                "filename": "test.md"
+            }
+        }
+        """
 
-        // Add a debug statement to print the URL of the connection
-        println("Connection URL: ${connection.url}")
-        val inputStream = connection.getInputStream()
-        val reader = BufferedReader(InputStreamReader(inputStream))
-        val json = reader.readLines().joinToString("\n")
-        reader.close()
-        inputStream.close()
-        json
-    } catch (e: Exception) {
-        println("An error occurred while downloading the JSON file: ${e.message}")
-        // TODO: "{}" // Return an empty JSON file if something goes wrong
-        "{\n" +
-        "\t\"article0\": {\n" +
-        "\t\t\"title\": \"Airguard Article Test 1\",\n" +
-        "\t\t\"author\": \"Alexander Heinrich\",\n" +
-        "\t\t\"filename\": \"test.md\"\n" +
-        "\t},\n" +
-        "\t\"article1\": {\n" +
-        "\t\t\"title\": \"Airguard Article Test 2\",\n" +
-        "\t\t\"author\": \"Dennis Arndt\",\n" +
-        "\t\t\"filename\": \"test.md\"\n" +
-        "\t},\n" +
-        "\t\"article2\": {\n" +
-        "\t\t\"title\": \"Airguard Article Test 3\",\n" +
-        "\t\t\"author\": \"Leon Böttger\",\n" +
-        "\t\t\"filename\": \"test.md\"\n" +
-        "\t}\n" +
-        "}"
-    }
+//    return try {
+//        val connection = URL(url).openConnection()
+//        connection.setRequestProperty("Accept", "application/json")
+//        connection.connectTimeout = 1000
+//
+//        // Add a debug statement to print the URL of the connection
+//        println("Connection URL: ${connection.url}")
+//        val inputStream = connection.getInputStream()
+//        val reader = BufferedReader(InputStreamReader(inputStream))
+//        val json = reader.readLines().joinToString("\n")
+//        reader.close()
+//        inputStream.close()
+//        json
+//    } catch (e: Exception) {
+//        println("An error occurred while downloading the JSON file: ${e.message}")
+//        // TODO: "{}" // Return an empty JSON file if something goes wrong
+//        """
+//        {
+//            {
+//                "title": "Airguard Article Test 1",
+//                "author": "Alexander Heinrich",
+//                "readingTime": 5,
+//                "previewText": "Preview Text 1",
+//                "cardColor": "blue",
+//                "filename": "test.md"
+//            },
+//            {
+//                "title": "Airguard Article Test 2",
+//                "author": "Dennis Arndt",
+//                "readingTime": 2,
+//                "previewText": "Preview Text 2",
+//                "cardColor": "grey",
+//                "filename": "test.md"
+//            },
+//            {
+//                "title": "Airguard Article Test 3",
+//                "author": "Leon Böttger",
+//                "readingTime": 4,
+//                "previewText": "Preview Text 3",
+//                "cardColor": "grey",
+//                "filename": "test.md"
+//            }
+//        }
+//        """
+//    }
 }
