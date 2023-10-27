@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +50,7 @@ class DashboardRiskFragment : Fragment() {
     }
 
 
+    @SuppressLint("DiscouragedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -95,8 +97,10 @@ class DashboardRiskFragment : Fragment() {
 
                     articleCard.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                    ).apply {
+                        topMargin = 22
+                    }
 
                     articleCard.setOnClickListener {
                         val directions: NavDirections =

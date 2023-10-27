@@ -37,12 +37,15 @@ class ArticleFragment : Fragment() {
         titleTextView.text = title
         authorTextView.text = author
         articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
+
+        var modifier = Modifier.fillMaxSize()
+
         markdownView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MarkDown(
                     url = url,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
         }
@@ -50,3 +53,4 @@ class ArticleFragment : Fragment() {
         return view
     }
 }
+
