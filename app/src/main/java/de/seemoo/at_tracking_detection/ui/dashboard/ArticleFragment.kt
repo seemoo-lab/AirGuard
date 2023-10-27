@@ -6,27 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import com.mukesh.MarkDown
 import de.seemoo.at_tracking_detection.R
-import org.w3c.dom.Text
-import java.net.URL
 
 
 class ArticleFragment : Fragment() {
-
-//    private val titleTextView: TextView by lazy { view?.findViewById(R.id.article_title) as TextView }
-//    private val authorTextView: TextView by lazy { view?.findViewById(R.id.article_author) as TextView }
-//    private val readingTimeTextView: TextView by lazy { view?.findViewById(R.id.article_reading_time) as TextView }
-
-    // private val articleWebView: WebView by lazy { view?.findViewById(R.id.article_webview) as WebView }
-
-//    private val composeView: ComposeView by lazy { view?.findViewById(R.id.markdown) as ComposeView }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
