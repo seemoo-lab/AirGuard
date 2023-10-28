@@ -102,15 +102,17 @@ class DashboardRiskFragment : Fragment() {
                         topMargin = 22
                     }
 
-                    articleCard.setOnClickListener {
-                        val directions: NavDirections =
-                            DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(
-                                author = article.author,
-                                title = article.title,
-                                filename = article.filename,
-                                readingTime = article.readingTime
-                            )
-                        findNavController().navigate(directions)
+                    if(article.filename != "") {
+                        articleCard.setOnClickListener {
+                            val directions: NavDirections =
+                                DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(
+                                    author = article.author,
+                                    title = article.title,
+                                    filename = article.filename,
+                                    readingTime = article.readingTime
+                                )
+                            findNavController().navigate(directions)
+                        }
                     }
 
                     articleCardsLinearLayout.addView(articleCard)

@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.dashboard
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -28,7 +29,21 @@ fun getURL(filename: String): URL {
 }
 
 fun downloadJson(url: String): String {
+    val errorReturnValue = """
+        {
+            "article0": {
+                "title": "No internet connection",
+                "author": "Dennis Arndt",
+                "readingTime": 0,
+                "previewText": "You are currently not connected to the internet. You will find articles that will help you navigate the app here when you are connected to the internet.",
+                "cardColor": "blue_card_background",
+                "filename": ""
+            }
+        }
+    """.trimIndent()
+
     val connection = URL(url).openConnection() as HttpURLConnection
+
 
     return try {
         connection.requestMethod = "GET"
@@ -44,8 +59,11 @@ fun downloadJson(url: String): String {
             reader.close()
             response.toString()
         } else {
-            "{}"
+            errorReturnValue
         }
+    } catch (e: Exception) {
+        Timber.e(e)
+        errorReturnValue
     } finally {
         connection.disconnect()
     }
