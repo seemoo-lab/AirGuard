@@ -21,6 +21,11 @@
                 android:id="@+id/deletion_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/delete_data_explanation"
                 android:gravity="center"/>
         </LinearLayout>
