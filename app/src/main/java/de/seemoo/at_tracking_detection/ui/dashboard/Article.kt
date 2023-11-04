@@ -28,9 +28,29 @@ fun getURL(filename: String): URL {
     return URL("https://tpe.seemoo.tu-darmstadt.de/static/articles/$filename")
 }
 
-fun downloadJson(url: String): String {
-    val errorReturnValue = """
-        {
+fun downloadJson(language: String): String {
+    val fallbackURL = "https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json"
+
+    // TODO: set different language article urls
+    val url = when (language) {
+        "de" -> "https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json"
+        "en" -> "https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json"
+        else -> fallbackURL
+    }
+
+    val errorReturnValue = when (language) {
+        "de" -> """{
+            "article0": {
+                "title": "Keine Internetverbindung",
+                "author": "Dennis Arndt",
+                "readingTime": 0,
+                "previewText": "Es besteht aktuell keine Internetverbindung. Hier werden Artikel angezeigt, die dir helfen die App zu bedienen, sobald du wieder mit dem Internet verbunden bist.",
+                "cardColor": "blue_card_background",
+                "filename": ""
+            }
+        }
+        """.trimIndent()
+        else -> """{
             "article0": {
                 "title": "No internet connection",
                 "author": "Dennis Arndt",
@@ -40,7 +60,8 @@ fun downloadJson(url: String): String {
                 "filename": ""
             }
         }
-    """.trimIndent()
+        """.trimIndent()
+    }
 
     val connection = URL(url).openConnection() as HttpURLConnection
 
