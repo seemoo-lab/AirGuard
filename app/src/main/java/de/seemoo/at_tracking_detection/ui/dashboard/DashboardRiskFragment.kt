@@ -67,8 +67,7 @@ class DashboardRiskFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             progressBar.visibility = View.VISIBLE
 
-            val locale = resources.configuration.locales[0].language
-            val articlesJSON = downloadJson(locale)
+            val articlesJSON = downloadJson()
             Timber.d("Articles JSON: %s", articlesJSON)
 
             withContext(Dispatchers.Main) {

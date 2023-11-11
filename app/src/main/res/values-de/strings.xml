@@ -305,8 +305,14 @@
     <string name="delete_data_success">Datenlöschung erfolgreich</string>
     <string name="delete_data_error">Etwas ist schief gelaufen</string>
     <string name="delete_data_no_data">Keine Daten zum Löschen vorhanden</string>
+
+    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json</string>
     <string name="article_reading_time">Lesedauer: %d min</string>
+    <string name="article_offline_header">Keine Internetverbindung</string>
+    <string name="article_offline_text">Es besteht aktuell keine Internetverbindung. Hier werden Artikel angezeigt, die dir helfen die App zu bedienen, sobald du wieder mit dem Internet verbunden bist.</string>
+
     <string name="copyright">Copyright</string>
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
+
 </resources>
