@@ -50,6 +50,12 @@ class BackgroundWorkScheduler @Inject constructor(
         backgroundWorkBuilder.buildSendStatisticsWorker()
     ).also { it.logOperationSchedule(WorkerConstants.PERIODIC_SEND_STATISTICS_WORKER) }
 
+    fun scheduleShareDataDebug() = workManager.enqueueUniqueWork(
+        WorkerConstants.ONETIME_SEND_STATISTICS_WORKER,
+        ExistingWorkPolicy.APPEND_OR_REPLACE,
+        backgroundWorkBuilder.buildSendStatisticsWorkerDebug()
+    ).also { it.logOperationSchedule(WorkerConstants.ONETIME_SEND_STATISTICS_WORKER) }
+
     fun removeShareData() =
         workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SEND_STATISTICS_WORKER)
 
