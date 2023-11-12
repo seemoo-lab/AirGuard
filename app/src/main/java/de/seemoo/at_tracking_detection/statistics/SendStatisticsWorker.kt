@@ -22,23 +22,37 @@ class SendStatisticsWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        if (BuildConfig.DEBUG) {
-            Timber.d("Not sending any data. Debug mode")
-            return Result.success()
-        }
+//        if (BuildConfig.DEBUG) {
+//            Timber.d("Not sending any data. Debug mode")
+//            return Result.success()
+//        }
         var token = SharedPrefs.token
         val lastDataDonation = SharedPrefs.lastDataDonation ?: LocalDateTime.MIN
 
-        if (!api.ping().isSuccessful) {
-            Timber.e("Server not available!")
+        try {
+            if (!api.ping().isSuccessful) {
+                Timber.e("Server not available!")
+                return Result.retry()
+            }
+        }catch (e: Error) {
+            Timber.e("Failed pinging server")
+            Timber.e(e.message)
             return Result.retry()
         }
 
+
         if (token == null) {
-            val response = api.getToken().body() ?: return Result.retry()
-            token = response.token
-            SharedPrefs.token = token
+            try {
+                val response = api.getToken().body() ?: return Result.retry()
+                token = response.token
+                SharedPrefs.token = token
+            }catch (e: Error) {
+                Timber.e("Failed getting token")
+                Timber.e(e.message)
+                return Result.retry()
+            }
         }
+
 
         val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
         val uploadDateTime: LocalDateTime = if (lastDataDonation > oneWeekAgo) {
@@ -48,12 +62,10 @@ class SendStatisticsWorker @AssistedInject constructor(
             }
 
         val devices = deviceRepository.getDeviceBeaconsSinceDate(uploadDateTime)
-        // This makes sure that no devices will be sent twice. If the donation fails, then the app
-        // will upload newer data the next time.
-        SharedPrefs.lastDataDonation = LocalDateTime.now()
 
         if (devices.isEmpty()) {
             Timber.d("Nothing to send...")
+            SharedPrefs.lastDataDonation = LocalDateTime.now()
             return Result.success()
         }
 
@@ -68,7 +80,19 @@ class SendStatisticsWorker @AssistedInject constructor(
             }
         }
 
-        if (!api.donateData(token = token, devices=devices).isSuccessful) {
+        if (!BuildConfig.DEBUG) {
+            // This makes sure that no devices will be sent twice. If the donation fails, then the app
+            // will upload newer data the next time.
+            SharedPrefs.lastDataDonation = LocalDateTime.now()
+        }
+        Timber.d("Trying to upload ${devices.size}")
+        try {
+            if (!api.donateData(token = token, devices=devices).isSuccessful) {
+                return Result.retry()
+            }
+        }catch (e: Error) {
+            Timber.e("Failed uploading devices")
+            Timber.e(e.message)
             return Result.retry()
         }
 

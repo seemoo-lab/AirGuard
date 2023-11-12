@@ -5,6 +5,7 @@ object WorkerConstants {
     const val MIN_HOURS_TO_NEXT_SEND_STATISTICS = 4L
     const val PERIODIC_SCAN_WORKER = "PeriodicScanWorker"
     const val PERIODIC_SEND_STATISTICS_WORKER = "PeriodicSendStatisticsWorker"
+    const val ONETIME_SEND_STATISTICS_WORKER = "OneTimeSendStatisticsWorker"
     const val TRACKING_DETECTION_WORKER = "TrackingDetectionWorker"
     const val IGNORE_DEVICE_WORKER = "IgnoreDeviceWorker"
     const val FALSE_ALARM_WORKER = "FalseAlarmWorker"

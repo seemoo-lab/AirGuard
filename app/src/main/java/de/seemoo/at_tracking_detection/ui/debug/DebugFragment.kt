@@ -100,7 +100,7 @@ class DebugFragment : Fragment() {
                 }
             }
         view.findViewById<Button>(R.id.donate_data)?.setOnClickListener {
-            backgroundWorkScheduler.scheduleShareData()
+            backgroundWorkScheduler.scheduleShareDataDebug()
         }
 
         view.findViewById<Button>(R.id.button4)?.setOnClickListener {
