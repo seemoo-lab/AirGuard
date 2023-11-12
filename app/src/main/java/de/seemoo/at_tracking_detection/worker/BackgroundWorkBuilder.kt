@@ -28,6 +28,13 @@ class BackgroundWorkBuilder @Inject constructor() {
             .setConstraints(buildConstraints())
             .build()
 
+    /*Send statistics now*/
+    fun buildSendStatisticsWorkerDebug(): OneTimeWorkRequest =
+        OneTimeWorkRequestBuilder<SendStatisticsWorker>().addTag(WorkerConstants.ONETIME_SEND_STATISTICS_WORKER)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.HOURS)
+            .setConstraints(buildConstraints())
+            .build()
+
     fun buildTrackingDetectorWorker(): OneTimeWorkRequest =
         OneTimeWorkRequestBuilder<TrackingDetectorWorker>().addTag(WorkerConstants.TRACKING_DETECTION_WORKER)
             .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
