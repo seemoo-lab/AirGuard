@@ -82,7 +82,7 @@ interface DeviceDao {
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
-    @Query("SELECT * FROM device JOIN beacon ON beacon.deviceAddress = deviceAddress WHERE beacon.receivedAt >= :dateTime")
+    @Query("SELECT * FROM device WHERE lastSeen >= :dateTime")
     suspend fun getDeviceBeaconsSince(dateTime: LocalDateTime): List<DeviceBeaconNotification>
 
     @Transaction
