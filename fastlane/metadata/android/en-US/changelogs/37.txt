@@ -1,6 +1,0 @@
-- Support for Samsung SmartTags 
-- Support for Chipolo Tags 
-- Improved tracking detecting 
-- Improved risk evaluation 
-- Improved user interface for manual scanning
-- The app can now detect AirTags which are connected to an iPhone

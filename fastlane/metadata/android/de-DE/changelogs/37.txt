@@ -1,5 +1,0 @@
-- Samsung SmartTags werden unterstützt 
-- Chipolo Tags werden unterstützt 
-- Verbesserte Tracking Erkennung 
-- Verbessertes Nutzerinterface für manuelles Scannen
-- Erkennung von AirTags die mit einem iPhone verbunden sind

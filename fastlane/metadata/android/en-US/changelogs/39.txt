@@ -1,3 +1,4 @@
+This version fixes some minor issues in version 2.1
 - Search for scanners using a detailed scan
 - Manual scan sort options
 - Manual scan can be paused
