@@ -18,11 +18,11 @@ data class DeviceBeaconNotification(
     val lastSeen: LocalDateTime,
     val deviceType: DeviceType,
     @Relation(parentColumn = "address", entityColumn = "deviceAddress")
-    val beacons: List<Beacon>,
+    var beacons: List<Beacon>,
     @Relation(
         parentColumn = "address",
         entityColumn = "deviceAddress",
         entity = Notification::class
     )
-    val notifications: List<NotificationFeedback>
+    var notifications: List<NotificationFeedback>
 )

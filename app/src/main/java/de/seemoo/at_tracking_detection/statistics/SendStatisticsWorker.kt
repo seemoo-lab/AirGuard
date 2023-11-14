@@ -22,10 +22,11 @@ class SendStatisticsWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-//        if (BuildConfig.DEBUG) {
-//            Timber.d("Not sending any data. Debug mode")
-//            return Result.success()
-//        }
+        if (BuildConfig.DEBUG) {
+            Timber.d("Not sending any data. Debug mode")
+            return Result.success()
+        }
+
         var token = SharedPrefs.token
         val lastDataDonation = SharedPrefs.lastDataDonation ?: LocalDateTime.MIN
 
@@ -55,12 +56,17 @@ class SendStatisticsWorker @AssistedInject constructor(
 
 
         val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
-        val uploadDateTime: LocalDateTime = if (lastDataDonation > oneWeekAgo) {
+        var uploadDateTime: LocalDateTime = if (lastDataDonation > oneWeekAgo) {
                 lastDataDonation
             }else {
                 oneWeekAgo
             }
 
+        if (BuildConfig.DEBUG) {
+            uploadDateTime = LocalDateTime.now().minusDays(1)
+        }
+
+        // Get all devices last seen, since the last upload time
         val devices = deviceRepository.getDeviceBeaconsSinceDate(uploadDateTime)
 
         if (devices.isEmpty()) {
@@ -72,11 +78,19 @@ class SendStatisticsWorker @AssistedInject constructor(
         // Remove sensitive data
         devices.forEach {
             it.address = ""
+            // Remove beacons that have already been uploaded
+            it.beacons = it.beacons.filter { beacon ->
+                beacon.receivedAt >= uploadDateTime
+            }
             it.beacons.forEach { beacon ->
                 // beacon.latitude = null
                 // beacon.longitude = null
                 beacon.locationId = null
                 beacon.deviceAddress = ""
+            }
+            // Remove notifications that have already been uploaded
+            it.notifications = it.notifications.filter { notification ->
+                notification.createdAt >= uploadDateTime
             }
         }
 
@@ -85,7 +99,7 @@ class SendStatisticsWorker @AssistedInject constructor(
             // will upload newer data the next time.
             SharedPrefs.lastDataDonation = LocalDateTime.now()
         }
-        Timber.d("Trying to upload ${devices.size}")
+        Timber.d("Trying to upload ${devices.size} devices")
         try {
             if (!api.donateData(token = token, devices=devices).isSuccessful) {
                 return Result.retry()
@@ -97,7 +111,7 @@ class SendStatisticsWorker @AssistedInject constructor(
         }
 
         Timber.d("${devices.size} devices shared!")
-
+        SharedPrefs.lastDataDonation = LocalDateTime.now()
         return Result.success()
     }
 }
