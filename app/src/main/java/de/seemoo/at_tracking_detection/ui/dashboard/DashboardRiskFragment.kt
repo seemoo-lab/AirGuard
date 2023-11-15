@@ -66,7 +66,8 @@ class DashboardRiskFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             progressBar.visibility = View.VISIBLE
-            val articlesJSON = downloadJson("https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json")
+
+            val articlesJSON = downloadJson()
             Timber.d("Articles JSON: %s", articlesJSON)
 
             withContext(Dispatchers.Main) {
