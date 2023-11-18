@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.startActivitySafe
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
 import javax.inject.Inject
@@ -52,7 +53,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     Intent.ACTION_VIEW,
                     Uri.parse("https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html")
                 )
-                startActivity(intent)
+                startActivitySafe(intent)
                 return@OnPreferenceClickListener true
             }
 

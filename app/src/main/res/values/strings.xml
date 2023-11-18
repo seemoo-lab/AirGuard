@@ -109,6 +109,7 @@
 
     <string name="settings_information_contact_title">Information &amp; Contact</string>
     <string name="settings_information_contact_summary">Get information about us</string>
+    <string name="app_handler_not_found">App for opening this content isn\'t found</string>
 
     <string name="settings_delete_study_data_title">Delete study data</string>
     <string name="settings_delete_study_data_summary">Request deletion of study data</string>
