@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -7,10 +8,11 @@ import androidx.fragment.app.Fragment
 import de.seemoo.at_tracking_detection.R
 
 inline fun Context.startActivitySafe(intent: Intent, onError: () -> Unit = { showNotAppFound() }) {
-    if (intent.resolveActivity(packageManager) != null)
+    try {
         startActivity(intent)
-    else
+    } catch (e: ActivityNotFoundException) {
         onError()
+    }
 }
 
 fun Context.showNotAppFound() {
@@ -18,7 +20,9 @@ fun Context.showNotAppFound() {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun Fragment.startActivitySafe(intent: Intent, onError: (() -> Unit)? = null) {
-    val context = requireContext()
-    context.startActivitySafe(intent, onError ?: { context.showNotAppFound() })
+inline fun Fragment.startActivitySafe(
+    intent: Intent,
+    onError: () -> Unit = { context?.showNotAppFound() }
+) {
+    context?.startActivitySafe(intent, onError)
 }

@@ -65,7 +65,7 @@ class IgnoreBatteryOptimizationFragment : Fragment() {
             intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
             intent.data = Uri.parse("package:$packageName")
         }
-        requireContext().startActivitySafe(intent)
+        startActivitySafe(intent)
     }
 
     companion object {
