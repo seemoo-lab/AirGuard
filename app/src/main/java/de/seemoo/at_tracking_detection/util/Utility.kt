@@ -103,7 +103,6 @@ object Utility {
         val geoPointList = ArrayList<GeoPoint>()
         val markerList = ArrayList<Marker>()
 
-
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
@@ -113,10 +112,11 @@ object Utility {
         withContext(Dispatchers.Default) {
             locationList
                 .filter { it.locationId != 0 }
-                .map { location ->
+                .forEach { location ->
                     if (!map.isShown) {
-                        return@map
+                        return@forEach
                     }
+
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint
@@ -134,8 +134,8 @@ object Utility {
                     }
                 }
         }
-        map.overlays.addAll(markerList)
 
+        map.overlays.addAll(markerList)
         Timber.d("Added ${geoPointList.size} markers to the map!")
 
         if (connectWithPolyline) {
@@ -159,15 +159,12 @@ object Utility {
             try {
                 Timber.d("Zoom in to bounds -> $boundingBox")
                 map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
-
             } catch (e: IllegalArgumentException) {
                 mapController.setCenter(boundingBox.centerWithDateLine)
                 mapController.setZoom(10.0)
                 Timber.e("Failed to zoom to bounding box! ${e.message}")
             }
         }
-
-        // map.zoomToBoundingBox(boundingBox, true)
 
         return true
     }
