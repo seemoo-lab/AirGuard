@@ -82,7 +82,7 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     }
 
     private fun dismissWithDelay() {
-        if (isAdded) {
+        if (isAdded && !isDetached && !isRemoving) {
             Handler(Looper.getMainLooper()).postDelayed({
                 dismiss()
             }, DIALOG_CLOSE_DELAY)
