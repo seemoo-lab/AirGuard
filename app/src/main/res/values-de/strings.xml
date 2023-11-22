@@ -306,6 +306,8 @@
     <string name="delete_data_error">Etwas ist schief gelaufen</string>
     <string name="delete_data_no_data">Keine Daten zum Löschen vorhanden</string>
 
+    <string name="article_image_description">Vorschaubild für diesen Artikel</string>
+
     <string name="smarttag_uwb">SmartTag (mit UWB)</string>
 
     <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json</string>

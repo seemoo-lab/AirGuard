@@ -16,6 +16,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
+    val preview_image: String, // TODO: Rename when in production to PreviewImage, also in JSON
     val filename: String
 )
 
@@ -28,6 +29,10 @@ fun parseArticles(jsonString: String): List<Article> {
 
 fun getURL(filename: String): URL {
     return URL("https://tpe.seemoo.tu-darmstadt.de/static/articles/$filename")
+}
+
+fun getImageURL(filename: String): String {
+    return "https://tpe.seemoo.tu-darmstadt.de/articles/$filename"
 }
 
 fun downloadJson(): String {

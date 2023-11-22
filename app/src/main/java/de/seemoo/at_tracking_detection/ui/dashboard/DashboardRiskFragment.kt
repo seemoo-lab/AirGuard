@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -15,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -85,10 +87,15 @@ class DashboardRiskFragment : Fragment() {
                     val layout = LayoutInflater.from(context).inflate(R.layout.include_article_card, null)
                     val textViewTitle = layout.findViewById<TextView>(R.id.card_title)
                     val textViewPreviewText = layout.findViewById<TextView>(R.id.card_text_preview)
+                    val imageViewPreview = layout.findViewById<ImageView>(R.id.preview_image)
                     val materialCard = layout.findViewById<MaterialCardView>(R.id.material_card)
 
                     textViewTitle.text = article.title
-                    textViewPreviewText.text = article.previewText
+                    if (article.previewText.isNotEmpty()){
+                        textViewPreviewText.text = article.previewText
+                    } else {
+                        textViewPreviewText.visibility = View.GONE
+                    }
 
                     val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
                     materialCard.setBackgroundColor(colorResourceId)
@@ -103,7 +110,20 @@ class DashboardRiskFragment : Fragment() {
                         topMargin = 22
                     }
 
-                    if(article.filename != "") {
+                    if (article.preview_image.isNotEmpty()) { // TODO: Rename when in production to PreviewImage, also in JSON
+                        val imageURL = getImageURL(article.preview_image) // TODO: Rename when in production to PreviewImage, also in JSON
+                        // TODO: Load image from URL
+                        context?.let {
+                            Glide.with(it)
+                                .load(imageURL)
+                                .fitCenter()
+                                .into(imageViewPreview)
+                        }
+                    } else {
+                        imageViewPreview.visibility = View.GONE
+                    }
+
+                    if (article.filename.isNotEmpty()) {
                         articleCard.setOnClickListener {
                             val directions: NavDirections =
                                 DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(

@@ -128,6 +128,8 @@ dependencies {
 
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
 
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+
 
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     kapt 'androidx.hilt:hilt-compiler:1.0.0'

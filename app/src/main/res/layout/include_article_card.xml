@@ -27,6 +27,12 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/preview_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/article_image_description"/>
+
             <TextView
                 android:id="@+id/card_text_preview"
                 android:layout_width="match_parent"
