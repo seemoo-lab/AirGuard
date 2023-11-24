@@ -43,26 +43,30 @@ class DataDeletionFragment : Fragment() {
         deletionButton.setOnClickListener {
             val token = SharedPrefs.token
 
-            sharedPreferences.edit().putBoolean("share_data", false).apply()
-
             CoroutineScope(Dispatchers.Main).launch {
                 if (!api.ping().isSuccessful) {
                     Timber.e("Server not available!")
-                    return@launch
-                }
-                if (token != null) {
-                    val response = api.deleteStudyData(token)
-                    val text = when {
-                        response.isSuccessful -> R.string.delete_data_success
-                        else -> R.string.delete_data_error
-                    }
+                    val text = R.string.delete_data_server_error
                     Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
-                    if (response.isSuccessful) {
-                        findNavController().popBackStack()
-                    }
-                } else {
+                } else if (token == null) {
+                    Timber.e("Token is null! Could not delete data!")
                     val text = R.string.delete_data_no_data
                     Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                } else {
+                    val response = api.deleteStudyData(token)
+
+                    if (response.isSuccessful) {
+                        Timber.e("Data Deletion Successful!")
+                        SharedPrefs.token = null
+                        sharedPreferences.edit().putBoolean("share_data", false).apply()
+                        val text = R.string.delete_data_success
+                        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                        findNavController().popBackStack()
+                    } else {
+                        Timber.e("Data Deletion Failed! Server sent error!")
+                        val text = R.string.delete_data_error
+                        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                    }
                 }
             }
 

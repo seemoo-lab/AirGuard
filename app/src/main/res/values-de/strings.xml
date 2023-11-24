@@ -304,6 +304,7 @@
     <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf "Ja" bei der Studienteilnahme klicken.</string>
     <string name="delete_data_success">Datenlöschung erfolgreich</string>
     <string name="delete_data_error">Etwas ist schief gelaufen</string>
+    <string name="delete_data_server_error">Server nicht erreichbar. Versuche es später nochmal.</string>
     <string name="delete_data_no_data">Keine Daten zum Löschen vorhanden</string>
 
     <string name="article_image_description">Vorschaubild für diesen Artikel</string>

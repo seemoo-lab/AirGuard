@@ -112,7 +112,6 @@ class DashboardRiskFragment : Fragment() {
 
                     if (article.preview_image.isNotEmpty()) { // TODO: Rename when in production to PreviewImage, also in JSON
                         val imageURL = getImageURL(article.preview_image) // TODO: Rename when in production to PreviewImage, also in JSON
-                        // TODO: Load image from URL
                         context?.let {
                             Glide.with(it)
                                 .load(imageURL)

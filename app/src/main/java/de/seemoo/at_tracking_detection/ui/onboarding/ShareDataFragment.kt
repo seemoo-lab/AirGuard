@@ -60,15 +60,6 @@ class ShareDataFragment : Fragment(), SlidePolicy {
             it.setBackgroundColor(Color.GREEN)
             noButton.setBackgroundColor(Color.TRANSPARENT)
             sharedPreferences.edit().putBoolean("share_data", true).apply()
-
-            var token = SharedPrefs.token
-            if (token == null) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val response = api.getToken().body() ?: return@launch
-                    token = response.token
-                    SharedPrefs.token = token
-                }
-            }
         }
         noButton.setOnClickListener {
             buttonPressed = true
