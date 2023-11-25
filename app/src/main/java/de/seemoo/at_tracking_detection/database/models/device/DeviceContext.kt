@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 
 interface DeviceContext {
     val bluetoothFilter: ScanFilter
@@ -15,6 +16,9 @@ interface DeviceContext {
         get() = 30 * 60
 
     val statusByteDeviceType: UInt
+
+    val numberOfDaysToBeConsideredForTrackingDetection: Long
+        get() = RiskLevelEvaluator.RELEVANT_DAYS
 
     fun getConnectionState(scanResult: ScanResult): ConnectionState {
         return ConnectionState.UNKNOWN

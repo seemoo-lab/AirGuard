@@ -112,7 +112,7 @@ class ScanDBTests() {
         val updatedScan = scanRepository.scanWithId(scanId.toInt())
         assert(updatedScan != null)
 
-        assert(scanDB?.endDate == updatedScan?.endDate)
+        assert(scanDB.endDate == updatedScan?.endDate)
         assert(updatedScan?.noDevicesFound == 10)
         assert(updatedScan?.duration == 5)
     }
@@ -123,7 +123,9 @@ class ScanDBTests() {
         unfinished.forEach{
             assert(it.endDate == null)
             assert(it.startDate == null)
-            assert(it.startDate?.compareTo(RiskLevelEvaluator.relevantTrackingDate) ?: -1 >= 0)
+            assert(
+                (it.startDate?.compareTo(RiskLevelEvaluator.relevantTrackingDateDefault) ?: -1) >= 0
+            )
         }
     }
 }

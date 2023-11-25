@@ -5,7 +5,6 @@ import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -47,12 +46,12 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDevice(deviceAddress: String): BaseDevice? = deviceDao.getByAddress(deviceAddress)
 
-    val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDate)
+    val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDateDefault)
 
     val countIgnored = deviceDao.getCountIgnored()
 
-    fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDate)
-    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDate)
+    fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDateDefault)
+    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDateDefault)
 
     fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
 

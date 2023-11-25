@@ -37,6 +37,9 @@ class Chipolo(val id: Int) : Device() {
         override val statusByteDeviceType: UInt
             get() = 0u
 
+        override val numberOfDaysToBeConsideredForTrackingDetection: Long
+            get() = 2
+
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FE33-0000-1000-8000-00805F9B34FB")
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {

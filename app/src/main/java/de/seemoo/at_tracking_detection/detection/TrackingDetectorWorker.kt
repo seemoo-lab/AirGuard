@@ -82,7 +82,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             // Only retrieve the last two weeks since they are only relevant for tracking
-            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDate)
+            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateDefault)
             beaconsPerDevice[it.deviceAddress] = beacons
         }
         return beaconsPerDevice

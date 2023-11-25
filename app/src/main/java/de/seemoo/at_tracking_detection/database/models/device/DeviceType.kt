@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 
 enum class DeviceType {
     UNKNOWN,
@@ -78,6 +79,22 @@ enum class DeviceType {
             TILE -> true
             CHIPOLO -> true
             else -> false
+        }
+    }
+
+    fun getNumberOfDaysToBeConsideredForTrackingDetection(): Long {
+        return when (this) {
+            TILE -> Tile.numberOfDaysToBeConsideredForTrackingDetection
+            CHIPOLO -> Chipolo.numberOfDaysToBeConsideredForTrackingDetection
+            UNKNOWN -> Unknown.numberOfDaysToBeConsideredForTrackingDetection
+            AIRPODS -> AirPods.numberOfDaysToBeConsideredForTrackingDetection
+            AIRTAG -> AirTag.numberOfDaysToBeConsideredForTrackingDetection
+            APPLE -> AppleDevice.numberOfDaysToBeConsideredForTrackingDetection
+            FIND_MY -> FindMy.numberOfDaysToBeConsideredForTrackingDetection
+            SAMSUNG -> SamsungDevice.numberOfDaysToBeConsideredForTrackingDetection
+            GALAXY_SMART_TAG -> SmartTag.numberOfDaysToBeConsideredForTrackingDetection
+            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfDaysToBeConsideredForTrackingDetection
+            else -> RiskLevelEvaluator.RELEVANT_DAYS
         }
     }
 }

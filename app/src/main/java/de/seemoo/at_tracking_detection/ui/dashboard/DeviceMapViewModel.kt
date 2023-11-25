@@ -17,7 +17,7 @@ class DeviceMapViewModel @Inject constructor(
         beaconRepository.getDeviceBeacons(it)
     }
 
-    val allLocations: LiveData<List<Beacon>> = beaconRepository.getBeaconsSince(RiskLevelEvaluator.relevantTrackingDate).asLiveData()
+    val allLocations: LiveData<List<Beacon>> = beaconRepository.getBeaconsSince(RiskLevelEvaluator.relevantTrackingDateDefault).asLiveData()
 
     val isMapLoading = MutableLiveData<Boolean>(false)
 

@@ -5,7 +5,6 @@ import de.seemoo.at_tracking_detection.database.daos.ScanDao
 import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ScanRepository @Inject constructor(
@@ -15,16 +14,16 @@ class ScanRepository @Inject constructor(
     var lastScan = scanDao.lastScan()
 
     var relevantScans =
-        scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDate)
+        scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDateDefault)
 
-    fun relevantScans(manual: Boolean, limit: Int): List<Scan> = scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDate, manual, limit)
+    fun relevantScans(manual: Boolean, limit: Int): List<Scan> = scanDao.getScansSince(RiskLevelEvaluator.relevantTrackingDateDefault, manual, limit)
 
-    val relevantDebugScans = scanDao.getDebugScansSince(RiskLevelEvaluator.relevantTrackingDate)
+    val relevantDebugScans = scanDao.getDebugScansSince(RiskLevelEvaluator.relevantTrackingDateDefault)
 
     var flowRelevantScans =
-        scanDao.getFlowScansSince(RiskLevelEvaluator.relevantTrackingDate)
+        scanDao.getFlowScansSince(RiskLevelEvaluator.relevantTrackingDateDefault)
 
-    val flowDebugScans = scanDao.getFlowDebugRelevantScans(RiskLevelEvaluator.relevantTrackingDate)
+    val flowDebugScans = scanDao.getFlowDebugRelevantScans(RiskLevelEvaluator.relevantTrackingDateDefault)
 
     var allScans: List<Scan> = scanDao.getAllScans()
 
@@ -32,15 +31,15 @@ class ScanRepository @Inject constructor(
 
     val totalCount: Int = scanDao.getNumberOfScans()
 
-    var countInRelevantTime: Int = scanDao.getNumberOfScansSince(RiskLevelEvaluator.relevantTrackingDate)
+    var countInRelevantTime: Int = scanDao.getNumberOfScansSince(RiskLevelEvaluator.relevantTrackingDateDefault)
 
-    val relevantUnfinishedScans: List<Scan> = scanDao.unfinishedScans(RiskLevelEvaluator.relevantTrackingDate)
+    val relevantUnfinishedScans: List<Scan> = scanDao.unfinishedScans(RiskLevelEvaluator.relevantTrackingDateDefault)
 
     @WorkerThread
     suspend fun insert(scan: Scan): Long = scanDao.insert(scan)
 
     @WorkerThread
-    suspend fun  deleteIrrelevantScans() = scanDao.deleteUntil(RiskLevelEvaluator.relevantTrackingDate)
+    suspend fun  deleteIrrelevantScans() = scanDao.deleteUntil(RiskLevelEvaluator.relevantTrackingDateDefault)
 
     @WorkerThread
     suspend fun update(scan: Scan) = scanDao.update(scan)
