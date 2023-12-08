@@ -17,13 +17,15 @@ android {
         viewBinding true
         dataBinding true
         compose true
+        buildConfig true
     }
+
+    compileSdk = 34
 
     defaultConfig {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
-        targetSdkVersion 33
-        compileSdk 33
+        targetSdk = 34
         versionCode 38
         versionName "2.1"
 

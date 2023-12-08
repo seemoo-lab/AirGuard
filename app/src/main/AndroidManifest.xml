@@ -29,6 +29,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".ATTrackingDetectionApplication"
@@ -48,7 +51,12 @@
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:parentActivityName=".ui.MainActivity"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.seemoo.at_tracking_detection.TRACKING_NOTIFICATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -98,11 +106,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.OnboardingActivity" />
+        <activity android:name=".ui.OnboardingActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".util.ble.BluetoothLeService"
             android:enabled="true"
+            android:foregroundServiceType="connectedDevice"
             android:exported="false"/>
 
         <service

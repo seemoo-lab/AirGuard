@@ -122,12 +122,12 @@ class RallyLineGraphChart : View {
         drawVerticalBars(viewCanvas)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         drawBezierCurve(canvas)
         bitmap?.let {
-            canvas?.drawBitmap(it, 0f, 0f, bitmapPaint)
+            canvas.drawBitmap(it, 0f, 0f, bitmapPaint)
         }
     }
 
@@ -177,7 +177,7 @@ class RallyLineGraphChart : View {
 
             canvas?.drawPath(borderPath, borderPathPaint)
 
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -202,7 +202,7 @@ class RallyLineGraphChart : View {
                 conPoint1.add(PointF((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
                 conPoint2.add(PointF((points[i].x + points[i - 1].x) / 2, points[i].y))
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
