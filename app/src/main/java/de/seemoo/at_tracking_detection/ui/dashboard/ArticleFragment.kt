@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -43,7 +44,7 @@ class ArticleFragment : Fragment() {
         authorTextView.text = author
         articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
 
-        var modifier = Modifier.fillMaxSize()
+        val modifier = Modifier.fillMaxSize()
 
         val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
@@ -57,10 +58,12 @@ class ArticleFragment : Fragment() {
                 markdownView.apply {
                     setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                     setContent {
-                        MarkDown(
-                            url = url,
-                            modifier = modifier
-                        )
+                        MaterialTheme {
+                            MarkDown(
+                                url = url,
+                                modifier = modifier
+                            )
+                        }
                     }
                 }
             } catch (e: Exception) {

@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
+import android.annotation.SuppressLint
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.transition.TransitionInflater
@@ -73,13 +75,25 @@ class TrackingFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
 
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
-        activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity.registerReceiver(
+                gattUpdateReceiver,
+                DeviceManager.gattIntentFilter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            activity.registerReceiver(
+                gattUpdateReceiver,
+                DeviceManager.gattIntentFilter
+            )
+        }
     }
 
     override fun onPause() {
