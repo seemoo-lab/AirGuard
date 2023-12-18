@@ -348,7 +348,7 @@
     <string name="delete_data_server_error">Server is not reachable. Try again later.</string>
     <string name="delete_data_no_data">No data to delete</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles.json</string>
+    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
     <string name="article_reading_time">Reading time: %d min</string>
     <string name="article_offline_header">No internet connection</string>
     <string name="article_offline_text">You are currently not connected to the internet. You will find articles that will help you navigate the app here when you are connected to the internet.</string>

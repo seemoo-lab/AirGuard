@@ -27,11 +27,7 @@ fun parseArticles(jsonString: String): List<Article> {
     return articleMap.values.toList()
 }
 
-fun getURL(filename: String): URL {
-    return URL("https://tpe.seemoo.tu-darmstadt.de/static/articles/$filename")
-}
-
-fun getImageURL(filename: String): String {
+fun getURL(filename: String): String {
     return "https://tpe.seemoo.tu-darmstadt.de/articles/$filename"
 }
 
