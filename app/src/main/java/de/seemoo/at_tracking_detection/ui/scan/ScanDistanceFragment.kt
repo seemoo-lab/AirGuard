@@ -20,7 +20,6 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
@@ -55,9 +54,10 @@ class ScanDistanceFragment : Fragment() {
                 if (getPublicKey(it) == publicKey){
                     // viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionState(it)
-                    val connectionStateString = getConnectionStateAsString(it)
-                    viewModel.connectionStateString.postValue(connectionStateString)
                     viewModel.connectionState.postValue(connectionState)
+                    val connectionStateString = getConnectionStateExplanation(connectionState)
+                    viewModel.connectionStateString.postValue(connectionStateString)
+
                     val batteryState = getBatteryState(it)
                     val batteryStateString = getBatteryStateAsString(it)
                     viewModel.batteryStateString.postValue(batteryStateString)
@@ -73,7 +73,7 @@ class ScanDistanceFragment : Fragment() {
 
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
-                        removeSearchMessage()
+                        removeSearchMessage(batteryState != BatteryState.UNKNOWN)
                     }
                 }
 
@@ -94,14 +94,19 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    private fun removeSearchMessage() {
+    private fun removeSearchMessage(showBattery: Boolean = true) {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.VISIBLE
-        binding.batteryLayout.visibility = View.VISIBLE
         binding.deviceTypeLayout.visibility = View.VISIBLE
         binding.connectionStateLayout.visibility = View.VISIBLE
+        binding.scanExplanationLayout.visibility = View.VISIBLE
         binding.deviceNotFound.visibility = View.GONE
+        if (showBattery) {
+            binding.batteryLayout.visibility = View.VISIBLE
+        } else {
+            binding.batteryLayout.visibility = View.GONE
+        }
     }
 
     private fun showSearchMessage() {
@@ -109,6 +114,7 @@ class ScanDistanceFragment : Fragment() {
         binding.searchingForDevice.visibility = View.VISIBLE
         binding.connectionQuality.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
+        binding.scanExplanationLayout.visibility = View.GONE
         binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
         binding.deviceNotFound.visibility = View.GONE
@@ -118,6 +124,7 @@ class ScanDistanceFragment : Fragment() {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.GONE
+        binding.scanExplanationLayout.visibility = View.GONE
         binding.batteryLayout.visibility = View.GONE
         binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
@@ -147,12 +154,13 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun setBattery(batteryState: BatteryState) {
+        binding.batteryLayout.visibility = View.VISIBLE
         when(batteryState) {
             BatteryState.FULL -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_full_24))
             BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_medium_24))
             BatteryState.LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_low_24))
             BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
-            else -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_unknown_24))
+            else -> binding.batteryLayout.visibility = View.GONE
         }
     }
 
@@ -160,6 +168,16 @@ class ScanDistanceFragment : Fragment() {
         val drawable = resources.getDrawable(DeviceType.getImageDrawable(deviceType))
         binding.deviceTypeSymbol.setImageDrawable(drawable)
         binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
+    }
+
+    private fun getConnectionStateExplanation(connectionState: ConnectionState): String {
+        return when (connectionState) {
+            ConnectionState.OVERMATURE_OFFLINE -> getString(R.string.connection_state_overmature_offline_explanation)
+            ConnectionState.CONNECTED -> getString(R.string.connection_state_connected_explanation)
+            ConnectionState.OFFLINE -> getString(R.string.connection_state_offline_explanation)
+            ConnectionState.PREMATURE_OFFLINE -> getString(R.string.connection_state_premature_offline_explanation)
+            ConnectionState.UNKNOWN -> getString(R.string.connection_state_unknown_explanation)
+        }
     }
 
     private fun startBluetoothScan() {
@@ -210,20 +228,20 @@ class ScanDistanceFragment : Fragment() {
 
         startBluetoothScan()
 
-        val infoButton = binding.infoButton
-        infoButton.setOnClickListener {
-            val text = when (viewModel.connectionState.value as ConnectionState){
-                ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
-                ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
-                ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
-                ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
-                ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
-            }
-            val duration = Toast.LENGTH_SHORT
-
-            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
-            toast.show()
-        }
+//        val infoButton = binding.infoButton
+//        infoButton.setOnClickListener {
+//            val text = when (viewModel.connectionState.value as ConnectionState){
+//                ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
+//                ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
+//                ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
+//                ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
+//                ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
+//            }
+//            val duration = Toast.LENGTH_SHORT
+//
+//            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
+//            toast.show()
+//        }
 
         val batterySymbol = binding.batterySymbol
         batterySymbol.setOnClickListener {

@@ -253,13 +253,13 @@
     <string name="battery_very_low">Sehr Niedrig</string>
     <string name="battery_unknown">Unbekannt</string>
     <string name="connection_state_offline">Offline</string>
-    <string name="connection_state_offline_explanation">Gerät war in den letzten 15 Minuten nicht verbunden</string>
+    <string name="connection_state_offline_explanation">Gerät ist vom Besitzer getrennt</string>
     <string name="connection_state_overmature_offline">Overmature Offline</string>
     <string name="connection_state_premature_offline">Premature Offline</string>
-    <string name="connection_state_overmature_offline_explanation">Gerät war für mehrere Stunden nicht verbunden</string>
+    <string name="connection_state_overmature_offline_explanation">Gerät ist seit mind. 8 Stunden vom Besitzer getrennt</string>
     <string name="connection_state_connected">Verbunden</string>
     <string name="connection_state_connected_explanation">Gerät ist verbunden mit Besitzer</string>
-    <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten verbunden</string>
+    <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten mit Besitzer verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
     <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
     <string name="scan_sorting_by_rssi">nach Signalstärke</string>
@@ -277,6 +277,7 @@
     <string name="connection_state_unknown_explanation">Verbindungsstatus kann nicht bestimmt werden</string>
     <string name="connection_state_content_description">Informationen über den Verbindungsstatus des Geräts</string>
     <string name="scan_not_in_range">Gerät ist nicht in Reichweite</string>
+    <string name="scan_explanation">Bewege dich langsam und versuche die Signalstäre zu maximieren um den Tracker zu finden.</string>
 
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
