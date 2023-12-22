@@ -20,6 +20,9 @@ interface DeviceContext {
     val numberOfDaysToBeConsideredForTrackingDetection: Long
         get() = RiskLevelEvaluator.RELEVANT_DAYS
 
+    val numberOfLocationsToBeConsideredForTrackingDetection: Int
+        get() = RiskLevelEvaluator.getLocationsAtLeastTrackedBeforeAlarm()
+
     fun getConnectionState(scanResult: ScanResult): ConnectionState {
         return ConnectionState.UNKNOWN
     }

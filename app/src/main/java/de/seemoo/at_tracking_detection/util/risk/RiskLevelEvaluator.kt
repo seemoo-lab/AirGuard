@@ -89,7 +89,6 @@ class RiskLevelEvaluator(
         const val RELEVANT_DAYS: Long = 14 // Only consider beacons in the last x days, default value, can be overwritten in the specific device properties
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
-        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3 // Number of beacons with locations before notification is created
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8 // Minimum time difference until next notification
@@ -101,6 +100,11 @@ class RiskLevelEvaluator(
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 90
+
+        // A single tracker gets tracked at least for x minutes until notification is created
+        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 3
+        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 5
+        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 8
 
         private fun getAtLeastTrackedSince(): LocalDateTime = LocalDateTime.now().minusMinutes(
             getMinutesAtLeastTrackedBeforeAlarm()
@@ -114,6 +118,15 @@ class RiskLevelEvaluator(
                 "medium" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
                 "high" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH
                 else -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
+            }
+        }
+
+        fun getLocationsAtLeastTrackedBeforeAlarm(): Int {
+            return when (SharedPrefs.riskSensitivity) {
+                "low" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
+                "medium" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                "high" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
+                else -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
             }
         }
 
@@ -157,7 +170,7 @@ class RiskLevelEvaluator(
                     val numberOfLocations = deviceRepository.getNumberOfLocationsForDeviceSince(device.address, relevantTrackingDate)
 
                     // Detected at at least 3 different locations
-                    if (!useLocation || numberOfLocations >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                    if (!useLocation || numberOfLocations >= (device.deviceType?.getNumberOfLocationsToBeConsideredForTrackingDetection() ?: getLocationsAtLeastTrackedBeforeAlarm())) {
                         val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository ?: return RiskLevel.LOW
                         val falseAlarms = notificationRepository.getFalseAlarmForDeviceSinceCount(device.address, relevantTrackingDate)
 
@@ -174,7 +187,7 @@ class RiskLevelEvaluator(
 
                                 // High Risk: High Number of Notifications and Accurate Locations
                                 // Medium Risk: Low Number of Notifications or only inaccurate Location Reports
-                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= (device.deviceType?.getNumberOfLocationsToBeConsideredForTrackingDetection() ?: getLocationsAtLeastTrackedBeforeAlarm())) {
                                     deviceRepository.updateRiskLevelCache(device.address, 2, LocalDateTime.now())
                                     RiskLevel.HIGH
                                 } else{
