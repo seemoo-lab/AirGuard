@@ -96,18 +96,48 @@ enum class DeviceType {
         }
     }
 
-    fun getNumberOfLocationsToBeConsideredForTrackingDetection(): Int {
+    fun getNumberOfLocationsToBeConsideredForTrackingDetectionLow(): Int {
         return when (this) {
-            TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetection
-            CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetection
-            UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetection
-            AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetection
-            AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetection
-            APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetection
-            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetection
-            SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetection
-            GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetection
-            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetection
+            TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionLow
+        }
+    }
+
+    fun getNumberOfLocationsToBeConsideredForTrackingDetectionMedium(): Int {
+        return when (this) {
+            TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+        }
+    }
+
+    fun getNumberOfLocationsToBeConsideredForTrackingDetectionHigh(): Int {
+        return when (this) {
+            TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionHigh
         }
     }
 }

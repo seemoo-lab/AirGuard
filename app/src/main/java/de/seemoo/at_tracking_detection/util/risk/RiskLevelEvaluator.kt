@@ -5,6 +5,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
@@ -96,15 +97,15 @@ class RiskLevelEvaluator(
         val relevantTrackingDateDefault: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS) // Fallback Option, if possible use getRelevantTrackingDate() Function
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
-        // A single tracker gets tracked at least for x minutes until notification is created
+        // Default Values: A single tracker gets tracked at least for x minutes until notification is created
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 90
 
-        // A single tracker gets tracked at least for x minutes until notification is created
-        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 3
-        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 5
-        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 8
+        // Default Values: A single tracker gets tracked at least for x minutes until notification is created
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 3
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 5
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 8
 
         private fun getAtLeastTrackedSince(): LocalDateTime = LocalDateTime.now().minusMinutes(
             getMinutesAtLeastTrackedBeforeAlarm()
@@ -121,12 +122,21 @@ class RiskLevelEvaluator(
             }
         }
 
-        fun getLocationsAtLeastTrackedBeforeAlarm(): Int {
-            return when (SharedPrefs.riskSensitivity) {
-                "low" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
-                "medium" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
-                "high" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
-                else -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+        private fun getNumberOfLocationsToBeConsideredForTrackingDetection(deviceType: DeviceType?): Int {
+            return if (deviceType == null)  {
+                when (SharedPrefs.riskSensitivity) {
+                    "low" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
+                    "medium" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                    "high" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
+                    else -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                }
+            } else {
+                when (SharedPrefs.riskSensitivity) {
+                    "low" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionLow()
+                    "medium" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionMedium()
+                    "high" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionHigh()
+                    else -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionMedium()
+                }
             }
         }
 
@@ -170,7 +180,7 @@ class RiskLevelEvaluator(
                     val numberOfLocations = deviceRepository.getNumberOfLocationsForDeviceSince(device.address, relevantTrackingDate)
 
                     // Detected at at least 3 different locations
-                    if (!useLocation || numberOfLocations >= (device.deviceType?.getNumberOfLocationsToBeConsideredForTrackingDetection() ?: getLocationsAtLeastTrackedBeforeAlarm())) {
+                    if (!useLocation || numberOfLocations >= getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)) {
                         val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository ?: return RiskLevel.LOW
                         val falseAlarms = notificationRepository.getFalseAlarmForDeviceSinceCount(device.address, relevantTrackingDate)
 
@@ -187,7 +197,7 @@ class RiskLevelEvaluator(
 
                                 // High Risk: High Number of Notifications and Accurate Locations
                                 // Medium Risk: Low Number of Notifications or only inaccurate Location Reports
-                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= (device.deviceType?.getNumberOfLocationsToBeConsideredForTrackingDetection() ?: getLocationsAtLeastTrackedBeforeAlarm())) {
+                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)) {
                                     deviceRepository.updateRiskLevelCache(device.address, 2, LocalDateTime.now())
                                     RiskLevel.HIGH
                                 } else{
