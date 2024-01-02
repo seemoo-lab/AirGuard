@@ -77,16 +77,16 @@ object Utility {
     fun enableMyLocationOverlay(
         map: MapView
     ) {
-        val context = ATTrackingDetectionApplication.getAppContext()
         val locationOverlay = MyLocationNewOverlay(map)
-        val options = BitmapFactory.Options()
-        val bitmapPerson =
-            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-        locationOverlay.setPersonIcon(bitmapPerson)
-        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
-        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
-        locationOverlay.enableMyLocation()
-        locationOverlay.enableFollowLocation()
+//        val context = ATTrackingDetectionApplication.getAppContext()
+//        val options = BitmapFactory.Options()
+//        val bitmapPerson =
+//            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
+//        locationOverlay.setPersonIcon(bitmapPerson)
+//        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
+//        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
+//        locationOverlay.enableMyLocation()
+//        locationOverlay.enableFollowLocation()
         map.overlays.add(locationOverlay)
         map.controller.setZoom(ZOOMED_OUT_LEVEL)
     }
