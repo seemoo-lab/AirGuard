@@ -18,7 +18,7 @@ import de.seemoo.at_tracking_detection.ui.scan.dialog.PlaySoundDialogFragment
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 
-class BluetoothDeviceAdapter constructor(private val fragmentManager: FragmentManager) :
+class BluetoothDeviceAdapter(private val fragmentManager: FragmentManager) :
     ListAdapter<ScanResult, BluetoothDeviceAdapter.ScanResultViewHolder>(Companion) {
 
     class ScanResultViewHolder(private val binding: ItemScanResultBinding) :

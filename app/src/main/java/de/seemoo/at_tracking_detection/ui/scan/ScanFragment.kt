@@ -33,16 +33,25 @@ class ScanFragment : Fragment() {
     ): View {
         val binding: FragmentScanBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
-        val bluetoothDeviceAdapter = BluetoothDeviceAdapter(childFragmentManager)
+        val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter(childFragmentManager)
+        val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter(childFragmentManager)
 
-        binding.adapter = bluetoothDeviceAdapter
+        binding.adapterHighRisk = bluetoothDeviceAdapterHighRisk
+        binding.adapterLowRisk = bluetoothDeviceAdapterLowRisk
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = scanViewModel
 
-        scanViewModel.bluetoothDeviceList.observe(viewLifecycleOwner) {
-            bluetoothDeviceAdapter.submitList(it)
+        // TODO: possible to optimize this???
+        scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {
+            bluetoothDeviceAdapterHighRisk.submitList(it)
             // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
-            bluetoothDeviceAdapter.notifyDataSetChanged()
+            bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
+        }
+
+        scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {
+            bluetoothDeviceAdapterLowRisk.submitList(it)
+            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
+            bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
@@ -54,9 +63,14 @@ class ScanFragment : Fragment() {
         }
 
         scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
-            val bluetoothDeviceListValue = scanViewModel.bluetoothDeviceList.value ?: return@observe
-            scanViewModel.sortResults(bluetoothDeviceListValue)
-            scanViewModel.bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+            val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
+            val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
+
+            scanViewModel.sortResults(bluetoothDeviceListHighRiskValue)
+            scanViewModel.sortResults(bluetoothDeviceListLowRiskValue)
+
+            scanViewModel.bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
+            scanViewModel.bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)
 
             if (view != null) {
                 val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)

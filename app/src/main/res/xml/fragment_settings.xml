@@ -50,13 +50,6 @@
         />
 
     <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_radar_tracking"
-        android:key="show_connected_devices"
-        android:summary="@string/settings_show_connected_devices"
-        android:title="@string/settings_show_connected_devices_title" />
-
-    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:icon="@drawable/ic_baseline_notifications_active_24"
         android:key="notification_priority_high"

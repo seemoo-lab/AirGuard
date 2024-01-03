@@ -10,7 +10,11 @@
             type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
 
         <variable
-            name="adapter"
+            name="adapter_low_risk"
+            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
+
+        <variable
+            name="adapter_high_risk"
             type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
 
         <import type="android.view.View" />
@@ -108,13 +112,27 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@+id/scan_result_recycler"
+            app:layout_constraintBottom_toTopOf="@+id/scan_result_recycler_high_risk"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sorting_options" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/scan_result_recycler"
+            android:id="@+id/scan_result_recycler_high_risk"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler_low_risk"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
+            app:setAdapter="@{adapter_high_risk}" >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scan_result_recycler_low_risk"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:nestedScrollingEnabled="false"
@@ -122,8 +140,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
-            app:setAdapter="@{adapter}" >
+            app:layout_constraintTop_toBottomOf="@id/scan_result_recycler_high_risk"
+            app:setAdapter="@{adapter_low_risk}" >
 
         </androidx.recyclerview.widget.RecyclerView>
 

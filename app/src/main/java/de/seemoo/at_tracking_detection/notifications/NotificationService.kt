@@ -146,7 +146,7 @@ class NotificationService @Inject constructor(
         // Do not send multiple notifications
         if (!ATTrackingDetectionApplication.SURVEY_IS_RUNNING) {return}
 
-        if (SharedPrefs.surveyNotficationSent && !replace) {return}
+        if (SharedPrefs.surveyNotificationSent && !replace) {return}
         //Check if already scheduled
         val notificationDate = SharedPrefs.surveyNotificationDate
         if ( replace || notificationDate == null || notificationDate < LocalDateTime.now()) {
