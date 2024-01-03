@@ -321,4 +321,7 @@
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
 
+    <string name="high_risk_trackers">Mögliche Tracker</string>
+    <string name="low_risk_trackers">Sichere Tracker</string>
+
 </resources>

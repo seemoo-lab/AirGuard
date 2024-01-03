@@ -112,38 +112,67 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@+id/scan_result_recycler_high_risk"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sorting_options" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/scan_result_recycler_high_risk"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scan_result_wrapper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler_low_risk"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
-            app:setAdapter="@{adapter_high_risk}" >
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/scan_result_recycler_low_risk"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scan_result_recycler_high_risk"
-            app:setAdapter="@{adapter_low_risk}" >
+                <!-- High-risk trackers label -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/high_risk_trackers"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:background="@android:color/darker_gray" />
 
-        </androidx.recyclerview.widget.RecyclerView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/scan_result_recycler_high_risk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:setAdapter="@{adapter_high_risk}" />
+
+                <!-- Low-risk trackers label -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/low_risk_trackers"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:background="@android:color/darker_gray" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/scan_result_recycler_low_risk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:setAdapter="@{adapter_low_risk}" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <com.github.ybq.android.spinkit.SpinKitView
             style="@style/SpinKitView.Large.DoubleBounce"

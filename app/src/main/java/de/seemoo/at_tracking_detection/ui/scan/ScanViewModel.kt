@@ -75,7 +75,6 @@ class ScanViewModel @Inject constructor(
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
         ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
-
             val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
             Timber.d("Got location $location in ScanViewModel")
 

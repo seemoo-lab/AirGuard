@@ -356,4 +356,6 @@
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>
+    <string name="high_risk_trackers">Potential Trackers</string>
+    <string name="low_risk_trackers">Safe Trackers</string>
 </resources>
