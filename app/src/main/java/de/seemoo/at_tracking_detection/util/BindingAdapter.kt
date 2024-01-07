@@ -2,16 +2,13 @@ package de.seemoo.at_tracking_detection.util
 
 import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import java.util.*
 
@@ -44,17 +41,6 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
     imageView.setImageDrawable(device.getDrawable())
 }
 
-@BindingAdapter("setDeviceColor", requireAll = true)
-fun setDeviceColor(materialCardView: MaterialCardView, scanResult: ScanResult) {
-    when (BaseDevice.getConnectionState(scanResult)) {
-        ConnectionState.CONNECTED -> materialCardView.setCardBackgroundColor(-7829368)
-        ConnectionState.PREMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
-        ConnectionState.OFFLINE -> materialCardView.setCardBackgroundColor(-7829368)
-        ConnectionState.OVERMATURE_OFFLINE -> materialCardView.setCardBackgroundColor(0)
-        ConnectionState.UNKNOWN -> materialCardView.setCardBackgroundColor(0)
-    }
-}
-
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
@@ -67,28 +53,3 @@ fun setDeviceName (textView: TextView, scanResult: ScanResult) {
     }
 }
 
-@BindingAdapter("hideWhenNoSoundPlayed", requireAll = true)
-fun hideWhenNoSoundPlayed(view: View, scanResult: ScanResult) {
-    val device = BaseDevice(scanResult).device
-    if (device.isConnectable() && BaseDevice.getConnectionState(scanResult) == ConnectionState.OVERMATURE_OFFLINE) {
-        view.visibility = View.VISIBLE
-    }else {
-        view.visibility = View.INVISIBLE
-    }
-}
-
-@BindingAdapter("visibilityBellIcon", requireAll = true)
-fun visibilityBellIcon(view: View, scanResult: ScanResult) {
-    val deviceAddress = BaseDevice(scanResult).address
-    val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository
-
-    if (notificationRepository != null) {
-        if (notificationRepository.existsNotificationForDevice(deviceAddress)) {
-            view.visibility = View.VISIBLE
-        } else {
-            view.visibility = View.INVISIBLE
-        }
-    } else {
-        view.visibility = View.INVISIBLE
-    }
-}

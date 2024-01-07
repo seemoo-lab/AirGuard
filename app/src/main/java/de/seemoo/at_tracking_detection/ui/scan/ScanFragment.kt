@@ -33,8 +33,8 @@ class ScanFragment : Fragment() {
     ): View {
         val binding: FragmentScanBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
-        val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter(childFragmentManager)
-        val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter(childFragmentManager)
+        val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
+        val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
 
         binding.adapterHighRisk = bluetoothDeviceAdapterHighRisk
         binding.adapterLowRisk = bluetoothDeviceAdapterLowRisk

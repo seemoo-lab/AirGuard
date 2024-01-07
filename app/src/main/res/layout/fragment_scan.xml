@@ -29,7 +29,7 @@
             android:id="@+id/sorting_options"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.isListEmpty ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"
             app:layout_constraintBottom_toTopOf="@id/scan_result_loading_bar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -121,6 +121,7 @@
             android:id="@+id/scan_result_wrapper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -173,16 +174,6 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-        <com.github.ybq.android.spinkit.SpinKitView
-            style="@style/SpinKitView.Large.DoubleBounce"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="24dp"
-            android:visibility="@{(!vm.isListEmpty || vm.scanFinished) ? View.GONE : View.VISIBLE, default=visible}"
-            app:SpinKit_Color="?colorAccent" />
-
 
         <include
             android:id="@+id/include_scan_empty_explanation"
