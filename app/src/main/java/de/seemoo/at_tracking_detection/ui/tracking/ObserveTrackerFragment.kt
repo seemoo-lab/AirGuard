@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import de.seemoo.at_tracking_detection.worker.ScheduleWorkersReceiver
 
 
@@ -81,10 +81,11 @@ class ObserveTrackerFragment: Fragment() {
                         }
 
                         // Ensure coroutine cancellation if needed
-                        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                            fun onDestroy() {
-                                coroutine.cancel()
+                        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+                            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                                if (event == Lifecycle.Event.ON_DESTROY) {
+                                    coroutine.cancel()
+                                }
                             }
                         })
                     }
@@ -130,12 +131,13 @@ class ObserveTrackerFragment: Fragment() {
                         }
 
                         // Ensure coroutine cancellation if needed
-                        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                            fun onDestroy() {
-                                coroutine.cancel()
+                        viewLifecycleOwner.lifecycle.addObserver(
+                            LifecycleEventObserver { _, event ->
+                                if (event == Lifecycle.Event.ON_DESTROY) {
+                                    coroutine.cancel()
+                                }
                             }
-                        })
+                        )
                     }
                 }
 

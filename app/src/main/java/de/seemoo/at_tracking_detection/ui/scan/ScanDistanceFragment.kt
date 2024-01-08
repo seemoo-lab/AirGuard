@@ -6,11 +6,13 @@ import android.bluetooth.le.ScanResult
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.animation.addListener
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -67,8 +69,8 @@ class ScanDistanceFragment : Fragment() {
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
                     val deviceType = DeviceManager.getDeviceType(it)
-                    setDeviceType(deviceType)
-                    setBattery(batteryState)
+                    setDeviceType(requireContext(), deviceType)
+                    setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
 
                     if (viewModel.isFirstScanCallback.value as Boolean) {
@@ -153,19 +155,19 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    private fun setBattery(batteryState: BatteryState) {
+    private fun setBattery(context: Context, batteryState: BatteryState) {
         binding.batteryLayout.visibility = View.VISIBLE
         when(batteryState) {
-            BatteryState.FULL -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_full_24))
-            BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_medium_24))
-            BatteryState.LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_low_24))
-            BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
+            BatteryState.FULL -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full_24))
+            BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_medium_24))
+            BatteryState.LOW -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_low_24))
+            BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_very_low_24))
             else -> binding.batteryLayout.visibility = View.GONE
         }
     }
 
-    private fun setDeviceType(deviceType: DeviceType) {
-        val drawable = resources.getDrawable(DeviceType.getImageDrawable(deviceType))
+    private fun setDeviceType(context: Context, deviceType: DeviceType) {
+        val drawable = ContextCompat.getDrawable(context, DeviceType.getImageDrawable(deviceType))
         binding.deviceTypeSymbol.setImageDrawable(drawable)
         binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
     }
