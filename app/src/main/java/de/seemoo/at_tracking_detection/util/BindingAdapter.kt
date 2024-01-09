@@ -1,9 +1,9 @@
 package de.seemoo.at_tracking_detection.util
 
-import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -20,17 +20,16 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     }
 }
 
-@SuppressLint("UseCompatLoadingForDrawables")
 @BindingAdapter("setSignalStrengthDrawable", requireAll = true)
 fun setSignalStrengthDrawable(imageView: ImageView, scanResult: ScanResult) {
     val rssi: Int = scanResult.rssi
     val quality = Utility.dbmToQuality(rssi)
 
     when (quality) {
-        0 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_low))
-        1 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_low))
-        2 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_middle_high))
-        3 -> imageView.setImageDrawable(imageView.context.getDrawable(R.drawable.ic_signal_high))
+        0 -> imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_signal_low))
+        1 -> imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_signal_middle_low))
+        2 -> imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_signal_middle_high))
+        3 -> imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_signal_high))
     }
 }
 

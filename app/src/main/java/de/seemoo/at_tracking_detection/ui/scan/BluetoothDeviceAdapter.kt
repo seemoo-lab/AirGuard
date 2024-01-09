@@ -46,10 +46,10 @@ class BluetoothDeviceAdapter:
 
     companion object : DiffUtil.ItemCallback<ScanResult>() {
         override fun areContentsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean =
-            oldItem == newItem
+            getPublicKey(oldItem) == getPublicKey(newItem)
 
         override fun areItemsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean =
-            getPublicKey(oldItem) == getPublicKey(newItem)
+            oldItem == newItem
     }
 
 }
