@@ -48,6 +48,9 @@ class SmartTagPlus(override val id: Int) : SamsungDevice(id) {
         override val statusByteDeviceType: UInt
             get() = 0u
 
+        override val websiteManufacturer: String
+            get() = "https://www.samsung.com/"
+
         private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
     }
 }

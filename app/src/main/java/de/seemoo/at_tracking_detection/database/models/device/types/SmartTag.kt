@@ -42,6 +42,9 @@ class SmartTag(override val id: Int) : SamsungDevice(id) {
         override val deviceType: DeviceType
             get() = DeviceType.GALAXY_SMART_TAG
 
+        override val websiteManufacturer: String
+            get() = "https://www.samsung.com/"
+
         override val defaultDeviceName: String
             get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.smarttag_no_uwb)
 

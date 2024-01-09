@@ -162,6 +162,9 @@ class AirPods(val id: Int) : Device(), Connectable {
         override val deviceType: DeviceType
             get() = DeviceType.AIRPODS
 
+        override val websiteManufacturer: String
+            get() = "https://www.apple.com/airpods/"
+
         override val defaultDeviceName: String
             get() = "AirPods"
 

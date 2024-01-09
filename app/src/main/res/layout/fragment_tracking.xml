@@ -206,7 +206,6 @@
 
         </LinearLayout>
 
-
         <TextView
             android:id="@+id/tracking_scan_airtag_text"
             android:layout_width="match_parent"
@@ -218,10 +217,37 @@
             android:autoSizeTextType="uniform"
             android:text="@string/tracking_info"
             android:visibility="@{vm.showNfcHint ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/additional_tiles"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tracking_tiles" />
+
+        <LinearLayout
+            android:id="@+id/additional_tiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracking_scan_airtag_text">
+
+            <include
+                android:id="@+id/manufacturer_website"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:minHeight="@dimen/tracking_tile_height"
+                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1"
+                bind:clickable="@{true}"
+                bind:drawable="@{@drawable/ic_baseline_info_24}"
+                bind:subtitle="@{@string/website_manufacturer_detail}"
+                bind:title="@{@string/website_manufacturer}"
+                />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

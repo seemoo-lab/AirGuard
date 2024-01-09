@@ -49,6 +49,9 @@ open class SamsungDevice(open val id: Int) : Device(){
         override val statusByteDeviceType: UInt
             get() = 0u
 
+        override val websiteManufacturer: String
+            get() = "https://www.samsung.com/"
+
         private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {

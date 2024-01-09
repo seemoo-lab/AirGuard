@@ -9,6 +9,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
@@ -125,6 +126,11 @@ class TrackingFragment : Fragment() {
         val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
         val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
         val map: MapView = view.findViewById(R.id.map)
+        val includedLayout: View = view.findViewById(R.id.manufacturer_website)
+
+        includedLayout.setOnClickListener {
+            trackingViewModel.clickOnWebsite(requireContext())
+        }
 
         feedbackButton.setOnClickListener {
             val directions: NavDirections =

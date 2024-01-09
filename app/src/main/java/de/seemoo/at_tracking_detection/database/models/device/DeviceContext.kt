@@ -28,6 +28,9 @@ interface DeviceContext {
 
     val numberOfLocationsToBeConsideredForTrackingDetectionHigh: Int
         get() = RiskLevelEvaluator.NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
+    
+    val websiteManufacturer: String
+        get() = "https://www.seemoo.tu-darmstadt.de/"
 
     fun getConnectionState(scanResult: ScanResult): ConnectionState {
         return ConnectionState.UNKNOWN

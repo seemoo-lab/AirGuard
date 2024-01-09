@@ -37,6 +37,9 @@ class Chipolo(val id: Int) : Device() {
         override val statusByteDeviceType: UInt
             get() = 0u
 
+        override val websiteManufacturer: String
+            get() = "https://chipolo.net/"
+
         override val numberOfDaysToBeConsideredForTrackingDetection: Long
             get() = 1
 

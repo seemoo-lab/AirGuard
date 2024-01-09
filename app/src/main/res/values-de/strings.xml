@@ -104,6 +104,7 @@
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
     <string name="title_data_deletion">Datenlöschung anfragen</string>
+    <string name="title_article">Artikel</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
@@ -301,6 +302,9 @@
     <string name="version_number">Version %s</string>
     <string name="contact_us">Kontaktiere uns</string>
     <string name="credits">Credits</string>
+    <string name="website_manufacturer">Hersteller Website</string>
+    <string name="website_manufacturer_detail">Öffnet die Webseite des Herstellers</string>
+    <string name="no_browser">Kein Browser gefunden</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
     <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf "Ja" bei der Studienteilnahme klicken.</string>
     <string name="delete_data_success">Datenlöschung erfolgreich</string>
