@@ -39,7 +39,16 @@ class Tile(val id: Int) : Device(){
             get() = 0u
 
         override val numberOfDaysToBeConsideredForTrackingDetection: Long
-            get() = 2
+            get() = 1
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
+            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionLow
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionMedium: Int
+            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionHigh: Int
+            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionHigh
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEED-0000-1000-8000-00805F9B34FB")
     }
