@@ -81,18 +81,18 @@ enum class DeviceType {
         }
     }
 
-    fun getNumberOfDaysToBeConsideredForTrackingDetection(): Long {
+    fun getNumberOfHoursToBeConsideredForTrackingDetection(): Long {
         return when (this) {
-            TILE -> Tile.numberOfDaysToBeConsideredForTrackingDetection
-            CHIPOLO -> Chipolo.numberOfDaysToBeConsideredForTrackingDetection
-            UNKNOWN -> Unknown.numberOfDaysToBeConsideredForTrackingDetection
-            AIRPODS -> AirPods.numberOfDaysToBeConsideredForTrackingDetection
-            AIRTAG -> AirTag.numberOfDaysToBeConsideredForTrackingDetection
-            APPLE -> AppleDevice.numberOfDaysToBeConsideredForTrackingDetection
-            FIND_MY -> FindMy.numberOfDaysToBeConsideredForTrackingDetection
-            SAMSUNG -> SamsungDevice.numberOfDaysToBeConsideredForTrackingDetection
-            GALAXY_SMART_TAG -> SmartTag.numberOfDaysToBeConsideredForTrackingDetection
-            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfDaysToBeConsideredForTrackingDetection
+            TILE -> Tile.numberOfHoursToBeConsideredForTrackingDetection
+            CHIPOLO -> Chipolo.numberOfHoursToBeConsideredForTrackingDetection
+            UNKNOWN -> Unknown.numberOfHoursToBeConsideredForTrackingDetection
+            AIRPODS -> AirPods.numberOfHoursToBeConsideredForTrackingDetection
+            AIRTAG -> AirTag.numberOfHoursToBeConsideredForTrackingDetection
+            APPLE -> AppleDevice.numberOfHoursToBeConsideredForTrackingDetection
+            FIND_MY -> FindMy.numberOfHoursToBeConsideredForTrackingDetection
+            SAMSUNG -> SamsungDevice.numberOfHoursToBeConsideredForTrackingDetection
+            GALAXY_SMART_TAG -> SmartTag.numberOfHoursToBeConsideredForTrackingDetection
+            GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfHoursToBeConsideredForTrackingDetection
         }
     }
 

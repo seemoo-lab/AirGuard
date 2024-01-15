@@ -12,7 +12,6 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import java.text.DateFormat
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
@@ -87,7 +86,7 @@ class RiskCardViewModel @Inject constructor(
                 riskColor = ContextCompat.getColor(context, R.color.risk_low)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_DAYS),
+                    context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_HOURS),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
                 lastDiscoveryModel.postValue(RiskRowViewModel(
@@ -106,7 +105,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS
+                        RiskLevelEvaluator.RELEVANT_HOURS
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
@@ -128,7 +127,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS
+                        RiskLevelEvaluator.RELEVANT_HOURS
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))

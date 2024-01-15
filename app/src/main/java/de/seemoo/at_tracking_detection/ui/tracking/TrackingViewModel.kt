@@ -2,9 +2,7 @@ package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.*
-import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
@@ -13,7 +11,6 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -30,7 +27,7 @@ class TrackingViewModel @Inject constructor(
 
     val noLocationsYet = MutableLiveData(true)
 
-    val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
+    private val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
 
     val error = MutableLiveData(false)
 

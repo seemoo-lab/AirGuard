@@ -40,8 +40,8 @@ class Chipolo(val id: Int) : Device() {
         override val websiteManufacturer: String
             get() = "https://chipolo.net/"
 
-        override val numberOfDaysToBeConsideredForTrackingDetection: Long
-            get() = 1
+        override val numberOfHoursToBeConsideredForTrackingDetection: Long
+            get() = super.numberOfHoursToBeConsideredForTrackingDetection
 
         override val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
             get() = super.numberOfLocationsToBeConsideredForTrackingDetectionLow

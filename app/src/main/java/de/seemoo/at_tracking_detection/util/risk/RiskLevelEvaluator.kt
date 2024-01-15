@@ -79,7 +79,7 @@ class RiskLevelEvaluator(
 
     // How many trackers have been relevant here as tracker
     fun getNumberRelevantTrackers(): Int {
-        val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+        val relevantDate = LocalDateTime.now().minusHours(RELEVANT_HOURS)
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
 
         return baseDevices.count()
@@ -87,14 +87,15 @@ class RiskLevelEvaluator(
 
     companion object {
         /** The number of days that we use to calculate the risk **/
-        const val RELEVANT_DAYS: Long = 14 // Only consider beacons in the last x days, default value, can be overwritten in the specific device properties
+        const val RELEVANT_HOURS: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
         const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8 // Minimum time difference until next notification
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
-        val relevantTrackingDateDefault: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS) // Fallback Option, if possible use getRelevantTrackingDate() Function
+        val relevantTrackingDateDefault: LocalDateTime = LocalDateTime.now().minusHours(
+            RELEVANT_HOURS) // Fallback Option, if possible use getRelevantTrackingDate() Function
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Default Values: A single tracker gets tracked at least for x minutes until notification is created
@@ -150,7 +151,7 @@ class RiskLevelEvaluator(
             // Not ignored
             // Tracker has been seen long enough
             if (!device.ignore && device.firstDiscovery <= getAtLeastTrackedSince()) {
-                val relevantDays: Long = device.deviceType?.getNumberOfDaysToBeConsideredForTrackingDetection() ?: RELEVANT_DAYS
+                val relevantDays: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RELEVANT_HOURS
                 val relevantTrackingDate = getRelevantTrackingDate(relevantDays)
                 val numberOfBeacons = beaconRepository.getNumberOfBeaconsAddress(device.address, relevantTrackingDate)
 
