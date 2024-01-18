@@ -26,8 +26,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 34
-        versionCode 38
-        versionName "2.1"
+        versionCode 40
+        versionName "2.1.1"
 
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]

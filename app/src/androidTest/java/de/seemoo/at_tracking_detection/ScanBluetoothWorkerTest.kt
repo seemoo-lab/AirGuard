@@ -75,7 +75,7 @@ class ScanBluetoothWorkerTest {
         val deviceRepository = DatabaseModule.provideDeviceRepository(DatabaseModule.provideDeviceDao(db))
         val scanRepository = DatabaseModule.provideScanRepository(DatabaseModule.provideScanDao(db))
         val locationRepository = DatabaseModule.provideLocationRepository(DatabaseModule.provideLocationDao(db))
-        val locationProvider = LocationProvider(context.getSystemService<LocationManager>()!!, DefaultBuildVersionProvider())
+        val locationProvider = LocationProvider(context.getSystemService<LocationManager>()!!)
 
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()!!.notificationService
         val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()!!.backgroundWorkScheduler
@@ -236,13 +236,13 @@ class ScanBluetoothWorkerTest {
     }
 }
 
-class TestLocationProvider(private val lastLocationIsNull: Boolean, private val locationDelayMillis: Long, locationManager: LocationManager, versionProvider: BuildVersionProvider) : LocationProvider(locationManager, versionProvider) {
-    override fun getLastLocation(checkRequirements: Boolean): Location? {
-        if (lastLocationIsNull) {
-            return null
-        }
-        return super.getLastLocation(checkRequirements)
-    }
+class TestLocationProvider(private val lastLocationIsNull: Boolean, private val locationDelayMillis: Long, locationManager: LocationManager, versionProvider: BuildVersionProvider) : LocationProvider(locationManager) {
+//    override fun getLastLocation(checkRequirements: Boolean): Location? {
+//        if (lastLocationIsNull) {
+//            return null
+//        }
+//        return super.getLastLocation(checkRequirements)
+//    }
 
     override fun lastKnownOrRequestLocationUpdates(
         locationRequester: LocationRequester,
