@@ -55,7 +55,7 @@ class RiskDetailFragment : Fragment() {
 //                Intent.ACTION_VIEW,
 //                Uri.parse("https://support.apple.com/en-us/HT212227")
 //            )
-//            startActivity(intent)
+//            startActivitySafe(intent)
 //        }
 
         view.findViewById<MaterialCardView>(R.id.card_trackers_found).setOnClickListener {
