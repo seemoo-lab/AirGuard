@@ -1,0 +1,338 @@
+<resources>
+    <string name="app_name">AirGuard</string>
+
+    <string name="title_ignored_devices">已忽略的裝置</string>
+    <string name="title_dashboard">控制面板</string>
+    <string name="title_settings">設定</string>
+    <string name="title_debug">除錯</string>
+    <string name="title_feedback">回饋</string>
+    <string name="title_tracking">一個 ID 為 {deviceAddress} 的裝置正在追蹤您</string>
+    <string name="title_devices_tracking">裝置 ID：{deviceAddress}</string>
+    <string name="title_scan">掃描</string>
+    <string name="title_scan_detail">詳細掃描：{deviceAddress}</string>
+    <string name="title_observe_tracker">觀察追蹤器：{deviceAddress}</string>
+    <string name="title_device_map">所有裝置</string>
+    <string name="title_devices">裝置清單</string>
+    <string name="title_data_deletion">資料刪除請求</string>
+
+    <string name="map_empty_text">尚未找到任何裝置。每次發現裝置時，都會在地圖上顯示該裝置被發現的位置。但這並不表示有人在每個位置都追蹤您。在多數情況下，您可能會在大眾運輸工具或是從您的鄰居那邊發現其他裝置。</string>
+
+    <string name="mark_false_alarm">標記為誤報</string>
+    <string name="channel_name">追蹤偵測</string>
+    <string name="channel_description">對可能的追蹤裝置發出警示</string>
+    <string name="statistics_beacons">找到的裝置</string>
+    <string name="statistics_devices">位置</string>
+    <string name="statistics_alerts">已發送的追蹤警報</string>
+    <string name="statistics_false_alarms">誤報</string>
+    <string name="statistics_devices_monitored">目前監控的裝置</string>
+    <string name="settings_share_data_summary">透過分享匿名資料來支持專案</string>
+    <string name="settings_share_data_title">參與研究</string>
+    <string name="device_item_first_discovery">首次發現：</string>
+    <string name="beacons">裝置指標</string>
+    <string name="devices_swipe">滑動移除</string>
+    <string name="devices_list_empty">每次偵測到 AirTag 或其他可能的追蹤裝置，都會在這裡列出來。這個清單有可能也會包括一些其實沒有追蹤您的裝置。至於真正追蹤您的裝置，您會收到相關通知。</string>
+    <string name="ignored_device_list_empty">每次您收到已知裝置（例如您自己的 AirTag）追蹤您的通知，您可以把它設為誤報。對於藍牙地址不會變的裝置（如 Tile、Chipolo），也可以選擇忽略。這些裝置會在這裡列出。注意：AirTag 的藍牙地址每天會變一次，所以即使您把它設為誤報，隔天它會變成新的裝置</string>
+    <string name="settings_use_location_summary">若啟用，將能在被追蹤時提供更詳細的追蹤資訊。</string>
+    <string name="settings_use_location_title">使用位置資訊</string>
+    <string name="error_requesting_location_permission">請求背景位置權限時出錯</string>
+    <string name="tracking_locate_at_title">播放裝置音效</string>
+    <string name="tracking_locate_at_subtitle">找出 AirTag 的位置</string>
+    <string name="permissions_background_location_title">背景位置資訊</string>
+    <string name="permission_background_location_message">授予此權限後，可以在被追蹤時提供更詳細的追蹤資訊。這是一個選擇性功能。</string>
+    <string name="ok_button">確定</string>
+    <string name="tracking_feedback_title">意見回饋</string>
+    <string name="tracking_feedback_subtitle">提供一些建議</string>
+    <string name="tracking_detail_scan_title">詳細掃描</string>
+    <string name="tracking_detail_scan_subtitle">顯示此追蹤器的即時資訊</string>
+    <string name="tracking_ignore_device_title">忽略裝置</string>
+    <string name="tracking_ignore_device_subtitle">對此裝置的通知靜音</string>
+    <string name="tracking_false_alarm_title">誤報</string>
+    <string name="tracking_false_alarm_subtitle">將此通知標記為誤報</string>
+    <string name="tracking_missing_beacons_info">有些指標在沒有任何位置資料的情況下被捕獲，因此並未顯示。</string>
+    <string name="feedback_question1">Find My 裝置藏在哪裡？</string>
+    <string name="feedback_location_backpack">背包</string>
+    <string name="feedback_location_clothes">衣物</string>
+    <string name="feedback_location_car">汽車</string>
+    <string name="feedback_location_bike">自行車</string>
+    <string name="feedback_close">關閉</string>
+    <string name="tracking_locate_at_playing_sound">正在播放音效…</string>
+    <string name="permission_required">需要權限</string>
+    <string name="permission_required_message">您需要給予此權限才能使用此應用程式。</string>
+    <string name="rssi">RSSI</string>
+    <string name="device_item_last_seen">最後出現時間：</string>
+    <string name="dashboard_tile_change">+%d</string>
+    <string name="onboarding_share_data_title">參與我們的研究？</string>
+    <string name="onboarding_share_data_switch">參與研究</string>
+    <string name="onboarding_share_data_description">
+        這個應用程式是由德國達姆施塔特工業大學的研究人員開發的。透過我們的研究，我們希望了解有多少人受到惡意追蹤影響。
+        究竟 Apple 的「尋找我的裝置」是否真的被用來追蹤人們。最終，我們的應用程式能有多大程度保護人們免受此類追蹤。\n
+        <b>您需要年滿 18 歲才能加入。</b>
+        \n\n
+
+        • 我們將收集一些關於發現的裝置的資訊，例如<b>裝置類型</b>，<b>RSSI 值</b>（訊號強度）以及<b>發現的日期和時間</b> \n\n
+        • 已向您發送了多少<b>通知</b>，通知的<b>日期和時間</b>以及您可以選擇提供的<b>意見回饋</b>\n\n
+
+        我們<b>絕不會</b>分享任何位置資料或可能識別您的資料！參與完全是匿名的。</string>
+
+    <string name="onboarding_1_description">當這款應用程式偵測到 AirTag、具有 Find My 功能的裝置、SmartTag、Chipolo 或 Tile 似乎在追蹤您時，會提醒您。</string>
+    <string name="location_permission_title">位置權限</string>
+    <string name="location_permission_message">此應用程式需要位置權限才能允許即使在應用程式關閉或未使用時也能掃描 AirTags 或其他藍牙追蹤器。此外，您可以選擇允許應用程式在您被追蹤時記錄位置。</string>
+
+    <string name="onboarding_ignore_battery_optimization_title">電池最佳化</string>
+    <string name="onboarding_ignore_battery_optimization_description">為了防止 Android 在背景中止應用程式，我們需要停用電池最佳化。</string>
+    <string name="onboarding_ignore_battery_optimization">忽略電池最佳化</string>
+    <string name="onboarding_4_title">背景位置權限</string>
+    <string name="onboarding_4_description">為了在您被追蹤時獲得更詳細的位置歷史記錄，請允許此應用程式始終使用您的位置。此應用程式收集位置資料，以便我們在應用程式關閉或未使用時保存 AirTag 或其他藍牙追蹤器的位置。此功能是選擇性的，並且不會有位置資料離開您的裝置。</string>
+    <string name="onboarding_5_title">全部設定完成</string>
+    <string name="settings_theme_system_default">系統預設</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_light">淺色</string>
+    <string name="settings_use_low_power_ble_summary">此設定將減少電力消耗，但可能會影響追蹤器的偵測效果</string>
+    <string name="tracking_device_not_connectable">此裝置無法播放音效。</string>
+    <string name="tracking_info">透過您的手機使用 NFC 掃描此 AirTag 以取得更多資訊。</string>
+    <string name="info">資訊</string>
+
+    <string name="settings_show_connected_devices_title">顯示已連線的裝置</string>
+    <string name="settings_show_connected_devices">在掃描標籤中顯示已連線到其擁有者裝置的裝置</string>
+
+    <string name="settings_notification_priority_high_title">高優先級通知</string>
+    <string name="settings_notification_priority_high">如果啟用，將以高優先級的警報發出通知</string>
+
+    <string name="settings_third_party_libraries_title">第三方函式庫</string>
+    <string name="settings_third_party_libraries_summary">顯示所有使用的第三方函式庫及其授權的清單</string>
+
+    <string name="settings_attributions_title">屬性</string>
+    <string name="settings_attributions_summary">顯示屬性清單</string>
+
+    <string name="settings_privacy_policy_title">隱私政策</string>
+    <string name="settings_privacy_policy_summary">查看我們簡要的隱私政策</string>
+
+    <string name="settings_information_contact_title">聯絡資訊</string>
+    <string name="settings_information_contact_summary">取得我們的聯絡資訊</string>
+
+    <string name="settings_delete_study_data_title">刪除研究資料</string>
+    <string name="settings_delete_study_data_summary">請求刪除研究資料</string>
+
+    <string name="settings_device_filter_title">依裝置類型篩選</string>
+    <string name="settings_device_filter_dialog_title">選擇裝置類型</string>
+    <string name="settings_device_filter_summary">選擇 AirGuard 應觀察的裝置類型。未選擇的裝置類型將不會出現在手動掃描中，且當此類裝置追蹤您時，您將不會收到通知。</string>
+
+
+    <string name="onboarding_share_data_no">否</string>
+    <string name="onboarding_share_data_yes">是</string>
+    <string name="onboarding_share_data_dialog">請決定是否要參與。所有分享的資料都是完全匿名的。</string>
+    <string name="device_name_airtag" translatable="false">AirTag %s</string>
+    <string name="device_name_find_my_device">Find My 裝置 %s</string>
+
+    <string name="notification_observe_tracker_title_base">您觀察的追蹤器</string>
+    <string name="notification_observe_tracker_positive_singular">您觀察的追蹤器已至少追蹤您一小時。</string>
+    <string name="notification_observe_tracker_positive_plural">您觀察的追蹤器已至少追蹤您 %d 小時。</string>
+    <string name="notification_observe_tracker_negative">您觀察的追蹤器並未追蹤您。</string>
+
+    <string name="notification_text_base">開啟通知以取得更多資訊。追蹤器已至少追蹤您 %d 分鐘。</string>
+    <string name="notification_title_base">有追蹤器一直在追蹤您</string>
+    <string name="notification_text_single">開啟通知以取得更多資訊。%s 已至少追蹤您 %d 分鐘。</string>
+    <string name="notification_text_multiple">開啟通知以取得更多資訊。%s 已至少追蹤您 %d 分鐘。</string>
+    <string name="notification_title_vocal">%s 在追蹤您</string>
+    <string name="notification_title_consonant">%s 在追蹤您</string>
+    <string name="notification_title_multiple">%s 在追蹤您</string>
+    <string name="notification_title_ble_error">BLE 掃描失敗</string>
+    <string name="alert_sent_icon">已發送警報的圖示</string>
+    <string name="device_icon">裝置圖示</string>
+    <string name="location_sample_image">位置樣本圖片</string>
+    <string name="permissions_location_title">背景位置</string>
+    <string name="permission_location_message">需要此權限以提供在 AirTag，Find My 裝置，SmartTag，Chipolo 或 Tile 追蹤您時的一些更詳細的追蹤資訊。此權限是選擇性的。</string>
+    <string name="onboarding_2_title">位置權限</string>
+    <string name="onboarding_2_description">此應用程式需要權限來存取您的位置，以便透過藍牙低能量搜索周圍的追蹤器。沒有此權限，應用程式將無法運作，也將無法找到任何追蹤裝置。您的位置資料絕不會離開您的裝置。</string>
+    <string name="devices_edit_title">編輯裝置名稱</string>
+    <string name="cancel_button">取消</string>
+    <string name="devices_alter_removed">已移除 "%s"！</string>
+    <string name="undo_button">還原</string>
+    <string name="grant_location_permission">授予位置權限</string>
+    <string name="grant_permission">授予權限</string>
+    <string name="cancel">取消</string>
+    <string name="no_button">不，謝謝</string>
+    <string name="dashboard_scan_fab_description">掃描追蹤您的裝置！</string>
+    <string name="dashboard_scan_fab">手動掃描</string>
+    <string name="onboarding_scan_title">藍牙掃描</string>
+    <string name="onboarding_scan_description">我們需要藍牙掃描權限去掃描周圍的追蹤裝置！</string>
+    <string name="onboarding_connect_title">藍牙連線</string>
+    <string name="onboarding_connect_description">如果找到追蹤裝置，AirGuard 可以讓您在其上播放音效。為此，我們需要連線到此裝置的權限。</string>
+    <string name="onboarding_notification_title">發送通知</string>
+    <string name="onboarding_notification_description">當我們確認有追蹤器在追蹤您時，我們需要發送通知的權限。</string>
+    <string name="twitter_description">關注我們的 Twitter 帳號</string>
+    <string name="twitter">Twitter</string>
+    <string name="scan_result_item_image_description">掃描結果項目</string>
+    <string name="scan_result_no_devices">未找到追蹤裝置。您是安全的！\n我們只掃描 Apple Find My 追蹤器（AirTags），Galaxy SmartTags，Chipolos 和 Tiles。</string>
+    <string name="ble_service_connection_error">無法連線到裝置</string>
+    <string name="yes_button">是</string>
+    <string name="scan_enable_bluetooth_message">必須開啟藍牙才能掃描藍牙裝置。</string>
+    <string name="scan_enable_bluetooth_title">藍牙掃描</string>
+    <string name="risk_level_low">無風險</string>
+    <string name="risk_level_medium">中風險</string>
+    <string name="risk_level_high">高風險</string>
+    <string name="no_trackers_found">在過去的 %d 天內未找到追蹤器</string>
+    <string name="found_x_trackers">在過去的 %d 天內檢測到 %d 個追蹤器</string>
+    <string name="last_scan_info">最後掃描：%s</string>
+    <string name="last_discovery">最後在 %s 發現追蹤器</string>
+    <string name="how_does_airguard_work">AirGuard 如何運作？</string>
+    <string name="notification_help">
+        • 手動掃描追蹤器並最終觸發音效。\n<br />
+        • 透過移除電池來停用追蹤器。\n<br />
+        • 帶著追蹤器去警察局。\n<br />
+        • 確保在您停用追蹤器之前不要移動到安全地點。\n<br />
+    </string>
+    <string name="i_got_a_notification_what_should_i_do">我收到了通知，我該怎麼辦？</string>
+
+    <string name="find_tracker_help">
+        • 可能會有誤報。因為您旁邊的人可能正在使用追蹤器（例如，大眾運輸工具中的人）\n<br />
+        • 如果您在不同的日子收到多個通知，請確保使用播放音效功能！
+    </string>
+    <string name="i_cannot_find_the_tracker">我找不到追蹤器</string>
+    <string name="airguard_scan_explanation">AirGuard 使用藍牙掃描追蹤您的裝置。</string>
+    <string name="airguard_detection_explanation">AirGuard 可以利用位置資訊檢測追蹤器是否在多個位置追蹤您！</string>
+    <string name="airguard_notification_explanation">當有可能的追蹤裝置在追蹤您時，您會收到通知！然後上方的卡片將會變成橘色或紅色。</string>
+
+    <string name="find_sound">播放音效來找到它</string>
+    <string name="find_manual_scan">進行手動掃描並定位它</string>
+    <string name="find_battery">移除電池</string>
+    <string name="find_headline">找到並停用 AirTag</string>
+    <string name="title_risk_detail">風險評估</string>
+    <string name="show_all">顯示全部</string>
+    <string name="tracker_detected">已檢測到追蹤器</string>
+    <string name="locations_tracked">所有位置</string>
+    <string name="dates_detected">已檢測的日期</string>
+    <string name="filter">開啟篩選器</string>
+    <string name="filter_ignored">已忽略</string>
+    <string name="filter_notified">已識別的追蹤器</string>
+    <string name="filter_title_device_attributes">裝置屬性</string>
+    <string name="filter_apply">套用</string>
+    <string name="filter_from_until_text">%s 到 %s</string>
+    <string name="filter_date_range_picker_title">最後看到</string>
+    <string name="app_theme_dark">深色</string>
+    <string name="app_theme_light">淺色</string>
+    <string name="app_theme_system_default">系統預設</string>
+    <string name="settings_risk_sensitivity_low">低</string>
+    <string name="settings_risk_sensitivity_medium">中</string>
+    <string name="settings_risk_sensitivity_high">高</string>
+    <string name="settings_risk_sensitivity_title">偵測靈敏度</string>
+    <string name="settings_risk_sensitivity_summary">此設定控制追蹤偵測的靈敏度。較高的設定可提昇偵測速度，但結果可能較不準確。</string>
+    <string name="settings_app_theme_title">應用程式佈景主題</string>
+    <string name="settings_app_theme_summary">選擇一個佈景主題！</string>
+    <string name="settings_metric_title">公制</string>
+    <string name="settings_metric_summary">使用公制來顯示距離</string>
+    <string name="info_text_only_trackers">此清單僅顯示在過去 14 天內追蹤您的追蹤器。要檢視所有裝置，您可以使用右下角的按鈕更改篩選器。</string>
+    <string name="info_text_all_devices">此清單顯示在過去 14 天內由 AirGuard 發現的所有裝置。這包括並未追蹤您的裝置。已識別的追蹤器會被標記為驚嘆號。您可以使用右下角的按鈕篩選裝置。</string>
+    <string name="info_text_all_locations">此檢視顯示找到裝置的所有位置。這包括並未追蹤您的位置的裝置。</string>
+    <string name="empty_list_devices">此清單顯示在過去 14 天內由 AirGuard 發現的所有裝置。由於清單為空，表示沒有找到任何裝置。請記住，應用程式只能透過使用藍牙找到潛在的追蹤裝置，因此請確保藍牙已啟用。</string>
+    <string name="empty_list_trackers">此清單僅顯示在過去 14 天內追蹤您的裝置。由於清單中沒有內容，表示沒有找到任何嘗試追蹤您裝置。每當有裝置追蹤您的位置時，您都會收到通知。請確保藍牙已啟用以找到追蹤裝置。使用下面的按鈕，您可以檢視所有裝置，即使它們並未被識別為追蹤器。</string>
+    <string name="show_all_button">顯示所有裝置</string>
+    <string name="empty_image_content_description">顯示一個空的清單</string>
+    <string name="beacon_locations">指標位置</string>
+    <string name="other_devices_found">找到的其他裝置</string>
+    <string name="device_name_tile" translatable="false">Tile %s</string>
+    <string name="device_name_samsung_device" translatable="true">Samsung 的裝置 %s</string>
+    <string name="device_name_smarttag" translatable="false">SmartTag %s</string>
+    <string name="device_name_smarttag_plus" translatable="false">SmartTag Plus %s</string>
+    <string name="device_name_airpods" translatable="false">AirPods %s</string>
+    <string name="device_name_apple_device">Apple 的裝置 %s</string>
+    <string name="device_name_unknown_device">未知裝置 %s</string>
+    <string name="play_sound_error_fail">播放音效失敗！請再試一次！</string>
+    <string name="play_sound_error_init">無法連線到藍牙服務！</string>
+    <string name="play_sound_error_connect">無法連線到裝置！</string>
+    <string name="filter_title_device_types">裝置類型</string>
+    <string name="notification_ignore_device">忽略裝置</string>
+    <string name="notification_false_alarm">誤報</string>
+    <string name="last_scans">最近掃描</string>
+    <string name="tip_airtag_testing"><b>測試應用程式？</b> 如果在設定中啟用了此功能，AirTag 只能在與附近的 iPhone / iPad 連線時被發現。否則，AirTag / SmartTag 需要從藍牙斷開連線 15 分鐘才能在應用程式中被發現。AirGuard 不會儲存已連線的追蹤器。</string>
+    <string name="none">無</string>
+    <string name="already_scanning_warning">應用程式已在背景中掃描。請等待 10 秒，然後重新開始手動掃描</string>
+    <string name="settings_use_low_power_ble_title">低功耗掃描模式</string>
+    <string name="ignored_devices">已忽略的裝置</string>
+    <string name="airtags_found">找到的 AirTag</string>
+    <string name="findmy_found">找到的 Find My 裝置</string>
+    <string name="tile_found">找到的 Tile</string>
+    <string name="chipolo_found">找到的 Chipolo</string>
+    <string name="smarttag_found">找到的 SmartTag</string>
+    <string name="survey_card_title">我們正在進行調查</string>
+    <string name="survey_card_info_text">我們正在嘗試找出有多少人經歷過跟蹤和位置追蹤攻擊。我們邀請每個使用者參與調查，即使您並未成為這些攻擊的受害者。這項調查是我們在達姆施塔特工業大學的研究專案的一部分。</string>
+    <string name="participate">參與</string>
+    <string name="survey_info_1">有多少人經歷過跟蹤和位置追蹤？</string>
+    <string name="survey_info_2">我們如何保護他們？</string>
+    <string name="survey_info_3">即使您未經歷過這種攻擊，也請參與</string>
+    <string name="survey_info_4">由德國達姆施塔特工業大學進行</string>
+    <string name="remind_later">稍後提醒我</string>
+    <string name="show_not_again">不再顯示</string>
+    <string name="survey_alert_title">調查資訊</string>
+    <string name="survey_alert_message">您希望稍後再提醒您參加調查嗎？</string>
+    <string name="survery_settings_summary">達姆施塔特工業大學正在進行調查，以了解人們如何受到跟蹤的影響</string>
+    <string name="survey_settings_title">跟蹤和位置追蹤調查</string>
+    <string name="onboarding_setting_summary">將始終顯示應用程式的初始化流程</string>
+    <string name="onboarding_setting_title">顯示初始化流程</string>
+    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
+    <string name="bluetooth_off_explanation">藍牙已關閉。此應用程式需要藍牙來掃描附近的追蹤器。</string>
+    <string name="open_bluetooth_settings">開啟藍牙設定</string>
+
+    <string name="battery_text">電量：</string>
+    <string name="battery_full">充飽</string>
+    <string name="battery_medium">中</string>
+    <string name="battery_low">低</string>
+    <string name="battery_very_low">非常低</string>
+    <string name="battery_unknown">未知</string>
+
+    <string name="connection_state_offline">離線</string>
+    <string name="connection_state_offline_explanation">裝置已超過 15 分鐘未進行連線</string>
+    <string name="connection_state_overmature_offline">長時間離線</string>
+    <string name="connection_state_overmature_offline_explanation">裝置已與擁有者的裝置斷線數小時</string>
+    <string name="connection_state_premature_offline">短時間離線</string>
+    <string name="connection_state_premature_offline_explanation">裝置在過去 15 分鐘內有過連線</string>
+    <string name="connection_state_connected">已連線</string>
+    <string name="connection_state_connected_explanation">裝置目前與擁有者的裝置處於連線狀態</string>
+    <string name="connection_state_unknown">未知</string>
+    <string name="connection_state_content_description">關於裝置連線狀態的資訊</string>
+
+
+    <string name="scan_accessibility">開始或停止掃描</string>
+    <string name="scan_sorting_by_rssi">依訊號強度</string>
+    <string name="scan_sorting_by_recently">依最近偵測到</string>
+    <string name="scan_sorting_by_address">依 MAC-地址</string>
+    <string name="scan_sorting_by_name">依名稱</string>
+    <string name="scan_sorting_by_type">依類型</string>
+    <string name="scan_not_in_range">裝置不在範圍內</string>
+    <string name="scan_battery_icon_description">此圖示顯示追蹤器的電池狀態</string>
+    <string name="scan_state_info_icon_description">點選此圖示會顯示連線狀態的解釋</string>
+
+    <string name="play_sound_description">在追蹤裝置上播放音效</string>
+    <string name="bell_icon_description">此裝置已被識別為追蹤器</string>
+
+    <string name="searching_for_device">正在尋找裝置</string>
+    <string name="battery_status_text">電池：</string>
+    <string name="connection_state_unknown_explanation">無法確定連線狀態</string>
+
+    <string name="airtag" translatable="false">AirTag</string>
+    <string name="airpods" translatable="false">AirPods</string>
+    <string name="apple_device">Apple 的裝置</string>
+    <string name="chipolo" translatable="false">Chipolo</string>
+    <string name="find_my_device">Find My 裝置</string>
+    <string name="samsung_device">Samsung 的裝置</string>
+    <string name="smart_tag" translatable="false">SmartTag</string>
+    <string name="tile" translatable="false">Tile</string>
+    <string name="airguard_for_android">AirGuard for Android</string>
+    <string name="version_number">版本 %s</string>
+    <string name="contact_us">聯絡我們</string>
+
+    <string name="observe_tracker_title">觀察追蹤器</string>
+    <string name="observe_tracker_clock_description">時鐘的圖片</string>
+    <string name="observe_tracker_start_observation">開始觀察</string>
+    <string name="observe_tracker_explanation">如果您不確定此追蹤器是否在追蹤您，您可以手動觀察它。\n\n在一小時內，AirGuard 將搜尋此追蹤器並立即發送通知，即使您並未與此追蹤器一起移動。如果追蹤器不再附近，您也會收到相關通知。</string>
+    <string name="tracking_observe_tracker_subtitle">找出此追蹤器是否在追蹤您</string>
+    <string name="observe_tracker_success">已開始觀察</string>
+    <string name="observe_tracker_failure">您已在觀察此追蹤器</string>
+    <string name="credits">致謝</string>
+
+    <string name="delete_data_button">請求刪除資料</string>
+    <string name="delete_data_explanation">Placeholder：解釋發生的事情等。</string>
+    <string name="copyright">版權</string>
+    <string name="developer">開發者：%s</string>
+    <string name="maintainer">維護者：%s</string>
+</resources>
