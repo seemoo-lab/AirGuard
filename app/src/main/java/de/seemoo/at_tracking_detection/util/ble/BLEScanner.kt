@@ -21,8 +21,7 @@ import timber.log.Timber
  * Not to be used for Background scanning. This is handled in the `ScanBluetoothWorker`
  */
 object BLEScanner {
-
-    var bluetoothManager: BluetoothManager? = null
+    private var bluetoothManager: BluetoothManager? = null
     var callbacks = ArrayList<ScanCallback>()
     var isScanning = false
     private var lastLocation: Location? = null
@@ -39,6 +38,12 @@ object BLEScanner {
         if(this.bluetoothManager != null && isScanning) { return true }
 
         this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = this.bluetoothManager?.adapter
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            Timber.d("Bluetooth is not enabled.")
+            return false
+        }
 
         val scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()

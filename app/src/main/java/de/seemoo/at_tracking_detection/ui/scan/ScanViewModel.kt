@@ -106,12 +106,15 @@ class ScanViewModel @Inject constructor(
             bluetoothDeviceListLowRiskValue.add(scanResult)
         }
 
-        // TODO: is sorting necessary long term?
-        sortResults(bluetoothDeviceListHighRiskValue)
-        sortResults(bluetoothDeviceListLowRiskValue)
+        val sortedHighRiskList = ArrayList(bluetoothDeviceListHighRiskValue)
+        val sortedLowRiskList = ArrayList(bluetoothDeviceListLowRiskValue)
 
-        bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
-        bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)
+        sortResults(sortedHighRiskList)
+        sortResults(sortedLowRiskList)
+
+        bluetoothDeviceListHighRisk.postValue(sortedHighRiskList)
+        bluetoothDeviceListLowRisk.postValue(sortedLowRiskList)
+
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(
             "status bytes: ${

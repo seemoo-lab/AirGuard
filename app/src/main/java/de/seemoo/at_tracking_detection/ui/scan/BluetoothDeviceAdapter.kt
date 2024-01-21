@@ -13,7 +13,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
 
 class BluetoothDeviceAdapter:
-    ListAdapter<ScanResult, BluetoothDeviceAdapter.ScanResultViewHolder>(Companion) {
+    ListAdapter<ScanResult, BluetoothDeviceAdapter.ScanResultViewHolder>(BluetoothDeviceDiffCallback()) {
 
     class ScanResultViewHolder(private val binding: ItemScanResultBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -43,13 +43,14 @@ class BluetoothDeviceAdapter:
                     .navigate(directions)
             }
     }
+}
 
-    companion object : DiffUtil.ItemCallback<ScanResult>() {
-        override fun areContentsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean =
-            getPublicKey(oldItem) == getPublicKey(newItem)
-
-        override fun areItemsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean =
-            oldItem == newItem
+class BluetoothDeviceDiffCallback: DiffUtil.ItemCallback<ScanResult>() {
+    override fun areItemsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean {
+        return oldItem.device.address == newItem.device.address
     }
 
+    override fun areContentsTheSame(oldItem: ScanResult, newItem: ScanResult): Boolean {
+        return (oldItem.device.address == newItem.device.address) && (oldItem.rssi == newItem.rssi)
+    }
 }

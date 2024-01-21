@@ -26,6 +26,9 @@ class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
 
+    private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
+    private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,24 +36,19 @@ class ScanFragment : Fragment() {
     ): View {
         val binding: FragmentScanBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
-        val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
-        val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
 
         binding.adapterHighRisk = bluetoothDeviceAdapterHighRisk
         binding.adapterLowRisk = bluetoothDeviceAdapterLowRisk
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = scanViewModel
 
-        // TODO: possible to optimize this???
         scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {
             bluetoothDeviceAdapterHighRisk.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
             bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
         }
 
         scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {
             bluetoothDeviceAdapterLowRisk.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
             bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
         }
 
@@ -62,6 +60,7 @@ class ScanFragment : Fragment() {
             }
         }
 
+        // TODO: Sorting is currently not working
         scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
             val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
             val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
