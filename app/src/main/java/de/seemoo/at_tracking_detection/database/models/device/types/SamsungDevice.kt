@@ -105,16 +105,19 @@ open class SamsungDevice(open val id: Int) : Device(){
             return BatteryState.UNKNOWN
         }
 
-        override fun getPublicKey(scanResult: ScanResult): String{
-            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+        override fun getPublicKey(scanResult: ScanResult): String {
+            try {
+                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 
-            fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+                fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
-            return if (serviceData == null || serviceData.size < 12) {
-                scanResult.device.address
-            } else {
-                byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
+                if (serviceData != null && serviceData.size >= 12) {
+                    return byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting public key")
             }
+            return scanResult.device.address
         }
 
         fun getSamsungDeviceType(scanResult: ScanResult): DeviceType{

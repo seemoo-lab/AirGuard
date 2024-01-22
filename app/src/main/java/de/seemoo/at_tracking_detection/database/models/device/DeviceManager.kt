@@ -17,37 +17,28 @@ object DeviceManager {
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Checking device type for ${scanResult.device.address}")
 
-        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x004c)
-        val services = scanResult.scanRecord?.serviceUuids
-        if (manufacturerData != null) {
-            val statusByte: Byte = manufacturerData[2]
-//            Timber.d("Status byte $statusByte, ${statusByte.toString(2)}")
-            // Get the correct int from the byte
-            val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
-//            Timber.d("Device type int: $deviceTypeInt")
+        scanResult.scanRecord?.let { scanRecord ->
+            scanRecord.getManufacturerSpecificData(0x004c)?.let { manufacturerData ->
+                if (manufacturerData.size >= 3) { // Ensure array size is sufficient
+                    val statusByte: Byte = manufacturerData[2]
+                    val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
 
-            var deviceTypeCheck: DeviceType? = null
-
-            for (device in appleDevices) {
-                // Implementation of device detection is incorrect.
-                if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
-                    deviceTypeCheck = device.deviceType
+                    for (device in appleDevices) {
+                        if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
+                            return device.deviceType
+                        }
+                    }
                 }
             }
 
-            return deviceTypeCheck ?: Unknown.deviceType
-        }else if (services != null) {
-            //Check if this device is a Tile
-            if (services.contains(Tile.offlineFindingServiceUUID)) {
-                return Tile.deviceType
+            scanRecord.serviceUuids?.let { services ->
+                when {
+                    services.contains(Tile.offlineFindingServiceUUID) -> return Tile.deviceType
+                    services.contains(Chipolo.offlineFindingServiceUUID) -> return Chipolo.deviceType
+                    services.contains(SmartTag.offlineFindingServiceUUID) -> return SamsungDevice.getSamsungDeviceType(scanResult)
+                    else -> return Unknown.deviceType
+                }
             }
-            else if(services.contains(Chipolo.offlineFindingServiceUUID)){
-                return Chipolo.deviceType
-            }
-            else if(services.contains(SmartTag.offlineFindingServiceUUID)){
-                return SamsungDevice.getSamsungDeviceType(scanResult)
-            }
-
         }
         return Unknown.deviceType
     }
