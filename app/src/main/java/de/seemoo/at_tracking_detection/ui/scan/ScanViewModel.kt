@@ -33,8 +33,7 @@ class ScanViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
     ) : ViewModel() {
-
-    val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResult>>()
+    val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResult>>() // TODO: Problem needs to be immutable so that DiffUtil works
 
     val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResult>>()
 
