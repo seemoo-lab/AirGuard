@@ -92,7 +92,7 @@ class RiskLevelEvaluator(
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
-        const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 1 // Minimum time difference until next notification
+        const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8 // Minimum time difference until next notification
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
         val relevantTrackingDateDefault: LocalDateTime = LocalDateTime.now().minusHours(
             RELEVANT_HOURS) // Fallback Option, if possible use getRelevantTrackingDate() Function
@@ -112,18 +112,7 @@ class RiskLevelEvaluator(
             getMinutesAtLeastTrackedBeforeAlarm()
         )
 
-        private fun getRelevantTrackingDate(
-            relevantHours: Long,
-            lastNotificationSent: LocalDateTime?,
-            valueForNotification: Boolean
-        ): LocalDateTime {
-            val relevantTrackingDateRaw = LocalDateTime.now().minusHours(relevantHours)
-            return if (!valueForNotification || lastNotificationSent == null || relevantTrackingDateRaw.isAfter(lastNotificationSent)) {
-                relevantTrackingDateRaw
-            } else {
-                lastNotificationSent
-            }
-        }
+        private fun getRelevantTrackingDate(relevantDays: Long): LocalDateTime = LocalDateTime.now().minusDays(relevantDays)
 
         fun getMinutesAtLeastTrackedBeforeAlarm(): Long {
             return when (SharedPrefs.riskSensitivity) {
@@ -152,25 +141,18 @@ class RiskLevelEvaluator(
             }
         }
 
-        /**
-         * Checks if BaseDevice is a tracking device, Checks if all the criteria for a tracking device are met
-         * @param device the device to check
-         * @param useLocation if the location should be used for the check
-         * @param valueForNotification if the check is for a notification, Standard: For Risk Calculation for the dashboard. Notifications are only thrown if the criteria is met again after the last notification, therefore a different calculation method is required.
-         * @return the risk level of the device under the given circumstances
-         */
-        fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean, valueForNotification: Boolean = false): RiskLevel {
+        // Checks if BaseDevice is a tracking device
+        // Goes through all the criteria
+        fun checkRiskLevelForDevice(device: BaseDevice, useLocation: Boolean): RiskLevel {
             Timber.d("Checking Risk Level for Device: ${device.address}")
 
             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository ?: return RiskLevel.LOW
-            val lastNotificationSent = device.lastNotificationSent
 
             // Not ignored
             // Tracker has been seen long enough
-            if (!device.ignore && device.firstDiscovery <= getAtLeastTrackedSince() &&
-                (lastNotificationSent == null || device.lastSeen.isAfter(lastNotificationSent))) {
-                val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RELEVANT_HOURS
-                val relevantTrackingDate = getRelevantTrackingDate(relevantHours, lastNotificationSent, valueForNotification)
+            if (!device.ignore && device.firstDiscovery <= getAtLeastTrackedSince()) {
+                val relevantDays: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RELEVANT_HOURS
+                val relevantTrackingDate = getRelevantTrackingDate(relevantDays)
                 val numberOfBeacons = beaconRepository.getNumberOfBeaconsAddress(device.address, relevantTrackingDate)
 
                 // Detected at least 3 Times

@@ -96,6 +96,7 @@ class AirTag(val id: Int) : Device(), Connectable {
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onCharacteristicRead(
                 gatt: BluetoothGatt?,
                 characteristic: BluetoothGattCharacteristic?,
