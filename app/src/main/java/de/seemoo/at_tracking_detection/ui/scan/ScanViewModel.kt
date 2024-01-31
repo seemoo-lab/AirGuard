@@ -105,11 +105,11 @@ class ScanViewModel @Inject constructor(
             bluetoothDeviceListLowRiskValue.add(scanResult)
         }
 
-//        val sortedHighRiskList = ArrayList(bluetoothDeviceListHighRiskValue)
-//        val sortedLowRiskList = ArrayList(bluetoothDeviceListLowRiskValue)
-//
-//        sortResults(sortedHighRiskList)
-//        sortResults(sortedLowRiskList)
+        val sortedHighRiskList = ArrayList(bluetoothDeviceListHighRiskValue)
+        val sortedLowRiskList = ArrayList(bluetoothDeviceListLowRiskValue)
+
+        sortResults(sortedHighRiskList)
+        sortResults(sortedLowRiskList)
 
         bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
         bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
@@ -124,14 +124,14 @@ class ScanViewModel @Inject constructor(
         Timber.d("Device list (Low Risk): ${bluetoothDeviceListLowRisk.value?.count()}")
     }
 
-//    fun sortResults(bluetoothDeviceListValue: MutableList<ScanResult>) {
-//        when(sortingOrder.value) {
-//            SortingOrder.SIGNAL_STRENGTH -> bluetoothDeviceListValue.sortByDescending { it.rssi }
-//            SortingOrder.DETECTION_ORDER -> bluetoothDeviceListValue.sortByDescending { it.timestampNanos }
-//            SortingOrder.ADDRESS -> bluetoothDeviceListValue.sortBy { it.device.address }
-//            else -> bluetoothDeviceListValue.sortByDescending { it.rssi }
-//        }
-//    }
+    fun sortResults(bluetoothDeviceListValue: MutableList<ScanResult>) {
+        when(sortingOrder.value) {
+            SortingOrder.SIGNAL_STRENGTH -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+            SortingOrder.DETECTION_ORDER -> bluetoothDeviceListValue.sortByDescending { it.timestampNanos }
+            SortingOrder.ADDRESS -> bluetoothDeviceListValue.sortBy { it.device.address }
+            else -> bluetoothDeviceListValue.sortByDescending { it.rssi }
+        }
+    }
 
     fun changeColorOf(sortOptions: List<TextView>, sortOption: TextView) {
         val theme = Utility.getSelectedTheme()

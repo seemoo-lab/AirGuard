@@ -42,6 +42,7 @@ class ScanFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = scanViewModel
 
+        // TODO: notifyDataSetChanged is very inefficient. DiffUtil does not work properly for some reason
         scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {
             bluetoothDeviceAdapterHighRisk.submitList(it)
             bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
@@ -60,33 +61,32 @@ class ScanFragment : Fragment() {
             }
         }
 
-        // TODO: Sorting order does not work right now
-//        scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
-//            val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
-//            val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
-//
-//            scanViewModel.sortResults(bluetoothDeviceListHighRiskValue)
-//            scanViewModel.sortResults(bluetoothDeviceListLowRiskValue)
-//
-//            scanViewModel.bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
-//            scanViewModel.bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
-//
-//            if (view != null) {
-//                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
-//                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
-//                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
-//
-//                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
-//
-//                when(it) {
-//                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
-//                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
-//                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//                }
-//            }
-//
-//        }
+        scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
+            val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
+            val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
+
+            scanViewModel.sortResults(bluetoothDeviceListHighRiskValue)
+            scanViewModel.sortResults(bluetoothDeviceListLowRiskValue)
+
+            scanViewModel.bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
+            scanViewModel.bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
+
+            if (view != null) {
+                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
+                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
+                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
+
+                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+                when(it) {
+                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
+                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
+                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+                }
+            }
+
+        }
 
         return binding.root
     }
@@ -110,23 +110,23 @@ class ScanFragment : Fragment() {
             }
         }
 
-//        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
-//        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
-//        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
-//
-//        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
-//
-//        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//
-//        sortBySignalStrength.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
-//        }
-//        sortByDetectionOrder.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
-//        }
-//        sortByAddress.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
-//        }
+        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
+        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
+        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
+
+        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+
+        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+
+        sortBySignalStrength.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
+        }
+        sortByDetectionOrder.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
+        }
+        sortByAddress.setOnClickListener {
+            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
+        }
     }
 
     override fun onStart() {
