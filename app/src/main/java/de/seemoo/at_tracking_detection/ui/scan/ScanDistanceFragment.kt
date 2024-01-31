@@ -57,7 +57,8 @@ class ScanDistanceFragment : Fragment() {
                     // viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionState(it)
                     viewModel.connectionState.postValue(connectionState)
-                    val connectionStateString = getConnectionStateExplanation(connectionState)
+                    val deviceType = DeviceManager.getDeviceType(it)
+                    val connectionStateString = getConnectionStateExplanation(connectionState, deviceType)
                     viewModel.connectionStateString.postValue(connectionStateString)
 
                     val batteryState = getBatteryState(it)
@@ -68,7 +69,6 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    val deviceType = DeviceManager.getDeviceType(it)
                     setDeviceType(requireContext(), deviceType)
                     setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
@@ -172,9 +172,14 @@ class ScanDistanceFragment : Fragment() {
         binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
     }
 
-    private fun getConnectionStateExplanation(connectionState: ConnectionState): String {
+    private fun getConnectionStateExplanation(connectionState: ConnectionState, deviceType: DeviceType): String {
         return when (connectionState) {
-            ConnectionState.OVERMATURE_OFFLINE -> getString(R.string.connection_state_overmature_offline_explanation)
+            ConnectionState.OVERMATURE_OFFLINE -> when(deviceType) {
+                DeviceType.SAMSUNG,
+                DeviceType.GALAXY_SMART_TAG,
+                DeviceType.GALAXY_SMART_TAG_PLUS -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
+                else -> getString(R.string.connection_state_overmature_offline_explanation)
+            }
             ConnectionState.CONNECTED -> getString(R.string.connection_state_connected_explanation)
             ConnectionState.OFFLINE -> getString(R.string.connection_state_offline_explanation)
             ConnectionState.PREMATURE_OFFLINE -> getString(R.string.connection_state_premature_offline_explanation)
