@@ -328,5 +328,7 @@
 
     <string name="high_risk_trackers">Mögliche Tracker</string>
     <string name="low_risk_trackers">Sichere Tracker</string>
+    <string name="marker_legend">Legende</string>
+    <string name="device_marker">Standort an dem potenzieller Tracker gefunden wurde</string>
 
 </resources>

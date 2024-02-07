@@ -363,4 +363,6 @@
     <string name="maintainer">Maintainer: %s</string>
     <string name="high_risk_trackers">Potential Trackers</string>
     <string name="low_risk_trackers">Safe Trackers</string>
+    <string name="marker_legend">Legend</string>
+    <string name="device_marker">Location where a potential tracker was found</string>
 </resources>
