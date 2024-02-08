@@ -5,7 +5,7 @@ Diese Tracker sind nur so groß wie eine Münze und ideal, um Android Nutzer zu 
 
 Nachdem ein AirTag gefunden wurde, kannst du diesen klingeln lassen oder mit einem manuellen Scan auf die Suche gehen. Findest du ein Gerät, dann raten wir dir es zu deaktivieren, damit es nicht mehr deinen Standort verfolgt. 
 
-Die App speichert deinen Standort nur lokal, um dir später zu zeigen an welchen Orten ein Tracker dir gefolgt ist. Persönliche Daten teilt diese App niemals. 
+Die App speichert deinen Standort nur lokal, um dir später zu zeigen an welchen Orten ein Tracker die gefolgt ist. Persönliche Daten teilt diese App niemals. 
 
 Wenn niemand dich versucht zu starken über einen AirTag, dann wird die App dich auch nicht stören. 
 

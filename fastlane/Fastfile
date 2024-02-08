@@ -37,7 +37,7 @@ platform :android do
   end
 
   desc "Fetch Screenshots and metadata from Google Play"
-  lane :update_metadta do 
+  lane :update_metadata do 
     download_from_play_store
   end 
 

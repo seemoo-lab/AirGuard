@@ -104,7 +104,7 @@ object BLEScanner {
             super.onScanResult(callbackType, result)
             // TODO: Add scan result to DB here. Detection events should not be to close after each other.
             // New detection events (Beacons) every 15min
-            Timber.d("Found a device $result")
+//            Timber.d("Found a device $result")
 
             result?.let { scanResult ->
                 scanResults.add(0, scanResult)
