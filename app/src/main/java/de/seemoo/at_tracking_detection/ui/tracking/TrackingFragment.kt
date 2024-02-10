@@ -58,7 +58,7 @@ class TrackingFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
         val notificationId = safeArgs.notificationId
-        // This is called deviceAddress but contains the ID
+        // This is called deviceAddress but contains the ID not necessarily the address
         val deviceAddress = safeArgs.deviceAddress
         trackingViewModel.notificationId.postValue(notificationId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)
@@ -277,7 +277,9 @@ class TrackingFragment : Fragment() {
                 } else {
                     Timber.d("Device is ready to connect!")
                     trackingViewModel.device.observe(viewLifecycleOwner) { baseDevice ->
-                        it.connect(baseDevice)
+                        if (baseDevice != null) {
+                            it.connect(baseDevice)
+                        }
                     }
                 }
             }

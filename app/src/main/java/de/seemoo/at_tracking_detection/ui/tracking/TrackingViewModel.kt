@@ -27,7 +27,7 @@ class TrackingViewModel @Inject constructor(
 
     val noLocationsYet = MutableLiveData(true)
 
-    private val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
+    val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
 
     val error = MutableLiveData(false)
 
@@ -38,7 +38,7 @@ class TrackingViewModel @Inject constructor(
     val soundPlaying = MutableLiveData(false)
     val connecting = MutableLiveData(false)
 
-    val device = MutableLiveData<BaseDevice>()
+    val device = MutableLiveData<BaseDevice?>()
     val connectable = MutableLiveData(false)
 
     val canBeIgnored = MutableLiveData(false)
@@ -81,6 +81,7 @@ class TrackingViewModel @Inject constructor(
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {
                 noLocationsYet.postValue(true)
+                manufacturerWebsiteUrl.postValue("")
             }
         }
 
