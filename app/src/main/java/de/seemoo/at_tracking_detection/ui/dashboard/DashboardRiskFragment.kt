@@ -110,7 +110,7 @@ class DashboardRiskFragment : Fragment() {
                         topMargin = 22
                     }
 
-                    if (article.preview_image.isNotEmpty()) { // TODO: Rename when in production to PreviewImage, also in JSON
+                    if (!article.preview_image.isNullOrEmpty()) { // TODO: Rename when in production to PreviewImage, also in JSON
                         val imageURL = getURL(article.preview_image) // TODO: Rename when in production to PreviewImage, also in JSON
                         context?.let {
                             Glide.with(it)
@@ -122,7 +122,7 @@ class DashboardRiskFragment : Fragment() {
                         imageViewPreview.visibility = View.GONE
                     }
 
-                    if (article.filename.isNotEmpty()) {
+                    if (!article.filename.isNullOrEmpty()) {
                         articleCard.setOnClickListener {
                             val directions: NavDirections =
                                 DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(

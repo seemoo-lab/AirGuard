@@ -105,14 +105,14 @@ class ScanViewModel @Inject constructor(
             bluetoothDeviceListLowRiskValue.add(scanResult)
         }
 
+        sortResults(bluetoothDeviceListHighRiskValue)
+        sortResults(bluetoothDeviceListLowRiskValue)
+
         val sortedHighRiskList = ArrayList(bluetoothDeviceListHighRiskValue)
         val sortedLowRiskList = ArrayList(bluetoothDeviceListLowRiskValue)
 
-        sortResults(sortedHighRiskList)
-        sortResults(sortedLowRiskList)
-
-        bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
-        bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
+        bluetoothDeviceListHighRisk.postValue(sortedHighRiskList)
+        bluetoothDeviceListLowRisk.postValue(sortedLowRiskList)
 
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(
