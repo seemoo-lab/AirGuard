@@ -86,7 +86,7 @@ class RiskCardViewModel @Inject constructor(
                 riskColor = ContextCompat.getColor(context, R.color.risk_low)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_HOURS),
+                    context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_HOURS_TRACKING),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
                 lastDiscoveryModel.postValue(RiskRowViewModel(
@@ -105,7 +105,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_HOURS
+                        RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
@@ -127,7 +127,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_HOURS
+                        RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))

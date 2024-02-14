@@ -18,7 +18,7 @@ interface DeviceContext {
     val statusByteDeviceType: UInt
 
     val numberOfHoursToBeConsideredForTrackingDetection: Long
-        get() = RiskLevelEvaluator.RELEVANT_HOURS
+        get() = RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
 
     val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
         get() = RiskLevelEvaluator.NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
