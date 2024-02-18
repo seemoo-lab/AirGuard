@@ -16,11 +16,10 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
+import java.time.Duration
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 
 @HiltWorker
@@ -51,7 +50,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val device = deviceRepository.getDevice(mapEntry.key) ?: return@forEach
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+            if (throwNotification(device, useLocation)) {
                 // Send Notification
                 Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
@@ -88,25 +87,43 @@ class TrackingDetectorWorker @AssistedInject constructor(
         return beaconsPerDevice
     }
 
+    private fun throwNotification(device: BaseDevice, useLocation: Boolean): Boolean {
+        val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType) // TODO safe call because deviceType can be null
+        val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
+
+        val deviceIdentifier: String = device.address
+        val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
+        var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDate(relevantHours)
+
+        val lastNotificationSent = device.lastNotificationSent
+        if (lastNotificationSent != null && lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
+            considerDetectionEventSince = lastNotificationSent
+        }
+
+        val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)
+
+        val detectionEventsSorted: List<Beacon> = detectionEvents.sortedBy { it.receivedAt }
+        val earliestDetectionEvent: Beacon = detectionEventsSorted.firstOrNull() ?: return false
+        val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, LocalDateTime.now()).toMinutes()
+
+        val filteredDetectionEvents = detectionEvents.filter { it.locationId != null && it.locationId != 0 }
+        val distinctDetectionEvent = filteredDetectionEvents.map { it.locationId }.distinct()
+        val locations = distinctDetectionEvent.size
+
+        if (timeFollowing >= minTrackedTime) {
+            if (locations >= minNumberOfLocations || !useLocation) {
+                return true
+            }
+        }
+        return false
+    }
+
     companion object {
         fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
             location.latitude = latitude
             location.longitude = longitude
             return location
-        }
-
-        /**
-         * Checks if the last notification was sent more than x hours ago
-         */
-        private fun checkLastNotification(device: BaseDevice): Boolean {
-            val lastNotificationSent = device.lastNotificationSent
-            return lastNotificationSent == null || isTimeToNotify(lastNotificationSent)
-        }
-
-        private fun isTimeToNotify(lastNotificationSent: LocalDateTime): Boolean {
-            val hoursPassed = lastNotificationSent.until(LocalDateTime.now(), ChronoUnit.HOURS)
-            return hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
         }
     }
 
