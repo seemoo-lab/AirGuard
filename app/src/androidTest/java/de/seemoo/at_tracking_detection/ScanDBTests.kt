@@ -124,7 +124,7 @@ class ScanDBTests() {
             assert(it.endDate == null)
             assert(it.startDate == null)
             assert(
-                (it.startDate?.compareTo(RiskLevelEvaluator.relevantTrackingDateDefault) ?: -1) >= 0
+                (it.startDate?.compareTo(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation) ?: -1) >= 0
             )
         }
     }

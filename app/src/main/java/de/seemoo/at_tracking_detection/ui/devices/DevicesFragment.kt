@@ -75,7 +75,7 @@ abstract class DevicesFragment(
                 )
             )
         } else {
-            val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDateDefault.toLocalDate()
+            val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation.toLocalDate()
             devicesViewModel.addOrRemoveFilter(
                 DateRangeFilter.build(
                     relevantTrackingStartDate,

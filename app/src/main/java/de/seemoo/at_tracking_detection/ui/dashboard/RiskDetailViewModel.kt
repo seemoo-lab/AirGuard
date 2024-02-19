@@ -31,14 +31,14 @@ class RiskDetailViewModel @Inject constructor(
     val locationRepository: LocationRepository,
 ) : ViewModel() {
 
-    private val relevantDate = RiskLevelEvaluator.relevantTrackingDateDefault
+    private val relevantDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
     private val trackersFound: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
     private val lastSeenDates = trackersFound.map {
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.lastSeen)
     }
 
     var riskColor: Int
-    val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDateDefault).asLiveData()
+    val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation).asLiveData()
 
     val totalLocationsTrackedCount= locationRepository.locationsSinceCount(relevantDate).asLiveData()
 

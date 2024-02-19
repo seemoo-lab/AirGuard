@@ -26,7 +26,7 @@ class RiskLevelEvaluator(
     fun evaluateRiskLevel(): RiskLevel {
         Timber.d("evaluateRiskLevel() called")
         // val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantTrackingDate)
-        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDateDefault)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDateForRiskCalculation)
 
         val totalTrackers = baseDevices.count()
 
@@ -68,7 +68,7 @@ class RiskLevelEvaluator(
      * The date when a tracker has been discovered last
      */
     fun getLastTrackerDiscoveryDate(): Date {
-        val relevantDate = relevantTrackingDateDefault
+        val relevantDate = relevantTrackingDateForRiskCalculation
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
             .sortedByDescending { it.lastSeen }
 
@@ -78,8 +78,8 @@ class RiskLevelEvaluator(
     }
 
     // How many trackers have been relevant here as tracker
-    fun getNumberRelevantTrackers(): Int {
-        val relevantDate = LocalDateTime.now().minusHours(RELEVANT_HOURS_TRACKING)
+    fun getNumberRelevantTrackers(relevantDays: Long = RELEVANT_DAYS_RISK_LEVEL): Int {
+        val relevantDate = LocalDateTime.now().minusDays(relevantDays)
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
 
         return baseDevices.count()
@@ -88,15 +88,15 @@ class RiskLevelEvaluator(
     companion object {
         /** The number of days that we use to calculate the risk **/
         const val RELEVANT_HOURS_TRACKING: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
-        const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
+        private const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
         private const val MINUTES_UNTIL_CACHE_IS_UPDATED: Long = 15
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
-        val relevantTrackingDateDefault: LocalDateTime = LocalDateTime.now().minusHours(
-            RELEVANT_HOURS_TRACKING) // Fallback Option, if possible use getRelevantTrackingDate() Function
+        val relevantTrackingDateForRiskCalculation: LocalDateTime = LocalDateTime.now().minusDays(
+            RELEVANT_DAYS_RISK_LEVEL) // Fallback Option, if possible use getRelevantTrackingDate() Function
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Default Values: A single tracker gets tracked at least for x minutes until notification is created
@@ -113,7 +113,7 @@ class RiskLevelEvaluator(
             getMinutesAtLeastTrackedBeforeAlarm()
         )
 
-        fun getRelevantTrackingDate(relevantHours: Long): LocalDateTime = LocalDateTime.now().minusHours(relevantHours)
+        fun getRelevantTrackingDateForTrackingDetection(relevantHours: Long = RELEVANT_HOURS_TRACKING): LocalDateTime = LocalDateTime.now().minusHours(relevantHours)
 
         fun getMinutesAtLeastTrackedBeforeAlarm(): Long {
             return when (SharedPrefs.riskSensitivity) {
@@ -152,8 +152,7 @@ class RiskLevelEvaluator(
             // Not ignored
             // Tracker has been seen long enough
             if (!device.ignore && device.firstDiscovery <= getAtLeastTrackedSince()) {
-                val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RELEVANT_HOURS_TRACKING
-                val relevantTrackingDate = getRelevantTrackingDate(relevantHours)
+                val relevantTrackingDate = relevantTrackingDateForRiskCalculation
                 val numberOfBeacons = beaconRepository.getNumberOfBeaconsAddress(device.address, relevantTrackingDate)
 
                 // Detected at least 3 Times

@@ -81,19 +81,19 @@ class TrackingDetectorWorker @AssistedInject constructor(
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             // Only retrieve the last two weeks since they are only relevant for tracking
-            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateDefault)
+            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
             beaconsPerDevice[it.deviceAddress] = beacons
         }
         return beaconsPerDevice
     }
 
     private fun throwNotification(device: BaseDevice, useLocation: Boolean): Boolean {
-        val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType) // TODO safe call because deviceType can be null
+        val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)
         val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
 
         val deviceIdentifier: String = device.address
         val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
-        var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDate(relevantHours)
+        var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(relevantHours)
 
         val lastNotificationSent = device.lastNotificationSent
         if (lastNotificationSent != null && lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
