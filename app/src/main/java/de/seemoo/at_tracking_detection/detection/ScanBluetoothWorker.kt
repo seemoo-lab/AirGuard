@@ -262,6 +262,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val uniqueIdentifier = getPublicKey(scanResult)
 
+            val connectionState: ConnectionState = BaseDevice.getConnectionState(scanResult)
+            val connectionStateString = Utility.connectionStateToString(connectionState)
+
             var beacon: Beacon? = null
             val beacons = beaconRepository.getDeviceBeaconsSince(
                 deviceAddress = uniqueIdentifier,
@@ -274,12 +277,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     // Save the manufacturer data to the beacon
                     Beacon(
                         discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
-                        scanResult.scanRecord?.bytes, uuids
+                        scanResult.scanRecord?.bytes, uuids, connectionStateString
                     )
                 } else {
                     Beacon(
                         discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
-                        null, uuids
+                        null, uuids, connectionStateString
                     )
                 }
                 beaconRepository.insert(beacon)
@@ -288,6 +291,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 Timber.d("Beacon already in the database... Adding Location")
                 beacon = beacons[0]
                 beacon.locationId = locId
+                if (beacon.connectionState == "UNKNOWN" && connectionState != ConnectionState.UNKNOWN) {
+                    beacon.connectionState = connectionStateString
+                }
                 beaconRepository.update(beacon)
             }
 

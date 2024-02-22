@@ -83,8 +83,7 @@ class SendStatisticsWorker @AssistedInject constructor(
                 beacon.receivedAt >= uploadDateTime
             }
             it.beacons.forEach { beacon ->
-                // beacon.latitude = null
-                // beacon.longitude = null
+                // Remove location and device address
                 beacon.locationId = null
                 beacon.deviceAddress = ""
             }

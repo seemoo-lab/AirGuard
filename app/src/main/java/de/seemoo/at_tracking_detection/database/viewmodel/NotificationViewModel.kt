@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.viewmodel
 
 import de.seemoo.at_tracking_detection.database.models.Notification
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.util.Utility
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -9,7 +10,8 @@ import javax.inject.Inject
 class NotificationViewModel @Inject constructor(private val notificationRepository: NotificationRepository) {
 
     suspend fun insert(deviceAddress: String): Int {
-        val notification = Notification(deviceAddress, false, LocalDateTime.now(ZoneOffset.UTC))
+        val sensitivity = Utility.getSensitivity()
+        val notification = Notification(deviceAddress, false, LocalDateTime.now(ZoneOffset.UTC), sensitivity)
         return notificationRepository.insert(notification).toInt()
     }
 

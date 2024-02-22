@@ -15,11 +15,13 @@ data class Notification(
     @ColumnInfo(name = "falseAlarm") val falseAlarm: Boolean,
     @ColumnInfo(name = "dismissed") val dismissed: Boolean?,
     @ColumnInfo(name = "clicked") val clicked: Boolean?,
-    @ColumnInfo(name = "createdAt") val createdAt: LocalDateTime
+    @ColumnInfo(name = "createdAt") val createdAt: LocalDateTime,
+    @ColumnInfo(name = "sensitivity", defaultValue = "0") val sensitivity: Int // 0 = unknown, 1 = low, 2 = medium, 3 = high
 ) {
     constructor(
         deviceAddress: String,
         falseAlarm: Boolean,
-        createdAt: LocalDateTime
-    ) : this(0, deviceAddress, falseAlarm, false, false, createdAt)
+        createdAt: LocalDateTime,
+        sensitivity: Int
+    ) : this(0, deviceAddress, falseAlarm, false, false, createdAt, sensitivity)
 }

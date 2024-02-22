@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -192,6 +193,25 @@ object Utility {
 
     fun dbmToPercent(rssi: Int, perfectRssi: Double = -30.0, worstRssi: Double = -90.0): Double {
         return DbmToPercent.convert(rssi.toDouble(), perfectRssi = perfectRssi, worstRssi = worstRssi).toDouble() / 100.0
+    }
+
+    fun getSensitivity(): Int {
+        return when (SharedPrefs.riskSensitivity) {
+            "low" -> 1
+            "medium" -> 2
+            "high" -> 3
+            else -> 0
+        }
+    }
+
+    fun connectionStateToString(connectionState: ConnectionState): String {
+        return when (connectionState) {
+            ConnectionState.CONNECTED -> "CONNECTED"
+            ConnectionState.OFFLINE -> "OFFLINE"
+            ConnectionState.OVERMATURE_OFFLINE -> "OVERMATURE_OFFLINE"
+            ConnectionState.PREMATURE_OFFLINE -> "PREMATURE_OFFLINE"
+            ConnectionState.UNKNOWN -> "UNKNOWN"
+        }
     }
 
     private fun rssiToQuality(percentage: Float): Int {
