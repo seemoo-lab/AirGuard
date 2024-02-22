@@ -50,6 +50,9 @@
     <string name="feedback_location_clothes">Kleidung</string>
     <string name="feedback_location_car">Auto</string>
     <string name="feedback_location_bike">Fahrrad</string>
+    <string name="feedback_location_other">Woanders</string>
+    <string name="feedback_location_not_found">Tracker nicht gefunden</string>
+    <string name="feedback_success">Feedback wurde übermittel</string>
     <string name="feedback_close">Schließen</string>
     <string name="tracking_locate_at_playing_sound">Ton wird abgespielt…</string>
     <string name="permission_required">Berechtigung erforderlich</string>

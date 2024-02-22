@@ -1,9 +1,12 @@
 package de.seemoo.at_tracking_detection.ui.feedback
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,7 +42,8 @@ class FeedbackFragment : Fragment() {
 
         val locations = arrayOf(
             R.string.feedback_location_backpack, R.string.feedback_location_clothes,
-            R.string.feedback_location_car, R.string.feedback_location_bike
+            R.string.feedback_location_car, R.string.feedback_location_bike,
+            R.string.feedback_location_other, R.string.feedback_location_not_found
         )
         for (location in locations) {
             val chip =
@@ -56,6 +60,11 @@ class FeedbackFragment : Fragment() {
             }
             chip.setOnClickListener {
                 feedbackViewModel.location.postValue(getString(location))
+                Toast.makeText(requireContext(), R.string.feedback_success, Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                    // Show a Toast message indicating success
+                }, 200)
             }
             locationChipGroup.addView(chip)
         }
