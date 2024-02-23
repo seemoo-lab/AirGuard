@@ -12,7 +12,7 @@ object DeviceManager {
 
     val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
-    val savedConnectionStates = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
+    val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Checking device type for ${scanResult.device.address}")

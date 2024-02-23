@@ -290,6 +290,7 @@
     <string name="connection_state_overmature_offline">Overmature Offline</string>
     <string name="connection_state_overmature_offline_explanation">Device is separated from its owner since at least 15 minutes</string>
     <string name="connection_state_overmature_offline_explanation_samsung">Device is separated from its owner since at least 8 hours</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">Device is separated from its owner since at least 30 minutes</string>
     <string name="connection_state_premature_offline">Premature Offline</string>
     <string name="connection_state_premature_offline_explanation">Connection to owner in the last 15 minutes</string>
     <string name="connection_state_connected">Connected</string>
@@ -368,4 +369,5 @@
     <string name="low_risk_trackers">Safe Trackers</string>
     <string name="marker_legend">Legend</string>
     <string name="device_marker">Location where a potential tracker was found</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">Connection to owner in the last 30 minutes</string>
 </resources>

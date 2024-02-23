@@ -178,11 +178,15 @@ class ScanDistanceFragment : Fragment() {
                 DeviceType.SAMSUNG,
                 DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
+                DeviceType.CHIPOLO -> getString(R.string.connection_state_overmature_offline_explanation_chipolo)
                 else -> getString(R.string.connection_state_overmature_offline_explanation)
             }
             ConnectionState.CONNECTED -> getString(R.string.connection_state_connected_explanation)
             ConnectionState.OFFLINE -> getString(R.string.connection_state_offline_explanation)
-            ConnectionState.PREMATURE_OFFLINE -> getString(R.string.connection_state_premature_offline_explanation)
+            ConnectionState.PREMATURE_OFFLINE -> when(deviceType) {
+                DeviceType.CHIPOLO -> getString(R.string.connection_state_premature_offline_explanation_chipolo)
+                else -> getString(R.string.connection_state_premature_offline_explanation)
+            }
             ConnectionState.UNKNOWN -> getString(R.string.connection_state_unknown_explanation)
         }
     }

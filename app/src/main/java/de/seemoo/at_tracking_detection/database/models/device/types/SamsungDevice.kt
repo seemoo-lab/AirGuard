@@ -35,8 +35,8 @@ open class SamsungDevice(open val id: Int) : Device(){
                     // Twelve Byte:
                     // 04, 00 --> UWB off,
                     // 04, 04 --> UWB on
-                    byteArrayOf((0x13).toByte()),
-                    byteArrayOf((0xFF).toByte())
+                    byteArrayOf((0x10).toByte()),
+                    byteArrayOf((0xF8).toByte())
                 )
                 .build()
 

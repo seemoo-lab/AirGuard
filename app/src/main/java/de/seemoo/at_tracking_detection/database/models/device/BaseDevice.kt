@@ -68,11 +68,7 @@ data class BaseDevice(
         getDeviceName(scanResult),
         false,
         scanResult.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                scanResult.isConnectable
-            } else {
-                null
-            }
+            scanResult.isConnectable
         },
         scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
         LocalDateTime.now(),
@@ -159,16 +155,6 @@ data class BaseDevice(
                 DeviceType.AIRTAG,
                 DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
-            }
-        }
-
-        fun getConnectionStateAsString(scanResult: ScanResult): String {
-            return when (getConnectionState(scanResult)) {
-                ConnectionState.OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_offline)
-                ConnectionState.PREMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_premature_offline)
-                ConnectionState.OVERMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_overmature_offline)
-                ConnectionState.CONNECTED -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_connected)
-                ConnectionState.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_unknown)
             }
         }
 

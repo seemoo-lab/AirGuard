@@ -261,10 +261,12 @@
     <string name="connection_state_overmature_offline">Overmature Offline</string>
     <string name="connection_state_premature_offline">Premature Offline</string>
     <string name="connection_state_overmature_offline_explanation">Gerät ist seit mind. 15 Minuten vom Besitzer getrennt</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">Gerät ist seit mind. 30 Minuten vom Besitzer getrennt</string>
     <string name="connection_state_overmature_offline_explanation_samsung">Gerät ist seit mind. 8 Stunden vom Besitzer getrennt</string>
     <string name="connection_state_connected">Verbunden</string>
     <string name="connection_state_connected_explanation">Gerät ist verbunden mit Besitzer</string>
     <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten mit Besitzer verbunden</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">Gerät war in den letzten 30 Minuten mit Besitzer verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
     <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
     <string name="scan_sorting_by_rssi">nach Signalstärke</string>
