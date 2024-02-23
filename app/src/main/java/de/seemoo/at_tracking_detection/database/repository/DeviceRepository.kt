@@ -57,6 +57,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
 
+    fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
+
     @WorkerThread
     suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
         return if (dateTime != null) {
@@ -87,5 +89,15 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     @WorkerThread
     suspend fun setIgnoreFlag(deviceAddress: String, state: Boolean) {
         deviceDao.setIgnoreFlag(deviceAddress, state)
+    }
+
+    @WorkerThread
+    suspend fun deleteDevice(baseDevice: BaseDevice) {
+        deviceDao.deleteDevice(baseDevice)
+    }
+
+    @WorkerThread
+    suspend fun deleteDevices(baseDevices: List<BaseDevice>) {
+        deviceDao.deleteDevices(baseDevices)
     }
 }

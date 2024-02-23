@@ -33,6 +33,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        deleteOldAndSafeTrackers()
+
         Timber.d("Tracking detection background job started!")
         // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
@@ -116,6 +118,17 @@ class TrackingDetectorWorker @AssistedInject constructor(
             }
         }
         return false
+    }
+
+    private suspend fun deleteOldAndSafeTrackers() {
+        // Delete old devices and beacons from the database
+        Timber.d("Deleting old and safe Trackers")
+        val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
+        val beaconsToBeDeleted = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+        beaconRepository.deleteBeacons(beaconsToBeDeleted)
+        val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+        deviceRepository.deleteDevices(devicesToBeDeleted)
+        Timber.d("Deleting successful")
     }
 
     companion object {
