@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanResult
-import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -32,6 +31,7 @@ data class BaseDevice(
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
+    @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
 ) {
 
     constructor(

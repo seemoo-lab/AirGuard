@@ -44,25 +44,25 @@ interface DeviceDao {
     @Query("UPDATE device SET `ignore` = :state WHERE address = :address")
     suspend fun setIgnoreFlag(address: String, state: Boolean)
 
-    @Query("SELECT COUNT(*) FROM device")
+    @Query("SELECT COUNT(*) FROM device WHERE safeTracker == 0")
     fun getTotalCount(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0 AND safeTracker == 0")
     fun getCountNotTracking(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1")
     fun getCountIgnored(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since")
+    @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since AND safeTracker == 0")
     fun getTotalCountChange(since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND safeTracker == 0")
     fun getCurrentlyMonitored(since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND deviceType = :deviceType")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND deviceType = :deviceType AND safeTracker == 0")
     fun getCountForType(deviceType: String, since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2)")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND (deviceType = :deviceType1 OR deviceType = :deviceType2) AND safeTracker == 0")
     fun getCountForTypes(deviceType1: String, deviceType2: String, since: LocalDateTime): Flow<Int>
 
     @Query("SELECT COUNT(DISTINCT(location.locationId)) FROM device, location, beacon WHERE beacon.locationId = location.locationId AND beacon.deviceAddress = device.address AND beacon.locationId != 0 AND device.address = :deviceAddress AND device.lastSeen >= :since")

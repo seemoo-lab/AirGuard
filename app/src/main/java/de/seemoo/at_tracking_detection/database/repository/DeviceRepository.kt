@@ -27,7 +27,7 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun updateRiskLevelCache(deviceAddress: String, riskLevel: Int, lastCalculatedRiskDate: LocalDateTime)
             = deviceDao.updateRiskLevelCache(deviceAddress, riskLevel, lastCalculatedRiskDate)
 
-    fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
+    // fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
 
     val totalCount: Flow<Int> = deviceDao.getTotalCount()
 
@@ -37,10 +37,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun devicesCurrentlyMonitored(since: LocalDateTime): Flow<Int> =
         deviceDao.getCurrentlyMonitored(since)
 
-    fun deviceCountSince(since: LocalDateTime): Flow<Int> =
-        deviceDao.getCurrentlyMonitored(since)
+    // fun deviceCountSince(since: LocalDateTime): Flow<Int> = deviceDao.getCurrentlyMonitored(since)
 
-    val ignoredDevices: Flow<List<BaseDevice>> = deviceDao.getIgnored()
+    // val ignoredDevices: Flow<List<BaseDevice>> = deviceDao.getIgnored()
 
     val ignoredDevicesSync: List<BaseDevice> = deviceDao.getIgnoredSync()
 
@@ -59,14 +58,14 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
 
-    @WorkerThread
-    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
-        return if (dateTime != null) {
-            deviceDao.getDeviceBeaconsSince(LocalDateTime.parse(dateTime))
-        } else {
-            deviceDao.getDeviceBeacons()
-        }
-    }
+//    @WorkerThread
+//    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
+//        return if (dateTime != null) {
+//            deviceDao.getDeviceBeaconsSince(LocalDateTime.parse(dateTime))
+//        } else {
+//            deviceDao.getDeviceBeacons()
+//        }
+//    }
 
     suspend fun getDeviceBeaconsSinceDate(dateTime: LocalDateTime?): List<DeviceBeaconNotification> {
         return if (dateTime != null) {
@@ -92,7 +91,7 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     }
 
     @WorkerThread
-    suspend fun deleteDevice(baseDevice: BaseDevice) {
+    suspend fun delete(baseDevice: BaseDevice) {
         deviceDao.deleteDevice(baseDevice)
     }
 

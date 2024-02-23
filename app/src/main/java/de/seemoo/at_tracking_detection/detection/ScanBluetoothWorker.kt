@@ -318,12 +318,14 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
                 // Check if ConnectionState qualifies Device to be saved
                 // Only Save when Device is offline long enough
-                when(BaseDevice.getConnectionState(scanResult)){
-                    ConnectionState.OVERMATURE_OFFLINE -> {}
-                    // ConnectionState.OFFLINE -> {}
-                    // ConnectionState.PREMATURE_OFFLINE -> {}
-                    ConnectionState.UNKNOWN -> {}
-                    else -> return null
+                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.savedConnectionStates) {
+                    Timber.d("Device not in a saved connection state... Skipping!")
+                    return null
+                }
+
+                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.unsafeConnectionState) {
+                    Timber.d("Device is safe and will be hidden to the user!")
+                    device.safeTracker = true
                 }
 
                 Timber.d("Add new Device to the database!")
