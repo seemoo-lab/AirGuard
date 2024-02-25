@@ -122,13 +122,23 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
     private suspend fun deleteOldAndSafeTrackers() {
         // Delete old devices and beacons from the database
-        Timber.d("Deleting old and safe Trackers")
+        Timber.d("Start deleting old and safe Trackers")
         val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
         val beaconsToBeDeleted = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-        beaconRepository.deleteBeacons(beaconsToBeDeleted)
+        if (beaconsToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
+            beaconRepository.deleteBeacons(beaconsToBeDeleted)
+            Timber.d("Deleting Beacons successful")
+        }
         val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-        deviceRepository.deleteDevices(devicesToBeDeleted)
-        Timber.d("Deleting successful")
+        if (devicesToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${devicesToBeDeleted.size} devices")
+            deviceRepository.deleteDevices(devicesToBeDeleted)
+            Timber.d("Deleting Devices successful")
+        }
+        if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
+            Timber.d("No old devices or beacons to delete")
+        }
     }
 
     companion object {
