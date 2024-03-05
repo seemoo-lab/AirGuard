@@ -42,24 +42,13 @@
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent">
 
-            <ImageView
-                android:id="@+id/device_type_symbol"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                bind:srcCompat="@drawable/ic_baseline_device_unknown_24"
-                bind:layout_constraintLeft_toLeftOf="parent"
-                bind:layout_constraintRight_toLeftOf="@id/device_type_text"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"
-                bind:tint="?attr/colorControlNormal" />
-
             <TextView
                 android:id="@+id/device_type_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/unknown"
                 android:textSize="30sp"
-                bind:layout_constraintLeft_toRightOf="@id/device_type_symbol"
+                bind:layout_constraintLeft_toLeftOf="parent"
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintTop_toTopOf="parent"/>
@@ -82,7 +71,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            bind:layout_constraintBottom_toTopOf="@id/battery_layout"
+            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"
             bind:layout_constraintTop_toBottomOf="@id/connection_quality"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent">
@@ -102,38 +91,38 @@
                 bind:layout_constraintHorizontal_chainStyle="packed"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/battery_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"
-            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent">
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:id="@+id/battery_layout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"-->
+<!--            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"-->
+<!--            bind:layout_constraintLeft_toLeftOf="parent"-->
+<!--            bind:layout_constraintRight_toRightOf="parent">-->
 
-            <TextView
-                android:id="@+id/battery_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/battery_status_text"
-                android:textSize="16sp"
-                bind:layout_constraintLeft_toLeftOf="parent"
-                bind:layout_constraintRight_toLeftOf="@id/battery_symbol"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"/>
+<!--            <TextView-->
+<!--                android:id="@+id/battery_text"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/battery_status_text"-->
+<!--                android:textSize="16sp"-->
+<!--                bind:layout_constraintLeft_toLeftOf="parent"-->
+<!--                bind:layout_constraintRight_toLeftOf="@id/battery_symbol"-->
+<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
+<!--                bind:layout_constraintTop_toTopOf="parent"/>-->
 
-            <ImageView
-                android:id="@+id/battery_symbol"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                bind:srcCompat="@drawable/ic_battery_unknown_24"
-                bind:layout_constraintRight_toRightOf="parent"
-                bind:layout_constraintLeft_toRightOf="@id/battery_text"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/scan_battery_icon_description"
-                bind:tint="?attr/colorControlNormal" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--            <ImageView-->
+<!--                android:id="@+id/battery_symbol"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                bind:srcCompat="@drawable/ic_battery_unknown_24"-->
+<!--                bind:layout_constraintRight_toRightOf="parent"-->
+<!--                bind:layout_constraintLeft_toRightOf="@id/battery_text"-->
+<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
+<!--                bind:layout_constraintTop_toTopOf="parent"-->
+<!--                android:contentDescription="@string/scan_battery_icon_description"-->
+<!--                bind:tint="?attr/colorControlNormal" />-->
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/connection_state_layout"
@@ -142,7 +131,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintTop_toBottomOf="@id/battery_layout"
+            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent">
 
