@@ -168,7 +168,7 @@
     <string name="twitter_description">Check out our Twitter account</string>
     <string name="twitter">Twitter</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found. You\'re safe!\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags, Chipolos and Tiles.</string>
+    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -176,8 +176,8 @@
     <string name="risk_level_low">No risk</string>
     <string name="risk_level_medium">Medium risk</string>
     <string name="risk_level_high">High risk</string>
-    <string name="no_trackers_found">No trackers found during the last %d hours</string>
-    <string name="found_x_trackers">Detected %d tracker during the last %d hours</string>
+    <string name="no_trackers_found">No trackers found since: %s</string>
+    <string name="found_x_trackers">Detected %d tracker during the last %d days</string>
     <string name="last_scan_info">Last scan: %s</string>
     <string name="last_discovery">Last tracker discovered at %s</string>
     <string name="how_does_airguard_work">How does AirGuard work?</string>

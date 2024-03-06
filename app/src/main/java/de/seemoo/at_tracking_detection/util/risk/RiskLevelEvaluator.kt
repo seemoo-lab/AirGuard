@@ -89,7 +89,7 @@ class RiskLevelEvaluator(
         /** The number of days that we use to calculate the risk **/
         const val RELEVANT_HOURS_TRACKING: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
         private const val DELETE_SAFE_DEVICES_OLDER_THAN_DAYS: Long = 30 // Delete devices that have been seen last more than x days ago
-        private const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
+        const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
         private const val MINUTES_UNTIL_CACHE_IS_UPDATED: Long = 15
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
