@@ -40,7 +40,7 @@
     <string name="tracking_false_alarm_title">誤報</string>
     <string name="tracking_false_alarm_subtitle">この通知を誤報としてマークする</string>
     <string name="tracking_missing_beacons_info">一部のタグは位置データなしで検知されたため、表示されません</string>
-    <string name="feedback_question1">Find Myデバイスはどこに隠されていましたか？</string>
+    <string name="feedback_question1">装置はどこに隠されていたのか？</string>
     <string name="feedback_location_backpack">リュックサック</string>
     <string name="feedback_location_clothes">服</string>
     <string name="feedback_location_car">車</string>

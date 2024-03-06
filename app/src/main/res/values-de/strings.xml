@@ -45,7 +45,7 @@
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
     <string name="tracking_false_alarm_title">Fehlalarm</string>
     <string name="tracking_false_alarm_subtitle">Diese Benachrichtigung als Fehlalarm markieren</string>
-    <string name="feedback_question1">Wo war das "Find My"-Gerät versteckt?</string>
+    <string name="feedback_question1">Wo war das Gerät versteckt?</string>
     <string name="feedback_location_backpack">Rucksack</string>
     <string name="feedback_location_clothes">Kleidung</string>
     <string name="feedback_location_car">Auto</string>

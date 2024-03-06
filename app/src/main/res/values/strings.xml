@@ -50,7 +50,7 @@
     <string name="tracking_false_alarm_title">False Alarm</string>
     <string name="tracking_false_alarm_subtitle">Mark this notification as false alarm</string>
     <string name="tracking_missing_beacons_info">Some beacons were captured without any location data and are therefore not displayed.</string>
-    <string name="feedback_question1">Where was the Find My device hidden?</string>
+    <string name="feedback_question1">Where was the Tracker you found hidden?</string>
     <string name="feedback_location_backpack">Backpack</string>
     <string name="feedback_location_clothes">Clothes</string>
     <string name="feedback_location_car">Car</string>
