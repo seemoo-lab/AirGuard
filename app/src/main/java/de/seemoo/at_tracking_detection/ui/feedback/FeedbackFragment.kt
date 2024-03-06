@@ -57,7 +57,7 @@ class FeedbackFragment : Fragment() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         ).apply {
-            topMargin = 16
+            topMargin = 24
         }
 
         val locationLayout = view.findViewById<LinearLayout>(R.id.feedback_location_layout)

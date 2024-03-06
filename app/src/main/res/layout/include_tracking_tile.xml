@@ -130,6 +130,7 @@
                 android:layout_height="24dp"
                 android:text="@{title}"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tracking_tile_image"
