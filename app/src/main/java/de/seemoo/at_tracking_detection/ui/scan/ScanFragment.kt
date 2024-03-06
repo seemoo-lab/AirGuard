@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -109,6 +111,12 @@ class ScanFragment : Fragment() {
             }
         }
 
+        val infoButton = view.findViewById<ImageButton>(R.id.info_button)
+        infoButton.setOnClickListener {
+            toggleInfoLayoutVisibility(view)
+        }
+
+
 //        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
 //        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
 //        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
@@ -131,6 +139,14 @@ class ScanFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
+    }
+
+    private fun toggleInfoLayoutVisibility(view: View) {
+        // Find the info layout by its ID
+        val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
+
+        // Toggle the visibility
+        infoLayout.visibility = if (infoLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
     private val scanCallback: ScanCallback = object : ScanCallback() {

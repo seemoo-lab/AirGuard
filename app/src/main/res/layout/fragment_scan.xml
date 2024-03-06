@@ -152,17 +152,51 @@
                     app:setAdapter="@{adapter_high_risk}" />
 
                 <!-- Low-risk trackers label -->
-                <TextView
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/low_risk_trackers_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/low_risk_trackers"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="4dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <!-- Adjust the ImageButton position -->
+                    <ImageButton
+                        android:id="@+id/info_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_baseline_info_24"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:padding="8dp"
+                        android:background="@android:color/transparent"
+                        android:onClick="toggleInfoLayout" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/info_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/low_risk_trackers"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="4dp"
-                    android:background="@android:color/darker_gray" />
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:padding="16dp">
+
+                    <!-- Your information content here -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/explanation_safe_trackers" />
+                </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scan_result_recycler_low_risk"
