@@ -25,86 +25,86 @@
         android:layout_height="match_parent"
         tools:context=".ui.scan.ScanFragment">
 
-        <HorizontalScrollView
-            android:id="@+id/sorting_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@id/scan_result_loading_bar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+<!--        <HorizontalScrollView-->
+<!--            android:id="@+id/sorting_options"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/scan_result_loading_bar"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
 
-                <LinearLayout
-                    android:id="@+id/sort_option_signal_strength_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/sort_option_signal_strength"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="8dp"
-                        android:padding="8dp"
-                        android:text="@string/scan_sorting_by_rssi"
-                        android:textSize="18sp" />
-                </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/sort_option_signal_strength_layout"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical">-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/sort_option_signal_strength"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:drawablePadding="8dp"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:text="@string/scan_sorting_by_rssi"-->
+<!--                        android:textSize="18sp" />-->
+<!--                </LinearLayout>-->
 
-                <LinearLayout
-                    android:id="@+id/sort_option_order_detection_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/sort_option_order_detection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="8dp"
-                        android:padding="8dp"
-                        android:text="@string/scan_sorting_by_recently"
-                        android:textSize="18sp" />
-                </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/sort_option_order_detection_layout"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical">-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/sort_option_order_detection"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:drawablePadding="8dp"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:text="@string/scan_sorting_by_recently"-->
+<!--                        android:textSize="18sp" />-->
+<!--                </LinearLayout>-->
 
-                <LinearLayout
-                    android:id="@+id/sort_option_address_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/sort_option_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="8dp"
-                        android:padding="8dp"
-                        android:text="@string/scan_sorting_by_address"
-                        android:textSize="18sp" />
-                </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/sort_option_address_layout"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical">-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/sort_option_address"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:drawablePadding="8dp"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:text="@string/scan_sorting_by_address"-->
+<!--                        android:textSize="18sp" />-->
+<!--                </LinearLayout>-->
 
-                <!-- <TextView
-                    android:id="@+id/sort_option_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="8dp"
-                    android:padding="8dp"
-                    android:text="@string/scan_sorting_by_name"
-                    android:textSize="18sp" />
+<!--                &lt;!&ndash; <TextView-->
+<!--                    android:id="@+id/sort_option_name"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:drawablePadding="8dp"-->
+<!--                    android:padding="8dp"-->
+<!--                    android:text="@string/scan_sorting_by_name"-->
+<!--                    android:textSize="18sp" />-->
 
-                <TextView
-                    android:id="@+id/sort_option_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="8dp"
-                    android:padding="8dp"
-                    android:text="@string/scan_sorting_by_type"
-                    android:textSize="18sp" /> -->
+<!--                <TextView-->
+<!--                    android:id="@+id/sort_option_type"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:drawablePadding="8dp"-->
+<!--                    android:padding="8dp"-->
+<!--                    android:text="@string/scan_sorting_by_type"-->
+<!--                    android:textSize="18sp" /> &ndash;&gt;-->
 
-            </LinearLayout>
-        </HorizontalScrollView>
+<!--            </LinearLayout>-->
+<!--        </HorizontalScrollView>-->
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/scan_result_loading_bar"
@@ -115,7 +115,7 @@
             app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sorting_options" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scan_result_wrapper"
@@ -131,17 +131,17 @@
                 android:orientation="vertical">
 
                 <!-- High-risk trackers label -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/high_risk_trackers"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="4dp"
-                    android:background="@android:color/darker_gray" />
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/high_risk_trackers"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:paddingStart="16dp"-->
+<!--                    android:paddingEnd="16dp"-->
+<!--                    android:paddingTop="8dp"-->
+<!--                    android:paddingBottom="4dp"-->
+<!--                    android:background="@android:color/darker_gray" />-->
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scan_result_recycler_high_risk"
