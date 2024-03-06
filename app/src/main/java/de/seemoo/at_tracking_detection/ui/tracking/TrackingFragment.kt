@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -126,6 +127,11 @@ class TrackingFragment : Fragment() {
         val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
         val map: MapView = view.findViewById(R.id.map)
         val includedLayout: View = view.findViewById(R.id.manufacturer_website)
+        val identifierExplanation: TextView = view.findViewById(R.id.identifier_explanation)
+
+        trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
+            identifierExplanation.text = Utility.getExplanationTextForDeviceType(deviceType)
+        }
 
         includedLayout.setOnClickListener {
             trackingViewModel.clickOnWebsite(requireContext())

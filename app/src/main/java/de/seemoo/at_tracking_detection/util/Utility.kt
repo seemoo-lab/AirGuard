@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
@@ -15,6 +14,7 @@ import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -211,6 +211,22 @@ object Utility {
             ConnectionState.OVERMATURE_OFFLINE -> "OVERMATURE_OFFLINE"
             ConnectionState.PREMATURE_OFFLINE -> "PREMATURE_OFFLINE"
             ConnectionState.UNKNOWN -> "UNKNOWN"
+        }
+    }
+
+    fun getExplanationTextForDeviceType(deviceType: DeviceType?): String {
+        Timber.d("get Explanation for DeviceType: $deviceType")
+        return when (deviceType) {
+            DeviceType.APPLE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.AIRPODS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.FIND_MY -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.AIRTAG-> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.SAMSUNG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.GALAXY_SMART_TAG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.GALAXY_SMART_TAG_PLUS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
+            DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
+            else -> ""
         }
     }
 

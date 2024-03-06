@@ -216,10 +216,25 @@
             android:autoSizeTextType="uniform"
             android:text="@string/tracking_info"
             android:visibility="@{vm.showNfcHint ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toTopOf="@id/additional_tiles"
+            app:layout_constraintBottom_toTopOf="@id/identifier_explanation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tracking_tiles" />
+
+        <TextView
+            android:id="@+id/identifier_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="0.05"
+            android:autoSizeTextType="uniform"
+            android:text="@string/explanation_apple"
+            app:layout_constraintBottom_toTopOf="@id/additional_tiles"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracking_scan_airtag_text" />
 
         <LinearLayout
             android:id="@+id/additional_tiles"
@@ -231,7 +246,7 @@
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tracking_scan_airtag_text">
+            app:layout_constraintTop_toBottomOf="@id/identifier_explanation">
 
             <include
                 android:id="@+id/manufacturer_website"

@@ -331,6 +331,11 @@
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
 
+    <string name="explanation_apple">Achtung:\nApple Geräte ändern ihre Kennung alle 24 Stunden nachdem sie einige Zeit vom Besitzergerät getrennt sind.\nAirTags, AirPods, FindMy-Geräte und andere Apple Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
+    <string name="explanation_samsung">Achtung:\nSamsung Geräte ändern ihre Kennung alle 24 Stunden nachdem sie längere Zeit vom Besitzergerät getrennt sind.\nSmartTags und andere Samsung Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
+    <string name="explanation_tile">Achtung:\nTile Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
+    <string name="explanation_chipolo">Achtung:\nChipolo Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
+
     <string name="high_risk_trackers">Mögliche Tracker</string>
     <string name="low_risk_trackers">Sichere Tracker</string>
     <string name="marker_legend">Legende</string>

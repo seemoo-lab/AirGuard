@@ -29,6 +29,8 @@ class TrackingViewModel @Inject constructor(
 
     val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
 
+    var deviceType = MutableLiveData<DeviceType>(DeviceType.UNKNOWN)
+
     val error = MutableLiveData(false)
 
     val falseAlarm = MutableLiveData(false)
@@ -73,10 +75,9 @@ class TrackingViewModel @Inject constructor(
                 connectable.postValue(it.device is Connectable)
                 showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
                 manufacturerWebsiteUrl.postValue(it.device.deviceContext.websiteManufacturer)
-                val deviceType = it.deviceType
-                if (deviceType != null) {
-                    this.canBeIgnored.postValue(deviceType.canBeIgnored())
-                }
+                deviceType.postValue(it.device.deviceContext.deviceType)
+                Timber.d("Set Device type: ${it.device.deviceContext.deviceType}")
+                canBeIgnored.postValue(it.device.deviceContext.deviceType.canBeIgnored())
                 val notification = notificationRepository.notificationForDevice(it).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {

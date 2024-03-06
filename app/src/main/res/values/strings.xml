@@ -362,6 +362,11 @@
     <string name="article_offline_header">No internet connection</string>
     <string name="article_offline_text">You are currently not connected to the internet. You will find articles that will help you navigate the app here when you are connected to the internet.</string>
 
+    <string name="explanation_apple">Please note:\nApple devices change their identifier every 24 hours once they are disconnected from their owner device for a certain time.\nAirTags, AirPods, FindMy and other Apple devices will be detected as a new device every day.</string>
+    <string name="explanation_samsung">Please note:\nSamsung devices change their identifier every 24 hours once they are disconnected from their owner device for a longer time.\nSmartTags and other Samsung SmartThings devices will be detected as a new device every day.</string>
+    <string name="explanation_tile">Please note:\nTile devices do not change their identifier.\nWhile this allows for a better tracking detection, this can also lead to false warnings.\nIn case of a tracking warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
+    <string name="explanation_chipolo">Please note:\nChipolo devices do not change their identifier.\nWhile this allows for a better tracking detection, this can also lead to false warnings.\nIn case of a tracking warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
+
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>
