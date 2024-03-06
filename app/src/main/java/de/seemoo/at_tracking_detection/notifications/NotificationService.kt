@@ -70,6 +70,20 @@ class NotificationService @Inject constructor(
         }
     }
 
+    @SuppressLint("MissingPermission")
+    fun sendObserveTrackerFailedNotification() {
+        val notificationId = generateNotificationId()
+        with(notificationManagerCompat) {
+            if (this.areNotificationsEnabled()) {
+                notify(
+                    OBSERVE_TRACKER_NOTIFICATION_TAG,
+                    notificationId,
+                    notificationBuilder.buildObserveTrackerFailedNotification(notificationId)
+                )
+            }
+        }
+    }
+
     /*
     @SuppressLint("MissingPermission")
     suspend fun sendObserveTrackerNotification(baseDevice: BaseDevice) {
@@ -132,7 +146,7 @@ class NotificationService @Inject constructor(
         // Do not send multiple notifications
         if (!ATTrackingDetectionApplication.SURVEY_IS_RUNNING) {return}
 
-        if (SharedPrefs.surveyNotficationSent && !replace) {return}
+        if (SharedPrefs.surveyNotificationSent && !replace) {return}
         //Check if already scheduled
         val notificationDate = SharedPrefs.surveyNotificationDate
         if ( replace || notificationDate == null || notificationDate < LocalDateTime.now()) {
@@ -162,28 +176,26 @@ class NotificationService @Inject constructor(
     }
 
     fun setup() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Timber.d("Setting up NotificationManager")
-            // Register the channel with the system
-            val channel = NotificationChannelCompat.Builder(
-                NotificationConstants.CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_HIGH
-            )
-                .setName(NotificationConstants.NOTIFICATION_CHANNEL_NAME)
-                .build()
+        Timber.d("Setting up NotificationManager")
+        // Register the channel with the system
+        val channel = NotificationChannelCompat.Builder(
+            NotificationConstants.CHANNEL_ID,
+            NotificationManagerCompat.IMPORTANCE_HIGH
+        )
+            .setName(NotificationConstants.NOTIFICATION_CHANNEL_NAME)
+            .build()
 
-            notificationManagerCompat.createNotificationChannel(channel)
+        notificationManagerCompat.createNotificationChannel(channel)
 
-            //Register the info channel
-            val infoChannel = NotificationChannelCompat.Builder(
-                NotificationConstants.INFO_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_LOW
-            )
-                .setName(NotificationConstants.NOTIFICATION_CHANNEL_INFO)
-                .build()
+        //Register the info channel
+        val infoChannel = NotificationChannelCompat.Builder(
+            NotificationConstants.INFO_CHANNEL_ID,
+            NotificationManagerCompat.IMPORTANCE_LOW
+        )
+            .setName(NotificationConstants.NOTIFICATION_CHANNEL_INFO)
+            .build()
 
-            notificationManagerCompat.createNotificationChannel(infoChannel)
-        }
+        notificationManagerCompat.createNotificationChannel(infoChannel)
     }
 
     companion object {

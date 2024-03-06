@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
+import android.annotation.SuppressLint
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.transition.TransitionInflater
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -55,14 +58,14 @@ class TrackingFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = trackingViewModel
-        val notifId = safeArgs.notificationId
-        // This is called deviceAddress but contains the ID
+        val notificationId = safeArgs.notificationId
+        // This is called deviceAddress but contains the ID not necessarily the address
         val deviceAddress = safeArgs.deviceAddress
-        trackingViewModel.notificationId.postValue(notifId)
+        trackingViewModel.notificationId.postValue(notificationId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)
         trackingViewModel.loadDevice(safeArgs.deviceAddress)
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
-            notificationId = it
+            this.notificationId = it
         }
 
         sharedElementEnterTransition =
@@ -73,13 +76,25 @@ class TrackingFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
 
         LocalBroadcastManager.getInstance(activity)
             .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
-        activity.registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity.registerReceiver(
+                gattUpdateReceiver,
+                DeviceManager.gattIntentFilter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            activity.registerReceiver(
+                gattUpdateReceiver,
+                DeviceManager.gattIntentFilter
+            )
+        }
     }
 
     override fun onPause() {
@@ -106,12 +121,21 @@ class TrackingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val feedbackButton = view.findViewById<CardView>(R.id.tracking_feedback)
-        val playSoundCard = view.findViewById<CardView>(R.id.tracking_play_sound)
-        val trackingDetailButton = view.findViewById<CardView>(R.id.tracking_detail_scan)
-        // TODO: include when finished
-        // val observeTrackerButton = view.findViewById<CardView>(R.id.tracking_observation)
-        val map = view.findViewById<MapView>(R.id.map)
+        val feedbackButton: CardView = view.findViewById(R.id.tracking_feedback)
+        val playSoundCard: CardView = view.findViewById(R.id.tracking_play_sound)
+        val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
+        val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
+        val map: MapView = view.findViewById(R.id.map)
+        val includedLayout: View = view.findViewById(R.id.manufacturer_website)
+        val identifierExplanation: TextView = view.findViewById(R.id.identifier_explanation)
+
+        trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
+            identifierExplanation.text = Utility.getExplanationTextForDeviceType(deviceType)
+        }
+
+        includedLayout.setOnClickListener {
+            trackingViewModel.clickOnWebsite(requireContext())
+        }
 
         feedbackButton.setOnClickListener {
             val directions: NavDirections =
@@ -126,13 +150,12 @@ class TrackingFragment : Fragment() {
             findNavController().navigate(directions)
         }
 
-        // TODO: include when finished
-//        observeTrackerButton.setOnClickListener {
-//            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
-//            val directions: NavDirections =
-//                TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
-//            findNavController().navigate(directions)
-//        }
+        observeTrackerButton.setOnClickListener {
+            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
+            val directions: NavDirections =
+                TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
+            findNavController().navigate(directions)
+        }
 
         playSoundCard.setOnClickListener {
             if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
@@ -190,7 +213,7 @@ class TrackingFragment : Fragment() {
         addInteractions(view)
     }
 
-    fun addInteractions(view: View) {
+    private fun addInteractions(view: View) {
         val button = view.findViewById<ImageButton>(R.id.open_map_button)
 
 
@@ -260,7 +283,9 @@ class TrackingFragment : Fragment() {
                 } else {
                     Timber.d("Device is ready to connect!")
                     trackingViewModel.device.observe(viewLifecycleOwner) { baseDevice ->
-                        it.connect(baseDevice)
+                        if (baseDevice != null) {
+                            it.connect(baseDevice)
+                        }
                     }
                 }
             }

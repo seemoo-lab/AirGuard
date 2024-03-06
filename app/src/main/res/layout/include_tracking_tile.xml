@@ -61,13 +61,6 @@
             android:layout_margin="8dp">
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/tracking_guideline_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.25" />
-
-            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/tracking_guideline_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,18 +76,14 @@
 
             <ImageView
                 android:id="@+id/tracking_tile_image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:adjustViewBounds="true"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
                 android:contentDescription="@{imageDescription}"
-                android:scaleType="fitStart"
                 android:src="@{drawable}"
-                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/tracking_guideline_left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_baseline_play_circle_outline_24"
-                />
+                tools:src="@drawable/ic_baseline_play_circle_outline_24" />
 
             <FrameLayout
                 android:layout_width="0dp"
@@ -132,24 +121,21 @@
                     android:contentDescription="@string/tracking_locate_at_playing_sound"
                     android:scaleType="fitEnd"
                     android:visibility="@{vm.error ? View.VISIBLE : View.INVISIBLE}"
-                    app:srcCompat="@drawable/ic_baseline_error_outline_24"
-                    />
+                    app:srcCompat="@drawable/ic_baseline_error_outline_24" />
             </FrameLayout>
 
             <TextView
                 android:id="@+id/tracking_tile_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoSizeMinTextSize="13sp"
-                android:autoSizeTextType="uniform"
-                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
                 android:text="@{title}"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tracking_guideline_horizontal"
-                tools:text="Title text"
-                />
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tracking_tile_image"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Title text" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -157,11 +143,12 @@
                 android:autoSizeMinTextSize="10sp"
                 android:autoSizeTextType="uniform"
                 android:text="@{subtitle}"
-                tools:text="Subtitle text"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tracking_tile_title" />
+                app:layout_constraintTop_toBottomOf="@id/tracking_tile_title"
+                tools:text="Subtitle text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

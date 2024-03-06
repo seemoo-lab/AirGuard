@@ -45,11 +45,14 @@
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
     <string name="tracking_false_alarm_title">Fehlalarm</string>
     <string name="tracking_false_alarm_subtitle">Diese Benachrichtigung als Fehlalarm markieren</string>
-    <string name="feedback_question1">Wo war das "Find My"-Gerät versteckt?</string>
+    <string name="feedback_question1">Wo war das Gerät versteckt?</string>
     <string name="feedback_location_backpack">Rucksack</string>
     <string name="feedback_location_clothes">Kleidung</string>
     <string name="feedback_location_car">Auto</string>
     <string name="feedback_location_bike">Fahrrad</string>
+    <string name="feedback_location_other">Woanders</string>
+    <string name="feedback_location_not_found">Tracker nicht gefunden</string>
+    <string name="feedback_success">Feedback wurde übermittel</string>
     <string name="feedback_close">Schließen</string>
     <string name="tracking_locate_at_playing_sound">Ton wird abgespielt…</string>
     <string name="permission_required">Berechtigung erforderlich</string>
@@ -104,6 +107,7 @@
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
     <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
     <string name="title_data_deletion">Datenlöschung anfragen</string>
+    <string name="title_article">Artikel</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
     <string name="beacons">Signale</string>
     <string name="dashboard_tile_change">+%d</string>
@@ -136,6 +140,7 @@
     <string name="notification_observe_tracker_positive_singular">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</string>
     <string name="notification_observe_tracker_positive_plural">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</string>
     <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
+    <string name="notification_observe_tracker_error">Es ist ein Fehler aufgetreten. Versuche es nochmal.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
     <string name="onboarding_notification_description">Um Benachrichtigungen zu senden, wenn ein Gerät gefunden wurde, benötigen wir die Berechtigung Benachrichtigungen zu verschicken.</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
@@ -147,7 +152,7 @@
     <string name="risk_level_low">Kein Risiko</string>
     <string name="risk_level_medium">Mittleres Risiko</string>
     <string name="risk_level_high">Hohes Risiko</string>
-    <string name="no_trackers_found">Keine Tracker gefunden in den letzten %d Tagen</string>
+    <string name="no_trackers_found">Keine Tracker gefunden seit: %s</string>
     <string name="found_x_trackers">%d Tracker gefunden in den letzten %d Tagen</string>
     <string name="last_scan_info">Letzter Scan: %s</string>
     <string name="last_discovery">Letzter Tracker gefunden am %s</string>
@@ -252,13 +257,16 @@
     <string name="battery_very_low">Sehr Niedrig</string>
     <string name="battery_unknown">Unbekannt</string>
     <string name="connection_state_offline">Offline</string>
-    <string name="connection_state_offline_explanation">Gerät war in den letzten 15 Minuten nicht verbunden</string>
+    <string name="connection_state_offline_explanation">Gerät ist vom Besitzer getrennt</string>
     <string name="connection_state_overmature_offline">Overmature Offline</string>
     <string name="connection_state_premature_offline">Premature Offline</string>
-    <string name="connection_state_overmature_offline_explanation">Gerät war für mehrere Stunden nicht verbunden</string>
+    <string name="connection_state_overmature_offline_explanation">Gerät ist seit mind. 15 Minuten vom Besitzer getrennt</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">Gerät ist seit mind. 30 Minuten vom Besitzer getrennt</string>
+    <string name="connection_state_overmature_offline_explanation_samsung">Gerät ist seit mind. 8 Stunden vom Besitzer getrennt</string>
     <string name="connection_state_connected">Verbunden</string>
     <string name="connection_state_connected_explanation">Gerät ist verbunden mit Besitzer</string>
-    <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten verbunden</string>
+    <string name="connection_state_premature_offline_explanation">Gerät war in den letzten 15 Minuten mit Besitzer verbunden</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">Gerät war in den letzten 30 Minuten mit Besitzer verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
     <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
     <string name="scan_sorting_by_rssi">nach Signalstärke</string>
@@ -276,15 +284,20 @@
     <string name="connection_state_unknown_explanation">Verbindungsstatus kann nicht bestimmt werden</string>
     <string name="connection_state_content_description">Informationen über den Verbindungsstatus des Geräts</string>
     <string name="scan_not_in_range">Gerät ist nicht in Reichweite</string>
+    <string name="scan_explanation">Bewege dich langsam und versuche die Signalstäre zu maximieren um den Tracker zu finden.</string>
 
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_device">Samsung Geräte</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
+    <string name="observe_tracker_stop_observation">Beobachtung stoppen</string>
+    <string name="observe_tracker_stop_observation_explanation">Dieser Tracker wird zur Zeit beobachtet.</string>
+    <string name="observe_tracker_stopped">Beobachtung beendet</string>
     <string name="observe_tracker_clock_description">Piktogramm einer Uhr</string>
     <string name="observe_tracker_start_observation">Beobachtung Starten</string>
     <string name="observe_tracker_explanation">Wenn Sie nicht sicher sind, ob dieser Tracker Ihnen folgt, können Sie ihn manuell beobachten. \n\nIn einer Stunde wird AirGuard nach diesem Tracker suchen und Ihnen sofort eine Benachrichtigung zukommen lassen, auch wenn Sie sich nicht mit diesem Tracker bewegt haben. Wenn der Tracker nicht mehr in der Nähe ist, erhalten Sie auch darüber eine Benachrichtigung.</string>
+    <string name="observe_tracker_changing_id">Dieser Tracker könnte möglicherweise seine Kennung ändern. Er befindet sich möglicherweise noch in der Nähe, selbst wenn er nicht mehr erkannt wird.</string>
     <string name="tracking_observe_tracker_subtitle">Finde heraus ob dieser Tracker dir folgt</string>
     <string name="title_observe_tracker">Beobachten: {deviceAddress}</string>
     <string name="observe_tracker_success">Beobachtung gestartet</string>
@@ -295,9 +308,39 @@
     <string name="version_number">Version %s</string>
     <string name="contact_us">Kontaktiere uns</string>
     <string name="credits">Credits</string>
+    <string name="website_manufacturer">Hersteller Website</string>
+    <string name="website_manufacturer_detail">Öffnet die Webseite des Herstellers</string>
+    <string name="no_browser">Kein Browser gefunden</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
-    <string name="delete_data_explanation">Platzhalter: Hier Erklärtext</string>
+    <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf "Ja" bei der Studienteilnahme klicken.</string>
+    <string name="delete_data_success">Datenlöschung erfolgreich</string>
+    <string name="delete_data_error">Etwas ist schief gelaufen</string>
+    <string name="delete_data_server_error">Server nicht erreichbar. Versuche es später nochmal.</string>
+    <string name="delete_data_no_data">Keine Daten zum Löschen vorhanden</string>
+
+    <string name="article_image_description">Vorschaubild für diesen Artikel</string>
+
+    <string name="smarttag_uwb">SmartTag (mit UWB)</string>
+
+    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_de.json</string>
+    <string name="article_reading_time">Lesedauer: %d min</string>
+    <string name="article_offline_header">Keine Internetverbindung</string>
+    <string name="article_offline_text">Es besteht aktuell keine Internetverbindung. Hier werden Artikel angezeigt, die dir helfen die App zu bedienen, sobald du wieder mit dem Internet verbunden bist.</string>
+
     <string name="copyright">Copyright</string>
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
+
+    <string name="explanation_apple">Achtung:\nApple Geräte ändern ihre Kennung alle 24 Stunden nachdem sie einige Zeit vom Besitzergerät getrennt sind.\nAirTags, AirPods, FindMy-Geräte und andere Apple Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
+    <string name="explanation_samsung">Achtung:\nSamsung Geräte ändern ihre Kennung alle 24 Stunden nachdem sie längere Zeit vom Besitzergerät getrennt sind.\nSmartTags und andere Samsung Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
+    <string name="explanation_tile">Achtung:\nTile Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
+    <string name="explanation_chipolo">Achtung:\nChipolo Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
+
+    <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.</string>
+
+    <string name="high_risk_trackers">Mögliche Tracker</string>
+    <string name="low_risk_trackers">Sichere Tracker</string>
+    <string name="marker_legend">Legende</string>
+    <string name="device_marker">Standort an dem potenzieller Tracker gefunden wurde</string>
+
 </resources>

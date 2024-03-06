@@ -40,7 +40,7 @@
     <string name="tracking_false_alarm_title">誤報</string>
     <string name="tracking_false_alarm_subtitle">この通知を誤報としてマークする</string>
     <string name="tracking_missing_beacons_info">一部のタグは位置データなしで検知されたため、表示されません</string>
-    <string name="feedback_question1">Find Myデバイスはどこに隠されていましたか？</string>
+    <string name="feedback_question1">装置はどこに隠されていたのか？</string>
     <string name="feedback_location_backpack">リュックサック</string>
     <string name="feedback_location_clothes">服</string>
     <string name="feedback_location_car">車</string>
@@ -129,7 +129,7 @@
     <string name="risk_level_low">問題なし</string>
     <string name="risk_level_medium">注意</string>
     <string name="risk_level_high">危険</string>
-    <string name="no_trackers_found">過去 %d 日間にタグは見つかりませんでした</string>
+    <string name="no_trackers_found">それ以来、トラッカーは見つかっていない：%s</string>
     <string name="found_x_trackers">過去 %d 日間に %d つのタグが検出されました</string>
     <string name="last_scan_info">最後のスキャン日時: %s</string>
     <string name="last_discovery">最後に見つかったタグは %s です</string>

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
@@ -14,6 +13,8 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -77,16 +78,16 @@ object Utility {
     fun enableMyLocationOverlay(
         map: MapView
     ) {
-        val context = ATTrackingDetectionApplication.getAppContext()
         val locationOverlay = MyLocationNewOverlay(map)
-        val options = BitmapFactory.Options()
-        val bitmapPerson =
-            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-        locationOverlay.setPersonIcon(bitmapPerson)
-        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
-        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
-        locationOverlay.enableMyLocation()
-        locationOverlay.enableFollowLocation()
+//        val context = ATTrackingDetectionApplication.getAppContext()
+//        val options = BitmapFactory.Options()
+//        val bitmapPerson =
+//            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
+//        locationOverlay.setPersonIcon(bitmapPerson)
+//        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
+//        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
+//        locationOverlay.enableMyLocation()
+//        locationOverlay.enableFollowLocation()
         map.overlays.add(locationOverlay)
         map.controller.setZoom(ZOOMED_OUT_LEVEL)
     }
@@ -103,7 +104,6 @@ object Utility {
         val geoPointList = ArrayList<GeoPoint>()
         val markerList = ArrayList<Marker>()
 
-
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
@@ -113,10 +113,11 @@ object Utility {
         withContext(Dispatchers.Default) {
             locationList
                 .filter { it.locationId != 0 }
-                .map { location ->
+                .forEach { location ->
                     if (!map.isShown) {
-                        return@map
+                        return@forEach
                     }
+
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint
@@ -134,8 +135,8 @@ object Utility {
                     }
                 }
         }
-        map.overlays.addAll(markerList)
 
+        map.overlays.addAll(markerList)
         Timber.d("Added ${geoPointList.size} markers to the map!")
 
         if (connectWithPolyline) {
@@ -159,15 +160,12 @@ object Utility {
             try {
                 Timber.d("Zoom in to bounds -> $boundingBox")
                 map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
-
             } catch (e: IllegalArgumentException) {
                 mapController.setCenter(boundingBox.centerWithDateLine)
                 mapController.setZoom(10.0)
                 Timber.e("Failed to zoom to bounding box! ${e.message}")
             }
         }
-
-        // map.zoomToBoundingBox(boundingBox, true)
 
         return true
     }
@@ -195,6 +193,41 @@ object Utility {
 
     fun dbmToPercent(rssi: Int, perfectRssi: Double = -30.0, worstRssi: Double = -90.0): Double {
         return DbmToPercent.convert(rssi.toDouble(), perfectRssi = perfectRssi, worstRssi = worstRssi).toDouble() / 100.0
+    }
+
+    fun getSensitivity(): Int {
+        return when (SharedPrefs.riskSensitivity) {
+            "low" -> 1
+            "medium" -> 2
+            "high" -> 3
+            else -> 0
+        }
+    }
+
+    fun connectionStateToString(connectionState: ConnectionState): String {
+        return when (connectionState) {
+            ConnectionState.CONNECTED -> "CONNECTED"
+            ConnectionState.OFFLINE -> "OFFLINE"
+            ConnectionState.OVERMATURE_OFFLINE -> "OVERMATURE_OFFLINE"
+            ConnectionState.PREMATURE_OFFLINE -> "PREMATURE_OFFLINE"
+            ConnectionState.UNKNOWN -> "UNKNOWN"
+        }
+    }
+
+    fun getExplanationTextForDeviceType(deviceType: DeviceType?): String {
+        Timber.d("get Explanation for DeviceType: $deviceType")
+        return when (deviceType) {
+            DeviceType.APPLE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.AIRPODS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.FIND_MY -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.AIRTAG-> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.SAMSUNG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.GALAXY_SMART_TAG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.GALAXY_SMART_TAG_PLUS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
+            DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
+            else -> ""
+        }
     }
 
     private fun rssiToQuality(percentage: Float): Int {

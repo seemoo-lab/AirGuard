@@ -28,6 +28,17 @@ interface Api {
         @Header("User-Agent") userAgent: String = USER_AGENT
     ): Response<Token>
 
+    /**
+     * Deletes the study data related to the given token.
+     */
+    @Headers("Authorization: Api-Key $API_KEY")
+    @DELETE("delete_study_data")
+    suspend fun deleteStudyData(
+        @Header("token") token: String,
+        @Header("X-Timezone") timezone: String = TIME_ZONE,
+        @Header("User-Agent") userAgent: String = USER_AGENT
+    ): Response<Void>
+
     @GET("ping")
     suspend fun ping(
         @Header("X-Timezone") timezone: String = TIME_ZONE,

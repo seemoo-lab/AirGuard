@@ -13,16 +13,22 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-
+    val HTTP_TIMEOUT: Long = 60
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .callTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+        .connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+        .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+        .build()
 
     @Provides
     @Singleton

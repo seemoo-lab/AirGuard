@@ -35,8 +35,8 @@ open class SamsungDevice(open val id: Int) : Device(){
                     // Twelve Byte:
                     // 04, 00 --> UWB off,
                     // 04, 04 --> UWB on
-                    byteArrayOf((0x13).toByte()),
-                    byteArrayOf((0xFF).toByte())
+                    byteArrayOf((0x10).toByte()),
+                    byteArrayOf((0xF8).toByte())
                 )
                 .build()
 
@@ -48,6 +48,9 @@ open class SamsungDevice(open val id: Int) : Device(){
 
         override val statusByteDeviceType: UInt
             get() = 0u
+
+        override val websiteManufacturer: String
+            get() = "https://www.samsung.com/"
 
         private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
@@ -102,16 +105,19 @@ open class SamsungDevice(open val id: Int) : Device(){
             return BatteryState.UNKNOWN
         }
 
-        override fun getPublicKey(scanResult: ScanResult): String{
-            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+        override fun getPublicKey(scanResult: ScanResult): String {
+            try {
+                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
 
-            fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+                fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
-            return if (serviceData == null || serviceData.size < 12) {
-                scanResult.device.address
-            } else {
-                byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
+                if (serviceData != null && serviceData.size >= 12) {
+                    return byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting public key")
             }
+            return scanResult.device.address
         }
 
         fun getSamsungDeviceType(scanResult: ScanResult): DeviceType{

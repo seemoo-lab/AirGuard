@@ -9,7 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,6 +27,9 @@ class ScanFragment : Fragment() {
 
     private val scanViewModel: ScanViewModel by viewModels()
 
+    private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
+    private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,16 +37,21 @@ class ScanFragment : Fragment() {
     ): View {
         val binding: FragmentScanBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
-        val bluetoothDeviceAdapter = BluetoothDeviceAdapter(childFragmentManager)
 
-        binding.adapter = bluetoothDeviceAdapter
+        binding.adapterHighRisk = bluetoothDeviceAdapterHighRisk
+        binding.adapterLowRisk = bluetoothDeviceAdapterLowRisk
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = scanViewModel
 
-        scanViewModel.bluetoothDeviceList.observe(viewLifecycleOwner) {
-            bluetoothDeviceAdapter.submitList(it)
-            // Ugly workaround because i don't know why this adapter only displays items after a screen wake up...
-            bluetoothDeviceAdapter.notifyDataSetChanged()
+        // TODO: notifyDataSetChanged is very inefficient. DiffUtil does not work properly for some reason
+        scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {
+            bluetoothDeviceAdapterHighRisk.submitList(it)
+            bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
+        }
+
+        scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {
+            bluetoothDeviceAdapterLowRisk.submitList(it)
+            bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
@@ -54,24 +63,29 @@ class ScanFragment : Fragment() {
         }
 
         scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
-            val bluetoothDeviceListValue = scanViewModel.bluetoothDeviceList.value ?: return@observe
-            scanViewModel.sortResults(bluetoothDeviceListValue)
-            scanViewModel.bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+            val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
+            val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
 
-            if (view != null) {
-                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
-                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
-                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
+            scanViewModel.sortResults(bluetoothDeviceListHighRiskValue)
+            scanViewModel.sortResults(bluetoothDeviceListLowRiskValue)
 
-                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+            scanViewModel.bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
+            scanViewModel.bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
 
-                when(it) {
-                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
-                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
-                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-                }
-            }
+//            if (view != null) {
+//                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
+//                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
+//                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
+//
+//                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+//
+//                when(it) {
+//                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+//                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
+//                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
+//                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+//                }
+//            }
 
         }
 
@@ -97,28 +111,42 @@ class ScanFragment : Fragment() {
             }
         }
 
-        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
-        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
-        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
-
-        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
-
-        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-
-        sortBySignalStrength.setOnClickListener {
-            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
+        val infoButton = view.findViewById<ImageButton>(R.id.info_button)
+        infoButton.setOnClickListener {
+            toggleInfoLayoutVisibility(view)
         }
-        sortByDetectionOrder.setOnClickListener {
-            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
-        }
-        sortByAddress.setOnClickListener {
-            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
-        }
+
+
+//        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
+//        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
+//        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
+//
+//        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
+//
+//        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
+//
+//        sortBySignalStrength.setOnClickListener {
+//            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
+//        }
+//        sortByDetectionOrder.setOnClickListener {
+//            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
+//        }
+//        sortByAddress.setOnClickListener {
+//            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
+//        }
     }
 
     override fun onStart() {
         super.onStart()
         scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
+    }
+
+    private fun toggleInfoLayoutVisibility(view: View) {
+        // Find the info layout by its ID
+        val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
+
+        // Toggle the visibility
+        infoLayout.visibility = if (infoLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
     private val scanCallback: ScanCallback = object : ScanCallback() {

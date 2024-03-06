@@ -26,7 +26,7 @@ class LocationProviderTest {
         val context = ATTrackingDetectionApplication.getAppContext()
         val locationManager = context.getSystemService<LocationManager>()
         assert(locationManager != null)
-        val locationProvider = LocationProvider(locationManager!!, DefaultBuildVersionProvider())
+        val locationProvider = LocationProvider(locationManager!!)
 
         // Getting the current location
         val startTime = LocalDateTime.now()
@@ -49,7 +49,7 @@ class LocationProviderTest {
         val context = ATTrackingDetectionApplication.getAppContext()
         val locationManager = context.getSystemService<LocationManager>()
         assert(locationManager != null)
-        val locationProvider = LocationProvider(locationManager!!, TestBuildVersionProvider(21))
+        val locationProvider = LocationProvider(locationManager!!)
 
         // Getting the current location
         val startTime = LocalDateTime.now()

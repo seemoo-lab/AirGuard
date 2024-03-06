@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanResult
-import android.os.Build
 import androidx.room.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -32,6 +31,7 @@ data class BaseDevice(
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
+    @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
 ) {
 
     constructor(
@@ -68,11 +68,7 @@ data class BaseDevice(
         getDeviceName(scanResult),
         false,
         scanResult.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                scanResult.isConnectable
-            } else {
-                null
-            }
+            scanResult.isConnectable
         },
         scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
         LocalDateTime.now(),
@@ -121,18 +117,18 @@ data class BaseDevice(
     companion object {
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.GALAXY_SMART_TAG_PLUS -> null
+                DeviceType.GALAXY_SMART_TAG_PLUS,
                 DeviceType.GALAXY_SMART_TAG -> null
                 else -> scanResult.scanRecord?.deviceName
             }
         }
 
-        fun getPublicKey(scanResult: ScanResult): String{
+        fun getPublicKey(scanResult: ScanResult): String {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.SAMSUNG -> SamsungDevice.getPublicKey(scanResult)
-                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getPublicKey(scanResult)
+                DeviceType.SAMSUNG,
+                DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getPublicKey(scanResult)
-                else -> scanResult.device.address
+                else -> scanResult.device.address // Default case to handle unknown types
             }
         }
 
@@ -140,12 +136,12 @@ data class BaseDevice(
             return when (DeviceManager.getDeviceType(scanResult)) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
-                DeviceType.SAMSUNG -> SamsungDevice.getConnectionState(scanResult)
-                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.SAMSUNG,
+                DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
-                DeviceType.AIRPODS -> AppleDevice.getConnectionState(scanResult)
-                DeviceType.FIND_MY -> AppleDevice.getConnectionState(scanResult)
-                DeviceType.AIRTAG -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.AIRPODS,
+                DeviceType.FIND_MY,
+                DeviceType.AIRTAG,
                 DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
                 else -> ConnectionState.UNKNOWN
             }
@@ -153,22 +149,12 @@ data class BaseDevice(
 
         fun getBatteryState(scanResult: ScanResult): BatteryState {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.GALAXY_SMART_TAG -> SamsungDevice.getBatteryState(scanResult)
+                DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getBatteryState(scanResult)
-                DeviceType.FIND_MY -> AirTag.getBatteryState(scanResult)
-                DeviceType.AIRTAG -> AirTag.getBatteryState(scanResult)
+                DeviceType.FIND_MY,
+                DeviceType.AIRTAG,
                 DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
-            }
-        }
-
-        fun getConnectionStateAsString(scanResult: ScanResult): String {
-            return when (getConnectionState(scanResult)) {
-                ConnectionState.OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_offline)
-                ConnectionState.PREMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_premature_offline)
-                ConnectionState.OVERMATURE_OFFLINE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_overmature_offline)
-                ConnectionState.CONNECTED -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_connected)
-                ConnectionState.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.connection_state_unknown)
             }
         }
 

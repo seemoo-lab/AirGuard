@@ -1,5 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.*
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
@@ -10,6 +12,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TrackingViewModel @Inject constructor(
@@ -24,15 +27,20 @@ class TrackingViewModel @Inject constructor(
 
     val noLocationsYet = MutableLiveData(true)
 
+    val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
+
+    var deviceType = MutableLiveData<DeviceType>(DeviceType.UNKNOWN)
+
     val error = MutableLiveData(false)
 
     val falseAlarm = MutableLiveData(false)
     val deviceIgnored = MutableLiveData(false)
+    val trackerObserved = MutableLiveData(false)
 
     val soundPlaying = MutableLiveData(false)
     val connecting = MutableLiveData(false)
 
-    val device = MutableLiveData<BaseDevice>()
+    val device = MutableLiveData<BaseDevice?>()
     val connectable = MutableLiveData(false)
 
     val canBeIgnored = MutableLiveData(false)
@@ -59,18 +67,22 @@ class TrackingViewModel @Inject constructor(
         deviceRepository.getDevice(address).also { it ->
             device.postValue(it)
             if (it != null) {
+                val deviceObserved = it.nextObservationNotification != null && it.nextObservationNotification!!.isAfter(
+                    LocalDateTime.now())
+                trackerObserved.postValue(deviceObserved)
                 deviceIgnored.postValue(it.ignore)
                 noLocationsYet.postValue(false)
                 connectable.postValue(it.device is Connectable)
                 showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
-                val deviceType = it.deviceType
-                if (deviceType != null) {
-                    this.canBeIgnored.postValue(deviceType.canBeIgnored())
-                }
+                manufacturerWebsiteUrl.postValue(it.device.deviceContext.websiteManufacturer)
+                deviceType.postValue(it.device.deviceContext.deviceType)
+                Timber.d("Set Device type: ${it.device.deviceContext.deviceType}")
+                canBeIgnored.postValue(it.device.deviceContext.deviceType.canBeIgnored())
                 val notification = notificationRepository.notificationForDevice(it).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {
                 noLocationsYet.postValue(true)
+                manufacturerWebsiteUrl.postValue("")
             }
         }
 
@@ -92,6 +104,15 @@ class TrackingViewModel @Inject constructor(
                 notificationRepository.setFalseAlarm(notificationId.value!!, newState)
             }
             falseAlarm.postValue(newState)
+        }
+    }
+
+    fun clickOnWebsite(context: android.content.Context) {
+        if (manufacturerWebsiteUrl.value != null) {
+            Timber.d("Click on website: ${manufacturerWebsiteUrl.value}")
+            val webpage: Uri = Uri.parse(manufacturerWebsiteUrl.value)
+            val intent = Intent(Intent.ACTION_VIEW, webpage)
+            context.startActivity(intent)
         }
     }
 }

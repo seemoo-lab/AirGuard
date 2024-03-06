@@ -5,13 +5,13 @@ import android.widget.TextView
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
@@ -19,7 +19,6 @@ import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
-import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
@@ -34,8 +33,9 @@ class ScanViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
     ) : ViewModel() {
+    val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResult>>() // TODO: Problem needs to be immutable so that DiffUtil works
 
-    val bluetoothDeviceList = MutableLiveData<MutableList<ScanResult>>()
+    val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResult>>()
 
     val scanFinished = MutableLiveData(false)
 
@@ -45,7 +45,8 @@ class ScanViewModel @Inject constructor(
 
     var bluetoothEnabled = MutableLiveData(true)
     init {
-        bluetoothDeviceList.value = ArrayList()
+        bluetoothDeviceListHighRisk.value = ArrayList()
+        bluetoothDeviceListLowRisk.value = ArrayList()
         bluetoothEnabled.value = BLEScanner.isBluetoothOn()
     }
 
@@ -73,7 +74,6 @@ class ScanViewModel @Inject constructor(
             since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
         ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
-
             val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
             Timber.d("Got location $location in ScanViewModel")
 
@@ -88,33 +88,40 @@ class ScanViewModel @Inject constructor(
             }
         }
 
-        val bluetoothDeviceListValue = bluetoothDeviceList.value ?: return
-        bluetoothDeviceListValue.removeIf {
+        val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value ?: return
+        val bluetoothDeviceListLowRiskValue = bluetoothDeviceListLowRisk.value ?: return
+
+        bluetoothDeviceListHighRiskValue.removeIf {
+            getPublicKey(it) == uniqueIdentifier
+        }
+        bluetoothDeviceListLowRiskValue.removeIf {
             getPublicKey(it) == uniqueIdentifier
         }
 
-        if (SharedPrefs.showConnectedDevices || BaseDevice.getConnectionState(scanResult) in DeviceManager.savedConnectionStates) {
+        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState) {
             // only add possible devices to list
-            bluetoothDeviceListValue.add(scanResult)
+            bluetoothDeviceListHighRiskValue.add(scanResult)
+        } else {
+            bluetoothDeviceListLowRiskValue.add(scanResult)
         }
 
-        if (!SharedPrefs.showConnectedDevices){
-            // Do not show connected devices when criteria is met
-            bluetoothDeviceListValue.removeIf {
-                BaseDevice.getConnectionState(it) !in DeviceManager.savedConnectionStates
-            }
-        }
+        sortResults(bluetoothDeviceListHighRiskValue)
+        sortResults(bluetoothDeviceListLowRiskValue)
 
-        sortResults(bluetoothDeviceListValue)
+        val sortedHighRiskList = ArrayList(bluetoothDeviceListHighRiskValue)
+        val sortedLowRiskList = ArrayList(bluetoothDeviceListLowRiskValue)
 
-        bluetoothDeviceList.postValue(bluetoothDeviceListValue)
+        bluetoothDeviceListHighRisk.postValue(sortedHighRiskList)
+        bluetoothDeviceListLowRisk.postValue(sortedLowRiskList)
+
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
         Timber.d(
             "status bytes: ${
                 scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
             }"
         )
-        Timber.d("Device list: ${bluetoothDeviceList.value?.count()}")
+        Timber.d("Device list (High Risk): ${bluetoothDeviceListHighRisk.value?.count()}")
+        Timber.d("Device list (Low Risk): ${bluetoothDeviceListLowRisk.value?.count()}")
     }
 
     fun sortResults(bluetoothDeviceListValue: MutableList<ScanResult>) {
@@ -142,7 +149,15 @@ class ScanViewModel @Inject constructor(
         }
     }
 
-    val isListEmpty: LiveData<Boolean> = bluetoothDeviceList.map { it.isEmpty() }
+    val isListEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        // Function to update the isListEmpty LiveData
+        fun update() {
+            val highRiskEmpty = bluetoothDeviceListHighRisk.value?.isEmpty() ?: true
+            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() ?: true
+            this.value = highRiskEmpty && lowRiskEmpty
+        }
 
-    val listSize: LiveData<Int> = bluetoothDeviceList.map { it.size }
+        addSource(bluetoothDeviceListHighRisk) { update() }
+        addSource(bluetoothDeviceListLowRisk) { update() }
+    }
 }

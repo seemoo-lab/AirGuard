@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,9 +14,10 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import java.text.DateFormat
 import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +33,7 @@ class RiskCardViewModel @Inject constructor(
     var trackersFoundModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
     var lastUpdateModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
     var lastDiscoveryModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
-    var dismissSurveyInformation: MutableLiveData<Boolean> = MutableLiveData(SharedPrefs.dismissSurveyInformation)
+    private var dismissSurveyInformation: MutableLiveData<Boolean> = MutableLiveData(SharedPrefs.dismissSurveyInformation)
 
     private var lastScan: LocalDateTime? = null
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
@@ -54,7 +57,7 @@ class RiskCardViewModel @Inject constructor(
         updateRiskLevel()
     }
 
-    fun updateLastUpdateModel() {
+    private fun updateLastUpdateModel() {
         val context = ATTrackingDetectionApplication.getAppContext()
 
         val lastScanString = if (lastScan != null) {
@@ -75,6 +78,8 @@ class RiskCardViewModel @Inject constructor(
         val dateFormat = DateFormat.getDateTimeInstance()
         val lastDiscoveryDate = riskLevelEvaluator.getLastTrackerDiscoveryDate()
         val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
+        val earliestTrackingDate = getEarliestTrackingDate()
+        val earliestTrackingDateString = dateFormat.format(earliestTrackingDate)
         val totalAlerts = riskLevelEvaluator.getNumberRelevantTrackers()
 
         updateLastUpdateModel()
@@ -87,7 +92,7 @@ class RiskCardViewModel @Inject constructor(
                 riskColor = ContextCompat.getColor(context, R.color.risk_low)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.no_trackers_found, RiskLevelEvaluator.RELEVANT_DAYS),
+                    context.getString(R.string.no_trackers_found, earliestTrackingDateString),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
                 lastDiscoveryModel.postValue(RiskRowViewModel(
@@ -106,7 +111,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS
+                        RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
@@ -128,7 +133,7 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(
                         R.string.found_x_trackers,
                         totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS
+                        RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
                     ),
                     ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
                 ))
@@ -139,5 +144,32 @@ class RiskCardViewModel @Inject constructor(
                 ))
             }
         }
+    }
+
+    private fun getEarliestTrackingDate(): Date {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val installDate = getInstallDate(context)
+        val oldestDatePossible = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
+        val oldestDatePossibleAsDate = Date.from(oldestDatePossible.atZone(ZoneId.systemDefault()).toInstant())
+
+        return if (installDate != null && installDate > oldestDatePossibleAsDate) {
+            installDate
+        } else {
+            oldestDatePossibleAsDate
+        }
+    }
+
+    private fun getInstallDate(context: Context): Date? {
+        try {
+            val packageManager = context.packageManager
+            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+            val installTimeMillis = packageInfo.firstInstallTime
+
+            // Convert milliseconds to Date
+            return Date(installTimeMillis)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
     }
 }

@@ -10,11 +10,11 @@
         android:summary="@string/settings_share_data_summary"
         app:title="@string/settings_share_data_title" />
 
-<!--    <Preference-->
-<!--        android:icon="@drawable/ic_delete"-->
-<!--        android:key="delete_study_data"-->
-<!--        android:summary="@string/settings_delete_study_data_summary"-->
-<!--        android:title="@string/settings_delete_study_data_title" />-->
+    <Preference
+        android:icon="@drawable/ic_delete"
+        android:key="delete_study_data"
+        android:summary="@string/settings_delete_study_data_summary"
+        android:title="@string/settings_delete_study_data_title" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_location_on_24"
@@ -48,13 +48,6 @@
         android:entryValues="@array/devicesFilterValue"
         android:defaultValue="@array/devicesFilterValue"
         />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_radar_tracking"
-        android:key="show_connected_devices"
-        android:summary="@string/settings_show_connected_devices"
-        android:title="@string/settings_show_connected_devices_title" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"

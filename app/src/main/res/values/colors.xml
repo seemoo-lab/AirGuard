@@ -19,4 +19,5 @@
     <color name="blue_card_background">#325B76</color>
     <color name="gray_card_background">#434343</color>
     <color name="card_background_teal">#1B9CAE</color>
+    <color name="warning_light_red">#FF3D2F</color>
 </resources>

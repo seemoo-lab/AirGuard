@@ -20,6 +20,7 @@
     <uses-permission
         android:name="android.permission.BLUETOOTH_ADMIN"
         android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
@@ -28,25 +29,34 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".ATTrackingDetectionApplication"
-        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ATTrackingDetection"
         android:localeConfig="@xml/locales_config"
         android:largeHeap="true"
-        tools:targetApi="tiramisu">
+        tools:targetApi="tiramisu"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false">
 
         <activity
             android:name=".ui.TrackingNotificationActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
-            android:parentActivityName=".ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.seemoo.at_tracking_detection.TRACKING_NOTIFICATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -70,14 +80,22 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".worker.ScheduleWorkersReceiver" android:exported="true">
+        <receiver
+            android:name=".worker.ScheduleWorkersReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".notifications.ScheduledNotificationReceiver"/>
+        <service
+            android:name=".worker.ObserveTrackerWorker"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".notifications.ScheduledNotificationReceiver"
+            android:exported="false"/>
 
         <activity
             android:name=".ui.MainActivity"
@@ -88,11 +106,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.OnboardingActivity" />
+        <activity android:name=".ui.OnboardingActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".util.ble.BluetoothLeService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false"/>
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

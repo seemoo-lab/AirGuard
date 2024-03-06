@@ -34,6 +34,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
 
+        if (SharedPrefs.token == null && !SharedPrefs.shareData) {
+            findPreference<Preference>("delete_study_data")?.isVisible = false
+        }
+
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view?.findNavController()?.navigate(R.id.action_settings_to_information)
@@ -73,8 +77,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if (SharedPrefs.shareData) {
                         Timber.d("Enabled background statistics sharing!")
                         backgroundWorkScheduler.scheduleShareData()
+                        findPreference<Preference>("delete_study_data")?.isVisible = true
                     } else {
                         backgroundWorkScheduler.removeShareData()
+                        if (SharedPrefs.token == null) {
+                            findPreference<Preference>("delete_study_data")?.isVisible = false
+                        }
                     }
                 }
                 "use_location" -> {

@@ -2,10 +2,8 @@ package de.seemoo.at_tracking_detection.database.models.device.types
 
 import android.bluetooth.le.ScanFilter
 import android.os.ParcelUuid
-import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
@@ -44,8 +42,11 @@ class SmartTag(override val id: Int) : SamsungDevice(id) {
         override val deviceType: DeviceType
             get() = DeviceType.GALAXY_SMART_TAG
 
+        override val websiteManufacturer: String
+            get() = "https://www.samsung.com/"
+
         override val defaultDeviceName: String
-            get() = "SmartTag"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.smarttag_no_uwb)
 
         override val statusByteDeviceType: UInt
             get() = 0u

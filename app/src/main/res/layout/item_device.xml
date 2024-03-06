@@ -189,7 +189,7 @@
                 android:id="@+id/ignored_icon"
                 android:layout_width="20dp"
                 android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:contentDescription="@string/alert_sent_icon"
                 android:visibility="@{baseDevice.ignore ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toTopOf="@+id/device_first_discovery"

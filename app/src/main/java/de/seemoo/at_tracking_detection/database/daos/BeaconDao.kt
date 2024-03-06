@@ -11,8 +11,8 @@ interface BeaconDao {
     fun getAllBeacons(): List<Beacon>
 
     // @Query("SELECT mfg FROM beacon WHERE mfg LIKE :Key LIMIT 1")
-    @Query("SELECT * FROM beacon WHERE mfg LIKE :ServiceData")
-    fun getBeaconsWithDataLike(ServiceData: String): List<Beacon>
+    @Query("SELECT * FROM beacon WHERE mfg LIKE :serviceData")
+    fun getBeaconsWithDataLike(serviceData: String): List<Beacon>
 
     @Query("SELECT * FROM beacon WHERE receivedAt >= :since")
     fun getLatestBeacons(since: LocalDateTime): List<Beacon>
@@ -69,4 +69,10 @@ interface BeaconDao {
 
     @Delete
     suspend fun delete(beacon: Beacon)
+
+    @Delete
+    suspend fun deleteBeacons(beacons: List<Beacon>)
+
+    @Query("SELECT * FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL")
+    fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon>
 }

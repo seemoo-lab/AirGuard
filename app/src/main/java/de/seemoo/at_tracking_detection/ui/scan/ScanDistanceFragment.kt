@@ -9,7 +9,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -20,8 +19,6 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionStateAsString
-import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
@@ -29,6 +26,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import timber.log.Timber
 
 class ScanDistanceFragment : Fragment() {
@@ -55,9 +53,11 @@ class ScanDistanceFragment : Fragment() {
                 if (getPublicKey(it) == publicKey){
                     // viewModel.bluetoothRssi.postValue(it.rssi)
                     val connectionState = getConnectionState(it)
-                    val connectionStateString = getConnectionStateAsString(it)
-                    viewModel.connectionStateString.postValue(connectionStateString)
                     viewModel.connectionState.postValue(connectionState)
+                    val deviceType = DeviceManager.getDeviceType(it)
+                    val connectionStateString = getConnectionStateExplanation(connectionState, deviceType)
+                    viewModel.connectionStateString.postValue(connectionStateString)
+
                     val batteryState = getBatteryState(it)
                     val batteryStateString = getBatteryStateAsString(it)
                     viewModel.batteryStateString.postValue(batteryStateString)
@@ -66,14 +66,14 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    val deviceType = DeviceManager.getDeviceType(it)
-                    setDeviceType(deviceType)
-                    setBattery(batteryState)
+                    binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
+
+                    // setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
 
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
-                        removeSearchMessage()
+                        removeSearchMessage(batteryState != BatteryState.UNKNOWN)
                     }
                 }
 
@@ -94,21 +94,27 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    private fun removeSearchMessage() {
+    private fun removeSearchMessage(showBattery: Boolean = true) {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.VISIBLE
-        binding.batteryLayout.visibility = View.VISIBLE
         binding.deviceTypeLayout.visibility = View.VISIBLE
         binding.connectionStateLayout.visibility = View.VISIBLE
+        binding.scanExplanationLayout.visibility = View.VISIBLE
         binding.deviceNotFound.visibility = View.GONE
+//        if (showBattery) {
+//            binding.batteryLayout.visibility = View.VISIBLE
+//        } else {
+//            binding.batteryLayout.visibility = View.GONE
+//        }
     }
 
     private fun showSearchMessage() {
         binding.scanResultLoadingBar.visibility = View.VISIBLE
         binding.searchingForDevice.visibility = View.VISIBLE
         binding.connectionQuality.visibility = View.GONE
-        binding.batteryLayout.visibility = View.GONE
+        // binding.batteryLayout.visibility = View.GONE
+        binding.scanExplanationLayout.visibility = View.GONE
         binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
         binding.deviceNotFound.visibility = View.GONE
@@ -118,7 +124,8 @@ class ScanDistanceFragment : Fragment() {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
         binding.connectionQuality.visibility = View.GONE
-        binding.batteryLayout.visibility = View.GONE
+        binding.scanExplanationLayout.visibility = View.GONE
+        // binding.batteryLayout.visibility = View.GONE
         binding.deviceTypeLayout.visibility = View.GONE
         binding.connectionStateLayout.visibility = View.GONE
         binding.deviceNotFound.visibility = View.VISIBLE
@@ -146,20 +153,34 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    private fun setBattery(batteryState: BatteryState) {
-        when(batteryState) {
-            BatteryState.FULL -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_full_24))
-            BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_medium_24))
-            BatteryState.LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_low_24))
-            BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_very_low_24))
-            else -> binding.batterySymbol.setImageDrawable(resources.getDrawable(R.drawable.ic_battery_unknown_24))
-        }
-    }
+//    private fun setBattery(context: Context, batteryState: BatteryState) {
+//        binding.batteryLayout.visibility = View.VISIBLE
+//        when(batteryState) {
+//            BatteryState.FULL -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_full_24))
+//            BatteryState.MEDIUM -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_medium_24))
+//            BatteryState.LOW -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_low_24))
+//            BatteryState.VERY_LOW -> binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_battery_very_low_24))
+//            else -> binding.batteryLayout.visibility = View.GONE
+//        }
+//    }
 
-    private fun setDeviceType(deviceType: DeviceType) {
-        val drawable = resources.getDrawable(DeviceType.getImageDrawable(deviceType))
-        binding.deviceTypeSymbol.setImageDrawable(drawable)
-        binding.deviceTypeText.text = DeviceType.userReadableName(deviceType)
+    private fun getConnectionStateExplanation(connectionState: ConnectionState, deviceType: DeviceType): String {
+        return when (connectionState) {
+            ConnectionState.OVERMATURE_OFFLINE -> when(deviceType) {
+                DeviceType.SAMSUNG,
+                DeviceType.GALAXY_SMART_TAG,
+                DeviceType.GALAXY_SMART_TAG_PLUS -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
+                DeviceType.CHIPOLO -> getString(R.string.connection_state_overmature_offline_explanation_chipolo)
+                else -> getString(R.string.connection_state_overmature_offline_explanation)
+            }
+            ConnectionState.CONNECTED -> getString(R.string.connection_state_connected_explanation)
+            ConnectionState.OFFLINE -> getString(R.string.connection_state_offline_explanation)
+            ConnectionState.PREMATURE_OFFLINE -> when(deviceType) {
+                DeviceType.CHIPOLO -> getString(R.string.connection_state_premature_offline_explanation_chipolo)
+                else -> getString(R.string.connection_state_premature_offline_explanation)
+            }
+            ConnectionState.UNKNOWN -> getString(R.string.connection_state_unknown_explanation)
+        }
     }
 
     private fun startBluetoothScan() {
@@ -210,35 +231,35 @@ class ScanDistanceFragment : Fragment() {
 
         startBluetoothScan()
 
-        val infoButton = binding.infoButton
-        infoButton.setOnClickListener {
-            val text = when (viewModel.connectionState.value as ConnectionState){
-                ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
-                ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
-                ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
-                ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
-                ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
-            }
-            val duration = Toast.LENGTH_SHORT
+//        val infoButton = binding.infoButton
+//        infoButton.setOnClickListener {
+//            val text = when (viewModel.connectionState.value as ConnectionState){
+//                ConnectionState.OVERMATURE_OFFLINE -> R.string.connection_state_overmature_offline_explanation
+//                ConnectionState.CONNECTED -> R.string.connection_state_connected_explanation
+//                ConnectionState.OFFLINE -> R.string.connection_state_offline_explanation
+//                ConnectionState.PREMATURE_OFFLINE -> R.string.connection_state_premature_offline_explanation
+//                ConnectionState.UNKNOWN -> R.string.connection_state_unknown_explanation
+//            }
+//            val duration = Toast.LENGTH_SHORT
+//
+//            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
+//            toast.show()
+//        }
 
-            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
-            toast.show()
-        }
-
-        val batterySymbol = binding.batterySymbol
-        batterySymbol.setOnClickListener {
-            val text = when (viewModel.batteryState.value as BatteryState){
-                BatteryState.FULL -> R.string.battery_full
-                BatteryState.MEDIUM -> R.string.battery_medium
-                BatteryState.VERY_LOW -> R.string.battery_very_low
-                BatteryState.LOW -> R.string.battery_low
-                else -> R.string.battery_unknown
-            }
-            val duration = Toast.LENGTH_SHORT
-
-            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
-            toast.show()
-        }
+//        val batterySymbol = binding.batterySymbol
+//        batterySymbol.setOnClickListener {
+//            val text = when (viewModel.batteryState.value as BatteryState){
+//                BatteryState.FULL -> R.string.battery_full
+//                BatteryState.MEDIUM -> R.string.battery_medium
+//                BatteryState.VERY_LOW -> R.string.battery_very_low
+//                BatteryState.LOW -> R.string.battery_low
+//                else -> R.string.battery_unknown
+//            }
+//            val duration = Toast.LENGTH_SHORT
+//
+//            val toast = Toast.makeText(requireContext(), text, duration) // in Activity
+//            toast.show()
+//        }
 
         return binding.root
     }

@@ -7,6 +7,7 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -34,15 +35,27 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
 
         fun scheduleWorker(context: Context, deviceAddress: String) {
             val inputData = Data.Builder()
-                .putString(ScheduleWorkersWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
+                .putString(ObserveTrackerWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
                 .build()
 
-            val workRequest = OneTimeWorkRequestBuilder<ScheduleWorkersWorker>()
+            val workRequestObserveTracker = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
                 .setInputData(inputData)
                 .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
                 .build()
 
-            WorkManager.getInstance(context).enqueue(workRequest)
+            val workRequestBluetoothScan = OneTimeWorkRequestBuilder<ScanBluetoothWorker>()
+                .setInitialDelay(OBSERVATION_DURATION*60-5, TimeUnit.MINUTES) // make a scan 5 minutes before the observation ends
+                .build()
+
+            WorkManager.getInstance(context).enqueue(workRequestBluetoothScan)
+            WorkManager.getInstance(context).enqueue(workRequestObserveTracker)
         }
+
+//        fun cancelWorker(context: Context, deviceAddress: String) {
+//            val workManager = WorkManager.getInstance(context)
+//            val workRequests = workManager.getWorkInfosByTag(deviceAddress)
+//
+//
+//        }
     }
 }

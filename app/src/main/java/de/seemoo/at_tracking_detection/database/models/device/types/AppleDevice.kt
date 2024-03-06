@@ -48,6 +48,9 @@ class AppleDevice(val id: Int) : Device() {
         override val statusByteDeviceType: UInt
             get() = 0u
 
+        override val websiteManufacturer: String
+            get() = "https://www.apple.com/"
+
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
 

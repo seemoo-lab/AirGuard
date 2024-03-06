@@ -262,6 +262,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
             val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
             val uniqueIdentifier = getPublicKey(scanResult)
 
+            val connectionState: ConnectionState = BaseDevice.getConnectionState(scanResult)
+            val connectionStateString = Utility.connectionStateToString(connectionState)
+
             var beacon: Beacon? = null
             val beacons = beaconRepository.getDeviceBeaconsSince(
                 deviceAddress = uniqueIdentifier,
@@ -274,12 +277,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
                     // Save the manufacturer data to the beacon
                     Beacon(
                         discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
-                        scanResult.scanRecord?.bytes, uuids
+                        scanResult.scanRecord?.bytes, uuids, connectionStateString
                     )
                 } else {
                     Beacon(
                         discoveryDate, scanResult.rssi, getPublicKey(scanResult), locId,
-                        null, uuids
+                        null, uuids, connectionStateString
                     )
                 }
                 beaconRepository.insert(beacon)
@@ -288,6 +291,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 Timber.d("Beacon already in the database... Adding Location")
                 beacon = beacons[0]
                 beacon.locationId = locId
+                if (beacon.connectionState == "UNKNOWN" && connectionState != ConnectionState.UNKNOWN) {
+                    beacon.connectionState = connectionStateString
+                }
                 beaconRepository.update(beacon)
             }
 
@@ -312,12 +318,14 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
                 // Check if ConnectionState qualifies Device to be saved
                 // Only Save when Device is offline long enough
-                when(BaseDevice.getConnectionState(scanResult)){
-                    ConnectionState.OVERMATURE_OFFLINE -> {}
-                    // ConnectionState.OFFLINE -> {}
-                    // ConnectionState.PREMATURE_OFFLINE -> {}
-                    ConnectionState.UNKNOWN -> {}
-                    else -> return null
+                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.savedConnectionStates) {
+                    Timber.d("Device not in a saved connection state... Skipping!")
+                    return null
+                }
+
+                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.unsafeConnectionState) {
+                    Timber.d("Device is safe and will be hidden to the user!")
+                    device.safeTracker = true
                 }
 
                 Timber.d("Add new Device to the database!")

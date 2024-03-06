@@ -21,8 +21,7 @@ import timber.log.Timber
  * Not to be used for Background scanning. This is handled in the `ScanBluetoothWorker`
  */
 object BLEScanner {
-
-    var bluetoothManager: BluetoothManager? = null
+    private var bluetoothManager: BluetoothManager? = null
     var callbacks = ArrayList<ScanCallback>()
     var isScanning = false
     private var lastLocation: Location? = null
@@ -39,6 +38,12 @@ object BLEScanner {
         if(this.bluetoothManager != null && isScanning) { return true }
 
         this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = this.bluetoothManager?.adapter
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            Timber.d("Bluetooth is not enabled.")
+            return false
+        }
 
         val scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
@@ -99,7 +104,7 @@ object BLEScanner {
             super.onScanResult(callbackType, result)
             // TODO: Add scan result to DB here. Detection events should not be to close after each other.
             // New detection events (Beacons) every 15min
-            Timber.d("Found a device $result")
+//            Timber.d("Found a device $result")
 
             result?.let { scanResult ->
                 scanResults.add(0, scanResult)
