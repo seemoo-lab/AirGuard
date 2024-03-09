@@ -336,7 +336,7 @@
     <string name="explanation_tile">Achtung:\nTile Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
     <string name="explanation_chipolo">Achtung:\nChipolo Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
 
-    <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.</string>
+    <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>
 
     <string name="high_risk_trackers">Mögliche Tracker</string>
     <string name="low_risk_trackers">Sichere Tracker</string>

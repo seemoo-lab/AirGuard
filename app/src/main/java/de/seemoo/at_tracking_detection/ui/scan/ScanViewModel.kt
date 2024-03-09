@@ -1,14 +1,15 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanResult
-import android.widget.TextView
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+//import android.widget.TextView
+//import androidx.compose.ui.graphics.Color
+//import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
@@ -19,7 +20,7 @@ import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
-import de.seemoo.at_tracking_detection.util.Utility
+//import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
@@ -88,6 +89,9 @@ class ScanViewModel @Inject constructor(
             }
         }
 
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return
+        val device = deviceRepository.getDevice(uniqueIdentifier)
+
         val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value ?: return
         val bluetoothDeviceListLowRiskValue = bluetoothDeviceListLowRisk.value ?: return
 
@@ -98,7 +102,7 @@ class ScanViewModel @Inject constructor(
             getPublicKey(it) == uniqueIdentifier
         }
 
-        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState) {
+        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState && (device != null && !device.ignore) || device == null) {
             // only add possible devices to list
             bluetoothDeviceListHighRiskValue.add(scanResult)
         } else {
@@ -133,21 +137,21 @@ class ScanViewModel @Inject constructor(
         }
     }
 
-    fun changeColorOf(sortOptions: List<TextView>, sortOption: TextView) {
-        val theme = Utility.getSelectedTheme()
-        var color = Color.Gray
-        if (theme){
-            color = Color.LightGray
-        }
-
-        sortOptions.forEach {
-            if(it == sortOption) {
-                it.setBackgroundColor(color.toArgb())
-            } else {
-                it.setBackgroundColor(Color.Transparent.toArgb())
-            }
-        }
-    }
+//    fun changeColorOf(sortOptions: List<TextView>, sortOption: TextView) {
+//        val theme = Utility.getSelectedTheme()
+//        var color = Color.Gray
+//        if (theme){
+//            color = Color.LightGray
+//        }
+//
+//        sortOptions.forEach {
+//            if(it == sortOption) {
+//                it.setBackgroundColor(color.toArgb())
+//            } else {
+//                it.setBackgroundColor(Color.Transparent.toArgb())
+//            }
+//        }
+//    }
 
     val isListEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
         // Function to update the isListEmpty LiveData

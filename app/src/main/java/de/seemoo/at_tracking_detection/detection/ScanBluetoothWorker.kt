@@ -244,13 +244,15 @@ class ScanBluetoothWorker @AssistedInject constructor(
             longitude: Double?,
             accuracy: Float?,
             discoveryDate: LocalDateTime,
-        ) {
-            saveDevice(scanResult, discoveryDate) ?: return // return when device does not qualify to be saved
+        ): Pair<BaseDevice?, Beacon?> {
+            val deviceSaved = saveDevice(scanResult, discoveryDate) ?: return Pair(null, null) // return when device does not qualify to be saved
 
             // set locationId to null if gps location could not be retrieved
             val locId: Int? = saveLocation(latitude, longitude, discoveryDate, accuracy)?.locationId
 
-            saveBeacon(scanResult, discoveryDate, locId)
+            val beaconSaved = saveBeacon(scanResult, discoveryDate, locId) ?: return Pair(null, null)
+
+            return Pair(deviceSaved, beaconSaved)
         }
 
     private suspend fun saveBeacon(
