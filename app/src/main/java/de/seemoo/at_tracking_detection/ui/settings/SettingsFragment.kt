@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -36,6 +37,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (SharedPrefs.token == null && !SharedPrefs.shareData) {
             findPreference<Preference>("delete_study_data")?.isVisible = false
+        }
+
+        if (SharedPrefs.advancedMode) {
+            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
+        } else {
+            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
         }
 
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
@@ -73,6 +86,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val sharedPreferenceListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
+                "advanced_mode" -> {
+                    if (SharedPrefs.advancedMode) {
+                        Timber.d("Enabled advanced mode!")
+                        findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
+                        findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
+                        findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
+                        findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
+                    } else {
+                        Timber.d("Disabled advanced mode!")
+                        findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
+                        findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
+                        findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
+                        findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
+                    }
+                }
                 "share_data" -> {
                     if (SharedPrefs.shareData) {
                         Timber.d("Enabled background statistics sharing!")

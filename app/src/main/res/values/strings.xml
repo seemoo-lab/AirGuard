@@ -28,6 +28,8 @@
     <string name="statistics_devices_monitored">Devices Currently Monitored</string>
     <string name="settings_share_data_summary">Support the project by sharing some anonymous data</string>
     <string name="settings_share_data_title">Participate in study</string>
+    <string name="settings_advanced_mode_summary">Adds more options to AirGuard. These options are meant for advanced users.</string>
+    <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="devices_swipe">Swipe to remove</string>

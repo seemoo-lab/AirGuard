@@ -213,7 +213,7 @@
     <string name="filter_title_device_types">Gerätetypen</string>
     <string name="notification_ignore_device">GERÄT IGNORIEREN</string>
     <string name="notification_false_alarm">FEHLALARM</string>
-    <string name="last_scans">Last scans</string>
+    <string name="last_scans">Letzte Scans</string>
     <string name="tip_airtag_testing"><b>Testest du die App?</b> Solange AirTags mit einem iPhone/iPad verbunden sind können sie nur gefunden werden, sofern es in den Einstellungen erlaubt wurde. Standardmäßig gilt: Trenne die Bluetooth Verbindung und warte 15min, dann werden sie gefunden. Verbundene Tracker werden nicht gespeichert. </string>
     <string name="none">Keiner</string>
     <string name="already_scanning_warning">Die App scannt bereits im Hintergrund. Bitte warte 10s und starte dann den Scan erneut.</string>
@@ -321,6 +321,9 @@
     <string name="article_image_description">Vorschaubild für diesen Artikel</string>
 
     <string name="smarttag_uwb">SmartTag (mit UWB)</string>
+
+    <string name="settings_advanced_mode_summary">Fügt erweiterte Funktionen zu AirGuard hinzu. Diese Optionen sind für fortgeschrittene Nutzer gedacht.</string>
+    <string name="settings_advanced_mode_title">Experten Modus</string>
 
     <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_de.json</string>
     <string name="article_reading_time">Lesedauer: %d min</string>

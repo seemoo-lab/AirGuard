@@ -13,6 +13,7 @@ import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentRiskDetailBinding
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import javax.inject.Inject
 
@@ -75,6 +76,12 @@ class RiskDetailFragment : Fragment() {
         view.findViewById<MaterialCardView>(R.id.card_devices_found).setOnClickListener {
             val directions = RiskDetailFragmentDirections.actionRiskDetailFragmentToNavigationDevices(showAllDevices = true, showDevicesFound = true)
             findNavController().navigate(directions)
+        }
+
+        if (!SharedPrefs.advancedMode) {
+            view.findViewById<MaterialCardView>(R.id.card_devices_found).visibility = View.GONE
+        } else {
+            view.findViewById<MaterialCardView>(R.id.card_devices_found).visibility = View.VISIBLE
         }
 
 //        view.findViewById<View>(R.id.card_beacons_found).setOnClickListener {

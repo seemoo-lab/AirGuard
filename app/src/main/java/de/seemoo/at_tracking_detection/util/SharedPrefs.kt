@@ -52,6 +52,14 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("share_data", value).apply()
         }
 
+    var advancedMode: Boolean
+        get() {
+            return sharedPreferences.getBoolean("advanced_mode", false)
+        }
+        set(value) {
+            sharedPreferences.edit().putBoolean("advanced_mode", value).apply()
+        }
+
     var token: String?
         get() {
             return sharedPreferences.getString("token", null)

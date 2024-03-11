@@ -25,12 +25,14 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
         val configuration = Configuration.getInstance()
@@ -64,6 +66,13 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             appBarItems.plus(R.id.navigation_debug)
         }
+
+        if (!SharedPrefs.advancedMode) {
+            val menu = navView.menu
+            val item = menu.findItem(R.id.navigation_allDevicesFragment)
+            item.isVisible = false
+        }
+
         val appBarConfiguration = AppBarConfiguration(appBarItems)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -97,6 +106,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         SharedPrefs.lastTimeOpened = dateTime
         super.onDestroy()
     }
@@ -108,5 +118,16 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        // Check if the changed preference is the advancedMode
+        if (key == "advanced_mode") {
+            // Update the visibility of the All Devices fragment menu item
+            val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
+            val menu = navView.menu
+            val item = menu.findItem(R.id.navigation_allDevicesFragment)
+            item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
+        }
     }
 }

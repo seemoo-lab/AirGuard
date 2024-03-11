@@ -5,6 +5,12 @@
     tools:context=".ui.settings.SettingsFragment">
 
     <SwitchPreferenceCompat
+        android:icon="@drawable/ic_baseline_admin_panel_settings_24"
+        android:key="advanced_mode"
+        android:summary="@string/settings_advanced_mode_summary"
+        app:title="@string/settings_advanced_mode_title" />
+
+    <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_analytics_24"
         android:key="share_data"
         android:summary="@string/settings_share_data_summary"
