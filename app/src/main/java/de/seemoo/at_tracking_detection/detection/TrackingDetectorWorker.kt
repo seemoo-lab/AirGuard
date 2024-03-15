@@ -9,6 +9,7 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -129,7 +130,10 @@ class TrackingDetectorWorker @AssistedInject constructor(
             Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
             beaconRepository.deleteBeacons(beaconsToBeDeleted)
             Timber.d("Deleting Beacons successful")
+        } else {
+            Timber.d("No old beacons to delete")
         }
+
         val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
         if (devicesToBeDeleted.isNotEmpty()) {
             Timber.d("Deleting ${devicesToBeDeleted.size} devices")
@@ -138,6 +142,16 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
         if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
             Timber.d("No old devices or beacons to delete")
+        }
+
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return
+        val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
+        if (locationsToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${locationsToBeDeleted.size} locations")
+            locationRepository.deleteLocations(locationsToBeDeleted)
+            Timber.d("Deleting Locations successful")
+        } else {
+            Timber.d("No locations to delete")
         }
     }
 

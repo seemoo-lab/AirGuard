@@ -24,6 +24,8 @@ class LocationRepository @Inject constructor(
 
     fun getNumberOfBeaconsForLocation(locationId: Int): Int = locationDao.getNumberOfBeaconsForLocation(locationId)
 
+    fun getLocationsWithNoBeacons(): List<LocationModel> = locationDao.getLocationsWithNoBeacons()
+
     @WorkerThread
     suspend fun insert(location: LocationModel) {
         locationDao.insert(location)
@@ -32,6 +34,16 @@ class LocationRepository @Inject constructor(
     @WorkerThread
     suspend fun update(location: LocationModel) {
         locationDao.update(location)
+    }
+
+    @WorkerThread
+    suspend fun delete(location: LocationModel) {
+        locationDao.delete(location)
+    }
+
+    @WorkerThread
+    suspend fun deleteLocations(locations: List<LocationModel>) {
+        locationDao.deleteLocations(locations)
     }
 
 }
