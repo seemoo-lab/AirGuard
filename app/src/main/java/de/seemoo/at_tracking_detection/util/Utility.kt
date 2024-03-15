@@ -20,6 +20,8 @@ import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
+import org.osmdroid.bonuspack.utils.BonusPackHelper
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -102,13 +104,22 @@ object Utility {
 
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
-        val markerList = ArrayList<Marker>()
 
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
 
         map.overlays.add(copyrightOverlay)
+
+        val iconDrawable = R.drawable.ic_baseline_location_on_45_black
+
+        val clusterer = RadiusMarkerClusterer(context)
+        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, iconDrawable)
+        clusterer.setIcon(clusterIcon)
+        clusterer.setRadius(100)
+        clusterer.mAnchorU = Marker.ANCHOR_CENTER
+        clusterer.mAnchorV = Marker.ANCHOR_BOTTOM
+        clusterer.mTextAnchorV = 0.6f
 
         withContext(Dispatchers.Default) {
             locationList
@@ -123,28 +134,30 @@ object Utility {
                     marker.position = geoPoint
                     marker.icon = ContextCompat.getDrawable(
                         context,
-                        R.drawable.ic_baseline_location_on_45_black
+                        iconDrawable
                     )
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     geoPointList.add(geoPoint)
-                    markerList.add(marker)
 
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
                         clickedMarker.closeInfoWindow()
                         false
                     }
+
+                    clusterer.add(marker)
                 }
         }
 
-        map.overlays.addAll(markerList)
+        map.overlays.add(clusterer)
         Timber.d("Added ${geoPointList.size} markers to the map!")
 
-        if (connectWithPolyline) {
-            val line = Polyline(map)
-            line.setPoints(geoPointList)
-            line.infoWindow = null
-            map.overlays.add(line)
-        }
+        // TODO: temporarily disabled
+//        if (connectWithPolyline) {
+//            val line = Polyline(map)
+//            line.setPoints(geoPointList)
+//            line.infoWindow = null
+//            map.overlays.add(line)
+//        }
 
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)

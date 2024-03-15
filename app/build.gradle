@@ -123,6 +123,7 @@ dependencies {
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
     implementation 'org.osmdroid:osmdroid-android:6.1.16'
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
