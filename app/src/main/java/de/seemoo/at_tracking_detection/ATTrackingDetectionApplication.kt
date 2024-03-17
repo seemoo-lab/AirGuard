@@ -178,11 +178,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                 null
             }
         }
-        fun getCurrentApp(): ATTrackingDetectionApplication? {
+        fun getCurrentApp(): ATTrackingDetectionApplication {
             return instance
         }
         //TODO: Add real survey URL
-        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
-        val SURVEY_IS_RUNNING = false
+        const val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
+        const val SURVEY_IS_RUNNING = false
     }
 }

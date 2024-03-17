@@ -8,9 +8,12 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import androidx.work.*
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.Operation
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.BuildConfig
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit

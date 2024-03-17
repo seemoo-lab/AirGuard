@@ -29,10 +29,6 @@ object BLEScanner {
     // Contains the last 10 scan results
     private var scanResults = ArrayList<ScanResult>()
 
-    init {
-
-    }
-
     fun startBluetoothScan(appContext: Context): Boolean {
         // Check if already scanning
         if(this.bluetoothManager != null && isScanning) { return true }
@@ -140,8 +136,9 @@ object BLEScanner {
 
     private fun fetchCurrentLocation() {
         // We fetch the current location and cache for saving the results to the DB
-        val locationProvider = ATTrackingDetectionApplication.getCurrentApp()?.locationProvider
-        val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
+        val locationProvider = ATTrackingDetectionApplication.getCurrentApp().locationProvider
+        val loc =
+            locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
         if (loc != null) {
             this.lastLocation = loc
         }
@@ -155,10 +152,7 @@ object BLEScanner {
 
     fun isBluetoothOn(): Boolean {
         val adapter = bluetoothManager?.adapter
-        if (adapter != null && adapter.isEnabled) {
-            return true
-        }
-        return false
+        return adapter != null && adapter.isEnabled
     }
 
     fun openBluetoothSettings(context: Context) {

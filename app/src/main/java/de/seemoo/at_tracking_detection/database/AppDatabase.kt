@@ -51,7 +51,5 @@ abstract class AppDatabase : RoomDatabase() {
         fromColumnName = "date",
         toColumnName = "endDate"
     )
-    class RenameScanMigrationSpec: AutoMigrationSpec {
-
-    }
+    class RenameScanMigrationSpec: AutoMigrationSpec
 }

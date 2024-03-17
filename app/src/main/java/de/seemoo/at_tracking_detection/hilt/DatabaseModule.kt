@@ -27,7 +27,7 @@ object DatabaseModule {
             try {
                 db.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
             }catch (e: SQLiteException) {
-                Timber.e("Could not create new column ${e}")
+                Timber.e("Could not create new column $e")
             }
 
         }
@@ -46,7 +46,7 @@ object DatabaseModule {
                 db.execSQL("CREATE UNIQUE INDEX `index_location_latitude_longitude` ON `location` (`latitude`, `longitude`)")
                 db.execSQL("ALTER TABLE `beacon` ADD COLUMN `locationId` INTEGER")
             }catch (e: SQLiteException) {
-                Timber.e("Could not create location ${e}")
+                Timber.e("Could not create location $e")
             }
 
             var sql: String
@@ -138,7 +138,7 @@ object DatabaseModule {
                 db.execSQL("INSERT INTO `beacon_backup` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon`")
                 db.execSQL("DROP TABLE `beacon`")
             } catch (e: SQLiteException) {
-                Timber.e("Could not create beacon_backup ${e}")
+                Timber.e("Could not create beacon_backup $e")
             }
 
             try {
@@ -146,7 +146,7 @@ object DatabaseModule {
                 db.execSQL("INSERT INTO `beacon` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon_backup`")
                 db.execSQL("DROP TABLE `beacon_backup`")
             } catch (e: SQLiteException) {
-                Timber.e("Could not create beacon ${e}")
+                Timber.e("Could not create beacon $e")
             }
         }
     }

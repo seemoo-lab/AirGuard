@@ -1,10 +1,11 @@
+package de.seemoo.at_tracking_detection.ui.settings
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.ui.settings.AttributionItem
 
 class AttributionAdapter(
     private val attributions: List<AttributionItem>,

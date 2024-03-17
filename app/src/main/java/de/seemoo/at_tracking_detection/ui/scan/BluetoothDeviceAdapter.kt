@@ -36,7 +36,7 @@ class BluetoothDeviceAdapter:
         holder.bind(scanResult)
 
         holder.itemView.findViewById<MaterialCardView>(R.id.scan_result_item_card)
-            .setOnClickListener() {
+            .setOnClickListener {
                 val deviceAddress: String = getPublicKey(scanResult)
                 val directions = ScanFragmentDirections.actionScanToTrackingFragment(deviceAddress)
                 holder.itemView.findNavController()

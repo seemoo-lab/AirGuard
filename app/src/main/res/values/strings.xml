@@ -133,6 +133,10 @@
     <string name="notification_observe_tracker_title_base">Your observed tracker</string>
     <string name="notification_observe_tracker_positive_singular">A tracker you observed has been following you for at least an hour.</string>
     <string name="notification_observe_tracker_positive_plural">A tracker you observed has been following you for at least %d hours.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">A tracker you observed has been following you for at least one hour.</item>
+        <item quantity="other">A tracker you observed has been following you for at least %d hours.</item>
+    </plurals>
     <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
     <string name="notification_observe_tracker_error">An error occurred while observing this tracker. Please try again.</string>
 
@@ -331,6 +335,7 @@
     <string name="contact_us">Contact Us</string>
 
     <string name="article_image_description">Preview Image for this article</string>
+    <string name="info_button_description">Show explanation text</string>
 
     <string name="observe_tracker_title">Observe Tracker</string>
     <string name="observe_tracker_clock_description">Image of a clock</string>

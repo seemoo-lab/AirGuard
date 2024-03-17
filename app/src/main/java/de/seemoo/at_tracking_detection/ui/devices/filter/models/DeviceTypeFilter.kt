@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.devices.filter.models
 
 import androidx.collection.ArraySet
-import androidx.collection.arraySetOf
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
@@ -18,10 +17,9 @@ class DeviceTypeFilter(deviceTypes: Set<DeviceType>) : Filter() {
 
     fun remove(deviceType: DeviceType) = deviceTypes.remove(deviceType)
 
-    var deviceTypes: ArraySet<DeviceType>
+    var deviceTypes: ArraySet<DeviceType> = ArraySet()
 
     init {
-        this.deviceTypes = ArraySet()
         this.deviceTypes.addAll(deviceTypes)
     }
 

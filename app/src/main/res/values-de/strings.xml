@@ -137,8 +137,10 @@
     <string name="onboarding_connect_title">Verbinden mit Bluetooth-Geräten</string>
     <string name="onboarding_connect_description">Wenn ein Tracking-Gerät gefunden wird, gibt AirGuard Dir die Möglichkeit, einen Ton darauf abzuspielen. Dafür benötigen wir die Erlaubnis, uns mit diesem Gerät zu verbinden!</string>
     <string name="notification_observe_tracker_title_base">Dein beobachteter Tracker</string>
-    <string name="notification_observe_tracker_positive_singular">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</string>
-    <string name="notification_observe_tracker_positive_plural">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">Ein Tracker den du beobachtet hast, folgt dir seit mindestens eine Stunde.</item>
+        <item quantity="other">Ein Tracker den du beobachtet hast, folgt dir seit mindestens %d Stunden.</item>
+    </plurals>
     <string name="notification_observe_tracker_negative">Ein Tracker den du beobachtet hast, folgt dir nicht.</string>
     <string name="notification_observe_tracker_error">Es ist ein Fehler aufgetreten. Versuche es nochmal.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
@@ -340,6 +342,8 @@
     <string name="explanation_chipolo">Achtung:\nChipolo Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
 
     <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>
+    <string name="info_button_description">Zeigt Erklärtext</string>
+
 
     <string name="high_risk_trackers">Mögliche Tracker</string>
     <string name="low_risk_trackers">Sichere Tracker</string>

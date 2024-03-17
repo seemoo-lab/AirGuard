@@ -174,12 +174,13 @@
                         android:id="@+id/info_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:contentDescription="@string/info_button_description"
                         android:src="@drawable/ic_baseline_info_24"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
                         android:padding="8dp"
-                        android:background="@android:color/transparent"
-                        android:onClick="toggleInfoLayout" />
+                        android:background="@android:color/transparent" />
 
                 </RelativeLayout>
 

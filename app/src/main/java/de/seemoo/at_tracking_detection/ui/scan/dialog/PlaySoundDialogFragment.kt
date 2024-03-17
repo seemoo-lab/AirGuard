@@ -25,7 +25,7 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetDialogFragment() {
+class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels()
 

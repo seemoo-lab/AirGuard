@@ -31,7 +31,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
     init {
         if (notificationService == null) {
             notificationService =
-                ATTrackingDetectionApplication.getCurrentApp()?.notificationService
+                ATTrackingDetectionApplication.getCurrentApp().notificationService
         }
 
         val context = ATTrackingDetectionApplication.getAppContext()
@@ -97,7 +97,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
                 val millisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
                 val timeOfEvent = System.currentTimeMillis() - millisecondsSinceEvent
                 val eventDate = Instant.ofEpochMilli(timeOfEvent).atZone(ZoneId.systemDefault()).toLocalDateTime()
-                Timber.d("Scan received at ${eventDate.toString()}")
+                Timber.d("Scan received at $eventDate")
                 if (BuildConfig.DEBUG) {
                     notificationService?.sendDebugNotificationFoundDevice(scanResult)
                 }

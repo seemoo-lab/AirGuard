@@ -123,7 +123,7 @@ class NotificationBuilder @Inject constructor(
                 )
             )
 
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val device = deviceRepository.getDevice(deviceAddress)
 
         if (device?.deviceType != null && device.deviceType.canBeIgnored()) {
@@ -229,16 +229,11 @@ class NotificationBuilder @Inject constructor(
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
 
         val notifyText = if (observationPositive) {
-            if (observationDuration == 1L) {
-                context.getString(
-                    R.string.notification_observe_tracker_positive_singular,
-                )
-            } else {
-                context.getString(
-                    R.string.notification_observe_tracker_positive_plural,
-                    observationDuration
-                )
-            }
+            context.resources.getQuantityString(
+                R.plurals.notification_observe_tracker_positive,
+                observationDuration.toInt(),
+                observationDuration
+            )
         } else {
             context.getString(
                 R.string.notification_observe_tracker_negative,

@@ -1,11 +1,14 @@
 package de.seemoo.at_tracking_detection.database.daos
 
-import androidx.room.*
-import de.seemoo.at_tracking_detection.database.models.Beacon
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import de.seemoo.at_tracking_detection.database.models.Scan
-import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities
+import java.time.LocalDateTime
 
 @Dao
 interface ScanDao {

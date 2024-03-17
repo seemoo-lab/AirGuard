@@ -10,7 +10,6 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
-import java.util.*
 
 @BindingAdapter("setAdapter")
 fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -42,8 +41,8 @@ fun setDeviceDrawable(imageView: ImageView, scanResult: ScanResult) {
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName (textView: TextView, scanResult: ScanResult) {
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-    val deviceFromDb = deviceRepository?.getDevice(getPublicKey(scanResult))
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+    val deviceFromDb = deviceRepository.getDevice(getPublicKey(scanResult))
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {

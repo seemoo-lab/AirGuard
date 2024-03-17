@@ -68,7 +68,7 @@ class DeviceMapFragment : Fragment() {
 
         locationLiveData.observe(viewLifecycleOwner) { locations ->
             lifecycleScope.launch {
-                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
                 val locationList: List<Location> = if (deviceAddress.isNullOrEmpty()) {
                     locationRepository.locationsSince(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
                 } else {

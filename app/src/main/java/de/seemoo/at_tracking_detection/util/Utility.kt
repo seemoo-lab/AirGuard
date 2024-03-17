@@ -180,7 +180,7 @@ object Utility {
             .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
 
         val locationList = arrayListOf<Location>()
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return emptyList()
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
 
         uniqueLocations.mapNotNullTo(locationList) {
             locationRepository.getLocationWithId(it.locationId!!)
