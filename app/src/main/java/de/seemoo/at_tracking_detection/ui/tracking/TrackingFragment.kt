@@ -25,7 +25,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
@@ -121,85 +120,49 @@ class TrackingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val feedbackButton: CardView = view.findViewById(R.id.tracking_feedback)
-        val playSoundCard: CardView = view.findViewById(R.id.tracking_play_sound)
-        val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
-        val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
-        val map: MapView = view.findViewById(R.id.map)
-        val includedLayout: View = view.findViewById(R.id.manufacturer_website)
-        val identifierExplanation: TextView = view.findViewById(R.id.identifier_explanation)
-
         trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
-            identifierExplanation.text = Utility.getExplanationTextForDeviceType(deviceType)
+            view.findViewById<TextView>(R.id.identifier_explanation).text =
+                Utility.getExplanationTextForDeviceType(deviceType)
         }
 
-        includedLayout.setOnClickListener {
+        view.findViewById<View>(R.id.manufacturer_website).setOnClickListener {
             trackingViewModel.clickOnWebsite(requireContext())
         }
 
-        feedbackButton.setOnClickListener {
-            val directions: NavDirections =
-                TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
-            findNavController().navigate(directions)
+        view.findViewById<CardView>(R.id.tracking_feedback).setOnClickListener {
+            navigateToFeedbackFragment()
         }
 
-        trackingDetailButton.setOnClickListener {
-            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
-            val directions: NavDirections =
-                TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
-            findNavController().navigate(directions)
-        }
-
-        observeTrackerButton.setOnClickListener {
-            val deviceAddress: String = trackingViewModel.deviceAddress.value ?: return@setOnClickListener
-            val directions: NavDirections =
-                TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
-            findNavController().navigate(directions)
-        }
-
-        playSoundCard.setOnClickListener {
-            if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
-                return@setOnClickListener
-            }
-
-            val baseDevice = trackingViewModel.device.value
-            if (baseDevice != null && baseDevice.device is Connectable) {
-                toggleSound()
-            } else {
-                Snackbar.make(
-                    view,
-                    getString(R.string.tracking_device_not_connectable),
-                    Snackbar.LENGTH_LONG
-                ).show()
+        view.findViewById<CardView>(R.id.tracking_detail_scan).setOnClickListener {
+            trackingViewModel.deviceAddress.value?.let { deviceAddress ->
+                navigateToScanDistance(deviceAddress)
             }
         }
 
+        view.findViewById<CardView>(R.id.tracking_observation).setOnClickListener {
+            trackingViewModel.deviceAddress.value?.let { deviceAddress ->
+                navigateToObserveTracker(deviceAddress)
+            }
+        }
+
+        view.findViewById<CardView>(R.id.tracking_play_sound).setOnClickListener {
+            handlePlaySound()
+        }
+
+        val map: MapView = view.findViewById(R.id.map)
         Utility.enableMyLocationOverlay(map)
 
-        trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
+        trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
-
-                val locationList = arrayListOf<Location>()
-                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
-
-                it.filter { it.locationId != null && it.locationId != 0 }
-                    .map {
-                        val location = locationRepository.getLocationWithId(it.locationId!!)
-                        if (location != null) {
-                            locationList.add(location)
-                        }
-                    }
-
-                // This is the per Device View
-                Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
-            }.invokeOnCompletion {
+                val locationList = Utility.fetchLocations(beacons)
+                Utility.setGeoPointsFromListOfLocations(locationList, map)
                 trackingViewModel.isMapLoading.postValue(false)
             }
         }
 
-        trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
-            if (!it) {
+        trackingViewModel.soundPlaying.observe(viewLifecycleOwner) { isPlaying ->
+            if (!isPlaying) {
                 try {
                     requireContext().unbindService(serviceConnection)
                 } catch (e: IllegalArgumentException) {
@@ -211,6 +174,41 @@ class TrackingFragment : Fragment() {
         }
 
         addInteractions(view)
+    }
+
+    private fun navigateToFeedbackFragment() {
+        val directions: NavDirections =
+            TrackingFragmentDirections.actionTrackingFragmentToFeedbackFragment(notificationId)
+        findNavController().navigate(directions)
+    }
+
+    private fun navigateToScanDistance(deviceAddress: String) {
+        val directions: NavDirections =
+            TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
+        findNavController().navigate(directions)
+    }
+
+    private fun navigateToObserveTracker(deviceAddress: String) {
+        val directions: NavDirections =
+            TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
+        findNavController().navigate(directions)
+    }
+
+    private fun handlePlaySound() {
+        if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+            return
+        }
+
+        val baseDevice = trackingViewModel.device.value
+        if (baseDevice != null && baseDevice.device is Connectable) {
+            toggleSound()
+        } else {
+            Snackbar.make(
+                requireView(),
+                getString(R.string.tracking_device_not_connectable),
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun addInteractions(view: View) {

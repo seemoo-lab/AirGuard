@@ -13,9 +13,10 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 
@@ -95,9 +95,8 @@ object Utility {
     }
 
     suspend fun setGeoPointsFromListOfLocations(
-        locationList: List<LocationModel>,
+        locationList: List<Location>,
         map: MapView,
-        connectWithPolyline: Boolean = false,
     ): Boolean {
         val context = ATTrackingDetectionApplication.getAppContext()
         val copyrightOverlay = CopyrightOverlay(context)
@@ -151,14 +150,6 @@ object Utility {
         map.overlays.add(clusterer)
         Timber.d("Added ${geoPointList.size} markers to the map!")
 
-        // TODO: temporarily disabled
-//        if (connectWithPolyline) {
-//            val line = Polyline(map)
-//            line.setPoints(geoPointList)
-//            line.infoWindow = null
-//            map.overlays.add(line)
-//        }
-
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)
             return false
@@ -181,6 +172,21 @@ object Utility {
         }
 
         return true
+    }
+
+    fun fetchLocations(locations: List<Beacon>): List<Location> {
+        val uniqueLocations = locations
+            .distinctBy { it.locationId } // Filter out duplicates based on locationId
+            .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
+
+        val locationList = arrayListOf<Location>()
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return emptyList()
+
+        uniqueLocations.mapNotNullTo(locationList) {
+            locationRepository.getLocationWithId(it.locationId!!)
+        }
+
+        return locationList
     }
 
 

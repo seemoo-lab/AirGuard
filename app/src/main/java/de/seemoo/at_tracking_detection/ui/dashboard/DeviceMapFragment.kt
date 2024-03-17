@@ -12,9 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import kotlinx.coroutines.launch
@@ -58,45 +56,18 @@ class DeviceMapFragment : Fragment() {
         Utility.enableMyLocationOverlay(map)
 
         val deviceAddress = this.deviceAddress
-        if (!deviceAddress.isNullOrEmpty()) {
-            viewModel.markerLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
+        val locationLiveData = if (!deviceAddress.isNullOrEmpty()) viewModel.markerLocations else viewModel.allLocations
 
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
-            }
-        } else {
-            viewModel.allLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository =
-                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
-
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map)
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
+        locationLiveData.observe(viewLifecycleOwner) { locations ->
+            lifecycleScope.launch {
+                val locationList = Utility.fetchLocations(locations)
+                Utility.setGeoPointsFromListOfLocations(locationList, map)
+            }.invokeOnCompletion {
+                viewModel.isMapLoading.postValue(false)
             }
         }
     }
+
+
+
 }
