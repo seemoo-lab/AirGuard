@@ -9,12 +9,17 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
 
@@ -55,19 +60,25 @@ class DeviceMapFragment : Fragment() {
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
 
-        val deviceAddress = this.deviceAddress
-        val locationLiveData = if (!deviceAddress.isNullOrEmpty()) viewModel.markerLocations else viewModel.allLocations
+        val locationLiveData: LiveData<List<Beacon>> = if (deviceAddress.isNullOrEmpty()) {
+            viewModel.allLocations
+        } else {
+            viewModel.markerLocations
+        }
 
         locationLiveData.observe(viewLifecycleOwner) { locations ->
             lifecycleScope.launch {
-                val locationList = Utility.fetchLocations(locations)
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
+                val locationList: List<Location> = if (deviceAddress.isNullOrEmpty()) {
+                    locationRepository.locationsSince(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
+                } else {
+                    Utility.fetchLocationListFromBeaconList(locations)
+                }
+
                 Utility.setGeoPointsFromListOfLocations(locationList, map)
             }.invokeOnCompletion {
                 viewModel.isMapLoading.postValue(false)
             }
         }
     }
-
-
-
 }

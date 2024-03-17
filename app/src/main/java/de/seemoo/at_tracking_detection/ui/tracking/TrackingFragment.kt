@@ -155,7 +155,7 @@ class TrackingFragment : Fragment() {
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
-                val locationList = Utility.fetchLocations(beacons)
+                val locationList = Utility.fetchLocationListFromBeaconList(beacons)
                 Utility.setGeoPointsFromListOfLocations(locationList, map)
                 trackingViewModel.isMapLoading.postValue(false)
             }

@@ -10,13 +10,11 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
-import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -28,7 +26,7 @@ class RiskDetailViewModel @Inject constructor(
     deviceRepository: DeviceRepository,
     scanRepository: ScanRepository,
     val beaconRepository: BeaconRepository,
-    val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepository,
 ) : ViewModel() {
 
     private val relevantDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
@@ -40,7 +38,7 @@ class RiskDetailViewModel @Inject constructor(
     var riskColor: Int
     val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation).asLiveData()
 
-    val totalLocationsTrackedCount= locationRepository.locationsSinceCount(relevantDate).asLiveData()
+    val totalLocationsTrackedCount = locationRepository.locationsSinceCount(relevantDate).asLiveData()
 
     // val discoveredBeacons: List<Beacon> = beaconRepository.getBeaconsForDevices(trackersFound)
 
@@ -56,10 +54,6 @@ class RiskDetailViewModel @Inject constructor(
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.endDate)
         }
         scanDates.joinToString(separator = "\n")
-    }
-
-    fun allBeacons(): Flow<List<Beacon>> {
-        return beaconRepository.getBeaconsSince(relevantDate)
     }
 
     init {

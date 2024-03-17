@@ -174,7 +174,7 @@ object Utility {
         return true
     }
 
-    fun fetchLocations(locations: List<Beacon>): List<Location> {
+    fun fetchLocationListFromBeaconList(locations: List<Beacon>): List<Location> {
         val uniqueLocations = locations
             .distinctBy { it.locationId } // Filter out duplicates based on locationId
             .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
