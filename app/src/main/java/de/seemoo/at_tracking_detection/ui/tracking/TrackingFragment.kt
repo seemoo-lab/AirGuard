@@ -146,6 +146,10 @@ class TrackingFragment : Fragment() {
             }
         })
 
+        if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
+            zoomToMarkers()
+        }
+
         trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
             view.findViewById<TextView>(R.id.identifier_explanation).text =
                 Utility.getExplanationTextForDeviceType(deviceType)
