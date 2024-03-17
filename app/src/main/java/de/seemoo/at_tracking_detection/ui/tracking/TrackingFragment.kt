@@ -33,6 +33,9 @@ import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
 import org.osmdroid.views.MapView
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -47,6 +50,8 @@ class TrackingFragment : Fragment() {
     private var notificationId: Int = -1
 
     private val safeArgs: TrackingFragmentArgs by navArgs()
+
+    private lateinit var mapView: MapView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +83,9 @@ class TrackingFragment : Fragment() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
+
+        zoomToMarkers()
+
         val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
 
         LocalBroadcastManager.getInstance(activity)
@@ -120,6 +128,24 @@ class TrackingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mapView = view.findViewById(R.id.map)
+
+        mapView.addMapListener(object : MapListener {
+            override fun onZoom(event: ZoomEvent?): Boolean {
+                // Check if the map is fully loaded and ready for zoom operations
+                if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {
+                    // Call the method to zoom to the bounding box of markers
+                    zoomToMarkers()
+                }
+                return true
+            }
+
+            override fun onScroll(event: ScrollEvent?): Boolean {
+                // Handle scroll event if needed
+                return true
+            }
+        })
+
         trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
             view.findViewById<TextView>(R.id.identifier_explanation).text =
                 Utility.getExplanationTextForDeviceType(deviceType)
@@ -149,14 +175,13 @@ class TrackingFragment : Fragment() {
             handlePlaySound()
         }
 
-        val map: MapView = view.findViewById(R.id.map)
-        Utility.enableMyLocationOverlay(map)
+        Utility.enableMyLocationOverlay(mapView)
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
                 val locationList = Utility.fetchLocationListFromBeaconList(beacons)
-                Utility.setGeoPointsFromListOfLocations(locationList, map)
+                Utility.setGeoPointsFromListOfLocations(locationList, mapView)
                 trackingViewModel.isMapLoading.postValue(false)
             }
         }
@@ -174,6 +199,15 @@ class TrackingFragment : Fragment() {
         }
 
         addInteractions(view)
+    }
+
+    private fun zoomToMarkers() {
+        lifecycleScope.launch {
+            trackingViewModel.isMapLoading.postValue(true)
+            val locationList = Utility.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
+            Utility.setGeoPointsFromListOfLocations(locationList, mapView)
+            trackingViewModel.isMapLoading.postValue(false)
+        }
     }
 
     private fun navigateToFeedbackFragment() {
