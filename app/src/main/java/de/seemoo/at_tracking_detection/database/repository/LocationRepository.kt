@@ -24,6 +24,11 @@ class LocationRepository @Inject constructor(
 
     fun getNumberOfBeaconsForLocation(locationId: Int): Int = locationDao.getNumberOfBeaconsForLocation(locationId)
 
+    fun getLocationsForBeacon(deviceAddress: String): List<LocationModel> = locationDao.getLocationsForDevice(deviceAddress)
+
+    fun getLocationsForBeaconSince(deviceAddress: String, since: LocalDateTime): List<LocationModel> = locationDao.getLocationsForDeviceSince(deviceAddress, since)
+
+
     fun getLocationsWithNoBeacons(): List<LocationModel> = locationDao.getLocationsWithNoBeacons()
 
     @WorkerThread

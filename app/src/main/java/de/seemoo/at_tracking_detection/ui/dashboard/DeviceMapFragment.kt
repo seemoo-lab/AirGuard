@@ -9,13 +9,11 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Utility
@@ -60,23 +58,18 @@ class DeviceMapFragment : Fragment() {
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
 
-        val locationLiveData: LiveData<List<Beacon>> = if (deviceAddress.isNullOrEmpty()) {
-            viewModel.allLocations
-        } else {
-            viewModel.markerLocations
-        }
+        lifecycleScope.launch {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
+            val locationList: List<Location> = if (!deviceAddress.isNullOrEmpty()) {
+                locationRepository.getLocationsForBeaconSince(deviceAddress!!, relevantTrackingDate)
+            } else {
+                locationRepository.locationsSince(relevantTrackingDate)
+            }
 
-        locationLiveData.observe(viewLifecycleOwner) { locations ->
-            lifecycleScope.launch {
-                val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
-                val locationList: List<Location> = if (deviceAddress.isNullOrEmpty()) {
-                    locationRepository.locationsSince(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
-                } else {
-                    Utility.fetchLocationListFromBeaconList(locations)
-                }
-
+            try {
                 Utility.setGeoPointsFromListOfLocations(locationList, map)
-            }.invokeOnCompletion {
+            } finally {
                 viewModel.isMapLoading.postValue(false)
             }
         }
