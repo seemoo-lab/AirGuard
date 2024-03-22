@@ -24,6 +24,13 @@ class BackgroundWorkScheduler @Inject constructor(
 ) {
 
     fun launch() {
+        // We now scan with Alarms instead of periodic workers, since they have proven to be unreliable
+        scheduleScanWithAlarm()
+        // We cancel all periodic scans
+        workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SCAN_WORKER)
+    }
+
+    fun legacyLaunch() {
         Timber.d("Work scheduler started!")
         workManager.enqueueUniquePeriodicWork(
             WorkerConstants.PERIODIC_SCAN_WORKER,
@@ -33,6 +40,13 @@ class BackgroundWorkScheduler @Inject constructor(
             operation.logOperationSchedule(WorkerConstants.PERIODIC_SCAN_WORKER)
             operation.result.addListener({ scheduleTrackingDetector() }, { it.run() })
         }
+    }
+
+    fun scheduleImmediateBackgroundScan() {
+        Timber.d("Scheduling Immediate Background Scan Worker ")
+        workManager.enqueueUniqueWork(WorkerConstants.SCAN_IMMEDIATELY,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            backgroundWorkBuilder.buildImmediateScanWorker())
     }
 
     fun getState(uniqueWorkName: String): LiveData<WorkInfo.State?> =
@@ -104,6 +118,41 @@ class BackgroundWorkScheduler @Inject constructor(
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
             Timber.d("Scheduled an alarm to reschedule the scan at $alarmDate")
+        }
+
+        fun scheduleScanWithAlarm() {
+            //Run in 15 min
+            val timeInMillisUntilNotification: Long = if (BuildConfig.DEBUG) {
+                15 * 60 * 1000
+            } else {
+                15 * 60 * 1000
+            }
+
+            val alarmDate = LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
+            val alarmTime = System.currentTimeMillis() + timeInMillisUntilNotification
+
+            val intent = Intent(ATTrackingDetectionApplication.getAppContext(), ScheduleWorkersReceiver::class.java)
+            intent.action = "AlarmManagerWakeUp_Perform_BackgroundScan"
+
+            val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
+                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            }else {
+                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+
+            val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
+                Context.ALARM_SERVICE) as AlarmManager
+
+            // We use exact Alarms since we want regular background scans to happen.
+
+            try {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+            }catch (exception: SecurityException) {
+                // Alarm could not be scheduled because user disallowed battery exception
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+            }
+
+            Timber.d("Scheduled an alarm to start a scan at $alarmDate")
         }
     }
 }

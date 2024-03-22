@@ -7,24 +7,50 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
-class ScheduleWorkersReceiver : BroadcastReceiver() {
+class ScheduleWorkersReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.d("Broadcast received ${intent?.action}")
-        val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler
-        //Enqueue the scan task
-        backgroundWorkScheduler?.launch()
-        if (SharedPrefs.shareData) {
-            backgroundWorkScheduler?.scheduleShareData()
-        }
-        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
-        Timber.d("Scheduled background work")
 
-        ATTrackingDetectionApplication.getCurrentApp()?.notificationService?.scheduleSurveyNotification(false)
+        if (intent?.action == "AlarmManagerWakeUp_Schedule_BackgroundScan") {
+            // The app has been launched because no scan was performed since two hours
+            val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler
+            //Schedule the periodic scan worker which runs every 15min
+            backgroundWorkScheduler?.launch()
+            if (SharedPrefs.shareData) {
+                backgroundWorkScheduler?.scheduleShareData()
+            }
+            BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
+        }else {
+            // action = AlarmManagerWakeUp_Perform_BackgroundScan
+            // The app has been launched to perform another scan
+            BackgroundWorkScheduler.scheduleScanWithAlarm()
+            val app = ATTrackingDetectionApplication?.getCurrentApp()
+            if (app != null) {
+
+                @OptIn(DelicateCoroutinesApi::class)
+                GlobalScope.launch {
+                    Timber.d("Running scan launched from Alert")
+                    BackgroundBluetoothScanner.scanInBackground(startedFrom = "ScheduleWorkersReceiver")
+                }
+
+            }else {
+                Timber.d("Could not find required dependencies")
+            }
+        }
     }
 
 
@@ -51,11 +77,21 @@ class ScheduleWorkersReceiver : BroadcastReceiver() {
             WorkManager.getInstance(context).enqueue(workRequestObserveTracker)
         }
 
-//        fun cancelWorker(context: Context, deviceAddress: String) {
-//            val workManager = WorkManager.getInstance(context)
-//            val workRequests = workManager.getWorkInfosByTag(deviceAddress)
-//
-//
-//        }
+    }
+}
+
+// From: https://stackoverflow.com/questions/74111692/run-coroutine-functions-on-broadcast-receiver
+fun BroadcastReceiver.goAsync(
+    context: CoroutineContext = EmptyCoroutineContext,
+    block: suspend CoroutineScope.() -> Unit
+) {
+    val pendingResult = goAsync()
+    @OptIn(DelicateCoroutinesApi::class) // Must run globally; there's no teardown callback.
+    GlobalScope.launch(context) {
+        try {
+            block()
+        } finally {
+            pendingResult.finish()
+        }
     }
 }

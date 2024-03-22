@@ -17,9 +17,9 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getD
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
 //import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
@@ -79,7 +79,7 @@ class ScanViewModel @Inject constructor(
             Timber.d("Got location $location in ScanViewModel")
 
             MainScope().async {
-                ScanBluetoothWorker.insertScanResult(
+                BackgroundBluetoothScanner.insertScanResult(
                     scanResult = scanResult,
                     latitude = location?.latitude,
                     longitude = location?.longitude,

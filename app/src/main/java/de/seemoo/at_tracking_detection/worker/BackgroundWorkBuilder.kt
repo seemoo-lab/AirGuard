@@ -20,6 +20,11 @@ class BackgroundWorkBuilder @Inject constructor() {
         .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.SECONDS)
         .build()
 
+    fun buildImmediateScanWorker(): OneTimeWorkRequest =
+        OneTimeWorkRequestBuilder<ScanBluetoothWorker>().addTag(WorkerConstants.SCAN_IMMEDIATELY)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
+            .build()
+
     fun buildSendStatisticsWorker(): PeriodicWorkRequest =
         PeriodicWorkRequestBuilder<SendStatisticsWorker>(
             WorkerConstants.MIN_HOURS_TO_NEXT_SEND_STATISTICS, TimeUnit.HOURS

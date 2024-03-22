@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import de.seemoo.at_tracking_detection.database.AppDatabase
 import de.seemoo.at_tracking_detection.database.daos.*
 import de.seemoo.at_tracking_detection.database.repository.*
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.MAX_DISTANCE_UNTIL_NEW_LOCATION
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
 import timber.log.Timber
 import javax.inject.Singleton
@@ -80,7 +80,7 @@ object DatabaseModule {
                     val locationA = getLocation(latitude, longitude)
                     val locationB = getLocation(closestLatitude, closestLongitude)
                     val distanceBetweenLocations = locationA.distanceTo(locationB)
-                    if (distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION){
+                    if (distanceBetweenLocations > BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION){
                         // println("Insert New, because far enough away")
                         insertNewLocation = true
                     } else {
