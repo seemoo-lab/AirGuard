@@ -49,6 +49,8 @@ class TrackingFragment : Fragment() {
 
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
+    private var map: MapView? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +76,11 @@ class TrackingFragment : Fragment() {
         postponeEnterTransition(100, TimeUnit.MILLISECONDS)
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showMarkersOnMap()
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -125,7 +132,7 @@ class TrackingFragment : Fragment() {
         val playSoundCard: CardView = view.findViewById(R.id.tracking_play_sound)
         val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
         val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
-        val map: MapView = view.findViewById(R.id.map)
+        map = view.findViewById(R.id.map)
         val includedLayout: View = view.findViewById(R.id.manufacturer_website)
         val identifierExplanation: TextView = view.findViewById(R.id.identifier_explanation)
 
@@ -174,29 +181,7 @@ class TrackingFragment : Fragment() {
             }
         }
 
-        Utility.enableMyLocationOverlay(map)
-
-        trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
-            lifecycleScope.launch {
-                trackingViewModel.isMapLoading.postValue(true)
-
-                val locationList = arrayListOf<Location>()
-                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
-
-                it.filter { it.locationId != null && it.locationId != 0 }
-                    .map {
-                        val location = locationRepository.getLocationWithId(it.locationId!!)
-                        if (location != null) {
-                            locationList.add(location)
-                        }
-                    }
-
-                // This is the per Device View
-                Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
-            }.invokeOnCompletion {
-                trackingViewModel.isMapLoading.postValue(false)
-            }
-        }
+//        Utility.enableMyLocationOverlay(map)
 
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
             if (!it) {
@@ -294,6 +279,35 @@ class TrackingFragment : Fragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
+        }
+    }
+
+    private fun showMarkersOnMap() {
+
+        trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
+            lifecycleScope.launch {
+                trackingViewModel.isMapLoading.postValue(true)
+
+                val locationList = arrayListOf<Location>()
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
+
+                it.filter { it.locationId != null && it.locationId != 0 }
+                    .map {
+                        val location = locationRepository.getLocationWithId(it.locationId!!)
+                        if (location != null) {
+                            locationList.add(location)
+                        }
+                    }
+
+                // This is the per Device View
+                map?.let {
+                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), it, true)
+                    it?.visibility = View.VISIBLE
+                }
+
+            }.invokeOnCompletion {
+                trackingViewModel.isMapLoading.postValue(false)
+            }
         }
     }
 }

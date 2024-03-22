@@ -48,16 +48,23 @@ class DeviceMapFragment : Fragment() {
         return binding.root
     }
 
+    var map: MapView? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ViewCompat.setTranslationZ(view, 100f)
-        val map: MapView = view.findViewById(R.id.map)
+        map = view.findViewById(R.id.map)
 
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
-        Utility.enableMyLocationOverlay(map)
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         val deviceAddress = this.deviceAddress
+
         if (!deviceAddress.isNullOrEmpty()) {
             viewModel.markerLocations.observe(viewLifecycleOwner) {
                 lifecycleScope.launch {
@@ -71,8 +78,10 @@ class DeviceMapFragment : Fragment() {
                                 locationList.add(location)
                             }
                         }
+                    map?.let {
+                        Utility.setGeoPointsFromListOfLocations(locationList.toList(), it, true)
+                    }
 
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
                 }.invokeOnCompletion {
                     viewModel.isMapLoading.postValue(false)
                 }
@@ -91,8 +100,9 @@ class DeviceMapFragment : Fragment() {
                                 locationList.add(location)
                             }
                         }
-
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map)
+                    map?.let {
+                        Utility.setGeoPointsFromListOfLocations(locationList.toList(), it)
+                    }
                 }.invokeOnCompletion {
                     viewModel.isMapLoading.postValue(false)
                 }
