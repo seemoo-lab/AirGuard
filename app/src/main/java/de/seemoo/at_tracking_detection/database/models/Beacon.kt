@@ -1,16 +1,20 @@
 package de.seemoo.at_tracking_detection.database.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import de.seemoo.at_tracking_detection.database.Converters
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-@Entity(tableName = "beacon")
+@Entity(
+    tableName = "beacon",
+    indices = [
+        Index(value = ["receivedAt"]),
+        Index(value = ["deviceAddress"]),
+        Index(value = ["connectionState"])
+    ]
+)
 @TypeConverters(DateTimeConverter::class, Converters::class)
 data class Beacon(
     @PrimaryKey(autoGenerate = true) val beaconId: Int,

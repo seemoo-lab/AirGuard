@@ -12,7 +12,16 @@ import java.time.format.FormatStyle
 import java.util.*
 import kotlin.experimental.and
 
-@Entity(tableName = "device", indices = [Index(value = ["address"], unique = true)])
+@Entity(
+    tableName = "device",
+    indices = [
+        Index(value = ["lastSeen"]),
+        Index(value = ["address"], unique = true),
+        Index(value = ["notificationSent"]),
+        Index(value = ["deviceType"]),
+        Index(value = ["lastSeen", "deviceType"])
+    ]
+)
 @TypeConverters(DateTimeConverter::class)
 data class BaseDevice(
     @PrimaryKey(autoGenerate = true) var deviceId: Int,
