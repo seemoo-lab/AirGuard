@@ -31,6 +31,7 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.security.Permission
 
 object Utility {
 
@@ -63,6 +64,14 @@ object Utility {
                 return true
             }
         }
+    }
+
+    fun checkPermission(permission: String): Boolean {
+        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: return false
+        return ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun checkBluetoothPermission(): Boolean {

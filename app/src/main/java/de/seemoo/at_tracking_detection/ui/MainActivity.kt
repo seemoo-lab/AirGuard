@@ -29,6 +29,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    @Inject
+    lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -95,6 +98,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onResume()
         Timber.d("MainActivity onResume called")
         BLEScanner.startBluetoothScan(this.applicationContext)
+
+        Timber.d("Scheduling an immediate background scan onResume of MainActivity")
+        backgroundWorkScheduler.scheduleImmediateBackgroundScan()
     }
 
 

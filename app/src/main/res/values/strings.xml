@@ -32,6 +32,7 @@
     <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
+    <string name="times_seen">Times seen</string>
     <string name="devices_swipe">Swipe to remove</string>
     <string name="devices_list_empty">Whenever the app detects an AirTag or another tracking device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
     <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile, Chipolo) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new one after a day.</string>
@@ -287,7 +288,7 @@
     <string name="battery_text">Battery Level: </string>
     <string name="battery_full">Full</string>
     <string name="battery_medium">Medium</string>
-    <string name="battery_low">Low</string>
+    <string name="battery_low" translatable="false">Low</string>
     <string name="battery_very_low">Very Low</string>
     <string name="battery_unknown">Unknown</string>
 
