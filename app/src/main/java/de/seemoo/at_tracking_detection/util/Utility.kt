@@ -124,10 +124,6 @@ object Utility {
             locationList
                 .filter { it.locationId != 0 }
                 .forEach { location ->
-                    if (!map.isShown) {
-                        return@forEach
-                    }
-
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint

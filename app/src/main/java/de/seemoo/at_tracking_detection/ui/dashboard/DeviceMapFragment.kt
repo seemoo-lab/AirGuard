@@ -49,64 +49,15 @@ class DeviceMapFragment : Fragment() {
         return binding.root
     }
 
-    var map: MapView? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ViewCompat.setTranslationZ(view, 100f)
-        map = view.findViewById(R.id.map)
+        val map: MapView = view.findViewById(R.id.map)
 
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
+        Utility.enableMyLocationOverlay(map)
 
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val deviceAddress = this.deviceAddress
-
-        if (!deviceAddress.isNullOrEmpty()) {
-            viewModel.markerLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
-
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-                    map?.let {
-                        Utility.setGeoPointsFromListOfLocations(locationList.toList(), it, true)
-                    }
-
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
-            }
-        } else {
-            viewModel.allLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository =
-                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
-
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-                    map?.let {
-                        Utility.setGeoPointsFromListOfLocations(locationList.toList(), it)
-                    }
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
             val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation

@@ -80,11 +80,6 @@ class TrackingFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        showMarkersOnMap()
-    }
-
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
@@ -146,7 +141,7 @@ class TrackingFragment : Fragment() {
             }
 
             override fun onScroll(event: ScrollEvent?): Boolean {
-                // Handle scroll event if needed
+                // Handle scroll event
                 return true
             }
         })
@@ -154,13 +149,6 @@ class TrackingFragment : Fragment() {
         if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
             zoomToMarkers()
         }
-        val feedbackButton: CardView = view.findViewById(R.id.tracking_feedback)
-        val playSoundCard: CardView = view.findViewById(R.id.tracking_play_sound)
-        val trackingDetailButton: CardView = view.findViewById(R.id.tracking_detail_scan)
-        val observeTrackerButton: CardView = view.findViewById(R.id.tracking_observation)
-        map = view.findViewById(R.id.map)
-        val includedLayout: View = view.findViewById(R.id.manufacturer_website)
-        val identifierExplanation: TextView = view.findViewById(R.id.identifier_explanation)
 
         trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
             view.findViewById<TextView>(R.id.identifier_explanation).text =
@@ -261,26 +249,8 @@ class TrackingFragment : Fragment() {
         }
     }
 
-//        Utility.enableMyLocationOverlay(map)
-
-        trackingViewModel.soundPlaying.observe(viewLifecycleOwner) {
-            if (!it) {
-                try {
-                    requireContext().unbindService(serviceConnection)
-                } catch (e: IllegalArgumentException) {
-                    Timber.e("Tried to unbind an unbound service!")
-                } finally {
-                    Timber.d("Service connection unregistered")
-                }
-            }
-        }
-
-        addInteractions(view)
-    }
-
     private fun addInteractions(view: View) {
         val button = view.findViewById<ImageButton>(R.id.open_map_button)
-
 
         button.setOnClickListener {
             val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
@@ -292,8 +262,6 @@ class TrackingFragment : Fragment() {
             val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
             findNavController().navigate(direction)
         }
-
-
     }
 
     private fun toggleSound() {
@@ -359,35 +327,6 @@ class TrackingFragment : Fragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
-        }
-    }
-
-    private fun showMarkersOnMap() {
-
-        trackingViewModel.markerLocations.observe(viewLifecycleOwner) {
-            lifecycleScope.launch {
-                trackingViewModel.isMapLoading.postValue(true)
-
-                val locationList = arrayListOf<Location>()
-                val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository!!
-
-                it.filter { it.locationId != null && it.locationId != 0 }
-                    .map {
-                        val location = locationRepository.getLocationWithId(it.locationId!!)
-                        if (location != null) {
-                            locationList.add(location)
-                        }
-                    }
-
-                // This is the per Device View
-                map?.let {
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), it, true)
-                    it?.visibility = View.VISIBLE
-                }
-
-            }.invokeOnCompletion {
-                trackingViewModel.isMapLoading.postValue(false)
-            }
         }
     }
 }
