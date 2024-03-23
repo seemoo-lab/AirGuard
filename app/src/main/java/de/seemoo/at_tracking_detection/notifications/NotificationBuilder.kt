@@ -100,9 +100,11 @@ class NotificationBuilder @Inject constructor(
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val notifyText = context.getString(
-            R.string.notification_text_base,
-            RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
+        val minutesAtLeastTracked = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
+        val notifyText = context.resources.getQuantityString(
+            R.plurals.notification_text_base,
+            minutesAtLeastTracked.toInt(),
+            minutesAtLeastTracked
         )
 
         var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)

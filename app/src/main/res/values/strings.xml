@@ -132,8 +132,6 @@
     <string name="device_name_find_my_device">Find My Device %s</string>
 
     <string name="notification_observe_tracker_title_base">Your observed tracker</string>
-    <string name="notification_observe_tracker_positive_singular">A tracker you observed has been following you for at least an hour.</string>
-    <string name="notification_observe_tracker_positive_plural">A tracker you observed has been following you for at least %d hours.</string>
     <plurals name="notification_observe_tracker_positive">
         <item quantity="one">A tracker you observed has been following you for at least one hour.</item>
         <item quantity="other">A tracker you observed has been following you for at least %d hours.</item>
@@ -141,7 +139,10 @@
     <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
     <string name="notification_observe_tracker_error">An error occurred while observing this tracker. Please try again.</string>
 
-    <string name="notification_text_base">Open the notification to get more info. A tracker has followed you for at least %d minutes.</string>
+    <plurals name="notification_text_base">
+        <item quantity="one">Open the notification to get more info. A tracker has followed you for at least one minute.</item>
+        <item quantity="other">Open the notification to get more info. A tracker has followed you for at least %d minutes.</item>
+    </plurals>
     <string name="notification_title_base">A tracker has been following you</string>
     <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least %d minutes.</string>
     <string name="notification_text_multiple">Open the notification to get more info. The %s have followed you for at least %d minutes.</string>
