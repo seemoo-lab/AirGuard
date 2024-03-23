@@ -15,8 +15,23 @@ object DeviceManager {
     val savedConnectionStates = enumValues<ConnectionState>().toList()
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
 
+    private val deviceTypeCache = mutableMapOf<String, DeviceType>()
+
     fun getDeviceType(scanResult: ScanResult): DeviceType {
-        Timber.d("Checking device type for ${scanResult.device.address}")
+        val deviceAddress = scanResult.device.address
+
+        // Check cache, before calculating again
+        deviceTypeCache[deviceAddress]?.let { cachedDeviceType ->
+            return cachedDeviceType
+        }
+
+        val deviceType = calculateDeviceType(scanResult)
+        deviceTypeCache[deviceAddress] = deviceType
+        return deviceType
+    }
+
+    private fun calculateDeviceType(scanResult: ScanResult): DeviceType {
+        Timber.d("Retrieving device type for ${scanResult.device.address}")
 
         scanResult.scanRecord?.let { scanRecord ->
             scanRecord.getManufacturerSpecificData(0x004c)?.let { manufacturerData ->
