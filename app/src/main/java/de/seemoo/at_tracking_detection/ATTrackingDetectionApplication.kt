@@ -18,6 +18,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
@@ -61,6 +62,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var locationProvider: LocationProvider
+
+    @Inject
+    lateinit var scanRepository: ScanRepository
 
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 

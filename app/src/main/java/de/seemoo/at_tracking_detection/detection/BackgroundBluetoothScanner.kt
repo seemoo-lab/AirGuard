@@ -74,11 +74,11 @@ object BackgroundBluetoothScanner {
             return ATTrackingDetectionApplication.getCurrentApp()?.scanRepository
         }
 
-    var isScanning = false
+    public var isScanning = false
     class BackgroundScanResults(var duration: Long, var scanMode: Int, var numberDevicesFound: Int, var failed: Boolean)
     suspend fun scanInBackground(startedFrom: String): BackgroundScanResults {
         if (isScanning) {
-            Timber.w("BLE background scan already running")
+            Timber.w("BackgroundBluetoothScanner scan already running")
             return BackgroundScanResults(0, 0, 0, true)
         }
 
@@ -130,6 +130,8 @@ object BackgroundBluetoothScanner {
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
         BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
+        isScanning = false
+
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
         //Waiting for updated location to come in
@@ -174,7 +176,6 @@ object BackgroundBluetoothScanner {
         backgroundWorkScheduler?.scheduleTrackingDetector()
         BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
 
-        isScanning = true
         // Release the wake lock when we are done
         wakeLock.release()
 

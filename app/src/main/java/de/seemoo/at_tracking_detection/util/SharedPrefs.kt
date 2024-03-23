@@ -44,6 +44,22 @@ object SharedPrefs {
             sharedPreferences.edit().putString("last_scan", value.toString()).apply()
         }
 
+    var nextScanDate: LocalDateTime?
+        get() {
+            val dateString = sharedPreferences.getString("next_scan", null)
+            if (dateString != null) {
+                return try {
+                    LocalDateTime.parse(dateString)
+                }catch(e: DateTimeParseException) {
+                    null
+                }
+            }
+            return null
+        }
+        set(value) {
+            sharedPreferences.edit().putString("next_scan", value.toString()).apply()
+        }
+
     var shareData: Boolean
         get() {
             return sharedPreferences.getBoolean("share_data", false)

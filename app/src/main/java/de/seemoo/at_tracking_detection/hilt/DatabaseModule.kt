@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import de.seemoo.at_tracking_detection.database.AppDatabase
 import de.seemoo.at_tracking_detection.database.daos.*
 import de.seemoo.at_tracking_detection.database.repository.*
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.MAX_DISTANCE_UNTIL_NEW_LOCATION
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
 import timber.log.Timber
 import javax.inject.Singleton
@@ -27,7 +27,7 @@ object DatabaseModule {
             try {
                 db.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
             }catch (e: SQLiteException) {
-                Timber.e("Could not create new column $e")
+                Timber.e("Could not create new column ${e}")
             }
 
         }
@@ -46,7 +46,7 @@ object DatabaseModule {
                 db.execSQL("CREATE UNIQUE INDEX `index_location_latitude_longitude` ON `location` (`latitude`, `longitude`)")
                 db.execSQL("ALTER TABLE `beacon` ADD COLUMN `locationId` INTEGER")
             }catch (e: SQLiteException) {
-                Timber.e("Could not create location $e")
+                Timber.e("Could not create location ${e}")
             }
 
             var sql: String
@@ -80,7 +80,7 @@ object DatabaseModule {
                     val locationA = getLocation(latitude, longitude)
                     val locationB = getLocation(closestLatitude, closestLongitude)
                     val distanceBetweenLocations = locationA.distanceTo(locationB)
-                    if (distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION){
+                    if (distanceBetweenLocations > BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION){
                         // println("Insert New, because far enough away")
                         insertNewLocation = true
                     } else {
@@ -138,7 +138,7 @@ object DatabaseModule {
                 db.execSQL("INSERT INTO `beacon_backup` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon`")
                 db.execSQL("DROP TABLE `beacon`")
             } catch (e: SQLiteException) {
-                Timber.e("Could not create beacon_backup $e")
+                Timber.e("Could not create beacon_backup ${e}")
             }
 
             try {
@@ -146,7 +146,7 @@ object DatabaseModule {
                 db.execSQL("INSERT INTO `beacon` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon_backup`")
                 db.execSQL("DROP TABLE `beacon_backup`")
             } catch (e: SQLiteException) {
-                Timber.e("Could not create beacon $e")
+                Timber.e("Could not create beacon ${e}")
             }
         }
     }

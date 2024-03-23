@@ -37,6 +37,20 @@
                 android:text="@{vm.scanText}"
                 />
 
+            <TextView
+                android:id="@+id/last_scan_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.lastScanDate}"
+                />
+
+            <TextView
+                android:id="@+id/next_scan_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.nextScanDate}"
+                />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -9,6 +9,7 @@ import android.os.*
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import timber.log.Timber
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -126,7 +127,16 @@ open class LocationProvider @Inject constructor(
     }
 
     private fun locationMatchesMinimumRequirements(location: Location): Boolean {
-       return location.accuracy <= MIN_ACCURACY_METER && getSecondsSinceLocation(location) <= MAX_AGE_SECONDS
+        if (location.accuracy <= MIN_ACCURACY_METER) {
+            if (getSecondsSinceLocation(location) <= MAX_AGE_SECONDS) {
+                return true
+            }else {
+                Timber.d("Location too old")
+            }
+        }else {
+            Timber.d("Location accuracy is not good enough")
+        }
+        return false
     }
 
 
@@ -221,6 +231,7 @@ open class LocationProvider @Inject constructor(
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Timber.w("Not requesting location, permission not granted")
             return
         }
 
@@ -239,6 +250,8 @@ open class LocationProvider @Inject constructor(
             )
         }
 
+        Timber.i("Requesting location updates from $enabledProviders")
+
         // If no location providers are enabled, log an error and stop location updates
         if (enabledProviders.isEmpty()) {
             Timber.e("ERROR: No location provider available")
@@ -248,10 +261,11 @@ open class LocationProvider @Inject constructor(
 
     private fun stopLocationUpdates() {
         locationManager.removeUpdates(this)
+        Timber.i("Stopping location updates")
     }
 
     override fun onLocationChanged(location: Location) {
-        Timber.d("Location updated: ${location.latitude} ${location.longitude}")
+        Timber.d("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location

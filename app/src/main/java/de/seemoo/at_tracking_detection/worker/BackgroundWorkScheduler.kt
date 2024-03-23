@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import android.Manifest
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 
 @Singleton
 class BackgroundWorkScheduler @Inject constructor(
@@ -50,6 +51,7 @@ class BackgroundWorkScheduler @Inject constructor(
             ExistingWorkPolicy.APPEND_OR_REPLACE,
             backgroundWorkBuilder.buildImmediateScanWorker())
     }
+
 
     fun getState(uniqueWorkName: String): LiveData<WorkInfo.State?> =
         workManager.getWorkInfosByTagLiveData(uniqueWorkName).map { it.lastOrNull()?.state }
@@ -166,6 +168,8 @@ class BackgroundWorkScheduler @Inject constructor(
                 alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
                 Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
             }
+
+            SharedPrefs.nextScanDate = alarmDate
         }
     }
 }

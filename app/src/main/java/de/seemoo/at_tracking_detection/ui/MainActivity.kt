@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import org.osmdroid.config.Configuration
 import timber.log.Timber
 import java.io.File

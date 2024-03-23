@@ -17,9 +17,9 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getD
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.TIME_BETWEEN_BEACONS
 //import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.MainScope
@@ -33,7 +33,7 @@ class ScanViewModel @Inject constructor(
     private val scanRepository: ScanRepository,
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
-    ) : ViewModel() {
+) : ViewModel() {
     val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResult>>() // TODO: Problem needs to be immutable so that DiffUtil works
 
     val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResult>>()
@@ -71,15 +71,15 @@ class ScanViewModel @Inject constructor(
         val currentDate = LocalDateTime.now()
         val uniqueIdentifier = getPublicKey(scanResult) // either public key or MAC-Address
         if (beaconRepository.getNumberOfBeaconsAddress(
-            deviceAddress = uniqueIdentifier,
-            since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
-        ) == 0) {
+                deviceAddress = uniqueIdentifier,
+                since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
+            ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
             val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
             Timber.d("Got location $location in ScanViewModel")
 
             MainScope().async {
-                ScanBluetoothWorker.insertScanResult(
+                BackgroundBluetoothScanner.insertScanResult(
                     scanResult = scanResult,
                     latitude = location?.latitude,
                     longitude = location?.longitude,
