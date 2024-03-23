@@ -11,6 +11,7 @@ import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
+import timber.log.Timber
 
 class BluetoothDeviceAdapter:
     ListAdapter<ScanResult, BluetoothDeviceAdapter.ScanResultViewHolder>(BluetoothDeviceDiffCallback()) {
@@ -37,10 +38,14 @@ class BluetoothDeviceAdapter:
 
         holder.itemView.findViewById<MaterialCardView>(R.id.scan_result_item_card)
             .setOnClickListener {
-                val deviceAddress: String = getPublicKey(scanResult)
-                val directions = ScanFragmentDirections.actionScanToTrackingFragment(deviceAddress)
-                holder.itemView.findNavController()
-                    .navigate(directions)
+                try {
+                    val deviceAddress: String = getPublicKey(scanResult)
+                    val directions = ScanFragmentDirections.actionScanToTrackingFragment(deviceAddress)
+                    holder.itemView.findNavController()
+                        .navigate(directions)
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
             }
     }
 }
