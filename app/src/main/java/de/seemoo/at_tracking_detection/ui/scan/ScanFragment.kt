@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
+import android.annotation.SuppressLint
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
@@ -24,11 +25,28 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
-
     private val scanViewModel: ScanViewModel by viewModels()
 
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var isNotifyDataSetChangedScheduled = false
+
+    @SuppressLint("NotifyDataSetChanged")
+    private val notifyDataSetChangedRunnable = Runnable {
+        // notifyDataSetChanged is very inefficient. DiffUtil does not work properly for some reason
+        bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
+        bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
+        isNotifyDataSetChangedScheduled = false
+    }
+
+    private fun scheduleNotifyDataSetChanged() {
+        if (!isNotifyDataSetChangedScheduled) {
+            handler.postDelayed(notifyDataSetChangedRunnable, 1000) // 1000 milliseconds = 1 second
+            isNotifyDataSetChangedScheduled = true
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,15 +61,14 @@ class ScanFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = scanViewModel
 
-        // TODO: notifyDataSetChanged is very inefficient. DiffUtil does not work properly for some reason
-        scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {
-            bluetoothDeviceAdapterHighRisk.submitList(it)
-            bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
+        scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {newList ->
+            bluetoothDeviceAdapterHighRisk.submitList(newList)
+            scheduleNotifyDataSetChanged()
         }
 
-        scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {
-            bluetoothDeviceAdapterLowRisk.submitList(it)
-            bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
+        scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {newList ->
+            bluetoothDeviceAdapterLowRisk.submitList(newList)
+            scheduleNotifyDataSetChanged()
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
@@ -102,12 +119,20 @@ class ScanFragment : Fragment() {
 
         }
 
+        scanViewModel.scanFinished.observe(viewLifecycleOwner) {scanFinished ->
+            if (scanFinished) {
+                stopBluetoothScan()
+            } else {
+                startBluetoothScan()
+            }
+        }
+
         val startStopButton = view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan)
         startStopButton.setOnClickListener {
             if (scanViewModel.scanFinished.value == true) {
-                startBluetoothScan()
+                scanViewModel.scanFinished.postValue(false)
             } else {
-                stopBluetoothScan()
+                scanViewModel.scanFinished.postValue(true)
             }
         }
 
@@ -207,7 +232,9 @@ class ScanFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        stopBluetoothScan()
+        if (scanViewModel.scanFinished.value == false) {
+            stopBluetoothScan()
+        }
     }
 
     override fun onDestroyView() {

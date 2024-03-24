@@ -42,8 +42,6 @@ class ScanViewModel @Inject constructor(
 
     val sortingOrder = MutableLiveData<SortingOrder>(SortingOrder.SIGNAL_STRENGTH)
 
-    val scanStart = MutableLiveData(LocalDateTime.MIN)
-
     var bluetoothEnabled = MutableLiveData(true)
     init {
         bluetoothDeviceListHighRisk.value = ArrayList()
@@ -89,7 +87,7 @@ class ScanViewModel @Inject constructor(
             }
         }
 
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val device = deviceRepository.getDevice(uniqueIdentifier)
 
         val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value ?: return
