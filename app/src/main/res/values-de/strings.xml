@@ -346,7 +346,7 @@
 
     <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>
     <string name="info_button_description">Zeigt Erklärtext</string>
-
+    <string name="device_name_cannot_be_empty">Der Name darf nicht leer sein</string>
 
     <string name="high_risk_trackers">Mögliche Tracker</string>
     <string name="low_risk_trackers">Sichere Tracker</string>

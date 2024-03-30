@@ -5,6 +5,7 @@ import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.text.InputFilter
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -211,21 +213,28 @@ class TrackingFragment : Fragment() {
         deviceNameTextView.setOnClickListener {
             val device = trackingViewModel.device.value
             if (device != null) {
-                val editName = EditText(context)
-                editName.setText(device.getDeviceNameWithID())
+                val editName = EditText(context).apply {
+                    maxLines = 1
+                    filters = arrayOf(InputFilter.LengthFilter(MAX_CHARACTER_LIMIT))
+                    setText(device.getDeviceNameWithID())
+                }
                 MaterialAlertDialogBuilder(requireContext())
                     .setIcon(R.drawable.ic_baseline_edit_24)
                     .setTitle(getString(R.string.devices_edit_title)).setView(editName)
                     .setNegativeButton(getString(R.string.cancel_button), null)
                     .setPositiveButton(R.string.ok_button) { _, _ ->
                         val newName = editName.text.toString()
-                        device.name = newName
-                        lifecycleScope.launch {
-                            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-                            deviceRepository.update(device)
-                            Timber.d("Renamed device to ${device.name}")
+                        if (newName.isNotEmpty()) {
+                            device.name = newName
+                            lifecycleScope.launch {
+                                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                                deviceRepository.update(device)
+                                Timber.d("Renamed device to ${device.name}")
+                            }
+                            deviceNameTextView.text = newName
+                        } else {
+                            Toast.makeText(context, R.string.device_name_cannot_be_empty, Toast.LENGTH_SHORT).show()
                         }
-                        deviceNameTextView.text = newName
                     }
                     .show()
             }
@@ -355,5 +364,9 @@ class TrackingFragment : Fragment() {
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
         }
+    }
+
+    companion object {
+        const val MAX_CHARACTER_LIMIT = 255
     }
 }

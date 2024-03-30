@@ -4,12 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputFilter
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
@@ -32,6 +34,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
+import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDate
@@ -271,16 +274,25 @@ abstract class DevicesFragment(
                 val device =
                     deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
                 if (direction == ItemTouchHelper.LEFT) {
-                    val editName = EditText(context)
+                    val editName = EditText(context).apply {
+                        maxLines = 1
+                        filters = arrayOf(InputFilter.LengthFilter(TrackingFragment.MAX_CHARACTER_LIMIT))
+                        setText(device.getDeviceNameWithID())
+                    }
                     editName.setText(device.getDeviceNameWithID())
                     MaterialAlertDialogBuilder(requireContext())
                         .setIcon(R.drawable.ic_baseline_edit_24)
                         .setTitle(getString(R.string.devices_edit_title)).setView(editName)
                         .setNegativeButton(getString(R.string.cancel_button), null)
                         .setPositiveButton(R.string.ok_button) { _, _ ->
-                            device.name = editName.text.toString()
-                            devicesViewModel.update(device)
-                            Timber.d("Renamed device to ${device.name}")
+                            val newName = editName.text.toString()
+                            if (newName.isNotEmpty()) {
+                                device.name = newName
+                                devicesViewModel.update(device)
+                                Timber.d("Renamed device to ${device.name}")
+                            } else {
+                                Toast.makeText(context, R.string.device_name_cannot_be_empty, Toast.LENGTH_SHORT).show()
+                            }
                         }
                         .setOnDismissListener {
                             deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
