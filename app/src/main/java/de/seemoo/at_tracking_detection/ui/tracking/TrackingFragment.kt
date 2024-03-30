@@ -9,6 +9,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.addCallback
@@ -21,6 +22,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -203,6 +205,31 @@ class TrackingFragment : Fragment() {
         }
 
         addInteractions(view)
+
+        val deviceNameTextView = view.findViewById<TextView>(R.id.device_name)
+
+        deviceNameTextView.setOnClickListener {
+            val device = trackingViewModel.device.value
+            if (device != null) {
+                val editName = EditText(context)
+                editName.setText(device.getDeviceNameWithID())
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.ic_baseline_edit_24)
+                    .setTitle(getString(R.string.devices_edit_title)).setView(editName)
+                    .setNegativeButton(getString(R.string.cancel_button), null)
+                    .setPositiveButton(R.string.ok_button) { _, _ ->
+                        val newName = editName.text.toString()
+                        device.name = newName
+                        lifecycleScope.launch {
+                            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                            deviceRepository.update(device)
+                            Timber.d("Renamed device to ${device.name}")
+                        }
+                        deviceNameTextView.text = newName
+                    }
+                    .show()
+            }
+        }
     }
 
     private fun zoomToMarkers() {
