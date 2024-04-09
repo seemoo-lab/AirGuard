@@ -92,7 +92,7 @@ object BLEScanner {
 
     fun unregisterCallback(callback: ScanCallback) {
         callbacks.remove(callback)
-        Timber.d("BLE ScanCallback unregistered")
+        // Timber.d("BLE ScanCallback unregistered")
     }
 
     private var ownScanCallback = object: ScanCallback() {
