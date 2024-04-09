@@ -24,6 +24,56 @@
         android:layout_height="wrap_content"
         tools:context=".ui.tracking.TrackingFragment">
 
+        <LinearLayout
+            android:id="@+id/header_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/map_container">
+
+            <TextView
+                android:id="@+id/device_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="@{vm.device.deviceNameWithID}"
+                android:layout_gravity="start"
+                android:gravity="start"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                tools:text="@string/title_debug"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="1"
+                    android:text="@string/device_item_last_seen" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="1"
+                    android:text="@{vm.device.formattedLastSeenDate}"
+                    tools:text="03/01/1337, 13:37" />
+
+            </LinearLayout>
+        </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/map_container"
             android:layout_width="0dp"
@@ -33,7 +83,7 @@
             app:layout_constraintHeight_min="250dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_wrapper"
             >
             <include
                 android:id="@+id/tracking_map"
@@ -252,7 +302,7 @@
                 android:id="@+id/manufacturer_website"
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
