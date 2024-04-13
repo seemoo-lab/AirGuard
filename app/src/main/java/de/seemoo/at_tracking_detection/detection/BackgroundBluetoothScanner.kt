@@ -432,8 +432,15 @@ object BackgroundBluetoothScanner {
                     // If location is within the set limit, just use that location and update lastSeen
                     Timber.d("Location already in the database... Updating the last seen date!")
                     location.lastSeen = discoveryDate
+                    if (altitude != null) {
+                        location.altitude = altitude
+                    }
+                    if (accuracy != null && (location.accuracy == null || location.accuracy!! > accuracy)) {
+                        location.accuracy = accuracy
+                        location.longitude = longitude
+                        location.latitude = latitude
+                    }
                     locationRepository.update(location)
-
                 }
 
                 Timber.d("Location: $location")

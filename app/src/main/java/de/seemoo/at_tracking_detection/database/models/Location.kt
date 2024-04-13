@@ -21,13 +21,13 @@ data class Location(
         altitude: Double?,
         accuracy: Float?
     ): this(
-        0,
-        null,
-        firstDiscovery, // firstDiscovery
-        firstDiscovery, // lastSeen
-        longitude,
-        latitude,
-        altitude,
-        accuracy
+        locationId = 0,
+        name = null,
+        firstDiscovery = firstDiscovery,
+        lastSeen = firstDiscovery,
+        longitude = longitude,
+        latitude = latitude,
+        altitude = altitude,
+        accuracy = accuracy,
     )
 }
