@@ -81,6 +81,7 @@ class ScanViewModel @Inject constructor(
                     scanResult = scanResult,
                     latitude = location?.latitude,
                     longitude = location?.longitude,
+                    altitude = location?.altitude,
                     accuracy = location?.accuracy,
                     discoveryDate = currentDate,
                 )

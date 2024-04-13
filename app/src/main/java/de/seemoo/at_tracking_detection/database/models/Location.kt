@@ -11,12 +11,14 @@ data class Location(
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "longitude") var longitude: Double,
     @ColumnInfo(name = "latitude") var latitude: Double,
+    @ColumnInfo(name = "altitude") var altitude: Double?,
     @ColumnInfo(name = "accuracy") var accuracy: Float?,
 ) {
     constructor(
         firstDiscovery: LocalDateTime,
         longitude: Double,
         latitude: Double,
+        altitude: Double?,
         accuracy: Float?
     ): this(
         0,
@@ -25,6 +27,7 @@ data class Location(
         firstDiscovery, // lastSeen
         longitude,
         latitude,
+        altitude,
         accuracy
     )
 }
