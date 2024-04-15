@@ -160,15 +160,15 @@ dependencies {
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.8.2'
     // Compose Material Design
-    implementation 'androidx.compose.material:material:1.6.4'
+    implementation 'androidx.compose.material:material:1.6.5'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.6.4'
+    implementation 'androidx.compose.animation:animation:1.6.5'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.6.4'
+    implementation 'androidx.compose.ui:ui-tooling:1.6.5'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.4'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.5'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 
