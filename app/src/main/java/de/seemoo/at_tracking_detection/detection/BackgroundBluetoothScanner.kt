@@ -281,6 +281,12 @@ object BackgroundBluetoothScanner {
             accuracy: Float?,
             discoveryDate: LocalDateTime,
         ): Pair<BaseDevice?, Beacon?> {
+            if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_ABOVE_ALTITUDE) {
+                Timber.d("Ignoring location above ${TrackingDetectorConstants.IGNORE_ABOVE_ALTITUDE}m, we assume the User is on a plane!")
+                // Do not save device in case we assume it is on a plane
+                return Pair(null, null)
+            }
+
             val deviceSaved = saveDevice(scanResult, discoveryDate) ?: return Pair(
                 null,
                 null
