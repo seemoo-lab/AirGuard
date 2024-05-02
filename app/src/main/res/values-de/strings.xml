@@ -8,7 +8,7 @@
     <string name="title_feedback">Feedback</string>
     <string name="title_tracking">Gerät mit der ID {deviceAddress} folgt Dir</string>
     <string name="title_devices_tracking">Gerät mit ID: {deviceAddress}</string>
-    <string name="title_scan_detail">Detail Scan: {deviceAddress}</string>
+    <string name="title_scan_detail">Orten: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices">Geräte</string>
@@ -39,7 +39,7 @@
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
-    <string name="tracking_detail_scan_title">Detaillierter Scan</string>
+    <string name="tracking_detail_scan_title">Gerät orten</string>
     <string name="tracking_detail_scan_subtitle">Zeigt Live Informationen über diesen Tracker</string>
     <string name="tracking_ignore_device_title">Gerät ignorieren</string>
     <string name="tracking_ignore_device_subtitle">Benachrichtigungen für dieses Gerät deaktivieren</string>
@@ -339,10 +339,10 @@
     <string name="developer">Entwickler: %s</string>
     <string name="maintainer">Maintainer: %s</string>
 
-    <string name="explanation_apple">Achtung:\nApple Geräte ändern ihre Kennung alle 24 Stunden nachdem sie einige Zeit vom Besitzergerät getrennt sind.\nAirTags, AirPods, FindMy-Geräte und andere Apple Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
-    <string name="explanation_samsung">Achtung:\nSamsung Geräte ändern ihre Kennung alle 24 Stunden nachdem sie längere Zeit vom Besitzergerät getrennt sind.\nSmartTags und andere Samsung Geräte werden jeden Tag als ein neues Gerät erkannt.</string>
-    <string name="explanation_tile">Achtung:\nTile Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
-    <string name="explanation_chipolo">Achtung:\nChipolo Geräte ändern ihre Kennung nicht.\nDies ermöglicht zwar eine genauere Tracking Erkennung, führt aber auch zu mehr falschen Warnungen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker nicht von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn) stammt.</string>
+    <string name="explanation_apple">Hinweis:\nApple Geräte ändern ihre Identität mindestens alle 24 Stunden.\nAirTags, AirPods, FindMy-Geräte und andere Apple Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
+    <string name="explanation_samsung">Hinweis:\nSamsung Geräte ändern ihre Identität mindestens alle 24 Stunden.\nSmartTags und andere Samsung Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
+    <string name="explanation_tile">Hinweis:\nTile Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
+    <string name="explanation_chipolo">Hinweis:\nChipolo Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
 
     <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>
     <string name="info_button_description">Zeigt Erklärtext</string>
