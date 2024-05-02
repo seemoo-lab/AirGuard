@@ -101,7 +101,7 @@ class ScanViewModel @Inject constructor(
             getPublicKey(it) == uniqueIdentifier
         }
 
-        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState && (device != null && !device.ignore) || device == null) {
+        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState && ((device != null && !device.ignore) || device==null)) {
             // only add possible devices to list
             bluetoothDeviceListHighRiskValue.add(scanResult)
         } else {
