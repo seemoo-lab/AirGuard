@@ -30,24 +30,7 @@ class ScanFragment : Fragment() {
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var isNotifyDataSetChangedScheduled = false
-
     @SuppressLint("NotifyDataSetChanged")
-    private val notifyDataSetChangedRunnable = Runnable {
-        // notifyDataSetChanged is very inefficient. DiffUtil does not work properly for some reason
-        bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
-        bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
-        isNotifyDataSetChangedScheduled = false
-    }
-
-    private fun scheduleNotifyDataSetChanged() {
-        if (!isNotifyDataSetChangedScheduled) {
-            handler.postDelayed(notifyDataSetChangedRunnable, 1000) // 1000 milliseconds = 1 second
-            isNotifyDataSetChangedScheduled = true
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,12 +46,12 @@ class ScanFragment : Fragment() {
 
         scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {newList ->
             bluetoothDeviceAdapterHighRisk.submitList(newList)
-            scheduleNotifyDataSetChanged()
+            bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
         }
 
         scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {newList ->
             bluetoothDeviceAdapterLowRisk.submitList(newList)
-            scheduleNotifyDataSetChanged()
+            bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
@@ -77,33 +60,6 @@ class ScanFragment : Fragment() {
             } else {
                 binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_stop_24)
             }
-        }
-
-        scanViewModel.sortingOrder.observe(viewLifecycleOwner) {
-            val bluetoothDeviceListHighRiskValue = scanViewModel.bluetoothDeviceListHighRisk.value ?: return@observe
-            val bluetoothDeviceListLowRiskValue = scanViewModel.bluetoothDeviceListLowRisk.value ?: return@observe
-
-            scanViewModel.sortResults(bluetoothDeviceListHighRiskValue)
-            scanViewModel.sortResults(bluetoothDeviceListLowRiskValue)
-
-            scanViewModel.bluetoothDeviceListHighRisk.postValue(ArrayList(bluetoothDeviceListHighRiskValue))
-            scanViewModel.bluetoothDeviceListLowRisk.postValue(ArrayList(bluetoothDeviceListLowRiskValue))
-
-//            if (view != null) {
-//                val sortBySignalStrength = requireView().findViewById<TextView>(R.id.sort_option_signal_strength)
-//                val sortByDetectionOrder = requireView().findViewById<TextView>(R.id.sort_option_order_detection)
-//                val sortByAddress = requireView().findViewById<TextView>(R.id.sort_option_address)
-//
-//                val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
-//
-//                when(it) {
-//                    SortingOrder.SIGNAL_STRENGTH -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//                    SortingOrder.DETECTION_ORDER -> scanViewModel.changeColorOf(sortOptions, sortByDetectionOrder)
-//                    SortingOrder.ADDRESS -> scanViewModel.changeColorOf(sortOptions, sortByAddress)
-//                    else -> scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//                }
-//            }
-
         }
 
         return binding.root
@@ -116,7 +72,6 @@ class ScanFragment : Fragment() {
         val bluetoothButton = view.findViewById<Button>(R.id.open_ble_settings_button)
         bluetoothButton.setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
-
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {scanFinished ->
@@ -140,25 +95,6 @@ class ScanFragment : Fragment() {
         infoButton.setOnClickListener {
             toggleInfoLayoutVisibility(view)
         }
-
-
-//        val sortBySignalStrength = view.findViewById<TextView>(R.id.sort_option_signal_strength)
-//        val sortByDetectionOrder = view.findViewById<TextView>(R.id.sort_option_order_detection)
-//        val sortByAddress = view.findViewById<TextView>(R.id.sort_option_address)
-//
-//        val sortOptions = listOf(sortBySignalStrength, sortByDetectionOrder, sortByAddress)
-//
-//        scanViewModel.changeColorOf(sortOptions, sortBySignalStrength)
-//
-//        sortBySignalStrength.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.SIGNAL_STRENGTH)
-//        }
-//        sortByDetectionOrder.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.DETECTION_ORDER)
-//        }
-//        sortByAddress.setOnClickListener {
-//            scanViewModel.sortingOrder.postValue(SortingOrder.ADDRESS)
-//        }
     }
 
     override fun onStart() {
@@ -167,10 +103,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
-        // Find the info layout by its ID
         val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
-
-        // Toggle the visibility
         infoLayout.visibility = if (infoLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
@@ -191,7 +124,7 @@ class ScanFragment : Fragment() {
                     it,
                     R.string.ble_service_connection_error,
                     Snackbar.LENGTH_LONG
-                )
+                ).show()
             }
         }
     }
@@ -203,7 +136,9 @@ class ScanFragment : Fragment() {
         }
 
         // Register the current fragment as a callback
-        BLEScanner.registerCallback(this.scanCallback)
+        if (this.scanCallback !in BLEScanner.callbacks) {
+            BLEScanner.registerCallback(this.scanCallback)
+        }
         scanViewModel.scanFinished.postValue(false)
 
         // Show to the user that no devices have been found
@@ -221,20 +156,6 @@ class ScanFragment : Fragment() {
         // until the app is closed / moved to background
         BLEScanner.unregisterCallback(this.scanCallback)
         scanViewModel.scanFinished.postValue(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (scanViewModel.scanFinished.value == false) {
-            startBluetoothScan()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (scanViewModel.scanFinished.value == false) {
-            stopBluetoothScan()
-        }
     }
 
     override fun onDestroyView() {
