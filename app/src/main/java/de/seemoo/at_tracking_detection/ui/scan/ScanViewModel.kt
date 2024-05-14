@@ -8,10 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
@@ -31,8 +28,8 @@ class ScanViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
 ) : ViewModel() {
-    val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResult>>() // TODO: Problem needs to be immutable so that DiffUtil works
-    val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResult>>()
+    val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResultWrapper>>()
+    val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResultWrapper>>()
 
     val scanFinished = MutableLiveData(false)
 
@@ -48,28 +45,21 @@ class ScanViewModel @Inject constructor(
             return@launch
         }
 
-        val uniqueIdentifier = getPublicKey(scanResult) // either public key or MAC-Address
+        val wrappedScanResult = ScanResultWrapper(scanResult)
 
         val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value?.toMutableList() ?: mutableListOf()
         val bluetoothDeviceListLowRiskValue = bluetoothDeviceListLowRisk.value?.toMutableList() ?: mutableListOf()
 
-        if (bluetoothDeviceListHighRiskValue.any { getPublicKey(it) == uniqueIdentifier } ||
-            bluetoothDeviceListLowRiskValue.any { getPublicKey(it) == uniqueIdentifier }) {
-            // If the scanResult is already in either of the lists, return early
-            return@launch
-        }
-
-        val deviceType = getDeviceType(scanResult)
         val validDeviceTypes = getAllowedDeviceTypesFromSettings()
 
-        if (deviceType !in validDeviceTypes) {
+        if (wrappedScanResult.deviceType !in validDeviceTypes) {
             // If device not selected in settings then do not add ScanResult to list or database
             return@launch
         }
 
         val currentDate = LocalDateTime.now()
         if (beaconRepository.getNumberOfBeaconsAddress(
-                deviceAddress = uniqueIdentifier,
+                deviceAddress = wrappedScanResult.uniqueIdentifier,
                 since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
             ) == 0) {
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
@@ -87,21 +77,31 @@ class ScanViewModel @Inject constructor(
         }
 
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-        val device = deviceRepository.getDevice(uniqueIdentifier)
+        val device = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
-        bluetoothDeviceListHighRiskValue.removeIf {
-            getPublicKey(it) == uniqueIdentifier
+        val elementHighRisk: ScanResultWrapper? = bluetoothDeviceListHighRiskValue.find {
+            it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
         }
-        bluetoothDeviceListLowRiskValue.removeIf {
-            getPublicKey(it) == uniqueIdentifier
+        val elementLowRisk: ScanResultWrapper? = bluetoothDeviceListLowRiskValue.find {
+            it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
         }
 
-        if (BaseDevice.getConnectionState(scanResult) in DeviceManager.unsafeConnectionState && ((device != null && !device.ignore) || device==null)) {
+        if (elementHighRisk != null) {
+            elementHighRisk.rssi = wrappedScanResult.rssi
+            elementHighRisk.txPower = wrappedScanResult.txPower
+            elementHighRisk.isConnectable = wrappedScanResult.isConnectable
+        } else if (wrappedScanResult.connectionState in DeviceManager.unsafeConnectionState && ((device != null && !device.ignore) || device==null)) {
             // only add possible devices to list
-            bluetoothDeviceListHighRiskValue.add(scanResult)
+            bluetoothDeviceListHighRiskValue.add(wrappedScanResult)
+        }
 
-        } else {
-            bluetoothDeviceListLowRiskValue.add(scanResult)
+        if (elementLowRisk != null) {
+            elementLowRisk.rssi = wrappedScanResult.rssi
+            elementLowRisk.txPower = elementLowRisk.txPower
+            elementLowRisk.isConnectable = wrappedScanResult.isConnectable
+        } else if ((wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState || (device == null || device.ignore)) && elementHighRisk == null ) {
+            // only add possible devices to list
+            bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
         }
 
         bluetoothDeviceListHighRiskValue.sortByDescending { it.rssi }
@@ -110,7 +110,7 @@ class ScanViewModel @Inject constructor(
         bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
         bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)
 
-        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $uniqueIdentifier")
+        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $wrappedScanResult.uniqueIdentifier")
         Timber.d(
             "status bytes: ${
                 scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)

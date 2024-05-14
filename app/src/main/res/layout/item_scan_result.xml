@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="scanResult"
-            type="android.bluetooth.le.ScanResult" />
+            name="wrappedScanResult"
+            type="de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper" />
 
         <import type="android.view.View" />
 
@@ -50,7 +50,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_left"
-                app:setDeviceDrawable="@{scanResult}"
+                app:setDeviceDrawable="@{wrappedScanResult}"
                 app:tint="?android:attr/textColorTertiary"
                 tools:src="@drawable/ic_airtag" />
 
@@ -68,7 +68,7 @@
                 app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:setDeviceName="@{scanResult}"
+                app:setDeviceName="@{wrappedScanResult}"
                 tools:text="Debug Device" />
 
             <ImageView
@@ -83,7 +83,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_right"
                 app:layout_constraintRight_toLeftOf="@id/device_arrow"
-                app:setSignalStrengthDrawable="@{scanResult}" />
+                app:setSignalStrengthDrawable="@{wrappedScanResult}" />
 
             <ImageView
                 android:id="@+id/device_arrow"

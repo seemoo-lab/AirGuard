@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
-import android.annotation.SuppressLint
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
@@ -30,7 +29,6 @@ class ScanFragment : Fragment() {
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,12 +44,9 @@ class ScanFragment : Fragment() {
 
         scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {newList ->
             bluetoothDeviceAdapterHighRisk.submitList(newList)
-            bluetoothDeviceAdapterHighRisk.notifyDataSetChanged()
         }
-
         scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {newList ->
             bluetoothDeviceAdapterLowRisk.submitList(newList)
-            bluetoothDeviceAdapterLowRisk.notifyDataSetChanged()
         }
 
         scanViewModel.scanFinished.observe(viewLifecycleOwner) {
