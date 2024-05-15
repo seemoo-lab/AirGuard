@@ -40,17 +40,6 @@ class Chipolo(val id: Int) : Device() {
         override val websiteManufacturer: String
             get() = "https://chipolo.net/"
 
-        override val numberOfHoursToBeConsideredForTrackingDetection: Long
-            get() = super.numberOfHoursToBeConsideredForTrackingDetection
-
-        override val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
-            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionLow
-
-        override val numberOfLocationsToBeConsideredForTrackingDetectionMedium: Int
-            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionMedium
-
-        override val numberOfLocationsToBeConsideredForTrackingDetectionHigh: Int
-            get() = super.numberOfLocationsToBeConsideredForTrackingDetectionHigh
 
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FE33-0000-1000-8000-00805F9B34FB")

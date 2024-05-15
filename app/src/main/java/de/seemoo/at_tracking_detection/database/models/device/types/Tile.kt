@@ -41,14 +41,11 @@ class Tile(val id: Int) : Device(){
         override val statusByteDeviceType: UInt
             get() = 0u
 
-        override val numberOfHoursToBeConsideredForTrackingDetection: Long
-            get() = super.numberOfHoursToBeConsideredForTrackingDetection
-
         override val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
-            get() = 8
+            get() = 5
 
         override val numberOfLocationsToBeConsideredForTrackingDetectionMedium: Int
-            get() = 5
+            get() = 4
 
         override val numberOfLocationsToBeConsideredForTrackingDetectionHigh: Int
             get() = 3

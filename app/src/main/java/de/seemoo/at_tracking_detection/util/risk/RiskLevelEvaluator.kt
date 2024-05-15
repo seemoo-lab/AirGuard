@@ -107,9 +107,9 @@ class RiskLevelEvaluator(
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 120
 
         // Default Values:
-        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 3
-        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 4
-        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 5
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 2
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 3
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 4
 
         private fun getAtLeastTrackedSince(): LocalDateTime = LocalDateTime.now().minusMinutes(
             getMinutesAtLeastTrackedBeforeAlarm()
