@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+<!-- Required for finding Bluetooth trackers -->
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
     <uses-feature android:name="android.hardware.bluetooth" />
 
+<!--   Checking if the user has internet access before we perform a data Upload -->
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true" />
+<!--  Required for finding Bluetooth trackers  -->
     <uses-permission
         android:name="android.permission.BLUETOOTH"
         android:required="true" />
+<!--  Required for connecting to Bluetooth trackers to play a sound  -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<!--  Required for finding Bluetooth trackers  -->
+
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
         android:required="true" />
+<!--    Enabling Bluetooth on the user's behalf. Android 13 or lower  -->
     <uses-permission
         android:name="android.permission.BLUETOOTH_ADMIN"
         android:required="true" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<!--   Required for sharing optional statistics data  -->
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<!--  Required for performing regular Bluetooth scans in the background  -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--  Required for accessing the user's location when a tracker has been found  -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<!--   We use the foreground service permission to get the user's location. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
+<!--Required for scheduling background scans-->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
