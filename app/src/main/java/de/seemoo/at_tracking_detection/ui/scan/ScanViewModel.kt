@@ -87,7 +87,8 @@ class ScanViewModel @Inject constructor(
         }
 
         if (elementHighRisk != null) {
-            elementHighRisk.rssi = wrappedScanResult.rssi
+            elementHighRisk.rssi.set(wrappedScanResult.rssi.get())
+            elementHighRisk.rssiValue = wrappedScanResult.rssiValue
             elementHighRisk.txPower = wrappedScanResult.txPower
             elementHighRisk.isConnectable = wrappedScanResult.isConnectable
         } else if (wrappedScanResult.connectionState in DeviceManager.unsafeConnectionState && ((device != null && !device.ignore) || device==null)) {
@@ -96,16 +97,17 @@ class ScanViewModel @Inject constructor(
         }
 
         if (elementLowRisk != null) {
-            elementLowRisk.rssi = wrappedScanResult.rssi
-            elementLowRisk.txPower = elementLowRisk.txPower
+            elementLowRisk.rssi.set(wrappedScanResult.rssi.get())
+            elementLowRisk.rssiValue = wrappedScanResult.rssiValue
+            elementLowRisk.txPower = wrappedScanResult.txPower
             elementLowRisk.isConnectable = wrappedScanResult.isConnectable
         } else if ((wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState || (device == null || device.ignore)) && elementHighRisk == null ) {
             // only add possible devices to list
             bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
         }
 
-        bluetoothDeviceListHighRiskValue.sortByDescending { it.rssi }
-        bluetoothDeviceListLowRiskValue.sortByDescending { it.rssi }
+        bluetoothDeviceListHighRiskValue.sortByDescending { it.rssiValue }
+        bluetoothDeviceListLowRiskValue.sortByDescending { it.rssiValue }
 
         bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
         bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)

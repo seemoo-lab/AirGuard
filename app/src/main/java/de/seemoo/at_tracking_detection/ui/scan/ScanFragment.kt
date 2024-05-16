@@ -158,6 +158,20 @@ class ScanFragment : Fragment() {
         stopBluetoothScan()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (scanViewModel.scanFinished.value == false) {
+            startBluetoothScan()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (scanViewModel.scanFinished.value == false) {
+            stopBluetoothScan()
+        }
+    }
+
     companion object {
         private const val SCAN_DURATION = 60_000L
     }
