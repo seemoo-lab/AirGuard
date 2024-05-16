@@ -7,11 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.ScanRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
@@ -24,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
-    private val scanRepository: ScanRepository,
+    private val deviceRepository: DeviceRepository,
     private val beaconRepository: BeaconRepository,
     private val locationProvider: LocationProvider,
 ) : ViewModel() {
@@ -76,7 +75,6 @@ class ScanViewModel @Inject constructor(
             )
         }
 
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val device = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
         val elementHighRisk: ScanResultWrapper? = bluetoothDeviceListHighRiskValue.find {
