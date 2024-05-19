@@ -284,7 +284,9 @@
     <string name="onboarding_setting_title">Show Onboarding</string>
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
+    <string name="location_off_explanation">Location is turned off. This app requires the location permission to scan for nearby trackers. Please turn on location in your system settings.\n\nIt is possible that you have to restart the App for this to have an effect.</string>
     <string name="open_bluetooth_settings">Open Bluetooth settings</string>
+    <string name="open_location_settings">Open Location settings</string>
 
     <string name="battery_text">Battery Level: </string>
     <string name="battery_full">Full</string>

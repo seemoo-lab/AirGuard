@@ -32,11 +32,14 @@ class ScanViewModel @Inject constructor(
 
     val scanFinished = MutableLiveData(false)
 
-    var bluetoothEnabled = MutableLiveData(true)
+    val bluetoothEnabled = MutableLiveData(true)
+    val locationEnabled = MutableLiveData(true)
+
     init {
         bluetoothDeviceListHighRisk.value = mutableListOf()
         bluetoothDeviceListLowRisk.value = mutableListOf()
         bluetoothEnabled.value = BLEScanner.isBluetoothOn()
+        locationEnabled.value = LocationProvider.isLocationTurnedOn()
     }
 
     fun addScanResult(scanResult: ScanResult) = viewModelScope.launch(Dispatchers.IO) {

@@ -150,7 +150,7 @@
             android:layout_marginBottom="16dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{!vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{!vm.bluetoothEnabled || !vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_stop_24"
@@ -166,6 +166,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            />
+
+        <include
+            android:id="@+id/include_location_disabled"
+            layout="@layout/include_location_disabled"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="@{vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

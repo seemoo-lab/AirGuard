@@ -1,12 +1,15 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import timber.log.Timber
@@ -300,6 +303,13 @@ open class LocationProvider @Inject constructor(
         const val MIN_DISTANCE_METER = 0.0F
         const val MAX_AGE_SECONDS = 120L
         const val MIN_ACCURACY_METER = 120L
+
+        fun isLocationTurnedOn(): Boolean {
+            val context = ATTrackingDetectionApplication.getAppContext()
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.FUSED_PROVIDER)
+        }
     }
 
 }
