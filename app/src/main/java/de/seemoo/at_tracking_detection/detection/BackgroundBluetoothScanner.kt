@@ -104,12 +104,17 @@ object BackgroundBluetoothScanner {
         location = null
 
         // Set a wake lock to keep the CPU running while we complete the scanning
-        val wakeLock: PowerManager.WakeLock =
-            (applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+        val powerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock: PowerManager.WakeLock? = powerManager.run {
+            try {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
-                    acquire(5*60*1000L /*5 minutes*/)
+                    acquire(5 * 60 * 1000L /*5 minutes*/)
                 }
+            } catch (e: SecurityException) {
+                Timber.w("Failed to acquire wake lock: ${e.message}")
+                null
             }
+        }
 
         val useLocation = SharedPrefs.useLocationInTrackingDetection
         if (useLocation) {
@@ -178,7 +183,7 @@ object BackgroundBluetoothScanner {
         BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
 
         // Release the wake lock when we are done
-        wakeLock.release()
+        wakeLock?.release()
 
         Timber.d("Finished Background Scan")
         return BackgroundScanResults(
