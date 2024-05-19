@@ -20,6 +20,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
@@ -59,17 +60,17 @@ object BackgroundBluetoothScanner {
         get() {
         return ATTrackingDetectionApplication.getCurrentApp().notificationService
     }
-    val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider
         get() {
             return ATTrackingDetectionApplication.getCurrentApp().locationProvider
         }
 
-    val scanRepository: ScanRepository
+    private val scanRepository: ScanRepository
         get() {
             return ATTrackingDetectionApplication.getCurrentApp().scanRepository
         }
 
-    var isScanning = false
+    private var isScanning = false
     class BackgroundScanResults(var duration: Long, var scanMode: Int, var numberDevicesFound: Int, var failed: Boolean)
     suspend fun scanInBackground(startedFrom: String): BackgroundScanResults {
         if (isScanning) {
@@ -79,9 +80,7 @@ object BackgroundBluetoothScanner {
 
         Timber.d("Starting BackgroundBluetoothScanner from $startedFrom")
         val scanMode = getScanMode()
-        val scanId =
-            scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
-
+        val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
 
         if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
@@ -91,6 +90,10 @@ object BackgroundBluetoothScanner {
             val bluetoothManager =
                 applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
+            if (bluetoothAdapter.bluetoothLeScanner == null) {
+                Timber.e("BluetoothLeScanner not found!")
+                return BackgroundScanResults(0, 0, 0, true)
+            }
         } catch (e: Throwable) {
             Timber.e("BluetoothAdapter not found!")
             return BackgroundScanResults(0, 0, 0, true)
@@ -113,6 +116,9 @@ object BackgroundBluetoothScanner {
             // Returns the last known location if this matches our requirements or starts new location updates
             locationFetchStarted = System.currentTimeMillis()
             location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L)
+            if (location == null) {
+                Timber.e("Failed to retrieve location")
+            }
         }
 
         //Starting BLE Scan
@@ -143,11 +149,11 @@ object BackgroundBluetoothScanner {
 
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
-            val deviceType = DeviceManager.getDeviceType(discoveredDevice.scanResult)
+            val deviceType = discoveredDevice.wrappedScanResult.deviceType
 
             if (deviceType in validDeviceTypes) {
                 insertScanResult(
-                    scanResult = discoveredDevice.scanResult,
+                    wrappedScanResult = discoveredDevice.wrappedScanResult,
                     latitude = location?.latitude,
                     longitude = location?.longitude,
                     altitude = location?.altitude,
@@ -159,14 +165,12 @@ object BackgroundBluetoothScanner {
 
         SharedPrefs.lastScanDate = LocalDateTime.now()
         SharedPrefs.isScanningInBackground = false
-        if (scanId != null) {
-            val scan = scanRepository.scanWithId(scanId.toInt())
-            if (scan != null) {
-                scan.endDate = LocalDateTime.now()
-                scan.duration = scanDuration.toInt() / 1000
-                scan.noDevicesFound = scanResultDictionary.size
-                scanRepository.update(scan)
-            }
+        val scan = scanRepository.scanWithId(scanId.toInt())
+        if (scan != null) {
+            scan.endDate = LocalDateTime.now()
+            scan.duration = scanDuration.toInt() / 1000
+            scan.noDevicesFound = scanResultDictionary.size
+            scanRepository.update(scan)
         }
 
         Timber.d("Scheduling tracking detector worker")
@@ -188,11 +192,12 @@ object BackgroundBluetoothScanner {
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
+            val wrappedScanResult = ScanResultWrapper(scanResult)
             //Checks if the device has been found already
-            if (!scanResultDictionary.containsKey(BaseDevice.getPublicKey(scanResult))) {
-                Timber.d("Found ${scanResult.device.address} at ${LocalDateTime.now()}")
-                scanResultDictionary[BaseDevice.getPublicKey(scanResult)] =
-                    DiscoveredDevice(scanResult, LocalDateTime.now())
+            if (!scanResultDictionary.containsKey(wrappedScanResult.uniqueIdentifier)) {
+                Timber.d("Found ${wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")
+                scanResultDictionary[wrappedScanResult.uniqueIdentifier] =
+                    DiscoveredDevice(wrappedScanResult, LocalDateTime.now())
             }
         }
 
@@ -265,16 +270,16 @@ object BackgroundBluetoothScanner {
         }
     }
 
-        class DiscoveredDevice(var scanResult: ScanResult, var discoveryDate: LocalDateTime)
+        class DiscoveredDevice(var wrappedScanResult: ScanResultWrapper, var discoveryDate: LocalDateTime)
 
         const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
         const val TIME_BETWEEN_BEACONS: Long =
             15 // 15 minutes until the same beacon gets saved again in the db
-        const val LOCATION_UPDATE_MAX_TIME_MS: Long =
+        private const val LOCATION_UPDATE_MAX_TIME_MS: Long =
             122_000L // Wait maximum 122s to get a location update
 
         suspend fun insertScanResult(
-            scanResult: ScanResult,
+            wrappedScanResult: ScanResultWrapper,
             latitude: Double?,
             longitude: Double?,
             altitude: Double?,
@@ -287,7 +292,7 @@ object BackgroundBluetoothScanner {
                 return Pair(null, null)
             }
 
-            val deviceSaved = saveDevice(scanResult, discoveryDate) ?: return Pair(
+            val deviceSaved = saveDevice(wrappedScanResult, discoveryDate) ?: return Pair(
                 null,
                 null
             ) // return when device does not qualify to be saved
@@ -302,22 +307,22 @@ object BackgroundBluetoothScanner {
             )?.locationId
 
             val beaconSaved =
-                saveBeacon(scanResult, discoveryDate, locId) ?: return Pair(null, null)
+                saveBeacon(wrappedScanResult, discoveryDate, locId) ?: return Pair(null, null)
 
             return Pair(deviceSaved, beaconSaved)
         }
 
         private suspend fun saveBeacon(
-            scanResult: ScanResult,
+            wrappedScanResult: ScanResultWrapper,
             discoveryDate: LocalDateTime,
             locId: Int?
         ): Beacon? {
             val beaconRepository =
                 ATTrackingDetectionApplication.getCurrentApp().beaconRepository
-            val uuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
-            val uniqueIdentifier = BaseDevice.getPublicKey(scanResult)
+            val uuids = wrappedScanResult.serviceUuids
+            val uniqueIdentifier = wrappedScanResult.uniqueIdentifier
 
-            val connectionState: ConnectionState = BaseDevice.getConnectionState(scanResult)
+            val connectionState: ConnectionState = wrappedScanResult.connectionState
             val connectionStateString = Utility.connectionStateToString(connectionState)
 
             var beacon: Beacon? = null
@@ -331,12 +336,12 @@ object BackgroundBluetoothScanner {
                 beacon = if (BuildConfig.DEBUG) {
                     // Save the manufacturer data to the beacon
                     Beacon(
-                        discoveryDate, scanResult.rssi, BaseDevice.getPublicKey(scanResult), locId,
-                        scanResult.scanRecord?.bytes, uuids, connectionStateString
+                        discoveryDate, wrappedScanResult.rssiValue, wrappedScanResult.uniqueIdentifier, locId,
+                        wrappedScanResult.mfg, uuids, connectionStateString
                     )
                 } else {
                     Beacon(
-                        discoveryDate, scanResult.rssi, BaseDevice.getPublicKey(scanResult), locId,
+                        discoveryDate, wrappedScanResult.rssiValue, wrappedScanResult.uniqueIdentifier, locId,
                         null, uuids, connectionStateString
                     )
                 }
@@ -358,28 +363,28 @@ object BackgroundBluetoothScanner {
         }
 
         private suspend fun saveDevice(
-            scanResult: ScanResult,
+            wrappedScanResult: ScanResultWrapper,
             discoveryDate: LocalDateTime
         ): BaseDevice? {
             val deviceRepository =
                 ATTrackingDetectionApplication.getCurrentApp().deviceRepository
 
-            val deviceAddress = BaseDevice.getPublicKey(scanResult)
+            val deviceAddress = wrappedScanResult.uniqueIdentifier
 
             // Checks if Device already exists in device database
             var device = deviceRepository.getDevice(deviceAddress)
             if (device == null) {
                 // Do not Save Samsung Devices
-                device = BaseDevice(scanResult)
+                device = BaseDevice(wrappedScanResult.scanResult)
 
                 // Check if ConnectionState qualifies Device to be saved
                 // Only Save when Device is offline long enough
-                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.savedConnectionStates) {
+                if (wrappedScanResult.connectionState !in DeviceManager.savedConnectionStates) {
                     Timber.d("Device not in a saved connection state... Skipping!")
                     return null
                 }
 
-                if (BaseDevice.getConnectionState(scanResult) !in DeviceManager.unsafeConnectionState) {
+                if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
                     Timber.d("Device is safe and will be hidden to the user!")
                     device.safeTracker = true
                 }

@@ -15,6 +15,8 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     val uniqueIdentifier = getPublicKey(scanResult)  // either public key or MAC-Address
     val deviceType = getDeviceType(scanResult)
     var connectionState = getConnectionState(scanResult)
+    val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
+    val mfg = scanResult.scanRecord?.bytes
 
     override fun hashCode(): Int {
         return scanResult.hashCode()

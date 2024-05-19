@@ -66,7 +66,7 @@ class ScanViewModel @Inject constructor(
             Timber.d("Got location $location in ScanViewModel")
 
             BackgroundBluetoothScanner.insertScanResult(
-                scanResult = scanResult,
+                wrappedScanResult = wrappedScanResult,
                 latitude = location?.latitude,
                 longitude = location?.longitude,
                 altitude = location?.altitude,

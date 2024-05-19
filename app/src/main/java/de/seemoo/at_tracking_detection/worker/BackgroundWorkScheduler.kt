@@ -98,7 +98,7 @@ class BackgroundWorkScheduler @Inject constructor(
         /**
          * If the app does not scan in background for two hours the AlarmManager will execute and call the `ScheduleWorkersReceiver` to initiate a new background scan
          */
-        @SuppressLint("UnspecifiedImmutableFlag")
+        // @SuppressLint("UnspecifiedImmutableFlag")
         fun scheduleAlarmWakeupIfScansFail() {
             //Run in 2 hours
 //            val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
@@ -148,21 +148,29 @@ class BackgroundWorkScheduler @Inject constructor(
                 Context.ALARM_SERVICE) as AlarmManager
 
             // We use exact Alarms since we want regular background scans to happen.
-            try {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                Timber.d("Scheduled an setExactAndAllowWhileIdle alarm to start a scan at $alarmDate")
-            }catch (exception: SecurityException) {
+            if (Utility.checkPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)) {
                 try {
-                    Timber.w("Failed scheduling setExactAndAllowWhileIdle Alarm scan")
-                    // Alarm could not be scheduled because user disallowed battery exception
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                    Timber.d("Scheduled an setExact alarm to start a scan at $alarmDate")
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                    Timber.d("Scheduled an setExactAndAllowWhileIdle alarm to start a scan at $alarmDate")
                 }catch (exception: SecurityException) {
-                    Timber.w("Failed scheduling setExact Alarm scan")
-                    // Alarm could not be scheduled because user disallowed battery exception
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                    Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
+                    try {
+                        Timber.w("Failed scheduling setExactAndAllowWhileIdle Alarm scan")
+                        // Alarm could not be scheduled because user disallowed battery exception
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                        Timber.d("Scheduled an setExact alarm to start a scan at $alarmDate")
+                    }catch (exception: SecurityException) {
+                        Timber.w("Failed scheduling setExact Alarm scan")
+                        // Alarm could not be scheduled because user disallowed battery exception
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                        Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
+                    }
+                } catch (exception: Exception) {
+                    Timber.e("Unexpected exception while scheduling alarm: ${exception.message}")
                 }
+            } else {
+                // Alarm could not be scheduled because user disallowed battery exception
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
             }
 
             SharedPrefs.nextScanDate = alarmDate
