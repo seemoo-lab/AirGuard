@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -27,7 +28,7 @@ class TrackingViewModel @Inject constructor(
 
     val noLocationsYet = MutableLiveData(true)
 
-    val manufacturerWebsiteUrl = MutableLiveData<String>("https://www.apple.com/airtag/")
+    val manufacturerWebsiteUrl = MutableLiveData<String>()
 
     var deviceType = MutableLiveData<DeviceType>(DeviceType.UNKNOWN)
 
@@ -64,24 +65,33 @@ class TrackingViewModel @Inject constructor(
     }
 
     fun loadDevice(address: String) =
-        deviceRepository.getDevice(address).also { it ->
-            device.postValue(it)
-            if (it != null) {
-                val deviceObserved = it.nextObservationNotification != null && it.nextObservationNotification!!.isAfter(
+        deviceRepository.getDevice(address).also { device ->
+            this.device.postValue(device)
+
+            deviceType.value = DeviceManager.getDeviceTypeFromCache(address) ?: DeviceType.UNKNOWN
+            Timber.d("Set Device type: ${deviceType.value}")
+
+            if (device != null) {
+                if (deviceType.value == null) {
+                    deviceType.value = device.device.deviceContext.deviceType
+                }
+                val deviceObserved = device.nextObservationNotification != null && device.nextObservationNotification!!.isAfter(
                     LocalDateTime.now())
                 trackerObserved.postValue(deviceObserved)
-                deviceIgnored.postValue(it.ignore)
+                deviceIgnored.postValue(device.ignore)
                 noLocationsYet.postValue(false)
-                connectable.postValue(it.device is Connectable)
-                showNfcHint.postValue(it.deviceType == DeviceType.AIRTAG)
-                manufacturerWebsiteUrl.postValue(it.device.deviceContext.websiteManufacturer)
-                deviceType.postValue(it.device.deviceContext.deviceType)
-                Timber.d("Set Device type: ${it.device.deviceContext.deviceType}")
-                canBeIgnored.postValue(it.device.deviceContext.deviceType.canBeIgnored())
-                val notification = notificationRepository.notificationForDevice(it).firstOrNull()
+                connectable.postValue(device.device is Connectable)
+                canBeIgnored.postValue(device.device.deviceContext.deviceType.canBeIgnored())
+                val notification = notificationRepository.notificationForDevice(device).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {
                 noLocationsYet.postValue(true)
+            }
+            showNfcHint.postValue(deviceType.value == DeviceType.AIRTAG)
+            if (deviceType.value != null) {
+                val websiteURL = DeviceManager.getWebsiteURL(deviceType.value!!)
+                manufacturerWebsiteUrl.postValue(websiteURL)
+            } else {
                 manufacturerWebsiteUrl.postValue("")
             }
         }

@@ -21,13 +21,22 @@ object DeviceManager {
         val deviceAddress = scanResult.device.address
 
         // Check cache, before calculating again
+        var deviceType: DeviceType? = getDeviceTypeFromCache(deviceAddress)
+        if (deviceType != null) {
+            return deviceType
+        } else {
+            Timber.d("Device type not in cache, calculating...")
+            deviceType = calculateDeviceType(scanResult)
+            deviceTypeCache[deviceAddress] = deviceType
+            return deviceType
+        }
+    }
+
+    fun getDeviceTypeFromCache(deviceAddress: String): DeviceType? {
         deviceTypeCache[deviceAddress]?.let { cachedDeviceType ->
             return cachedDeviceType
         }
-
-        val deviceType = calculateDeviceType(scanResult)
-        deviceTypeCache[deviceAddress] = deviceType
-        return deviceType
+        return null
     }
 
     private fun calculateDeviceType(scanResult: ScanResult): DeviceType {
@@ -57,6 +66,21 @@ object DeviceManager {
             }
         }
         return Unknown.deviceType
+    }
+
+    fun getWebsiteURL(deviceType: DeviceType): String {
+        return when (deviceType) {
+            DeviceType.UNKNOWN -> Unknown.websiteManufacturer
+            DeviceType.AIRTAG -> AirTag.websiteManufacturer
+            DeviceType.APPLE -> AppleDevice.websiteManufacturer
+            DeviceType.AIRPODS -> AirPods.websiteManufacturer
+            DeviceType.TILE -> Tile.websiteManufacturer
+            DeviceType.FIND_MY -> FindMy.websiteManufacturer
+            DeviceType.CHIPOLO -> Chipolo.websiteManufacturer
+            DeviceType.SAMSUNG -> SamsungDevice.websiteManufacturer
+            DeviceType.GALAXY_SMART_TAG -> SmartTag.websiteManufacturer
+            DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.websiteManufacturer
+        }
     }
 
     val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }
