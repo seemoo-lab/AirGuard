@@ -132,8 +132,8 @@ data class BaseDevice(
             }
         }
 
-        fun getPublicKey(scanResult: ScanResult): String {
-            return when (DeviceManager.getDeviceType(scanResult)) {
+        fun getPublicKey(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
+            return when (deviceType) {
                 DeviceType.SAMSUNG,
                 DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getPublicKey(scanResult)
@@ -141,8 +141,8 @@ data class BaseDevice(
             }
         }
 
-        fun getConnectionState(scanResult: ScanResult): ConnectionState {
-            return when (DeviceManager.getDeviceType(scanResult)) {
+        fun getConnectionState(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): ConnectionState {
+            return when (deviceType) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
                 DeviceType.SAMSUNG,
@@ -156,8 +156,8 @@ data class BaseDevice(
             }
         }
 
-        fun getBatteryState(scanResult: ScanResult): BatteryState {
-            return when (DeviceManager.getDeviceType(scanResult)) {
+        fun getBatteryState(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): BatteryState {
+            return when (deviceType) {
                 DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getBatteryState(scanResult)
                 DeviceType.FIND_MY,
@@ -167,8 +167,8 @@ data class BaseDevice(
             }
         }
 
-        fun getBatteryStateAsString(scanResult: ScanResult): String {
-            return when (getBatteryState(scanResult)) {
+        fun getBatteryStateAsString(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
+            return when (getBatteryState(scanResult, deviceType)) {
                 BatteryState.LOW -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_low)
                 BatteryState.VERY_LOW -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_very_low)
                 BatteryState.MEDIUM -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.battery_medium)

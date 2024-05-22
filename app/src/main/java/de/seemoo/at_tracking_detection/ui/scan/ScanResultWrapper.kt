@@ -12,9 +12,9 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     var rssiValue: Int = scanResult.rssi
     var txPower: Int = scanResult.txPower
     var isConnectable: Boolean = scanResult.isConnectable
-    val uniqueIdentifier = getPublicKey(scanResult)  // either public key or MAC-Address
     val deviceType = getDeviceType(scanResult)
-    var connectionState = getConnectionState(scanResult)
+    val uniqueIdentifier = getPublicKey(scanResult, deviceType)  // either public key or MAC-Address
+    var connectionState = getConnectionState(scanResult, deviceType)
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes
 
