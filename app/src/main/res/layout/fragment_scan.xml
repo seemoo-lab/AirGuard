@@ -72,6 +72,8 @@
 
                 <!-- Low-risk trackers label -->
                 <RelativeLayout
+                    android:id="@+id/low_risk_trackers_wrapper"
+                    android:visibility="@{vm.lowRiskIsEmpty ? View.GONE : View.VISIBLE, default=visible}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

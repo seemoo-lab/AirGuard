@@ -134,4 +134,14 @@ class ScanViewModel @Inject constructor(
         addSource(bluetoothDeviceListHighRisk) { update() }
         addSource(bluetoothDeviceListLowRisk) { update() }
     }
+
+    val lowRiskIsEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        // Function to update the isListEmpty LiveData
+        fun update() {
+            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() ?: true
+            this.value = lowRiskEmpty
+        }
+
+        addSource(bluetoothDeviceListLowRisk) { update() }
+    }
 }
