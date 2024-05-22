@@ -345,6 +345,7 @@
     <string name="explanation_samsung">Hinweis:\nSamsung Geräte ändern ihre Identität mindestens alle 24 Stunden.\nSmartTags und andere Samsung Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
     <string name="explanation_tile">Hinweis:\nTile Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
     <string name="explanation_chipolo">Hinweis:\nChipolo Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
+    <string name="explanation_unknown">Hinweis:\nManche Geräte ändern ihre Identität regelmäßig.\nDies kann zu mehr falschen Warnungen führen.\nDiese Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
 
     <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>
     <string name="info_button_description">Zeigt Erklärtext</string>

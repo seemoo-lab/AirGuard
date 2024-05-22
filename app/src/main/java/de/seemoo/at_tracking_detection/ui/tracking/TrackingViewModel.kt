@@ -72,16 +72,14 @@ class TrackingViewModel @Inject constructor(
             Timber.d("Set Device type: ${deviceType.value}")
 
             if (device != null) {
-                if (deviceType.value == null) {
-                    deviceType.value = device.device.deviceContext.deviceType
-                }
+                deviceType.value = device.device.deviceContext.deviceType
                 val deviceObserved = device.nextObservationNotification != null && device.nextObservationNotification!!.isAfter(
                     LocalDateTime.now())
                 trackerObserved.postValue(deviceObserved)
                 deviceIgnored.postValue(device.ignore)
                 noLocationsYet.postValue(false)
                 connectable.postValue(device.device is Connectable)
-                canBeIgnored.postValue(device.device.deviceContext.deviceType.canBeIgnored())
+                canBeIgnored.postValue(deviceType.value!!.canBeIgnored())
                 val notification = notificationRepository.notificationForDevice(device).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {

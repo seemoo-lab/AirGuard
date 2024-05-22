@@ -377,6 +377,7 @@
     <string name="explanation_samsung">Please note:\nSamsung devices change their identifier over time.\nSmartTags and other Samsung SmartThings devices are recognized as new devices periodically and can be displayed multiple times.</string>
     <string name="explanation_tile">Please note:\nTile devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_chipolo">Please note:\nChipolo devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
+    <string name="explanation_unknown">Please note:\nSome devices change their identifier over time.\nThese devices are recognized as new devices periodically and can be displayed multiple times.</string>
 
     <string name="explanation_safe_trackers">Safe Trackers are trackers around you that are currently connected or have been connected to their owner devices in the last minutes. They most likely do not pose a threat to you.\nAdditionally all tracker marked as ignored will be considered to be safe.</string>
     <string name="device_name_cannot_be_empty">The device name cannot be empty</string>

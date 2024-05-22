@@ -31,7 +31,6 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
-import java.security.Permission
 
 object Utility {
 
@@ -250,7 +249,7 @@ object Utility {
             DeviceType.GALAXY_SMART_TAG_PLUS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
             DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
             DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
-            else -> ""
+            else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_unknown)
         }
     }
 
