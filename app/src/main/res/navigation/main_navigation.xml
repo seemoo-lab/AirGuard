@@ -242,6 +242,10 @@
             android:name="deviceAddress"
             app:argType="string" />
         <argument
+            android:name="deviceTypeAsString"
+            android:defaultValue="UNKNOWN"
+            app:argType="string" />
+        <argument
             android:name="notificationId"
             android:defaultValue="-1"
             app:argType="integer" />

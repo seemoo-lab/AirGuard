@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.ItemScanResultBinding
 import timber.log.Timber
 
@@ -38,7 +40,13 @@ class BluetoothDeviceAdapter:
             .setOnClickListener {
                 try {
                     val deviceAddress: String = wrappedScanResult.uniqueIdentifier
-                    val directions = ScanFragmentDirections.actionScanToTrackingFragment(deviceAddress)
+                    val deviceType: DeviceType = wrappedScanResult.deviceType
+                    val deviceTypeString = DeviceManager.deviceTypeToString(deviceType)
+
+                    val directions = ScanFragmentDirections.actionScanToTrackingFragment(
+                        deviceAddress = deviceAddress,
+                        deviceTypeAsString = deviceTypeString
+                    )
                     holder.itemView.findNavController()
                         .navigate(directions)
                 } catch (e: Exception) {

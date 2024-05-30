@@ -83,6 +83,14 @@ object DeviceManager {
         }
     }
 
+    fun deviceTypeToString(deviceType: DeviceType): String {
+        return deviceType.name
+    }
+
+    fun stringToDeviceType(deviceTypeString: String): DeviceType {
+        return DeviceType.valueOf(deviceTypeString)
+    }
+
     val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }
 
     val gattIntentFilter: IntentFilter = IntentFilter().apply {

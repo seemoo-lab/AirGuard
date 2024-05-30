@@ -31,6 +31,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Utility
@@ -69,9 +70,11 @@ class TrackingFragment : Fragment() {
         val notificationId = safeArgs.notificationId
         // This is called deviceAddress but contains the ID not necessarily the address
         val deviceAddress = safeArgs.deviceAddress
+        val deviceTypeAsString = safeArgs.deviceTypeAsString
+        val deviceType: DeviceType = DeviceManager.stringToDeviceType(deviceTypeAsString)
         trackingViewModel.notificationId.postValue(notificationId)
         trackingViewModel.deviceAddress.postValue(deviceAddress)
-        trackingViewModel.loadDevice(safeArgs.deviceAddress)
+        trackingViewModel.loadDevice(safeArgs.deviceAddress, deviceType)
         trackingViewModel.notificationId.observe(viewLifecycleOwner) {
             this.notificationId = it
         }

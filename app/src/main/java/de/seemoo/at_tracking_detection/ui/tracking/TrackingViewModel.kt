@@ -54,25 +54,19 @@ class TrackingViewModel @Inject constructor(
         beaconRepository.getDeviceBeacons(it)
     }
 
-    val beaconsHaveMissingLocation: LiveData<Boolean> = markerLocations.map {
-        it.any { beacon ->
-            beacon.locationId == null
-        }
-    }
-
     val amountBeacons: LiveData<String> = markerLocations.map {
         it.size.toString()
     }
 
-    fun loadDevice(address: String) =
+    fun loadDevice(address: String, deviceTypeOverride: DeviceType) =
         deviceRepository.getDevice(address).also { device ->
             this.device.postValue(device)
+            deviceType.value = deviceTypeOverride
 
-            deviceType.value = DeviceManager.getDeviceTypeFromCache(address) ?: DeviceType.UNKNOWN
             Timber.d("Set Device type: ${deviceType.value}")
 
             if (device != null) {
-                deviceType.value = device.device.deviceContext.deviceType
+                deviceType.value = device.device.deviceContext.deviceType // This line is still necessary for the Device List in Expert Mode
                 val deviceObserved = device.nextObservationNotification != null && device.nextObservationNotification!!.isAfter(
                     LocalDateTime.now())
                 trackerObserved.postValue(deviceObserved)

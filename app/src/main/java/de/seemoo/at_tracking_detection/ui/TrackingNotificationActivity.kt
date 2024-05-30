@@ -30,7 +30,10 @@ class TrackingNotificationActivity : AppCompatActivity() {
             Timber.e("Device address is needed! Going home...")
             this.onSupportNavigateUp()
         } else {
-            val args = TrackingFragmentArgs(deviceAddress, notificationId).toBundle()
+            val args = TrackingFragmentArgs(
+                deviceAddress = deviceAddress,
+                notificationId = notificationId
+            ).toBundle()
             navController.setGraph(R.navigation.tracking_navigation, args)
         }
 
