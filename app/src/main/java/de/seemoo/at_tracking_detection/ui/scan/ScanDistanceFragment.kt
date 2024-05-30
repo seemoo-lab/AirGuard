@@ -44,16 +44,17 @@ class ScanDistanceFragment : Fragment() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             result?.let {scanResult ->
-                val publicKey = safeArgs.deviceAddress
+                val filteredIdentifier = safeArgs.deviceAddress
 
-                if (publicKey == null) {
+                if (filteredIdentifier == null) {
                     showSearchMessage()
                 }
 
-                if (deviceType == null) {
-                    deviceType = DeviceManager.getDeviceType(scanResult)
-                }
-                if (getPublicKey(scanResult, deviceType!!) == publicKey){
+                if (getPublicKey(scanResult) == filteredIdentifier){
+                    if (deviceType == null) {
+                        deviceType = DeviceManager.getDeviceType(scanResult)
+                    }
+
                     val connectionState = getConnectionState(scanResult, deviceType!!)
                     viewModel.connectionState.postValue(connectionState)
                     val connectionStateString = getConnectionStateExplanation(connectionState, deviceType!!)
