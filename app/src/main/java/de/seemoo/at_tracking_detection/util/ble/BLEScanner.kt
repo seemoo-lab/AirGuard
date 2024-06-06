@@ -11,6 +11,7 @@ import android.location.Location
 import android.provider.Settings
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
@@ -100,8 +101,7 @@ object BLEScanner {
             super.onScanResult(callbackType, result)
             // TODO: Add scan result to DB here. Detection events should not be to close after each other.
             // New detection events (Beacons) every 15min
-//            Timber.d("Found a device $result")
-
+            // Timber.d("Found a device $result")
             result?.let { scanResult ->
                 scanResults.add(0, scanResult)
                 if (scanResults.size > 10) {

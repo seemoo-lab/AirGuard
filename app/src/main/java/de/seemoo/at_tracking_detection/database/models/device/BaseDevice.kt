@@ -109,6 +109,7 @@ data class BaseDevice(
         DeviceType.SAMSUNG -> SamsungDevice(deviceId)
         DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
         DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
+        DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork(deviceId)
         else -> {
             // For backwards compatibility
             if (payloadData?.and(0x10)?.toInt() != 0 && connectable == true) {
@@ -152,6 +153,7 @@ data class BaseDevice(
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
                 DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.getConnectionState(scanResult)
                 else -> ConnectionState.UNKNOWN
             }
         }

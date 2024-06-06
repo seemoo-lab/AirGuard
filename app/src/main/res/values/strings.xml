@@ -81,7 +81,7 @@
 
         We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous.</string>
 
-    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, SmartTag, Chipolo or a Tile is tracking you.</string>
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, Google "Find My Device" capable device, SmartTag, Chipolo or a Tile is tracking you.</string>
     <string name="location_permission_title">Location Permission</string>
     <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Bluetooth Trackers even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
 
@@ -129,7 +129,8 @@
     <string name="onboarding_share_data_yes">Yes</string>
     <string name="onboarding_share_data_dialog">Please decide if you want to participate or not. All data shared is completely anonymous.</string>
     <string name="device_name_airtag" translatable="false">AirTag %s</string>
-    <string name="device_name_find_my_device">Find My Device %s</string>
+    <string name="device_name_find_my_device">"Find My" Device %s</string>
+    <string name="device_name_find_my_device_google">"Find My Device" Device %s</string>
 
     <string name="notification_observe_tracker_title_base">Your observed tracker</string>
     <plurals name="notification_observe_tracker_positive">
@@ -176,7 +177,7 @@
     <string name="twitter_description">Check out our Twitter account</string>
     <string name="twitter">Twitter</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Galaxy SmartTags, Chipolos and Tiles.</string>
+    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -334,6 +335,7 @@
     <string name="samsung_device">Samsung Devices</string>
     <string name="smart_tag" translatable="false">SmartTags</string>
     <string name="tile" translatable="false">Tiles</string>
+    <string name="google_find_my">Google "Find My Device" Devices</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">Version %s</string>
     <string name="contact_us">Contact Us</string>

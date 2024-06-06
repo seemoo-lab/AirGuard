@@ -14,7 +14,8 @@ enum class DeviceType {
     CHIPOLO,
     SAMSUNG,
     GALAXY_SMART_TAG,
-    GALAXY_SMART_TAG_PLUS;
+    GALAXY_SMART_TAG_PLUS,
+    GOOGLE_FIND_MY_NETWORK;
 
     companion object  {
         fun userReadableName(deviceType: DeviceType): String {
@@ -29,6 +30,7 @@ enum class DeviceType {
                 SAMSUNG -> SamsungDevice.defaultDeviceName
                 GALAXY_SMART_TAG -> SmartTag.defaultDeviceName
                 GALAXY_SMART_TAG_PLUS -> SmartTagPlus.defaultDeviceName
+                GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
         }
 
@@ -44,6 +46,7 @@ enum class DeviceType {
                 SAMSUNG -> R.drawable.ic_baseline_device_unknown_24
                 GALAXY_SMART_TAG -> R.drawable.ic_smarttag_icon
                 GALAXY_SMART_TAG_PLUS -> R.drawable.ic_smarttag_icon
+                GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
             }
         }
 
@@ -64,6 +67,7 @@ enum class DeviceType {
                         allowedDeviceTypes.add(GALAXY_SMART_TAG_PLUS)
                     }
                     "tiles" -> allowedDeviceTypes.add(TILE)
+                    "google_find_my_network" -> allowedDeviceTypes.add(GOOGLE_FIND_MY_NETWORK)
                 }
             }
 
@@ -93,6 +97,7 @@ enum class DeviceType {
             SAMSUNG -> SamsungDevice.numberOfHoursToBeConsideredForTrackingDetection
             GALAXY_SMART_TAG -> SmartTag.numberOfHoursToBeConsideredForTrackingDetection
             GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfHoursToBeConsideredForTrackingDetection
+            GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfHoursToBeConsideredForTrackingDetection
         }
     }
 
@@ -108,6 +113,7 @@ enum class DeviceType {
             SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
             GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
             GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionLow
         }
     }
 
@@ -123,6 +129,7 @@ enum class DeviceType {
             SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionMedium
         }
     }
 
@@ -138,6 +145,7 @@ enum class DeviceType {
             SAMSUNG -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             GALAXY_SMART_TAG -> SmartTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             GALAXY_SMART_TAG_PLUS -> SmartTagPlus.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionHigh
         }
     }
 }

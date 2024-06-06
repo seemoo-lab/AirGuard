@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo)
+    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo, GoogleFindMyNetwork)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
     val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
@@ -32,7 +32,7 @@ object DeviceManager {
         }
     }
 
-    fun getDeviceTypeFromCache(deviceAddress: String): DeviceType? {
+    private fun getDeviceTypeFromCache(deviceAddress: String): DeviceType? {
         deviceTypeCache[deviceAddress]?.let { cachedDeviceType ->
             return cachedDeviceType
         }
@@ -54,6 +54,10 @@ object DeviceManager {
                         }
                     }
                 }
+            }
+
+             if (scanRecord.serviceData.contains(GoogleFindMyNetwork.offlineFindingServiceUUID)) {
+                return GoogleFindMyNetwork.deviceType
             }
 
             scanRecord.serviceUuids?.let { services ->
@@ -80,6 +84,7 @@ object DeviceManager {
             DeviceType.SAMSUNG -> SamsungDevice.websiteManufacturer
             DeviceType.GALAXY_SMART_TAG -> SmartTag.websiteManufacturer
             DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.websiteManufacturer
+            DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.websiteManufacturer
         }
     }
 
@@ -91,7 +96,9 @@ object DeviceManager {
         return DeviceType.valueOf(deviceTypeString)
     }
 
-    val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }
+    val scanFilter: List<ScanFilter> = devices.map {
+        it.bluetoothFilter
+    }
 
     val gattIntentFilter: IntentFilter = IntentFilter().apply {
         addAction(BluetoothConstants.ACTION_EVENT_RUNNING)

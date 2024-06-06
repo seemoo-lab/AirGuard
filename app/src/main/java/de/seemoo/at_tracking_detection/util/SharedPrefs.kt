@@ -194,9 +194,6 @@ object SharedPrefs {
         }
 
     var devicesFilter: Set<String>
-        // 0: Low
-        // 1: Medium
-        // 2: High
         get() {
             return sharedPreferences.getStringSet("devices_filter", getDefaultDevicesFilterSet())?:getDefaultDevicesFilterSet()
         }
