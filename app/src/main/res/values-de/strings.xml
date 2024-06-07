@@ -254,6 +254,7 @@
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
     <string name="settings_notification_priority_high">Benachrichtigungen werden als Alarm mit hoher Priorität erstellt</string>
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
+    <string name="google_found">Gefundene "Mein Gerät finden" Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="location_off_explanation">Standort ist ausgeschaltet. Diese App benötigt die Standort-Berechtigung, um nach Trackern in der Nähe zu scannen. Bitte aktivieren sie Standorte in ihren System-Einstellungen.\n\nEs kann sein, dass die App neu gestartet werden muss, dass der Scan funktioniert.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
