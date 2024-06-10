@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.worker
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -19,6 +18,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import android.Manifest
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import java.time.Instant
+import java.util.TimeZone
 
 @Singleton
 class BackgroundWorkScheduler @Inject constructor(
@@ -105,20 +106,35 @@ class BackgroundWorkScheduler @Inject constructor(
             // Run in 60minBack
             val timeInMillisUntilNotification: Long = 60 * 60 * 1000
 
-            val alarmDate = LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
+            val alarmDate =
+                LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
             val alarmTime = System.currentTimeMillis() + timeInMillisUntilNotification
 
-            val intent = Intent(ATTrackingDetectionApplication.getAppContext(), ScheduleWorkersReceiver::class.java)
+            val intent = Intent(
+                ATTrackingDetectionApplication.getAppContext(),
+                ScheduleWorkersReceiver::class.java
+            )
             intent.action = "AlarmManagerWakeUp_Schedule_BackgroundScan"
 
             val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
-                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-            }else {
-                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
+            } else {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
             }
 
             val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
-                Context.ALARM_SERVICE) as AlarmManager
+                Context.ALARM_SERVICE
+            ) as AlarmManager
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
             Timber.d("Scheduled an alarm to reschedule the scan at $alarmDate")
@@ -135,45 +151,109 @@ class BackgroundWorkScheduler @Inject constructor(
             val alarmDate = LocalDateTime.now().plus(timeInMillisUntilNotification, ChronoUnit.MILLIS)
             val alarmTime = System.currentTimeMillis() + timeInMillisUntilNotification
 
-            val intent = Intent(ATTrackingDetectionApplication.getAppContext(), ScheduleWorkersReceiver::class.java)
+            val intent = Intent(
+                ATTrackingDetectionApplication.getAppContext(),
+                ScheduleWorkersReceiver::class.java
+            )
             intent.action = "AlarmManagerWakeUp_Perform_BackgroundScan"
 
             val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
-                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-            }else {
-                PendingIntent.getBroadcast(ATTrackingDetectionApplication.getAppContext(), -103, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
+            } else {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
             }
 
             val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
-                Context.ALARM_SERVICE) as AlarmManager
+                Context.ALARM_SERVICE
+            ) as AlarmManager
 
             // We use exact Alarms since we want regular background scans to happen.
-            if (Utility.checkPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)) {
-                try {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                    Timber.d("Scheduled an setExactAndAllowWhileIdle alarm to start a scan at $alarmDate")
-                }catch (exception: SecurityException) {
-                    try {
-                        Timber.w("Failed scheduling setExactAndAllowWhileIdle Alarm scan")
-                        // Alarm could not be scheduled because user disallowed battery exception
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                        Timber.d("Scheduled an setExact alarm to start a scan at $alarmDate")
-                    }catch (exception: SecurityException) {
-                        Timber.w("Failed scheduling setExact Alarm scan")
-                        // Alarm could not be scheduled because user disallowed battery exception
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                        Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
-                    }
-                } catch (exception: Exception) {
-                    Timber.e("Unexpected exception while scheduling alarm: ${exception.message}")
-                }
+            if (Build.VERSION.SDK_INT >= 31 && alarmManager.canScheduleExactAlarms()) {
+                scheduleAlarmExactAndAllowWhileIdle(alarmManager, alarmTime, alarmDate, pendingIntent)
             } else {
-                // Alarm could not be scheduled because user disallowed battery exception
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
-                Timber.d("Scheduled an set alarm to start a scan at $alarmDate")
+                Timber.e("Permission to schedule exact alarm not given. Scheduling  normal alarm")
+                scheduleAlarm(alarmManager, alarmTime, alarmDate,  pendingIntent)
             }
 
             SharedPrefs.nextScanDate = alarmDate
+        }
+
+
+        fun scheduleAlarmExactAndAllowWhileIdle(
+            alarmManager: AlarmManager,
+            alarmTime: Long,
+            alarmDate: LocalDateTime,
+            pendingIntent: PendingIntent
+        ) {
+
+            try {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    alarmTime,
+                    pendingIntent
+                )
+                Timber.d(
+                    "Scheduled an setExactAndAllowWhileIdle alarm to start a scan at $alarmDate"
+                )
+            } catch (exception: SecurityException) {
+                Timber.w("Failed scheduling setExactAndAllowWhileIdle Alarm scan  $exception")
+                scheduleAlarmExact(alarmManager, alarmTime, alarmDate, pendingIntent)
+            } catch (exception: Exception) {
+                Timber.w("Failed scheduling setExactAndAllowWhileIdle Alarm scan  $exception")
+                scheduleAlarmExact(alarmManager, alarmTime, alarmDate, pendingIntent)
+            }
+        }
+
+        fun scheduleAlarmExact(
+            alarmManager: AlarmManager,
+            alarmTime: Long,
+            alarmDate: LocalDateTime,
+            pendingIntent: PendingIntent
+        ) {
+            try {
+                // Alarm could not be scheduled because user disallowed battery exception
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                Timber.d(
+                    "Scheduled an setExact alarm to start a scan at $alarmDate"
+                )
+            } catch (exception: SecurityException) {
+                Timber.w("Failed scheduling setExact Alarm scan: $exception")
+                scheduleAlarm(alarmManager, alarmTime, alarmDate, pendingIntent)
+            } catch (exception: Exception) {
+                Timber.w("Failed scheduling setExact Alarm scan: $exception")
+                scheduleAlarm(alarmManager, alarmTime, alarmDate, pendingIntent)
+            }
+        }
+
+        fun scheduleAlarm(
+            alarmManager: AlarmManager,
+            alarmTime: Long,
+            alarmDate: LocalDateTime,
+            pendingIntent: PendingIntent
+        ) {
+            try {
+                // Alarm could not be scheduled because user disallowed battery exception
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
+                Timber.d(
+                    "Scheduled an set alarm to start a scan at $alarmDate"
+                )
+            } catch (exception: SecurityException) {
+                Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
+                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+            } catch (exception: Exception) {
+                Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
+                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+            }
         }
     }
 }
