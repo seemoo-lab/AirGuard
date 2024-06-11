@@ -12,44 +12,83 @@ object DeviceManager {
 
     val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo)
     private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
-    val savedConnectionStates = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
+    val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
+    val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
+
+    private val deviceTypeCache = mutableMapOf<String, DeviceType>()
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
-        Timber.d("Checking device type for ${scanResult.device.address}")
+        val deviceAddress = scanResult.device.address
 
-        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x004c)
-        val services = scanResult.scanRecord?.serviceUuids
-        if (manufacturerData != null) {
-            val statusByte: Byte = manufacturerData[2]
-//            Timber.d("Status byte $statusByte, ${statusByte.toString(2)}")
-            // Get the correct int from the byte
-            val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
-//            Timber.d("Device type int: $deviceTypeInt")
+        // Check cache, before calculating again
+        var deviceType: DeviceType? = getDeviceTypeFromCache(deviceAddress)
+        if (deviceType != null) {
+            return deviceType
+        } else {
+            Timber.d("Device type not in cache, calculating...")
+            deviceType = calculateDeviceType(scanResult)
+            deviceTypeCache[deviceAddress] = deviceType
+            return deviceType
+        }
+    }
 
-            var deviceTypeCheck: DeviceType? = null
+    fun getDeviceTypeFromCache(deviceAddress: String): DeviceType? {
+        deviceTypeCache[deviceAddress]?.let { cachedDeviceType ->
+            return cachedDeviceType
+        }
+        return null
+    }
 
-            for (device in appleDevices) {
-                // Implementation of device detection is incorrect.
-                if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
-                    deviceTypeCheck = device.deviceType
+    private fun calculateDeviceType(scanResult: ScanResult): DeviceType {
+        Timber.d("Retrieving device type for ${scanResult.device.address}")
+
+        scanResult.scanRecord?.let { scanRecord ->
+            scanRecord.getManufacturerSpecificData(0x004c)?.let { manufacturerData ->
+                if (manufacturerData.size >= 3) { // Ensure array size is sufficient
+                    val statusByte: Byte = manufacturerData[2]
+                    val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
+
+                    for (device in appleDevices) {
+                        if (device.statusByteDeviceType == deviceTypeInt.toUInt()) {
+                            return device.deviceType
+                        }
+                    }
                 }
             }
 
-            return deviceTypeCheck ?: Unknown.deviceType
-        }else if (services != null) {
-            //Check if this device is a Tile
-            if (services.contains(Tile.offlineFindingServiceUUID)) {
-                return Tile.deviceType
+            scanRecord.serviceUuids?.let { services ->
+                when {
+                    services.contains(Tile.offlineFindingServiceUUID) -> return Tile.deviceType
+                    services.contains(Chipolo.offlineFindingServiceUUID) -> return Chipolo.deviceType
+                    services.contains(SmartTag.offlineFindingServiceUUID) -> return SamsungDevice.getSamsungDeviceType(scanResult)
+                    else -> return Unknown.deviceType
+                }
             }
-            else if(services.contains(Chipolo.offlineFindingServiceUUID)){
-                return Chipolo.deviceType
-            }
-            else if(services.contains(SmartTag.offlineFindingServiceUUID)){
-                return SamsungDevice.getSamsungDeviceType(scanResult)
-            }
-
         }
         return Unknown.deviceType
+    }
+
+    fun getWebsiteURL(deviceType: DeviceType): String {
+        return when (deviceType) {
+            DeviceType.UNKNOWN -> Unknown.websiteManufacturer
+            DeviceType.AIRTAG -> AirTag.websiteManufacturer
+            DeviceType.APPLE -> AppleDevice.websiteManufacturer
+            DeviceType.AIRPODS -> AirPods.websiteManufacturer
+            DeviceType.TILE -> Tile.websiteManufacturer
+            DeviceType.FIND_MY -> FindMy.websiteManufacturer
+            DeviceType.CHIPOLO -> Chipolo.websiteManufacturer
+            DeviceType.SAMSUNG -> SamsungDevice.websiteManufacturer
+            DeviceType.GALAXY_SMART_TAG -> SmartTag.websiteManufacturer
+            DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.websiteManufacturer
+        }
+    }
+
+    fun deviceTypeToString(deviceType: DeviceType): String {
+        return deviceType.name
+    }
+
+    fun stringToDeviceType(deviceTypeString: String): DeviceType {
+        return DeviceType.valueOf(deviceTypeString)
     }
 
     val scanFilter: List<ScanFilter> = devices.map { it.bluetoothFilter }

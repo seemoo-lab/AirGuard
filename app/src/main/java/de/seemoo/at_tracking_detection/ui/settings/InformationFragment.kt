@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
-import AttributionAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri

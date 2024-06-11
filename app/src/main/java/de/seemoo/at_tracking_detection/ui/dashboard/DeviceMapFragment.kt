@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
 
@@ -57,49 +58,20 @@ class DeviceMapFragment : Fragment() {
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
 
-        val deviceAddress = this.deviceAddress
-        if (!deviceAddress.isNullOrEmpty()) {
-            viewModel.markerLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
-
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map, true)
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
+        lifecycleScope.launch {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
+            val locationList: List<Location> = if (!deviceAddress.isNullOrEmpty()) {
+                locationRepository.getLocationsForBeaconSince(deviceAddress!!, relevantTrackingDate)
+            } else {
+                locationRepository.locationsSince(relevantTrackingDate)
             }
-        } else {
-            viewModel.allLocations.observe(viewLifecycleOwner) {
-                lifecycleScope.launch {
-                    val locationList = arrayListOf<Location>()
-                    val locationRepository =
-                        ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return@launch
 
-                    it.filter { it.locationId != null && it.locationId != 0 }
-                        .map {
-                            val location = locationRepository.getLocationWithId(it.locationId!!)
-                            if (location != null) {
-                                locationList.add(location)
-                            }
-                        }
-
-                    Utility.setGeoPointsFromListOfLocations(locationList.toList(), map)
-                }.invokeOnCompletion {
-                    viewModel.isMapLoading.postValue(false)
-                }
+            try {
+                Utility.setGeoPointsFromListOfLocations(locationList, map)
+            } finally {
+                viewModel.isMapLoading.postValue(false)
             }
         }
-
-
     }
-
 }

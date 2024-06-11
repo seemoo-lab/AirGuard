@@ -5,6 +5,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
@@ -25,7 +26,7 @@ class RiskLevelEvaluator(
     fun evaluateRiskLevel(): RiskLevel {
         Timber.d("evaluateRiskLevel() called")
         // val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantTrackingDate)
-        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDate)
+        val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantTrackingDateForRiskCalculation)
 
         val totalTrackers = baseDevices.count()
 
@@ -67,7 +68,7 @@ class RiskLevelEvaluator(
      * The date when a tracker has been discovered last
      */
     fun getLastTrackerDiscoveryDate(): Date {
-        val relevantDate = relevantTrackingDate
+        val relevantDate = relevantTrackingDateForRiskCalculation
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesSince(relevantDate)
             .sortedByDescending { it.lastSeen }
 
@@ -77,8 +78,8 @@ class RiskLevelEvaluator(
     }
 
     // How many trackers have been relevant here as tracker
-    fun getNumberRelevantTrackers(): Int {
-        val relevantDate = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+    fun getNumberRelevantTrackers(relevantDays: Long = RELEVANT_DAYS_RISK_LEVEL): Int {
+        val relevantDate = LocalDateTime.now().minusDays(relevantDays)
         val baseDevices: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
 
         return baseDevices.count()
@@ -86,25 +87,35 @@ class RiskLevelEvaluator(
 
     companion object {
         /** The number of days that we use to calculate the risk **/
-        const val RELEVANT_DAYS: Long = 14 // Only consider beacons in the last x days
+        const val RELEVANT_HOURS_TRACKING: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
+        private const val DELETE_SAFE_DEVICES_OLDER_THAN_DAYS: Long = 30 // Delete devices that have been seen last more than x days ago
+        const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
+        private const val MINUTES_UNTIL_CACHE_IS_UPDATED: Long = 15
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
         private const val RELEVANT_DAYS_NOTIFICATIONS: Long = 5 // After MEDIUM risk notifications in the last x days (for a single device) change risk level to HIGH
-        private const val NUMBER_OF_LOCATIONS_BEFORE_ALARM: Int = 3 // Number of beacons with locations before notification is created
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
-        const val HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION: Long = 8 // Minimum time difference until next notification
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
-        val relevantTrackingDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS)
+        val relevantTrackingDateForRiskCalculation: LocalDateTime = LocalDateTime.now().minusDays(
+            RELEVANT_DAYS_RISK_LEVEL) // Fallback Option, if possible use getRelevantTrackingDate() Function
+        val deleteBeforeDate: LocalDateTime = LocalDateTime.now().minusDays(DELETE_SAFE_DEVICES_OLDER_THAN_DAYS)
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
-        // A single tracker gets tracked at least for x minutes until notification is created
+        // Default Values: A single tracker gets tracked at least for x minutes until notification is created
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
-        private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 90
+        private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 120
+
+        // Default Values:
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 2
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 3
+        const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW: Int = 4
 
         private fun getAtLeastTrackedSince(): LocalDateTime = LocalDateTime.now().minusMinutes(
             getMinutesAtLeastTrackedBeforeAlarm()
         )
+
+        fun getRelevantTrackingDateForTrackingDetection(relevantHours: Long = RELEVANT_HOURS_TRACKING): LocalDateTime = LocalDateTime.now().minusHours(relevantHours)
 
         fun getMinutesAtLeastTrackedBeforeAlarm(): Long {
             return when (SharedPrefs.riskSensitivity) {
@@ -112,6 +123,24 @@ class RiskLevelEvaluator(
                 "medium" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
                 "high" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH
                 else -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
+            }
+        }
+
+        fun getNumberOfLocationsToBeConsideredForTrackingDetection(deviceType: DeviceType?): Int {
+            return if (deviceType == null)  {
+                when (SharedPrefs.riskSensitivity) {
+                    "low" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
+                    "medium" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                    "high" -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
+                    else -> NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                }
+            } else {
+                when (SharedPrefs.riskSensitivity) {
+                    "low" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionLow()
+                    "medium" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionMedium()
+                    "high" -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionHigh()
+                    else -> deviceType.getNumberOfLocationsToBeConsideredForTrackingDetectionMedium()
+                }
             }
         }
 
@@ -125,6 +154,7 @@ class RiskLevelEvaluator(
             // Not ignored
             // Tracker has been seen long enough
             if (!device.ignore && device.firstDiscovery <= getAtLeastTrackedSince()) {
+                val relevantTrackingDate = relevantTrackingDateForRiskCalculation
                 val numberOfBeacons = beaconRepository.getNumberOfBeaconsAddress(device.address, relevantTrackingDate)
 
                 // Detected at least 3 Times
@@ -135,7 +165,8 @@ class RiskLevelEvaluator(
                     val lastCalculatedRiskLevel = deviceRepository.getLastCachedRiskLevelDate(device.address)
 
                     if (lastCalculatedRiskLevel != null) {
-                        if (lastCalculatedRiskLevel >= LocalDateTime.now().minusMinutes(15)) {
+                        if (lastCalculatedRiskLevel >= LocalDateTime.now().minusMinutes(
+                                MINUTES_UNTIL_CACHE_IS_UPDATED)) {
                             fun cachedRiskIntToRisk(cachedRiskInt: Int): RiskLevel {
                                 return when (cachedRiskInt) {
                                     0 -> RiskLevel.LOW
@@ -153,7 +184,7 @@ class RiskLevelEvaluator(
                     val numberOfLocations = deviceRepository.getNumberOfLocationsForDeviceSince(device.address, relevantTrackingDate)
 
                     // Detected at at least 3 different locations
-                    if (!useLocation || numberOfLocations >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                    if (!useLocation || numberOfLocations >= getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)) {
                         val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository ?: return RiskLevel.LOW
                         val falseAlarms = notificationRepository.getFalseAlarmForDeviceSinceCount(device.address, relevantTrackingDate)
 
@@ -170,7 +201,7 @@ class RiskLevelEvaluator(
 
                                 // High Risk: High Number of Notifications and Accurate Locations
                                 // Medium Risk: Low Number of Notifications or only inaccurate Location Reports
-                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= NUMBER_OF_LOCATIONS_BEFORE_ALARM) {
+                                return if (numberOfNotifications >= NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK && numberOfLocationsWithAccuracyLimit >= getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)) {
                                     deviceRepository.updateRiskLevelCache(device.address, 2, LocalDateTime.now())
                                     RiskLevel.HIGH
                                 } else{

@@ -1,33 +1,42 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.*
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.util.BuildVersionProvider
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
 open class LocationProvider @Inject constructor(
-    private val locationManager: LocationManager,
-    private val versionProvider: BuildVersionProvider): LocationListener {
+    private val locationManager: LocationManager): LocationListener {
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var bestLastLocation: Location? = null
 
     private val locationRequesters = ArrayList<LocationRequester>()
 
-    open fun getLastLocation(checkRequirements: Boolean = true): Location? {
-        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    fun getLastLocation(checkRequirements: Boolean = true): Location? {
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return null
         }
 
@@ -35,12 +44,19 @@ open class LocationProvider @Inject constructor(
     }
 
     /**
-     * Fetches the most recent location from network and gps and returns the one that has been recveived more recently
+     * Fetches the most recent location from network and gps and returns the one that has been received more recently
      * @return the most recent location across multiple providers
      */
-    @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
     private fun getLastLocationFromAnyProvider(checkRequirements: Boolean): Location? {
-        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return null
         }
 
@@ -63,53 +79,46 @@ open class LocationProvider @Inject constructor(
     }
 
     private fun legacyGetLastLocationFromAnyProvider(checkRequirements: Boolean): Location? {
-        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return null
         }
 
-        // On older versions we use both providers to get the best location signal
+        // Get the last known locations from both providers
         val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-
-            if (gpsLocation != null && networkLocation != null) {
-                // Got to past locations, lets check which passes our requirements
-                val gpsRequirements = locationMatchesMinimumRequirements(gpsLocation)
-                val networkRequirements = locationMatchesMinimumRequirements(networkLocation)
-                if (gpsRequirements && networkRequirements) {
-                    // Check which one is more current
-                    if (gpsLocation.time > networkLocation.time) {
-                        return gpsLocation
-                    }else {
-                        return networkLocation
-                    }
-                }else if (gpsRequirements) {
-                    // Only GPS satisfies the requirements. Return it
-                    return gpsLocation
-                }else if (networkRequirements) {
-                    // Only network satisfies. Return it
-                    return networkLocation
-                }else if (!checkRequirements) {
-                    if (gpsLocation.time > networkLocation.time) {
-                        return gpsLocation
-                    }
-                    return networkLocation
-                }
-            }else if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
-                // Only gps satisfies and network does not exist
-                return gpsLocation
+        // If both locations are available, return the one that is more current and meets the minimum requirements
+        if (networkLocation != null && gpsLocation != null) {
+            val bestLocation = if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation
+            if (locationMatchesMinimumRequirements(bestLocation)) {
+                return bestLocation
             }
         }
 
+        // If only one location is available, return it if it meets the minimum requirements
         if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
             return networkLocation
-        }else if (!checkRequirements) {
-            return networkLocation
+        }
+        if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
+            return gpsLocation
         }
 
-        Timber.d("No last know location matched the requirements")
-        return null
+        // If neither location meets the minimum requirements, return null
+        if (checkRequirements) {
+            return null
+        }
+
+        // If no location requirements are specified, return the last known location from either provider, or null if none are available
+        return networkLocation ?: gpsLocation
     }
 
     private fun getSecondsSinceLocation(location: Location): Long {
@@ -121,7 +130,16 @@ open class LocationProvider @Inject constructor(
     }
 
     private fun locationMatchesMinimumRequirements(location: Location): Boolean {
-       return location.accuracy <= MIN_ACCURACY_METER && getSecondsSinceLocation(location) <= MAX_AGE_SECONDS
+        if (location.accuracy <= MIN_ACCURACY_METER) {
+            if (getSecondsSinceLocation(location) <= MAX_AGE_SECONDS) {
+                return true
+            }else {
+                Timber.d("Location too old")
+            }
+        }else {
+            Timber.d("Location accuracy is not good enough")
+        }
+        return false
     }
 
 
@@ -132,27 +150,38 @@ open class LocationProvider @Inject constructor(
      * @param timeoutMillis: After the timeout the last location will be returned no matter if it matches the requirements or not
      * @return the last known location if this already satisfies our requirements
      */
-    @SuppressLint("InlinedApi") // Suppressed, because we use a custom version provider which is injectable for testing
-    open fun lastKnownOrRequestLocationUpdates(locationRequester: LocationRequester, timeoutMillis: Long?): Location? {
-        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    open fun lastKnownOrRequestLocationUpdates(
+        locationRequester: LocationRequester,
+        timeoutMillis: Long? = null
+    ): Location? {
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
+        // Get the last known location
         val lastLocation = getLastLocation()
+
+        // If the last location is available and meets the minimum requirements, return it
         if (lastLocation != null && locationMatchesMinimumRequirements(lastLocation)) {
             return lastLocation
         }
 
+        // Add the location requester to the list of active requesters
         this.locationRequesters.add(locationRequester)
 
-        // The fused location provider does not work reliably with Samsung + Android 12
-        // We just stay with the legacy location, because this just works
+        // Request location updates from all enabled providers
         requestLocationUpdatesFromAnyProvider()
 
+        // If a timeout is specified, set a timeout for the location update
         if (timeoutMillis != null) {
-            setTimeoutForLocationUpdate(requester =  locationRequester, timeoutMillis= timeoutMillis)
+            setTimeoutForLocationUpdate(requester = locationRequester, timeoutMillis = timeoutMillis)
         }
 
+        // Return null, since we don't have a location immediately available
         return null
     }
 
@@ -164,55 +193,59 @@ open class LocationProvider @Inject constructor(
      * @param timeoutMillis milliseconds after which the timeout will be executed
      */
     private fun setTimeoutForLocationUpdate(requester: LocationRequester, timeoutMillis: Long) {
-        val handler = Handler(Looper.getMainLooper())
-
-        val runnable = kotlinx.coroutines.Runnable {
-            if (this@LocationProvider.locationRequesters.size == 0) {
-                // The location was already returned
+        // Create a runnable to handle the timeout
+        val runnable = Runnable {
+            // If the location requester list is empty, the location has already been returned
+            if (this@LocationProvider.locationRequesters.isEmpty()) {
                 return@Runnable
             }
 
+            // Log the timeout and get the last known location, regardless of whether it meets the requirements
             Timber.d("Location request timed out")
             val lastLocation = this@LocationProvider.getLastLocation(checkRequirements = false)
+
+            // If the last location is available, notify the requester
             lastLocation?.let {
-                requester.receivedAccurateLocationUpdate(location = lastLocation)
+                requester.receivedAccurateLocationUpdate(location = it)
             }
+
+            // If there is only one requester left, stop location updates and clear the list
             if (this@LocationProvider.locationRequesters.size == 1) {
                 this@LocationProvider.stopLocationUpdates()
                 this@LocationProvider.locationRequesters.clear()
-            }else {
+            } else {
+                // Otherwise, remove the requester from the list
                 this@LocationProvider.locationRequesters.remove(requester)
             }
         }
 
+        // Schedule the runnable to be executed after the timeout period
+        val handler = Handler(Looper.getMainLooper())
         handler.postDelayed(runnable, timeoutMillis)
+
+        // Log the timeout settings
         Timber.d("Location request timeout set to $timeoutMillis")
     }
 
-
     private fun requestLocationUpdatesFromAnyProvider() {
-        if (ContextCompat.checkSelfPermission(ATTrackingDetectionApplication.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("Not requesting location, permission not granted")
             return
         }
 
-        Timber.d("Requesting location updates")
-        val gpsProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val networkProviderEnabled =
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        // Get the list of enabled location providers
+        val enabledProviders = locationManager.allProviders
+            .filter { locationManager.isProviderEnabled(it) }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+        // Request location updates from all enabled providers
+        enabledProviders.forEach {
             locationManager.requestLocationUpdates(
-                LocationManager.FUSED_PROVIDER,
-                MIN_UPDATE_TIME_MS,
-                MIN_DISTANCE_METER,
-                this,
-                handler.looper
-            )
-        }
-        
-        if (networkProviderEnabled) {
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
+                it,
                 MIN_UPDATE_TIME_MS,
                 MIN_DISTANCE_METER,
                 this,
@@ -220,38 +253,22 @@ open class LocationProvider @Inject constructor(
             )
         }
 
-        if (gpsProviderEnabled) {
-            // Using GPS and Network provider, because the GPS provider does notwork indoors (it will never call the callback)
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                MIN_UPDATE_TIME_MS,
-                MIN_DISTANCE_METER,
-                this,
-                handler.looper
-            )
-        }
+        Timber.i("Requesting location updates from $enabledProviders")
 
-        if (!networkProviderEnabled && !gpsProviderEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (!locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
-                    // Error
-                    Timber.e("ERROR: No location provider available")
-                    stopLocationUpdates()
-                    }
-            }else {
-                //Error
-                Timber.e("ERROR: No location provider available")
-                stopLocationUpdates()
-            }
+        // If no location providers are enabled, log an error and stop location updates
+        if (enabledProviders.isEmpty()) {
+            Timber.e("ERROR: No location provider available")
+            stopLocationUpdates()
         }
     }
 
-    fun stopLocationUpdates() {
+    private fun stopLocationUpdates() {
         locationManager.removeUpdates(this)
+        Timber.i("Stopping location updates")
     }
 
     override fun onLocationChanged(location: Location) {
-        Timber.d("Location updated: ${location.latitude} ${location.longitude}")
+        Timber.d("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location
@@ -276,9 +293,6 @@ open class LocationProvider @Inject constructor(
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-
     // Android Phones with SDK < 30 need these methods
     override fun onProviderEnabled(provider: String) {}
 
@@ -289,6 +303,13 @@ open class LocationProvider @Inject constructor(
         const val MIN_DISTANCE_METER = 0.0F
         const val MAX_AGE_SECONDS = 120L
         const val MIN_ACCURACY_METER = 120L
+
+        fun isLocationTurnedOn(): Boolean {
+            val context = ATTrackingDetectionApplication.getAppContext()
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.FUSED_PROVIDER)
+        }
     }
 
 }

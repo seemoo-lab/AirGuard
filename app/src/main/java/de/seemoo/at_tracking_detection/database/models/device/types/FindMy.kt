@@ -179,6 +179,9 @@ class FindMy(val id: Int) : Device(), Connectable {
         override val deviceType: DeviceType
             get() = DeviceType.FIND_MY
 
+        override val websiteManufacturer: String
+            get() = "https://www.apple.com/"
+
         override val defaultDeviceName: String
             get() = "FindMy Device"
 

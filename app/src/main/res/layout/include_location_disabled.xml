@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+
+        <variable
+            name="drawable"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="text"
+            type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="24dp"
+        android:padding="20dp"
+        android:background="?android:colorBackground"
+        >
+
+        <ImageView
+            android:id="@+id/location_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="50sp"
+            android:src="@drawable/ic_baseline_location_on_24"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHeight_max="100dp"
+            app:layout_constraintWidth_max="100dp"
+            android:contentDescription="@string/empty_image_content_description"
+            app:tint="@color/defaultTextColor"
+            tools:src="@drawable/ic_baseline_location_on_24" />
+
+
+        <TextView
+            android:id="@+id/location_off_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/location_off_explanation"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/location_image"
+            tools:text="@string/location_off_explanation" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

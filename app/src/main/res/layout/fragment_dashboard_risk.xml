@@ -39,32 +39,17 @@
                     android:layout_height="wrap_content"
                     bind:vm="@{vm}" />
 
-<!--                <include-->
-<!--                    layout="@layout/include_survey_card"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="22dp"-->
-<!--                    android:visibility="@{vm.dismissSurveyInformation ? View.GONE : View.VISIBLE}"-->
-<!--                    />-->
+                <ProgressBar
+                    android:id="@+id/loading_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
 
-                <include
-                    layout="@layout/include_how_airguard_works_card"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/articles_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp" />
-
-                <include
-                    layout="@layout/include_notification_info_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp" />
-
-                <include
-                    layout="@layout/include_find_a_tracker_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginBottom="22dp" />
+                    android:orientation="vertical" />
 
                 <View
                     android:layout_width="match_parent"
@@ -73,19 +58,5 @@
             </LinearLayout>
 
         </ScrollView>
-
-        <!--
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/scan_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/dashboard_scan_fab_description"
-            android:text="@string/dashboard_scan_fab"
-            app:icon="@drawable/ic_radar_tracking"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-        -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

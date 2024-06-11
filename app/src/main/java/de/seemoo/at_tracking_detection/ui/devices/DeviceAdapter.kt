@@ -10,7 +10,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.databinding.ItemDeviceBinding
 
-class DeviceAdapter constructor(
+class DeviceAdapter(
     private val devicesViewModel: DevicesViewModel,
     private val onClickListener: OnClickListener
 ) :

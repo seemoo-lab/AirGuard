@@ -17,13 +17,13 @@ import de.seemoo.at_tracking_detection.R
 @AndroidEntryPoint
 class LocationFragment : Fragment(R.layout.fragment_location_permission), SlidePolicy {
 
-    var canContinue = true
+    private var canContinue = true
 
     // Register the permissions callback, which handles the user's response to the
     // system permissions dialog. Save the return value, an instance of
     // ActivityResultLauncher. You can use either a val, as shown in this snippet,
     // or a lateinit var in your onAttach() or onCreate() method.
-    val requestPermissionLauncher =
+    private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -61,21 +61,21 @@ class LocationFragment : Fragment(R.layout.fragment_location_permission), SlideP
         showAlertDialogForLocationPermission()
     }
 
-    fun showAlertDialogForLocationPermission() {
-        val builder: AlertDialog.Builder? = context.let { AlertDialog.Builder(it) }
+    private fun showAlertDialogForLocationPermission() {
+        val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
 
-        builder?.setMessage(R.string.location_permission_message)
-        builder?.setIcon(R.drawable.ic_baseline_location_on_24)
-        builder?.setTitle(R.string.location_permission_title)
-        builder?.setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
+        builder.setMessage(R.string.location_permission_message)
+        builder.setIcon(R.drawable.ic_baseline_location_on_24)
+        builder.setTitle(R.string.location_permission_title)
+        builder.setPositiveButton(R.string.ok_button) { _: DialogInterface, _: Int ->
             this.requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        builder?.setNegativeButton("Cancel") { _: DialogInterface, _:Int ->
+        builder.setNegativeButton("Cancel") { _: DialogInterface, _:Int ->
 
         }
 
-        val dialog = builder?.create()
+        val dialog = builder.create()
         dialog?.show()
     }
 

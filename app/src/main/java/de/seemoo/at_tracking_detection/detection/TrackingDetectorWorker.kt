@@ -9,6 +9,7 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -16,11 +17,10 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
+import java.time.Duration
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 
 @HiltWorker
@@ -34,6 +34,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        deleteOldAndSafeTrackers()
+
         Timber.d("Tracking detection background job started!")
         // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
@@ -51,7 +53,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val device = deviceRepository.getDevice(mapEntry.key) ?: return@forEach
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (RiskLevelEvaluator.checkRiskLevelForDevice(device, useLocation) != RiskLevel.LOW && checkLastNotification(device)) {
+            if (throwNotification(device, useLocation)) {
                 // Send Notification
                 Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
@@ -82,10 +84,75 @@ class TrackingDetectorWorker @AssistedInject constructor(
         //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
         beaconRepository.getLatestBeacons(since).forEach {
             // Only retrieve the last two weeks since they are only relevant for tracking
-            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDate)
+            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
             beaconsPerDevice[it.deviceAddress] = beacons
         }
         return beaconsPerDevice
+    }
+
+    private fun throwNotification(device: BaseDevice, useLocation: Boolean): Boolean {
+        val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)
+        val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
+
+        val deviceIdentifier: String = device.address
+        val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
+        var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(relevantHours)
+
+        val lastNotificationSent = device.lastNotificationSent
+        if (lastNotificationSent != null && lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
+            considerDetectionEventSince = lastNotificationSent
+        }
+
+        val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)
+
+        val detectionEventsSorted: List<Beacon> = detectionEvents.sortedBy { it.receivedAt }
+        val earliestDetectionEvent: Beacon = detectionEventsSorted.firstOrNull() ?: return false
+        val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, LocalDateTime.now()).toMinutes()
+
+        val filteredDetectionEvents = detectionEvents.filter { it.locationId != null && it.locationId != 0 }
+        val distinctDetectionEvent = filteredDetectionEvents.map { it.locationId }.distinct()
+        val locations = distinctDetectionEvent.size
+
+        if (timeFollowing >= minTrackedTime) {
+            if (locations >= minNumberOfLocations || !useLocation) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private suspend fun deleteOldAndSafeTrackers() {
+        // Delete old devices and beacons from the database
+        Timber.d("Start deleting old and safe Trackers")
+        val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
+        val beaconsToBeDeleted = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+        if (beaconsToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
+            beaconRepository.deleteBeacons(beaconsToBeDeleted)
+            Timber.d("Deleting Beacons successful")
+        } else {
+            Timber.d("No old beacons to delete")
+        }
+
+        val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+        if (devicesToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${devicesToBeDeleted.size} devices")
+            deviceRepository.deleteDevices(devicesToBeDeleted)
+            Timber.d("Deleting Devices successful")
+        }
+        if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
+            Timber.d("No old devices or beacons to delete")
+        }
+
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return
+        val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
+        if (locationsToBeDeleted.isNotEmpty()) {
+            Timber.d("Deleting ${locationsToBeDeleted.size} locations")
+            locationRepository.deleteLocations(locationsToBeDeleted)
+            Timber.d("Deleting Locations successful")
+        } else {
+            Timber.d("No locations to delete")
+        }
     }
 
     companion object {
@@ -94,19 +161,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
             location.latitude = latitude
             location.longitude = longitude
             return location
-        }
-
-        /**
-         * Checks if the last notification was sent more than x hours ago
-         */
-        private fun checkLastNotification(device: BaseDevice): Boolean {
-            val lastNotificationSent = device.lastNotificationSent
-            return lastNotificationSent == null || isTimeToNotify(lastNotificationSent)
-        }
-
-        private fun isTimeToNotify(lastNotificationSent: LocalDateTime): Boolean {
-            val hoursPassed = lastNotificationSent.until(LocalDateTime.now(), ChronoUnit.HOURS)
-            return hoursPassed >= RiskLevelEvaluator.HOURS_AT_LEAST_UNTIL_NEXT_NOTIFICATION
         }
     }
 

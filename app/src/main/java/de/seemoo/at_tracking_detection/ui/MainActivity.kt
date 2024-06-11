@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import org.osmdroid.config.Configuration
 import timber.log.Timber
 import java.io.File
@@ -25,12 +26,17 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
+    @Inject
+    lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
         val configuration = Configuration.getInstance()
@@ -64,6 +70,13 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             appBarItems.plus(R.id.navigation_debug)
         }
+
+        if (!SharedPrefs.advancedMode) {
+            val menu = navView.menu
+            val item = menu.findItem(R.id.navigation_allDevicesFragment)
+            item.isVisible = false
+        }
+
         val appBarConfiguration = AppBarConfiguration(appBarItems)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -86,6 +99,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Timber.d("MainActivity onResume called")
         BLEScanner.startBluetoothScan(this.applicationContext)
+
+        Timber.d("Scheduling an immediate background scan onResume of MainActivity")
+        backgroundWorkScheduler.scheduleImmediateBackgroundScan()
     }
 
 
@@ -97,6 +113,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         SharedPrefs.lastTimeOpened = dateTime
         super.onDestroy()
     }
@@ -108,5 +125,16 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        // Check if the changed preference is the advancedMode
+        if (key == "advanced_mode") {
+            // Update the visibility of the All Devices fragment menu item
+            val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
+            val menu = navView.menu
+            val item = menu.findItem(R.id.navigation_allDevicesFragment)
+            item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
+        }
     }
 }

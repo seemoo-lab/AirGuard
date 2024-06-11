@@ -96,6 +96,7 @@ class AirTag(val id: Int) : Device(), Connectable {
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onCharacteristicRead(
                 gatt: BluetoothGatt?,
                 characteristic: BluetoothGattCharacteristic?,
@@ -141,6 +142,9 @@ class AirTag(val id: Int) : Device(), Connectable {
 
         override val statusByteDeviceType: UInt
             get() = 1u
+
+        override val websiteManufacturer: String
+            get() = "https://www.apple.com/airtag/"
 
         override fun getBatteryState(scanResult: ScanResult): BatteryState {
             val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)

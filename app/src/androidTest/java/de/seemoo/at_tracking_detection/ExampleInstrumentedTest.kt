@@ -61,7 +61,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 30),
@@ -71,7 +72,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 
@@ -84,7 +86,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 45),
@@ -94,7 +97,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 
@@ -107,7 +111,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 22, 10, 45),
@@ -117,7 +122,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = 1,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 
@@ -130,7 +136,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 0),
@@ -140,7 +147,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 
@@ -153,7 +161,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 29),
@@ -163,7 +172,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 
@@ -176,7 +186,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             ),
             Beacon(
                 receivedAt = LocalDateTime.of(2021, 11, 20, 10, 20),
@@ -186,7 +197,8 @@ class ExampleInstrumentedTest {
                 // latitude = 51.4839483,
                 locationId = null,
                 mfg = null,
-                serviceUUIDs = null
+                serviceUUIDs = null,
+                "UNKNOWN"
             )
         )
 

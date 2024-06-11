@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -29,11 +28,14 @@
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textSize="20sp" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/feedback_location_chip_group"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/feedback_location_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleSelection="true" />
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

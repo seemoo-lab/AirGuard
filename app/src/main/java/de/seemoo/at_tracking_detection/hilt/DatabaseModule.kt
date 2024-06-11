@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import de.seemoo.at_tracking_detection.database.AppDatabase
 import de.seemoo.at_tracking_detection.database.daos.*
 import de.seemoo.at_tracking_detection.database.repository.*
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker.Companion.MAX_DISTANCE_UNTIL_NEW_LOCATION
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.TrackingDetectorWorker.Companion.getLocation
 import timber.log.Timber
 import javax.inject.Singleton
@@ -23,9 +23,9 @@ import javax.inject.Singleton
 object DatabaseModule {
 
     val MIGRATION_5_7 = object : Migration(5, 7) {
-        override fun migrate(database: SupportSQLiteDatabase) {
+        override fun migrate(db: SupportSQLiteDatabase) {
             try {
-                database.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE `beacon` ADD COLUMN `serviceUUIDs` TEXT DEFAULT NULL")
             }catch (e: SQLiteException) {
                 Timber.e("Could not create new column ${e}")
             }
@@ -34,17 +34,17 @@ object DatabaseModule {
     }
 
     val MIGRATION_6_7 = object : Migration(6, 7) {
-        override fun migrate(database: SupportSQLiteDatabase) {
+        override fun migrate(db: SupportSQLiteDatabase) {
         }
     }
 
     val MIGRATION_9_10 = object : Migration(9, 10) {
-        override fun migrate(database: SupportSQLiteDatabase) {
+        override fun migrate(db: SupportSQLiteDatabase) {
             // add location table and locationID to beacon
             try {
-                database.execSQL("CREATE TABLE `location` (`locationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `accuracy` REAL)")
-                database.execSQL("CREATE UNIQUE INDEX `index_location_latitude_longitude` ON `location` (`latitude`, `longitude`)")
-                database.execSQL("ALTER TABLE `beacon` ADD COLUMN `locationId` INTEGER")
+                db.execSQL("CREATE TABLE `location` (`locationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `accuracy` REAL)")
+                db.execSQL("CREATE UNIQUE INDEX `index_location_latitude_longitude` ON `location` (`latitude`, `longitude`)")
+                db.execSQL("ALTER TABLE `beacon` ADD COLUMN `locationId` INTEGER")
             }catch (e: SQLiteException) {
                 Timber.e("Could not create location ${e}")
             }
@@ -52,7 +52,7 @@ object DatabaseModule {
             var sql: String
             while (true) {
                 sql = "SELECT * FROM `beacon` WHERE `locationId` IS NULL AND `latitude` IS NOT NULL AND `longitude` IS NOT NULL LIMIT 1"
-                val beacon = database.query(sql)
+                val beacon = db.query(sql)
 
                 if (beacon.count == 0) {
                     // If there are no more locations left to do, then break
@@ -68,7 +68,7 @@ object DatabaseModule {
                 // println("Longitude: $longitude")
 
                 sql = "SELECT `longitude`, `latitude` FROM `location` ORDER BY ABS(`latitude` - $latitude) + ABS(`longitude` - $longitude) ASC LIMIT 1"
-                val closestLocation = database.query(sql)
+                val closestLocation = db.query(sql)
 
                 var insertNewLocation = false
 
@@ -80,7 +80,7 @@ object DatabaseModule {
                     val locationA = getLocation(latitude, longitude)
                     val locationB = getLocation(closestLatitude, closestLongitude)
                     val distanceBetweenLocations = locationA.distanceTo(locationB)
-                    if (distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION){
+                    if (distanceBetweenLocations > BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION){
                         // println("Insert New, because far enough away")
                         insertNewLocation = true
                     } else {
@@ -103,7 +103,7 @@ object DatabaseModule {
                     var lastSeen = firstDiscovery // receivedAt
 
                     sql = "SELECT `firstDiscovery`, `lastSeen` FROM `device` WHERE `address` = '$deviceAddress'"
-                    val device = database.query(sql)
+                    val device = db.query(sql)
 
                     if (device.count > 0) {
                         // println("Successfully got timestamps from device table")
@@ -113,11 +113,11 @@ object DatabaseModule {
                     }
 
                     sql = "INSERT INTO `location` (`firstDiscovery`, `lastSeen`, `longitude`, `latitude`) VALUES ('$firstDiscovery', '$lastSeen', $longitude, $latitude)"
-                    database.execSQL(sql)
+                    db.execSQL(sql)
                 }
 
                 sql = "SELECT `locationId` FROM `location` WHERE `latitude` = $latitude AND `longitude` = $longitude"
-                val location = database.query(sql)
+                val location = db.query(sql)
                 println(location.count)
                 if (location.count > 0) { // else: locationId stays null
                     location.moveToFirst()
@@ -126,25 +126,25 @@ object DatabaseModule {
                     val beaconId = beacon.getInt(0)
                     println("beaconId: $beaconId")
                     sql = "UPDATE `beacon` SET `locationId` = $locationId WHERE `locationId` IS NULL AND `beaconId` = $beaconId"
-                    database.execSQL(sql)
+                    db.execSQL(sql)
 
                     sql = "SELECT * FROM `beacon` WHERE `locationId` IS NOT NULL"
-                    println(database.query(sql).count)
+                    println(db.query(sql).count)
                 }
             }
 
             try {
-                database.execSQL("CREATE TABLE `beacon_backup` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `locationId` INTEGER, `mfg` BLOB, `serviceUUIDs` TEXT)")
-                database.execSQL("INSERT INTO `beacon_backup` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon`")
-                database.execSQL("DROP TABLE `beacon`")
+                db.execSQL("CREATE TABLE `beacon_backup` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `locationId` INTEGER, `mfg` BLOB, `serviceUUIDs` TEXT)")
+                db.execSQL("INSERT INTO `beacon_backup` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon`")
+                db.execSQL("DROP TABLE `beacon`")
             } catch (e: SQLiteException) {
                 Timber.e("Could not create beacon_backup ${e}")
             }
 
             try {
-                database.execSQL("CREATE TABLE `beacon` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `locationId` INTEGER, `mfg` BLOB, `serviceUUIDs` TEXT)")
-                database.execSQL("INSERT INTO `beacon` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon_backup`")
-                database.execSQL("DROP TABLE `beacon_backup`")
+                db.execSQL("CREATE TABLE `beacon` (`beaconId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `receivedAt` TEXT NOT NULL, `rssi` INTEGER NOT NULL, `deviceAddress` TEXT NOT NULL, `locationId` INTEGER, `mfg` BLOB, `serviceUUIDs` TEXT)")
+                db.execSQL("INSERT INTO `beacon` SELECT `beaconId`, `receivedAt`,  `rssi`, `deviceAddress`, `locationId`, `mfg`, `serviceUUIDs` FROM `beacon_backup`")
+                db.execSQL("DROP TABLE `beacon_backup`")
             } catch (e: SQLiteException) {
                 Timber.e("Could not create beacon ${e}")
             }

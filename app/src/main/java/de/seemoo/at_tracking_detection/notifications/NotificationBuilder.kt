@@ -90,11 +90,7 @@ class NotificationBuilder @Inject constructor(
             context,
             code,
             intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.FLAG_IMMUTABLE
-            } else {
-                PendingIntent.FLAG_UPDATE_CURRENT
-            }
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
@@ -104,9 +100,11 @@ class NotificationBuilder @Inject constructor(
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val notifyText = context.getString(
-            R.string.notification_text_base,
-            RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
+        val minutesAtLeastTracked = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
+        val notifyText = context.resources.getQuantityString(
+            R.plurals.notification_text_base,
+            minutesAtLeastTracked.toInt(),
+            minutesAtLeastTracked
         )
 
         var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
@@ -127,7 +125,7 @@ class NotificationBuilder @Inject constructor(
                 )
             )
 
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository!!
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val device = deviceRepository.getDevice(deviceAddress)
 
         if (device?.deviceType != null && device.deviceType.canBeIgnored()) {
@@ -233,16 +231,11 @@ class NotificationBuilder @Inject constructor(
         val bundle: Bundle = packBundle(deviceAddress, notificationId)
 
         val notifyText = if (observationPositive) {
-            if (observationDuration == 1L) {
-                context.getString(
-                    R.string.notification_observe_tracker_positive_singular,
-                )
-            } else {
-                context.getString(
-                    R.string.notification_observe_tracker_positive_plural,
-                    observationDuration
-                )
-            }
+            context.resources.getQuantityString(
+                R.plurals.notification_observe_tracker_positive,
+                observationDuration.toInt(),
+                observationDuration
+            )
         } else {
             context.getString(
                 R.string.notification_observe_tracker_negative,
@@ -268,6 +261,20 @@ class NotificationBuilder @Inject constructor(
 
         return notification.build()
 
+    }
+
+    fun buildObserveTrackerFailedNotification(notificationId: Int): Notification {
+        val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+
+        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.notification_observe_tracker_title_base))
+            .setContentText(context.getString(R.string.notification_observe_tracker_error))
+            .setPriority(getNotificationPriority())
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
+            .setCategory(Notification.CATEGORY_ERROR)
+            .setSmallIcon(R.drawable.ic_scan_icon)
+            .setAutoCancel(true)
+            .build()
     }
 
     fun buildBluetoothErrorNotification(): Notification {

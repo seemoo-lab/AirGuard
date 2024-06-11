@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.database.daos
 
 import androidx.room.*
-import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -29,9 +28,24 @@ interface LocationDao {
     @Query("SELECT COUNT(*) FROM location, beacon WHERE location.locationId = :locationId AND location.locationId = beacon.locationId")
     fun getNumberOfBeaconsForLocation(locationId: Int): Int
 
+    @Query("SELECT * FROM location WHERE locationId NOT IN (SELECT DISTINCT locationId FROM beacon)")
+    fun getLocationsWithNoBeacons(): List<LocationModel>
+
+    @Query("SELECT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress")
+    fun getLocationsForDevice(deviceAddress: String): List<LocationModel>
+
+    @Query("SELECT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress AND b.receivedAt >= :since")
+    fun getLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): List<LocationModel>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(location: LocationModel): Long
 
     @Update
     suspend fun update(location: LocationModel)
+
+    @Delete
+    suspend fun delete(location: LocationModel)
+
+    @Delete
+    suspend fun deleteLocations(locations: List<LocationModel>)
 }

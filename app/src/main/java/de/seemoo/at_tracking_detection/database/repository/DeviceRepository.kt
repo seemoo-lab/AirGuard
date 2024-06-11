@@ -27,7 +27,7 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun updateRiskLevelCache(deviceAddress: String, riskLevel: Int, lastCalculatedRiskDate: LocalDateTime)
             = deviceDao.updateRiskLevelCache(deviceAddress, riskLevel, lastCalculatedRiskDate)
 
-    fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
+    // fun trackingDevicesSinceCount(since: LocalDateTime) = deviceDao.trackingDevicesCount(since)
 
     val totalCount: Flow<Int> = deviceDao.getTotalCount()
 
@@ -37,34 +37,35 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun devicesCurrentlyMonitored(since: LocalDateTime): Flow<Int> =
         deviceDao.getCurrentlyMonitored(since)
 
-    fun deviceCountSince(since: LocalDateTime): Flow<Int> =
-        deviceDao.getCurrentlyMonitored(since)
+    // fun deviceCountSince(since: LocalDateTime): Flow<Int> = deviceDao.getCurrentlyMonitored(since)
 
-    val ignoredDevices: Flow<List<BaseDevice>> = deviceDao.getIgnored()
+    // val ignoredDevices: Flow<List<BaseDevice>> = deviceDao.getIgnored()
 
     val ignoredDevicesSync: List<BaseDevice> = deviceDao.getIgnoredSync()
 
     fun getDevice(deviceAddress: String): BaseDevice? = deviceDao.getByAddress(deviceAddress)
 
-    val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDate)
+    val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
 
     val countIgnored = deviceDao.getCountIgnored()
 
-    fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDate)
-    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDate)
+    fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
+    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
 
     fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
 
     fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
 
-    @WorkerThread
-    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
-        return if (dateTime != null) {
-            deviceDao.getDeviceBeaconsSince(LocalDateTime.parse(dateTime))
-        } else {
-            deviceDao.getDeviceBeacons()
-        }
-    }
+    fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
+
+//    @WorkerThread
+//    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
+//        return if (dateTime != null) {
+//            deviceDao.getDeviceBeaconsSince(LocalDateTime.parse(dateTime))
+//        } else {
+//            deviceDao.getDeviceBeacons()
+//        }
+//    }
 
     suspend fun getDeviceBeaconsSinceDate(dateTime: LocalDateTime?): List<DeviceBeaconNotification> {
         return if (dateTime != null) {
@@ -87,5 +88,15 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     @WorkerThread
     suspend fun setIgnoreFlag(deviceAddress: String, state: Boolean) {
         deviceDao.setIgnoreFlag(deviceAddress, state)
+    }
+
+    @WorkerThread
+    suspend fun delete(baseDevice: BaseDevice) {
+        deviceDao.deleteDevice(baseDevice)
+    }
+
+    @WorkerThread
+    suspend fun deleteDevices(baseDevices: List<BaseDevice>) {
+        deviceDao.deleteDevices(baseDevices)
     }
 }

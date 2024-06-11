@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -20,10 +22,10 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogPlaySoundBinding
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetDialogFragment() {
+class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels()
 
@@ -50,30 +52,36 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewModel.playSoundState.collect {
-                when (it) {
-                    is DialogViewModel.ConnectionState.Playing -> {
-                        binding.spinnerConnecting.visibility = View.INVISIBLE
-                        binding.spinnerPlaying.visibility = View.VISIBLE
-                    }
-                    is DialogViewModel.ConnectionState.Connecting -> {
-                        binding.spinnerConnecting.visibility = View.VISIBLE
-                    }
-                    else -> {
-                        binding.spinnerConnecting.visibility = View.INVISIBLE
-                        binding.spinnerPlaying.visibility = View.INVISIBLE
-                        when (it) {
-                            is DialogViewModel.ConnectionState.Error -> {
-                                binding.imageError.visibility = View.VISIBLE
-                                binding.errorText.visibility = View.VISIBLE
-                                binding.errorText.text = it.message
-                            }
-                            is DialogViewModel.ConnectionState.Success -> {
-                                binding.imageSuccess.visibility = View.VISIBLE
-                            }
-                            else -> {
-                                Timber.d("Reached unknown state $it!")
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playSoundState.collect {
+                    when (it) {
+                        is DialogViewModel.ConnectionState.Playing -> {
+                            binding.spinnerConnecting.visibility = View.INVISIBLE
+                            binding.spinnerPlaying.visibility = View.VISIBLE
+                        }
+
+                        is DialogViewModel.ConnectionState.Connecting -> {
+                            binding.spinnerConnecting.visibility = View.VISIBLE
+                        }
+
+                        else -> {
+                            binding.spinnerConnecting.visibility = View.INVISIBLE
+                            binding.spinnerPlaying.visibility = View.INVISIBLE
+                            when (it) {
+                                is DialogViewModel.ConnectionState.Error -> {
+                                    binding.imageError.visibility = View.VISIBLE
+                                    binding.errorText.visibility = View.VISIBLE
+                                    binding.errorText.text = it.message
+                                }
+
+                                is DialogViewModel.ConnectionState.Success -> {
+                                    binding.imageSuccess.visibility = View.VISIBLE
+                                }
+
+                                else -> {
+                                    Timber.d("Reached unknown state $it!")
+                                }
                             }
                         }
                     }
@@ -83,9 +91,11 @@ class PlaySoundDialogFragment constructor(scanResult: ScanResult) : BottomSheetD
     }
 
     private fun dismissWithDelay() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            dismiss()
-        }, DIALOG_CLOSE_DELAY)
+        if (isAdded && !isDetached && !isRemoving) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                dismiss()
+            }, DIALOG_CLOSE_DELAY)
+        }
     }
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {

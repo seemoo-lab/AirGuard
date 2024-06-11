@@ -31,6 +31,36 @@
             app:popUpTo="@id/navigation_dashboard"
             app:popUpToSaveState="true"
             />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_ArticleFragment"
+            app:destination="@id/naviation_article"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/navigation_dashboard"
+            app:popUpToSaveState="true"
+            />
+    </fragment>
+
+    <!-- Article -->
+    <fragment
+        android:id="@+id/naviation_article"
+        android:name="de.seemoo.at_tracking_detection.ui.dashboard.ArticleFragment"
+        android:label="@string/title_article"
+        tools:layout="@layout/fragment_article">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="author"
+            app:argType="string" />
+        <argument
+            android:name="filename"
+            app:argType="string" />
+        <argument
+            android:name="readingTime"
+            app:argType="integer" />
     </fragment>
 
     <!-- Settings -->
@@ -210,6 +240,10 @@
         android:label="@string/title_devices_tracking">
         <argument
             android:name="deviceAddress"
+            app:argType="string" />
+        <argument
+            android:name="deviceTypeAsString"
+            android:defaultValue="UNKNOWN"
             app:argType="string" />
         <argument
             android:name="notificationId"

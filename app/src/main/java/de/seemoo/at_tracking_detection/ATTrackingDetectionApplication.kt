@@ -2,9 +2,11 @@ package de.seemoo.at_tracking_detection
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
@@ -18,6 +20,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
@@ -25,6 +28,7 @@ import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
 import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
@@ -61,6 +65,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var locationProvider: LocationProvider
+
+    @Inject
+    lateinit var scanRepository: ScanRepository
 
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 
@@ -116,6 +123,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         notificationService.scheduleSurveyNotification(false)
         BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
 
+        registerBroadcastReceiver()
+
         if (BuildConfig.DEBUG) {
 //            // Get a location for testing
 //            Timber.d("Request location")
@@ -167,6 +176,16 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
 
+    private fun registerBroadcastReceiver() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            val br = SetExactAlarmPermissionChangedReceiver()
+            val filter =
+                IntentFilter(AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED)
+            val flags = ContextCompat.RECEIVER_NOT_EXPORTED
+            ContextCompat.registerReceiver(this, br, filter, flags)
+        }
+    }
+
     companion object {
         private lateinit var instance: ATTrackingDetectionApplication
         fun getAppContext(): Context = instance.applicationContext
@@ -178,11 +197,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                 null
             }
         }
-        fun getCurrentApp(): ATTrackingDetectionApplication? {
+        fun getCurrentApp(): ATTrackingDetectionApplication {
             return instance
         }
         //TODO: Add real survey URL
-        val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
-        val SURVEY_IS_RUNNING = false
+        const val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
+        const val SURVEY_IS_RUNNING = false
     }
 }

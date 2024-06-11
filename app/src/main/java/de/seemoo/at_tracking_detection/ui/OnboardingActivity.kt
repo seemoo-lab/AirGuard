@@ -77,7 +77,7 @@ class OnboardingActivity : AppIntro() {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         } else {
-            onBackPressed()
+            finish()
         }
     }
 
@@ -218,9 +218,7 @@ class OnboardingActivity : AppIntro() {
 
         notificationSlide(slideNumber + 3)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            addSlide(IgnoreBatteryOptimizationFragment.newInstance())
-        }
+        addSlide(IgnoreBatteryOptimizationFragment.newInstance())
 
         addSlide(ShareDataFragment.newInstance())
 

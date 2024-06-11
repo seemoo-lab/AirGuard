@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="scanResult"
-            type="android.bluetooth.le.ScanResult" />
+            name="wrappedScanResult"
+            type="de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper" />
 
         <import type="android.view.View" />
 
@@ -18,14 +18,13 @@
         android:id="@+id/scan_result_item_card"
         style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:layout_margin="@dimen/card_margin"
-        app:setDeviceColor="@{scanResult}">
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/card_margin">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:layout_margin="4dp">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/scan_result_guideline_left"
@@ -35,37 +34,23 @@
                 app:layout_constraintGuide_percent="0.15" />
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/scan_result_guideline_middle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.60" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/scan_result_guideline_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.50" />
-
-            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/scan_result_guideline_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.85224277" />
+                app:layout_constraintGuide_percent="0.8" />
 
             <ImageView
                 android:id="@+id/scan_device_logo"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="12dp"
+                android:layout_marginVertical="8dp"
                 android:contentDescription="@string/scan_result_item_image_description"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_left"
                 app:layout_constraintTop_toTopOf="parent"
-                app:setDeviceDrawable="@{scanResult}"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_left"
+                app:setDeviceDrawable="@{wrappedScanResult}"
                 app:tint="?android:attr/textColorTertiary"
                 tools:src="@drawable/ic_airtag" />
 
@@ -73,31 +58,18 @@
                 android:id="@+id/scan_result_device_name"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="6dp"
-                android:autoSizeTextType="uniform"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:maxLines="1"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
-                app:layout_constraintBottom_toTopOf="@id/scan_result_guideline_horizontal"
-                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_left"
-                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
-                app:layout_constraintTop_toTopOf="parent"
-                app:setDeviceName="@{scanResult}"
-                tools:text="Debug Device" />
-
-            <TextView
-                android:id="@+id/scan_result_device_address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:autoSizeTextType="uniform"
-                android:maxLines="1"
-                android:text="@{scanResult.device.address}"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
+                app:layout_constraintLeft_toLeftOf="@id/scan_result_guideline_left"
+                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_right"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_left"
-                app:layout_constraintRight_toLeftOf="@id/scan_result_guideline_middle"
-                app:layout_constraintTop_toBottomOf="@id/scan_result_guideline_horizontal"
-                tools:text="FF:FF:FF:FF:FF" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:setDeviceName="@{wrappedScanResult}"
+                tools:text="Debug Device" />
 
             <ImageView
                 android:id="@+id/scan_signal_strength"
@@ -108,39 +80,20 @@
                 android:src="@drawable/ic_signal_low"
                 app:tint="?android:attr/textColorTertiary"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_middle"
-                app:layout_constraintRight_toLeftOf="@id/scan_bell_icon"
                 app:layout_constraintTop_toTopOf="parent"
-                app:setSignalStrengthDrawable="@{scanResult}" />
+                app:layout_constraintLeft_toRightOf="@id/scan_result_guideline_right"
+                app:layout_constraintRight_toLeftOf="@id/device_arrow"
+                app:setSignalStrengthDrawable="@{wrappedScanResult}" />
 
             <ImageView
-                android:id="@+id/scan_bell_icon"
+                android:id="@+id/device_arrow"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/scan_result_guideline_right"
-                app:layout_constraintStart_toEndOf="@+id/scan_signal_strength"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="?android:attr/textColorTertiary"
-                app:visibilityBellIcon="@{scanResult}"
-                android:src="@drawable/ic_baseline_notifications_active_24"
-                android:contentDescription="@string/bell_icon_description" />
-
-            <ImageView
-                android:id="@+id/scan_result_play_sound"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="12dp"
-                android:src="@{@drawable/ic_baseline_play_circle_outline_24}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/scan_bell_icon"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:hideWhenNoSoundPlayed="@{scanResult}"
-                app:tint="?android:attr/textColorHighlight"
-                tools:src="@drawable/ic_baseline_play_circle_outline_24"
-                android:contentDescription="@string/play_sound_description" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:srcCompat="@drawable/ic_baseline_chevron_right_24"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

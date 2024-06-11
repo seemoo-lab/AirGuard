@@ -10,14 +10,11 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
-import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -29,19 +26,19 @@ class RiskDetailViewModel @Inject constructor(
     deviceRepository: DeviceRepository,
     scanRepository: ScanRepository,
     val beaconRepository: BeaconRepository,
-    val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepository,
 ) : ViewModel() {
 
-    private val relevantDate = RiskLevelEvaluator.relevantTrackingDate
+    private val relevantDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
     private val trackersFound: List<BaseDevice> = deviceRepository.trackingDevicesNotIgnoredSince(relevantDate)
     private val lastSeenDates = trackersFound.map {
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.lastSeen)
     }
 
     var riskColor: Int
-    val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDate).asLiveData()
+    val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation).asLiveData()
 
-    val totalLocationsTrackedCount= locationRepository.locationsSinceCount(relevantDate).asLiveData()
+    val totalLocationsTrackedCount = locationRepository.locationsSinceCount(relevantDate).asLiveData()
 
     // val discoveredBeacons: List<Beacon> = beaconRepository.getBeaconsForDevices(trackersFound)
 
@@ -57,10 +54,6 @@ class RiskDetailViewModel @Inject constructor(
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(it.endDate)
         }
         scanDates.joinToString(separator = "\n")
-    }
-
-    fun allBeacons(): Flow<List<Beacon>> {
-        return beaconRepository.getBeaconsSince(relevantDate)
     }
 
     init {

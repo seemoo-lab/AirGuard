@@ -2,20 +2,27 @@ package de.seemoo.at_tracking_detection.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import timber.log.Timber
 
-class ScheduleWorkersWorker(
+class ObserveTrackerWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        Timber.d("ScheduleWorkersWorker doWork() called")
-        // Perform the work you need to do after the delay here
+        Timber.d("ObserveTrackerWorker doWork() called")
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return Result.failure()
         val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService ?: return Result.failure()
+
+        // Call ScanBluetoothWorker to scan for devices
+        val workRequest = OneTimeWorkRequest.Builder(ScanBluetoothWorker::class.java)
+            .build()
+        WorkManager.getInstance(applicationContext).enqueue(workRequest)
 
         val inputData = inputData
         val deviceAddress = inputData.getString(DEVICE_ADDRESS_PARAM)
@@ -28,7 +35,6 @@ class ScheduleWorkersWorker(
                 val lastSeen = device.lastSeen
 
                 if (nextObservationNotification != null && currentObservationDuration != null) {
-                    // TODO find a better solution, so call Bluetooth Check here
                     val observationPositive = (lastSeen >= nextObservationNotification.minusMinutes(ScheduleWorkersReceiver.OBSERVATION_DELTA) && lastSeen <= nextObservationNotification.plusMinutes(currentObservationDuration))
 
                     Timber.d("Observation for device ${device.address} is over... Sending Notification!")
@@ -39,7 +45,11 @@ class ScheduleWorkersWorker(
                     // Update device
                     deviceRepository.update(device)
                 }
+            } else {
+                notificationService.sendObserveTrackerFailedNotification()
             }
+        } else {
+            notificationService.sendObserveTrackerFailedNotification()
         }
         return Result.success()
     }

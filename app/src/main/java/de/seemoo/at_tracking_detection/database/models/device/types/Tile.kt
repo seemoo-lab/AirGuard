@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.*
-import timber.log.Timber
 
 class Tile(val id: Int) : Device(){
     override val imageResource: Int
@@ -36,8 +35,20 @@ class Tile(val id: Int) : Device(){
         override val defaultDeviceName: String
             get() = "Tile"
 
+        override val websiteManufacturer: String
+            get() = "https://www.tile.com/"
+
         override val statusByteDeviceType: UInt
             get() = 0u
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionLow: Int
+            get() = 5
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionMedium: Int
+            get() = 4
+
+        override val numberOfLocationsToBeConsideredForTrackingDetectionHigh: Int
+            get() = 3
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEED-0000-1000-8000-00805F9B34FB")
     }

@@ -19,9 +19,13 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mapContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}"
+            bind:layout_constraintBottom_toTopOf="@+id/legendContainer"
+            bind:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/info_text_locations"
@@ -41,6 +45,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 bind:loading="@{vm.isMapLoading}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/legendContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            bind:layout_constraintTop_toBottomOf="@id/mapContainer"
+            bind:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Marker Legend -->
+            <TextView
+                android:id="@+id/legendTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/marker_legend"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/legendDeviceMarker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/device_marker"
+                android:drawablePadding="4dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@id/legendTitle"
+                bind:drawableLeftCompat="@drawable/ic_baseline_location_on_45_black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

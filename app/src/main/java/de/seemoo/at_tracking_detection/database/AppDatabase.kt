@@ -8,7 +8,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 
 @Database(
-    version = 12,
+    version = 16,
     entities = [
         BaseDevice::class,
         Notification::class,
@@ -26,6 +26,10 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
         AutoMigration(from=8, to=9, spec = AppDatabase.RenameScanMigrationSpec::class),
         AutoMigration(from=10, to=11),
         AutoMigration(from=11, to=12),
+        AutoMigration(from=12, to=13),
+        AutoMigration(from=13, to=14),
+        AutoMigration(from=14, to=15),
+        AutoMigration(from=15, to=16)
     ],
     exportSchema = true
 )
@@ -49,7 +53,5 @@ abstract class AppDatabase : RoomDatabase() {
         fromColumnName = "date",
         toColumnName = "endDate"
     )
-    class RenameScanMigrationSpec: AutoMigrationSpec {
-
-    }
+    class RenameScanMigrationSpec: AutoMigrationSpec
 }

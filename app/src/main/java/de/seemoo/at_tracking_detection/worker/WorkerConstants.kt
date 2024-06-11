@@ -4,6 +4,7 @@ object WorkerConstants {
     const val MIN_MINUTES_TO_NEXT_BT_SCAN = 15L
     const val MIN_HOURS_TO_NEXT_SEND_STATISTICS = 4L
     const val PERIODIC_SCAN_WORKER = "PeriodicScanWorker"
+    const val SCAN_IMMEDIATELY = "PeriodicScanWorker_NOW"
     const val PERIODIC_SEND_STATISTICS_WORKER = "PeriodicSendStatisticsWorker"
     const val ONETIME_SEND_STATISTICS_WORKER = "OneTimeSendStatisticsWorker"
     const val TRACKING_DETECTION_WORKER = "TrackingDetectionWorker"

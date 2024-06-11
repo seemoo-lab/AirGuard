@@ -32,10 +32,10 @@ object SharedPrefs {
         get() {
             val dateString = sharedPreferences.getString("last_scan", null)
             if (dateString != null) {
-                try {
-                    return LocalDateTime.parse(dateString)
+                return try {
+                    LocalDateTime.parse(dateString)
                 }catch(e: DateTimeParseException) {
-                    return null
+                    null
                 }
             }
             return null
@@ -44,12 +44,36 @@ object SharedPrefs {
             sharedPreferences.edit().putString("last_scan", value.toString()).apply()
         }
 
+    var nextScanDate: LocalDateTime?
+        get() {
+            val dateString = sharedPreferences.getString("next_scan", null)
+            if (dateString != null) {
+                return try {
+                    LocalDateTime.parse(dateString)
+                }catch(e: DateTimeParseException) {
+                    null
+                }
+            }
+            return null
+        }
+        set(value) {
+            sharedPreferences.edit().putString("next_scan", value.toString()).apply()
+        }
+
     var shareData: Boolean
         get() {
             return sharedPreferences.getBoolean("share_data", false)
         }
         set(value) {
             sharedPreferences.edit().putBoolean("share_data", value).apply()
+        }
+
+    var advancedMode: Boolean
+        get() {
+            return sharedPreferences.getBoolean("advanced_mode", false)
+        }
+        set(value) {
+            sharedPreferences.edit().putBoolean("advanced_mode", value).apply()
         }
 
     var token: String?
@@ -64,10 +88,10 @@ object SharedPrefs {
         get() {
             val dateString = sharedPreferences.getString("lastDataDonation", null)
             if (dateString != null) {
-                try {
-                    return LocalDateTime.parse(dateString)
+                return try {
+                    LocalDateTime.parse(dateString)
                 }catch(e: DateTimeParseException) {
-                    return null
+                    null
                 }
             }
             return null
@@ -104,10 +128,10 @@ object SharedPrefs {
         get() {
             val dateString = sharedPreferences.getString("last_time_opened", null)
             if (dateString != null) {
-                try {
-                    return LocalDateTime.parse(dateString)
+                return try {
+                    LocalDateTime.parse(dateString)
                 }catch(e: DateTimeParseException) {
-                    return null
+                    null
                 }
             }
             return null
@@ -139,10 +163,10 @@ object SharedPrefs {
         get() {
             val dateString = sharedPreferences.getString("survey_notification_date", null)
             if (dateString != null) {
-                try {
-                    return LocalDateTime.parse(dateString)
+                return try {
+                    LocalDateTime.parse(dateString)
                 }catch(e: DateTimeParseException) {
-                    return null
+                    null
                 }
             }
             return null
@@ -151,20 +175,12 @@ object SharedPrefs {
             sharedPreferences.edit().putString("survey_notification_date", value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).apply()
         }
 
-    var surveyNotficationSent: Boolean
+    var surveyNotificationSent: Boolean
         get() {
             return sharedPreferences.getBoolean("survey_notification_sent", false)
         }set(value) {
         sharedPreferences.edit().putBoolean("survey_notification_sent", value).apply()
     }
-
-    var showConnectedDevices: Boolean
-        get() {
-            return sharedPreferences.getBoolean("show_connected_devices", false)
-        }
-        set(value) {
-            sharedPreferences.edit().putBoolean("show_connected_devices", value).apply()
-        }
 
     var riskSensitivity: String
         // 0: Low

@@ -21,8 +21,7 @@ import timber.log.Timber
  * Not to be used for Background scanning. This is handled in the `ScanBluetoothWorker`
  */
 object BLEScanner {
-
-    var bluetoothManager: BluetoothManager? = null
+    private var bluetoothManager: BluetoothManager? = null
     var callbacks = ArrayList<ScanCallback>()
     var isScanning = false
     private var lastLocation: Location? = null
@@ -30,15 +29,17 @@ object BLEScanner {
     // Contains the last 10 scan results
     private var scanResults = ArrayList<ScanResult>()
 
-    init {
-
-    }
-
     fun startBluetoothScan(appContext: Context): Boolean {
         // Check if already scanning
         if(this.bluetoothManager != null && isScanning) { return true }
 
         this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = this.bluetoothManager?.adapter
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            Timber.d("Bluetooth is not enabled.")
+            return false
+        }
 
         val scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
@@ -91,7 +92,7 @@ object BLEScanner {
 
     fun unregisterCallback(callback: ScanCallback) {
         callbacks.remove(callback)
-        Timber.d("BLE ScanCallback unregistered")
+        // Timber.d("BLE ScanCallback unregistered")
     }
 
     private var ownScanCallback = object: ScanCallback() {
@@ -135,8 +136,9 @@ object BLEScanner {
 
     private fun fetchCurrentLocation() {
         // We fetch the current location and cache for saving the results to the DB
-        val locationProvider = ATTrackingDetectionApplication.getCurrentApp()?.locationProvider
-        val loc = locationProvider?.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
+        val locationProvider = ATTrackingDetectionApplication.getCurrentApp().locationProvider
+        val loc =
+            locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
         if (loc != null) {
             this.lastLocation = loc
         }
@@ -150,10 +152,7 @@ object BLEScanner {
 
     fun isBluetoothOn(): Boolean {
         val adapter = bluetoothManager?.adapter
-        if (adapter != null && adapter.isEnabled) {
-            return true
-        }
-        return false
+        return adapter != null && adapter.isEnabled
     }
 
     fun openBluetoothSettings(context: Context) {

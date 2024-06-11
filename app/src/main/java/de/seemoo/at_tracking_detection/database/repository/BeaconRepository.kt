@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.database.repository
 
-import android.os.ParcelUuid
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -58,4 +57,11 @@ class BeaconRepository @Inject constructor(
     suspend fun update(beacon: Beacon) {
         beaconDao.update(beacon)
     }
+
+    @WorkerThread
+    suspend fun deleteBeacons(beacons: List<Beacon>) {
+        beaconDao.deleteBeacons(beacons)
+    }
+
+    fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon> = beaconDao.getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore)
 }

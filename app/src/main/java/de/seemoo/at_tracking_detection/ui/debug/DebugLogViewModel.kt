@@ -4,7 +4,6 @@ import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import fr.bipi.tressence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
@@ -12,11 +11,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DebugLogViewModel @Inject constructor(): ViewModel() {
-    var fullLogText: List<String>
+    private var fullLogText: List<String>
     var logText: MutableLiveData<String> = MutableLiveData()
     var filterText: MutableLiveData<String> = MutableLiveData()
 
-    val logFile: File
+    private val logFile: File
 
     init {
         val trees = Timber.forest()
