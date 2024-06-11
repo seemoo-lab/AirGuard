@@ -1,0 +1,38 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: 'AirGuard for Android: Tracking Protection'
+message: 'If you use this software, please cite it as below.'
+type: software
+authors:
+  - given-names: Niklas
+    family-names: Bittner
+    affiliation: 'SEEMOO, TU Darmstadt'
+  - given-names: Alexander
+    family-names: Heinrich
+    affiliation: 'SEEMOO, TU Darmstadt'
+    orcid: 'https://orcid.org/0000-0002-1150-1922'
+  - given-names: Dennis
+    family-names: Arndt
+    affiliation: 'SEEMOO, TU Darmstadt'
+  - given-names: Matthias
+    family-names: Hollick
+    affiliation: 'SEEMOO, TU Darmstadt'
+    orcid: 'https://orcid.org/0000-0002-9163-5989'
+repository-code: 'https://github.com/seemoo-lab/AirGuard'
+abstract: >-
+  The AirTags and other Find My devices are simple, small
+  and perfect to track Android users! Without tracking
+  warnings, as integrated on iOS, anyone could try to track
+  your behavior by placing an AirTag in your jacket,
+  backpack or car.
+keywords:
+  - Android
+  - Bluetooth Tracker
+  - Tracking Protection
+  - Stalking
+license: Apache-2.0
+commit: dd3e954861f0cf9a7c98c58e08de44a6573de7f7
+version: '2.2'
+date-released: '2024-06-11'
