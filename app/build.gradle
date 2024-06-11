@@ -28,7 +28,7 @@ android {
         targetSdk = 34
         versionCode 44
         versionName "2.2"
-
+        
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
