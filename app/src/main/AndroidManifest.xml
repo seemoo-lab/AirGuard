@@ -38,8 +38,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <!--  Required for accessing the user's location when a tracker has been found  -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
 <!--Required for scheduling background scans-->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"
+        android:minSdkVersion="33" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -115,12 +120,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.OnboardingActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ui.OnboardingActivity">
         </activity>
 
         <service

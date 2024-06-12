@@ -72,8 +72,6 @@
 # R8 full mode strips generic signatures from return types if not kept.
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
--keep class de.seemoo.at_tracking_detection.** { *; }
-
 # Keep Gson classes
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class com.google.gson.Gson { *; }
