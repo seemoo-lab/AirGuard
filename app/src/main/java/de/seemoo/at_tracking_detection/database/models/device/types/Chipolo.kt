@@ -48,18 +48,10 @@ class Chipolo(val id: Int) : Device() {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
             if (serviceData != null) {
-                // The last bit of the second byte indicates the offline mode
-                // 0 --> Device was connected in the last 30 minutes
-                // 1 --> Last Connection with owner device was longer than 30 minutes ago
-                val statusBit = getBitsFromByte(serviceData[1], 0)
+                // Change, previously we were comparing a bit that could indicate that a tracker was connected to a nearby tracker.
+                // It seems like this was not the case for all trackers, so we just report this tracker as Overmature offline as soon as it moves to tracking mode.
 
-                return if (statusBit) {
-                    Timber.d("Chipolo: Overmature Offline Mode")
-                    ConnectionState.OVERMATURE_OFFLINE
-                } else {
-                    Timber.d("Chipolo: Premature Offline Mode")
-                    ConnectionState.PREMATURE_OFFLINE
-                }
+                return ConnectionState.OVERMATURE_OFFLINE
             }
 
             return ConnectionState.UNKNOWN
