@@ -106,9 +106,7 @@ data class BaseDevice(
         DeviceType.FIND_MY -> FindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
         DeviceType.CHIPOLO -> Chipolo(deviceId)
-        DeviceType.SAMSUNG -> SamsungDevice(deviceId)
-        DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
-        DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
+        DeviceType.SAMSUNG_DEVICE -> SamsungDevice(deviceId)
         DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork(deviceId)
         else -> {
             // For backwards compatibility
@@ -127,17 +125,15 @@ data class BaseDevice(
     companion object {
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
-                DeviceType.GALAXY_SMART_TAG_PLUS,
-                DeviceType.GALAXY_SMART_TAG -> null
+                // TODO
+                DeviceType.SAMSUNG_DEVICE -> null
                 else -> scanResult.scanRecord?.deviceName
             }
         }
 
         fun getPublicKey(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
             return when (deviceType) {
-                DeviceType.SAMSUNG,
-                DeviceType.GALAXY_SMART_TAG,
-                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getPublicKey(scanResult)
+                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getPublicKey(scanResult)
                 else -> scanResult.device.address // Default case to handle unknown types
             }
         }
@@ -146,9 +142,7 @@ data class BaseDevice(
             return when (deviceType) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
-                DeviceType.SAMSUNG,
-                DeviceType.GALAXY_SMART_TAG,
-                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
@@ -160,8 +154,7 @@ data class BaseDevice(
 
         fun getBatteryState(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): BatteryState {
             return when (deviceType) {
-                DeviceType.GALAXY_SMART_TAG,
-                DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getBatteryState(scanResult)
+                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getBatteryState(scanResult)
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
                 DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)

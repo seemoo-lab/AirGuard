@@ -151,9 +151,7 @@ class ScanDistanceFragment : Fragment() {
     private fun getConnectionStateExplanation(connectionState: ConnectionState, deviceType: DeviceType): String {
         return when (connectionState) {
             ConnectionState.OVERMATURE_OFFLINE -> when(deviceType) {
-                DeviceType.SAMSUNG,
-                DeviceType.GALAXY_SMART_TAG,
-                DeviceType.GALAXY_SMART_TAG_PLUS -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
+                DeviceType.SAMSUNG_DEVICE -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
                 DeviceType.CHIPOLO -> getString(R.string.connection_state_overmature_offline_explanation_chipolo)
                 else -> getString(R.string.connection_state_overmature_offline_explanation)
             }

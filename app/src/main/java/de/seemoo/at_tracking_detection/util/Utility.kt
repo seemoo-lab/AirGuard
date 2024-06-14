@@ -240,13 +240,11 @@ object Utility {
     fun getExplanationTextForDeviceType(deviceType: DeviceType?): String {
         Timber.d("get Explanation for DeviceType: $deviceType")
         return when (deviceType) {
-            DeviceType.APPLE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
-            DeviceType.AIRPODS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
-            DeviceType.FIND_MY -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
-            DeviceType.AIRTAG-> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
-            DeviceType.SAMSUNG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
-            DeviceType.GALAXY_SMART_TAG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
-            DeviceType.GALAXY_SMART_TAG_PLUS -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.APPLE,
+            DeviceType.AIRPODS,
+            DeviceType.FIND_MY,
+            DeviceType.AIRTAG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
+            DeviceType.SAMSUNG_DEVICE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
             DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
             DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
             else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_unknown)

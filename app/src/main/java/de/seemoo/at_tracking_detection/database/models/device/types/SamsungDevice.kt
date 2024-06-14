@@ -1,22 +1,27 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
+import android.annotation.SuppressLint
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.BatteryState
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
 import timber.log.Timber
 
-open class SamsungDevice(open val id: Int) : Device(){
+class SamsungDevice(val id: Int) : Device() {
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_smarttag_icon
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_samsung_device)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
             .format(id)
 
     override val deviceContext: DeviceContext
@@ -28,9 +33,9 @@ open class SamsungDevice(open val id: Int) : Device(){
                 .setServiceData(
                     offlineFindingServiceUUID,
                     // First Byte:
-                    // 13, FF --> After 24 Hours,
+                    // 13, FF --> After 8 Hours,
                     // 12, FE --> After 15 Minutes
-                    // 10, F8 --> Instant
+                    // 10, F8 --> Connected
                     //
                     // Twelve Byte:
                     // 04, 00 --> UWB off,
@@ -41,18 +46,38 @@ open class SamsungDevice(open val id: Int) : Device(){
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.SAMSUNG
-
-        override val defaultDeviceName: String
-            get() = "Samsung Device"
-
-        override val statusByteDeviceType: UInt
-            get() = 0u
+            get() = DeviceType.SAMSUNG_DEVICE
 
         override val websiteManufacturer: String
             get() = "https://www.samsung.com/"
 
-        private val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
+        override val defaultDeviceName: String
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.smarttag_no_uwb)
+
+        override val statusByteDeviceType: UInt
+            get() = 0u
+
+        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
+
+        @SuppressLint("MissingPermission")
+        fun getSubType(scanResult: ScanResult): SamsungDeviceType {
+            val advertisementName = scanResult.device.name
+            val hasUWB = getUwbAvailability(scanResult)
+            val externalManufacturerName = null // 0x180A, 0x2A29
+            val appearance = null // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
+
+            return SamsungDeviceType.UNKNOWN
+        }
+
+        private fun getUwbAvailability(scanResult: ScanResult): Boolean? {
+            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+            if (serviceData != null && serviceData.size >= 12) {
+                return getBitsFromByte(serviceData[12], 2)
+            }
+
+            return null
+        }
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
@@ -107,7 +132,7 @@ open class SamsungDevice(open val id: Int) : Device(){
 
         override fun getPublicKey(scanResult: ScanResult): String {
             try {
-                val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
+                val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
                 fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
@@ -119,31 +144,5 @@ open class SamsungDevice(open val id: Int) : Device(){
             }
             return scanResult.device.address
         }
-
-        fun getSamsungDeviceType(scanResult: ScanResult): DeviceType{
-            val serviceData = scanResult.scanRecord?.getServiceData(SmartTag.offlineFindingServiceUUID)
-
-            /*
-            if (serviceData != null) {
-                println("Service Data Byte: ")
-                println(String.format("%02X", serviceData[12]))
-                println("Service Data Bit for UWB: ")
-                println(getBitsFromByte(serviceData[12], 2))
-            }
-             */
-
-            return if (serviceData == null){
-                Timber.d("Samsung Service Data is null")
-                deviceType
-            // Little Endian: (5) -> (2)
-            } else if (getBitsFromByte(serviceData[12], 2)) {
-                Timber.d("Samsung Service Data is SmartTag Plus")
-                SmartTagPlus.deviceType
-            } else {
-                Timber.d("Samsung Service Data is SmartTag")
-                SmartTag.deviceType
-            }
-        }
     }
-
 }

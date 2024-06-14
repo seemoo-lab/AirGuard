@@ -27,9 +27,7 @@ class AllDevicesViewModel @Inject constructor(
     val countTile = deviceRepository.countForDeviceType(DeviceType.TILE).asLiveData()
     val countChipolo = deviceRepository.countForDeviceType(DeviceType.CHIPOLO).asLiveData()
     val countGoogle = deviceRepository.countForDeviceType(DeviceType.GOOGLE_FIND_MY_NETWORK).asLiveData()
-    val countSmartTag = deviceRepository.countForDeviceTypes(
-        DeviceType.GALAXY_SMART_TAG, DeviceType.GALAXY_SMART_TAG_PLUS
-    ).asLiveData()
+    val countSmartTag = deviceRepository.countForDeviceType(DeviceType.SAMSUNG_DEVICE).asLiveData()
 
     var riskColor: Int
 

@@ -93,7 +93,7 @@ class DevicesTabUITest {
         onView(withText("FindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
-        onView(withText("Galaxy SmartTag")).perform(click())
+        onView(withText("Galaxy SamsungDevice")).perform(click())
         onView(withText("Tile")).perform(click())
 
 
@@ -104,7 +104,7 @@ class DevicesTabUITest {
         onView(withText("FindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
-        onView(withText("Galaxy SmartTag")).perform(click())
+        onView(withText("Galaxy SamsungDevice")).perform(click())
         onView(withText("Tile")).perform(click())
 
         onView(withText("identified trackers")).perform(click())

@@ -50,7 +50,6 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val countIgnored = deviceDao.getCountIgnored()
 
     fun countForDeviceType(deviceType: DeviceType) = deviceDao.getCountForType(deviceType.name, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
-    fun countForDeviceTypes(deviceType1: DeviceType, deviceType2: DeviceType) = deviceDao.getCountForTypes(deviceType1.name, deviceType2.name, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
 
     fun getNumberOfLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForDevice(deviceAddress, since)
 
