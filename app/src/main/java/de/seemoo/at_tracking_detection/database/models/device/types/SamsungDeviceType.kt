@@ -4,6 +4,6 @@ enum class SamsungDeviceType{
     SMART_TAG_1,
     SMART_TAG_1_PLUS,
     SMART_TAG_2,
-    OTHER,
+    SOLUM,
     UNKNOWN;
 }

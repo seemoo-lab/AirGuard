@@ -12,6 +12,7 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
 import timber.log.Timber
 
@@ -59,17 +60,27 @@ class SamsungDevice(val id: Int) : Device() {
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
-        @SuppressLint("MissingPermission")
-        fun getSubType(scanResult: ScanResult): SamsungDeviceType {
-            val advertisementName = scanResult.device.name
-            val hasUWB = getUwbAvailability(scanResult)
-            val externalManufacturerName = null // 0x180A, 0x2A29
-            val appearance = null // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
+        fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
+            val advertisedName = wrappedScanResult.advertisedName
+            val hasUWB = wrappedScanResult.uwbCapable
+            val deviceName = wrappedScanResult.deviceName
+            val externalManufacturerName = wrappedScanResult.manufacturer // 0x180A, 0x2A29
+            val appearance = wrappedScanResult.appearance // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
 
-            return SamsungDeviceType.UNKNOWN
+            return if (hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2")) {
+                SamsungDeviceType.SMART_TAG_2
+            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") && externalManufacturerName == "SOLUM") {
+                SamsungDeviceType.SOLUM
+            } else if (hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
+                SamsungDeviceType.SMART_TAG_1_PLUS
+            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
+                SamsungDeviceType.SMART_TAG_1
+            } else {
+                SamsungDeviceType.UNKNOWN
+            }
         }
 
-        private fun getUwbAvailability(scanResult: ScanResult): Boolean? {
+        fun getUwbAvailability(scanResult: ScanResult): Boolean? {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
             if (serviceData != null && serviceData.size >= 12) {

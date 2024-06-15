@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 
 enum class DeviceType {
@@ -30,7 +31,8 @@ enum class DeviceType {
             }
         }
 
-        fun getImageDrawable(deviceType: DeviceType): Int {
+        fun getImageDrawable(wrappedScanResult: ScanResultWrapper): Int {
+            val deviceType: DeviceType = wrappedScanResult.deviceType
             return when (deviceType) {
                 UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
                 AIRPODS -> R.drawable.ic_airpods
@@ -39,7 +41,16 @@ enum class DeviceType {
                 FIND_MY -> R.drawable.ic_chipolo
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
-                SAMSUNG_DEVICE -> R.drawable.ic_smarttag_icon
+                SAMSUNG_DEVICE -> {
+                    val subType: SamsungDeviceType = SamsungDevice.getSubType(wrappedScanResult)
+                    when (subType) {
+                        SamsungDeviceType.SMART_TAG_1 -> R.drawable.ic_smarttag_icon
+                        SamsungDeviceType.SMART_TAG_1_PLUS -> R.drawable.ic_smarttag_icon
+                        SamsungDeviceType.SMART_TAG_2 -> R.drawable.ic_baseline_device_unknown_24
+                        SamsungDeviceType.SOLUM -> R.drawable.ic_baseline_device_unknown_24
+                        SamsungDeviceType.UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
+                    }
+                }
                 GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
             }
         }

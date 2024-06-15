@@ -1,7 +1,13 @@
 package de.seemoo.at_tracking_detection.util.ble
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
@@ -11,10 +17,10 @@ import android.location.Location
 import android.provider.Settings
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
+import java.util.UUID
 
 
 /***
@@ -29,6 +35,19 @@ object BLEScanner {
 
     // Contains the last 10 scan results
     private var scanResults = ArrayList<ScanResult>()
+
+    private val GATT_GENERIC_ACCESS_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+    private val GATT_DEVICE_NAME_UUID = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
+    private val GATT_APPEARANCE_UUID = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
+
+    private val GATT_DEVICE_INFORMATION_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+    private val GATT_MANUFACTURER_NAME_UUID = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
+
+    private val connectedDevices = mutableSetOf<String>()
+
+    val deviceNames = mutableMapOf<String, String>()
+    val appearances = mutableMapOf<String, Int>()
+    val manufacturers = mutableMapOf<String, String>()
 
     fun startBluetoothScan(appContext: Context): Boolean {
         // Check if already scanning
@@ -107,6 +126,7 @@ object BLEScanner {
                 if (scanResults.size > 10) {
                     scanResults.removeLastOrNull()
                 }
+                connectToDevice(scanResult.device)
             }
 
             callbacks.forEach {
@@ -131,6 +151,78 @@ object BLEScanner {
             callbacks.forEach {
                 it.onBatchScanResults(results)
             }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun connectToDevice(device: BluetoothDevice) {
+        if (device.address in connectedDevices) {
+            Timber.d("Already connected to device: ${device.address}. Skipping connection.")
+            return
+        }
+        Timber.d("Connecting to device: ${device.address}")
+        device.connectGatt(null, false, gattCallback)
+        connectedDevices.add(device.address)
+    }
+
+    private val gattCallback = object : BluetoothGattCallback() {
+        @SuppressLint("MissingPermission")
+        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            super.onConnectionStateChange(gatt, status, newState)
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Timber.d("Connected to GATT server. Attempting to start service discovery: ${gatt.discoverServices()}")
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Timber.d("Disconnected from GATT server.")
+                gatt.close()
+            }
+        }
+
+        @SuppressLint("MissingPermission")
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            super.onServicesDiscovered(gatt, status)
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                val genericAccessService = gatt.getService(GATT_GENERIC_ACCESS_UUID)
+                val deviceInfoService = gatt.getService(GATT_DEVICE_INFORMATION_UUID)
+
+                genericAccessService?.let {
+                    val deviceNameCharacteristic = it.getCharacteristic(GATT_DEVICE_NAME_UUID)
+                    val appearanceCharacteristic = it.getCharacteristic(GATT_APPEARANCE_UUID)
+                    gatt.readCharacteristic(deviceNameCharacteristic)
+                    gatt.readCharacteristic(appearanceCharacteristic)
+                }
+
+                deviceInfoService?.let {
+                    val manufacturerNameCharacteristic = it.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)
+                    gatt.readCharacteristic(manufacturerNameCharacteristic)
+                }
+            } else {
+                Timber.d("onServicesDiscovered received: $status")
+            }
+        }
+
+        @SuppressLint("MissingPermission")
+        override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
+            super.onCharacteristicRead(gatt, characteristic, status)
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                when (characteristic.uuid) {
+                    GATT_DEVICE_NAME_UUID -> {
+                        val deviceName = characteristic.getStringValue(0)
+                        Timber.d("Retrieve device name: $deviceName")
+                        deviceNames[gatt.device.address] = deviceName
+                    }
+                    GATT_APPEARANCE_UUID -> {
+                        val appearance = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0)
+                        Timber.d("Retrieve appearance: $appearance")
+                        appearances[gatt.device.address] = appearance
+                    }
+                    GATT_MANUFACTURER_NAME_UUID -> {
+                        val manufacturerName = characteristic.getStringValue(0)
+                        Timber.d("Retrieve manufacturer name: $manufacturerName")
+                        manufacturers[gatt.device.address] = manufacturerName
+                    }
+                }
+            }
+            gatt.disconnect()
         }
     }
 

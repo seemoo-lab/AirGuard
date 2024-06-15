@@ -45,7 +45,7 @@ fun setSignalStrengthDrawable(imageView: ImageView, wrappedScanResult: ScanResul
 
 @BindingAdapter("setDeviceDrawable", requireAll = true)
 fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper) {
-    val drawableResId = DeviceType.getImageDrawable(wrappedScanResult.deviceType)
+    val drawableResId = DeviceType.getImageDrawable(wrappedScanResult)
     val drawable = ContextCompat.getDrawable(imageView.context, drawableResId)
     imageView.setImageDrawable(drawable)
 }

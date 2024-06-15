@@ -46,7 +46,6 @@ class ScanViewModel @Inject constructor(
         if (scanFinished.value == true) {
             return@launch
         }
-
         val wrappedScanResult = ScanResultWrapper(scanResult)
 
         val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value?.toMutableList() ?: mutableListOf()
