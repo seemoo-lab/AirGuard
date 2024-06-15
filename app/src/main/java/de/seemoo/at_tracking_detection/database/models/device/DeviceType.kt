@@ -17,7 +17,7 @@ enum class DeviceType {
     GOOGLE_FIND_MY_NETWORK;
 
     companion object  {
-        fun userReadableName(deviceType: DeviceType): String {
+        fun userReadableNameDefault(deviceType: DeviceType): String {
             return when (deviceType) {
                 UNKNOWN -> Unknown.defaultDeviceName
                 AIRPODS -> AirPods.defaultDeviceName
@@ -27,6 +27,30 @@ enum class DeviceType {
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
                 SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
+                GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
+            }
+        }
+
+        fun userReadableName(wrappedScanResult: ScanResultWrapper): String {
+            val deviceType: DeviceType = wrappedScanResult.deviceType
+            return when (deviceType) {
+                UNKNOWN -> Unknown.defaultDeviceName
+                AIRPODS -> AirPods.defaultDeviceName
+                AIRTAG -> AirTag.defaultDeviceName
+                APPLE -> AppleDevice.defaultDeviceName
+                FIND_MY -> FindMy.defaultDeviceName
+                TILE -> Tile.defaultDeviceName
+                CHIPOLO -> Chipolo.defaultDeviceName
+                SAMSUNG_DEVICE -> {
+                    val subType: SamsungDeviceType = SamsungDevice.getSubType(wrappedScanResult)
+                    when (subType) {
+                        SamsungDeviceType.SMART_TAG_1 -> "SmartTag"
+                        SamsungDeviceType.SMART_TAG_1_PLUS -> "SmartTag Plus"
+                        SamsungDeviceType.SMART_TAG_2 -> "SmartTag 2"
+                        SamsungDeviceType.SOLUM -> "SOLUM SmartTag"
+                        SamsungDeviceType.UNKNOWN -> "Samsung Device"
+                    }
+                }
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
         }

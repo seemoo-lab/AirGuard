@@ -105,7 +105,7 @@ class DevicesViewModel @Inject constructor(
             }else {
 
                 for (device in deviceTypeFilter.deviceTypes) {
-                    filterStringBuilder.append(DeviceType.userReadableName(device))
+                    filterStringBuilder.append(DeviceType.userReadableNameDefault(device))
                     filterStringBuilder.append(", ")
                 }
                 if (deviceTypeFilter.deviceTypes.isNotEmpty()) {

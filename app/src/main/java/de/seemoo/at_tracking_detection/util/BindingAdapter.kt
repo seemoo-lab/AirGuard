@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 
@@ -57,9 +58,7 @@ fun setDeviceName (textView: TextView, wrappedScanResult: ScanResultWrapper) {
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {
-        // TODO: this can be optimized
-        val device =  BaseDevice(wrappedScanResult.scanResult).device
-        textView.text = device.deviceContext.defaultDeviceName
+        textView.text = DeviceType.userReadableName(wrappedScanResult)
     }
 }
 

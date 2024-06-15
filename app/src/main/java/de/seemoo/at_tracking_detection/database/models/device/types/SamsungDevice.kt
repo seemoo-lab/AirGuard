@@ -67,13 +67,15 @@ class SamsungDevice(val id: Int) : Device() {
             val externalManufacturerName = wrappedScanResult.manufacturer // 0x180A, 0x2A29
             val appearance = wrappedScanResult.appearance // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
 
+            println("Samsung Device: $deviceName, $advertisedName, $hasUWB, $externalManufacturerName, $appearance")
+
             return if (hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2")) {
                 SamsungDeviceType.SMART_TAG_2
-            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") && externalManufacturerName == "SOLUM") {
+            } else if (hasUWB == false && externalManufacturerName == "SOLUM") {
                 SamsungDeviceType.SOLUM
-            } else if (hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
+            } else if (hasUWB == true) {
                 SamsungDeviceType.SMART_TAG_1_PLUS
-            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
+            } else if (hasUWB == false) {
                 SamsungDeviceType.SMART_TAG_1
             } else {
                 SamsungDeviceType.UNKNOWN

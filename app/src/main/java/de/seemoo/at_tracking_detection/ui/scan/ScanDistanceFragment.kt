@@ -68,7 +68,8 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    binding.deviceTypeText.text = DeviceType.userReadableName(deviceType!!)
+                    // TODO: inefficient
+                    binding.deviceTypeText.text = DeviceType.userReadableName(ScanResultWrapper(scanResult))
 
                     // setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
