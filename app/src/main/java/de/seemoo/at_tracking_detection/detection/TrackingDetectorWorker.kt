@@ -34,8 +34,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        deleteOldAndSafeTrackers()
-
         Timber.d("Tracking detection background job started!")
         // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
@@ -67,6 +65,14 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
 
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
+
+        Timber.d("Deleting old trackers")
+        try {
+            deleteOldAndSafeTrackers()
+        }catch (e:Exception) {
+            Timber.e("Deleting trackers failed ${e}")
+        }
+
         return Result.success(
             Data.Builder()
                 .putInt("sentNotifications", notificationsSent)
