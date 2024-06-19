@@ -62,13 +62,8 @@ class BluetoothDeviceDiffCallback: DiffUtil.ItemCallback<ScanResultWrapper>() {
     }
 
     override fun areContentsTheSame(oldItem: ScanResultWrapper, newItem: ScanResultWrapper): Boolean {
-        return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) &&
-                (oldItem.rssiValue == newItem.rssiValue) &&
-                (oldItem.deviceName.get() == newItem.deviceName.get()) &&
-                (oldItem.advertisedName.get() == newItem.advertisedName.get()) &&
-                (oldItem.appearance.get() == newItem.appearance.get()) &&
-                (oldItem.manufacturer.get() == newItem.manufacturer.get())
-        //return return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)
-        // return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)  && (oldItem.deviceName.get() == newItem.deviceName.get()) && (oldItem.advertisedName.get() == newItem.advertisedName.get()) && (oldItem.appearance.get() == newItem.appearance.get()) && (oldItem.manufacturer.get() == newItem.manufacturer.get())
+        // return oldItem == newItem
+        return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)
+        // return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)  && (oldItem.deviceName == newItem.deviceName) && (oldItem.advertisedName == newItem.advertisedName) && (oldItem.appearance == newItem.appearance) && (oldItem.manufacturer == newItem.manufacturer)
     }
 }

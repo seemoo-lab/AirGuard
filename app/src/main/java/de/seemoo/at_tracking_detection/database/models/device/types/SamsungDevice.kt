@@ -60,11 +60,11 @@ class SamsungDevice(val id: Int) : Device() {
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
         fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
-            val advertisedName = wrappedScanResult.advertisedName.get()
+            val advertisedName = wrappedScanResult.advertisedName
             val hasUWB = wrappedScanResult.uwbCapable
-            val deviceName = wrappedScanResult.deviceName.get()
-            val externalManufacturerName = wrappedScanResult.manufacturer.get() // 0x180A, 0x2A29
-            val appearance = wrappedScanResult.appearance.get() // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
+            val deviceName = wrappedScanResult.deviceName
+            val externalManufacturerName = wrappedScanResult.manufacturer // 0x180A, 0x2A29
+            val appearance = wrappedScanResult.appearance // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
 
             println("Samsung Device: $deviceName, $advertisedName, $hasUWB, $externalManufacturerName, $appearance")
 
@@ -72,9 +72,9 @@ class SamsungDevice(val id: Int) : Device() {
                 SamsungDeviceType.SMART_TAG_2
             } else if (hasUWB == false && externalManufacturerName == "SOLUM") {
                 SamsungDeviceType.SOLUM
-            } else if (hasUWB == true) {
+            } else if (hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
                 SamsungDeviceType.SMART_TAG_1_PLUS
-            } else if (hasUWB == false) {
+            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
                 SamsungDeviceType.SMART_TAG_1
             } else {
                 SamsungDeviceType.UNKNOWN

@@ -24,15 +24,15 @@ data class ScanResultWrapper(val scanResult: ScanResult){
 
     // Information for Subcategorization
     @SuppressLint("MissingPermission")
-    val advertisedName: ObservableField<String?> = ObservableField(scanResult.device.name)
+    val advertisedName: String? = scanResult.device.name
     val uwbCapable = when (deviceType) {
         DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getUwbAvailability(scanResult)
         DeviceType.AIRTAG -> true
         else -> false
     }
-    val deviceName: ObservableField<String?> = ObservableField(BLEScanner.deviceNames[deviceAddress])
-    val appearance: ObservableField<Int?> = ObservableField(BLEScanner.appearances[deviceAddress])
-    val manufacturer: ObservableField<String?> = ObservableField(BLEScanner.manufacturers[deviceAddress])
+    val deviceName: String? = BLEScanner.deviceNames[deviceAddress]
+    val appearance: Int? = BLEScanner.appearances[deviceAddress]
+    val manufacturer: String? = BLEScanner.manufacturers[deviceAddress]
 
     override fun hashCode(): Int {
         return scanResult.hashCode()
