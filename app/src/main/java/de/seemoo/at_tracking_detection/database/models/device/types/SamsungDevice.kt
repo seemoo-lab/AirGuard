@@ -60,7 +60,7 @@ class SamsungDevice(val id: Int) : Device() {
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
         fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
-            val advertisedName = wrappedScanResult.advertisedName
+            val advertisedName = wrappedScanResult.advertisedName.get()
             val hasUWB = wrappedScanResult.uwbCapable
             val deviceName = wrappedScanResult.deviceName.get()
             val externalManufacturerName = wrappedScanResult.manufacturer.get() // 0x180A, 0x2A29

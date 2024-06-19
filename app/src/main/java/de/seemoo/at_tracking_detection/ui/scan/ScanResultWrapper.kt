@@ -24,7 +24,7 @@ data class ScanResultWrapper(val scanResult: ScanResult){
 
     // Information for Subcategorization
     @SuppressLint("MissingPermission")
-    val advertisedName: String? = scanResult.device.name
+    val advertisedName: ObservableField<String?> = ObservableField(scanResult.device.name)
     val uwbCapable = when (deviceType) {
         DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getUwbAvailability(scanResult)
         DeviceType.AIRTAG -> true

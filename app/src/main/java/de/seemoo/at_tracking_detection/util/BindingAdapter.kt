@@ -8,8 +8,6 @@ import androidx.databinding.Observable
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 
@@ -60,6 +58,7 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
         }
     }
 
+    wrappedScanResult.advertisedName.addOnPropertyChangedCallback(callback)
     wrappedScanResult.deviceName.addOnPropertyChangedCallback(callback)
     wrappedScanResult.appearance.addOnPropertyChangedCallback(callback)
     wrappedScanResult.manufacturer.addOnPropertyChangedCallback(callback)
@@ -86,6 +85,7 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
         }
     }
 
+    wrappedScanResult.advertisedName.addOnPropertyChangedCallback(callback)
     wrappedScanResult.deviceName.addOnPropertyChangedCallback(callback)
     wrappedScanResult.appearance.addOnPropertyChangedCallback(callback)
     wrappedScanResult.manufacturer.addOnPropertyChangedCallback(callback)
