@@ -10,7 +10,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 
-data class ScanResultWrapper(val scanResult: ScanResult){
+data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boolean = false){
     val deviceAddress: String = scanResult.device.address
     val rssi: ObservableField<Int> = ObservableField(scanResult.rssi) // This is so the image can update itself live
     var rssiValue: Int = scanResult.rssi

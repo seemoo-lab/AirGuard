@@ -18,6 +18,7 @@ import android.provider.Settings
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationRequester
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.util.LinkedList
@@ -50,6 +51,8 @@ object BLEScanner {
     val deviceNames = mutableMapOf<String, String>()
     val appearances = mutableMapOf<String, Int>()
     val manufacturers = mutableMapOf<String, String>()
+
+    private var pendingScanResults = mutableMapOf<String, ScanResultWrapper>()
 
     fun startBluetoothScan(appContext: Context): Boolean {
         // Check if already scanning
@@ -120,19 +123,14 @@ object BLEScanner {
     private var ownScanCallback = object: ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            // TODO: Add scan result to DB here. Detection events should not be to close after each other.
-            // New detection events (Beacons) every 15min
-            // Timber.d("Found a device $result")
             result?.let { scanResult ->
-                scanResults.add(0, scanResult)
-                if (scanResults.size > 10) {
-                    scanResults.removeLastOrNull()
+                if (scanResult.device.address !in pendingScanResults) {
+                    val scanResultWrapper = ScanResultWrapper(scanResult)
+                    pendingScanResults[scanResult.device.address] = scanResultWrapper
+                    connectToDevice(scanResult.device)
+                } else {
+                    // Device already in the process, ignore this scan result for now
                 }
-                connectToDevice(scanResult.device)
-            }
-
-            callbacks.forEach {
-                it.onScanResult(callbackType, result)
             }
         }
 
@@ -145,11 +143,6 @@ object BLEScanner {
 
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
             super.onBatchScanResults(results)
-            // Batch results are only delivered when using low power scanning.
-            // We use low latency so this method should not be called.
-            // We implement it anyways to be save.
-
-            //TODO: Add scan result to DB here
             callbacks.forEach {
                 it.onBatchScanResults(results)
             }
@@ -190,7 +183,7 @@ object BLEScanner {
 
                 characteristicQueue.clear()
 
-                genericAccessService?.let { it ->
+                genericAccessService?.let {
                     it.getCharacteristic(GATT_DEVICE_NAME_UUID)?.let { characteristicQueue.add(it) }
                     it.getCharacteristic(GATT_APPEARANCE_UUID)?.let { characteristicQueue.add(it) }
                 }
@@ -199,7 +192,6 @@ object BLEScanner {
                     it.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)?.let { characteristicQueue.add(it) }
                 }
 
-                // Start reading the first characteristic
                 if (characteristicQueue.isNotEmpty()) {
                     gatt.readCharacteristic(characteristicQueue.poll())
                 }
@@ -207,37 +199,50 @@ object BLEScanner {
                 Timber.d("onServicesDiscovered received: $status")
             }
         }
+
         @SuppressLint("MissingPermission")
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
             super.onCharacteristicRead(gatt, characteristic, status)
+            val address = gatt.device.address
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 when (characteristic.uuid) {
                     GATT_DEVICE_NAME_UUID -> {
                         val deviceName = characteristic.getStringValue(0)
                         Timber.d("Retrieve device name: $deviceName")
-                        deviceNames[gatt.device.address] = deviceName
+                        deviceNames[address] = deviceName
                     }
                     GATT_APPEARANCE_UUID -> {
                         val appearance = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0)
                         Timber.d("Retrieve appearance: $appearance")
-                        appearances[gatt.device.address] = appearance
+                        appearances[address] = appearance
                     }
                     GATT_MANUFACTURER_NAME_UUID -> {
                         val manufacturerName = characteristic.getStringValue(0)
                         Timber.d("Retrieve manufacturer name: $manufacturerName")
-                        manufacturers[gatt.device.address] = manufacturerName
+                        manufacturers[address] = manufacturerName
                     }
                 }
 
-                // Read the next characteristic if there are more in the queue
                 if (characteristicQueue.isNotEmpty()) {
                     gatt.readCharacteristic(characteristicQueue.poll())
                 } else {
                     gatt.disconnect()
+                    pendingScanResults[address]?.isInfoComplete = true
+                    notifyCallbacks(pendingScanResults[address])
                 }
             } else {
                 Timber.d("Failed to read characteristic: ${characteristic.uuid}, status: $status")
                 gatt.disconnect()
+                pendingScanResults[address]?.isInfoComplete = true
+                notifyCallbacks(pendingScanResults[address])
+            }
+        }
+    }
+
+    private fun notifyCallbacks(scanResultWrapper: ScanResultWrapper?) {
+        scanResultWrapper?.let { wrapper ->
+            callbacks.forEach {
+                it.onScanResult(ScanSettings.CALLBACK_TYPE_ALL_MATCHES, wrapper.scanResult)
             }
         }
     }
