@@ -46,19 +46,48 @@ fun setSignalStrengthDrawable(imageView: ImageView, wrappedScanResult: ScanResul
 
 @BindingAdapter("setDeviceDrawable", requireAll = true)
 fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper) {
-    val drawableResId = DeviceType.getImageDrawable(wrappedScanResult)
-    val drawable = ContextCompat.getDrawable(imageView.context, drawableResId)
-    imageView.setImageDrawable(drawable)
+    fun setImage() {
+        val drawableResId = DeviceType.getImageDrawable(wrappedScanResult)
+        val drawable = ContextCompat.getDrawable(imageView.context, drawableResId)
+        imageView.setImageDrawable(drawable)
+    }
+
+    setImage()
+
+    val callback = object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            setImage()
+        }
+    }
+
+    wrappedScanResult.deviceName.addOnPropertyChangedCallback(callback)
+    wrappedScanResult.appearance.addOnPropertyChangedCallback(callback)
+    wrappedScanResult.manufacturer.addOnPropertyChangedCallback(callback)
 }
 
 @BindingAdapter("setDeviceName", requireAll = true)
-fun setDeviceName (textView: TextView, wrappedScanResult: ScanResultWrapper) {
+fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-    val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
-    if (deviceFromDb?.name != null) {
-        textView.text = deviceFromDb.getDeviceNameWithID()
-    } else {
-        textView.text = DeviceType.userReadableName(wrappedScanResult)
+
+    fun setName() {
+        val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+        if (deviceFromDb?.name != null) {
+            textView.text = deviceFromDb.getDeviceNameWithID()
+        } else {
+            textView.text = DeviceType.userReadableName(wrappedScanResult)
+        }
     }
+
+    setName()
+
+    val callback = object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            setName()
+        }
+    }
+
+    wrappedScanResult.deviceName.addOnPropertyChangedCallback(callback)
+    wrappedScanResult.appearance.addOnPropertyChangedCallback(callback)
+    wrappedScanResult.manufacturer.addOnPropertyChangedCallback(callback)
 }
 

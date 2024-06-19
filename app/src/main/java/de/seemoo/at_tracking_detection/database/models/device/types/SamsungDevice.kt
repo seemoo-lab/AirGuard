@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
-import android.annotation.SuppressLint
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.os.ParcelUuid
@@ -63,9 +62,9 @@ class SamsungDevice(val id: Int) : Device() {
         fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
             val advertisedName = wrappedScanResult.advertisedName
             val hasUWB = wrappedScanResult.uwbCapable
-            val deviceName = wrappedScanResult.deviceName
-            val externalManufacturerName = wrappedScanResult.manufacturer // 0x180A, 0x2A29
-            val appearance = wrappedScanResult.appearance // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
+            val deviceName = wrappedScanResult.deviceName.get()
+            val externalManufacturerName = wrappedScanResult.manufacturer.get() // 0x180A, 0x2A29
+            val appearance = wrappedScanResult.appearance.get() // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
 
             println("Samsung Device: $deviceName, $advertisedName, $hasUWB, $externalManufacturerName, $appearance")
 

@@ -30,9 +30,9 @@ data class ScanResultWrapper(val scanResult: ScanResult){
         DeviceType.AIRTAG -> true
         else -> false
     }
-    val deviceName: String? = BLEScanner.deviceNames[deviceAddress]
-    val appearance: Int? = BLEScanner.appearances[deviceAddress]
-    val manufacturer: String? = BLEScanner.manufacturers[deviceAddress]
+    val deviceName: ObservableField<String?> = ObservableField(BLEScanner.deviceNames[deviceAddress])
+    val appearance: ObservableField<Int?> = ObservableField(BLEScanner.appearances[deviceAddress])
+    val manufacturer: ObservableField<String?> = ObservableField(BLEScanner.manufacturers[deviceAddress])
 
     override fun hashCode(): Int {
         return scanResult.hashCode()
