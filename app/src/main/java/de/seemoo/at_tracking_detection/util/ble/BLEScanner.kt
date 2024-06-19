@@ -43,7 +43,7 @@ object BLEScanner {
     private val GATT_DEVICE_NAME_UUID = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
     private val GATT_APPEARANCE_UUID = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
 
-    private val GATT_DEVICE_INFORMATION_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+    private val GATT_DEVICE_INFORMATION_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
     private val GATT_MANUFACTURER_NAME_UUID = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
 
     private val connectedDevices = mutableSetOf<String>()
