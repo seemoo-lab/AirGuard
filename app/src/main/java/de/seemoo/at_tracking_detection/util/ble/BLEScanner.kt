@@ -20,6 +20,8 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
+import java.util.LinkedList
+import java.util.Queue
 import java.util.UUID
 
 
@@ -166,6 +168,8 @@ object BLEScanner {
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
+        private val characteristicQueue: Queue<BluetoothGattCharacteristic> = LinkedList()
+
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
@@ -184,22 +188,25 @@ object BLEScanner {
                 val genericAccessService = gatt.getService(GATT_GENERIC_ACCESS_UUID)
                 val deviceInfoService = gatt.getService(GATT_DEVICE_INFORMATION_UUID)
 
-                genericAccessService?.let {
-                    val deviceNameCharacteristic = it.getCharacteristic(GATT_DEVICE_NAME_UUID)
-                    val appearanceCharacteristic = it.getCharacteristic(GATT_APPEARANCE_UUID)
-                    gatt.readCharacteristic(deviceNameCharacteristic)
-                    gatt.readCharacteristic(appearanceCharacteristic)
+                characteristicQueue.clear()
+
+                genericAccessService?.let { it ->
+                    it.getCharacteristic(GATT_DEVICE_NAME_UUID)?.let { characteristicQueue.add(it) }
+                    it.getCharacteristic(GATT_APPEARANCE_UUID)?.let { characteristicQueue.add(it) }
                 }
 
                 deviceInfoService?.let {
-                    val manufacturerNameCharacteristic = it.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)
-                    gatt.readCharacteristic(manufacturerNameCharacteristic)
+                    it.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)?.let { characteristicQueue.add(it) }
+                }
+
+                // Start reading the first characteristic
+                if (characteristicQueue.isNotEmpty()) {
+                    gatt.readCharacteristic(characteristicQueue.poll())
                 }
             } else {
                 Timber.d("onServicesDiscovered received: $status")
             }
         }
-
         @SuppressLint("MissingPermission")
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
             super.onCharacteristicRead(gatt, characteristic, status)
@@ -221,8 +228,17 @@ object BLEScanner {
                         manufacturers[gatt.device.address] = manufacturerName
                     }
                 }
+
+                // Read the next characteristic if there are more in the queue
+                if (characteristicQueue.isNotEmpty()) {
+                    gatt.readCharacteristic(characteristicQueue.poll())
+                } else {
+                    gatt.disconnect()
+                }
+            } else {
+                Timber.d("Failed to read characteristic: ${characteristic.uuid}, status: $status")
+                gatt.disconnect()
             }
-            gatt.disconnect()
         }
     }
 
