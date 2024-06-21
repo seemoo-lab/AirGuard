@@ -20,18 +20,18 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import java.util.*
 
-class FindMy(val id: Int) : Device(), Connectable {
+class AppleFindMy(val id: Int) : Device(), Connectable {
 
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_chipolo
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device_apple)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = FindMy
+        get() = AppleFindMy
 
 
     override val bluetoothGattCallback: BluetoothGattCallback
@@ -183,7 +183,7 @@ class FindMy(val id: Int) : Device(), Connectable {
             get() = "https://www.apple.com/"
 
         override val defaultDeviceName: String
-            get() = "FindMy Device"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
 
         override val statusByteDeviceType: UInt
             get() = 2u

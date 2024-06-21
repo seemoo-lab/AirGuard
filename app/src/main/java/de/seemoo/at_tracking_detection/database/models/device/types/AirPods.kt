@@ -166,7 +166,7 @@ class AirPods(val id: Int) : Device(), Connectable {
             get() = "https://www.apple.com/airpods/"
 
         override val defaultDeviceName: String
-            get() = "AirPods"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airpods_default_name)
 
         override val statusByteDeviceType: UInt
             get() = 3u

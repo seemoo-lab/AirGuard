@@ -32,7 +32,7 @@ class Chipolo(val id: Int) : Device() {
             get() = DeviceType.CHIPOLO
 
         override val defaultDeviceName: String
-            get() = "Chipolo"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.chipolo_default_name)
 
         override val statusByteDeviceType: UInt
             get() = 0u
@@ -40,21 +40,6 @@ class Chipolo(val id: Int) : Device() {
         override val websiteManufacturer: String
             get() = "https://chipolo.net/"
 
-
-
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FE33-0000-1000-8000-00805F9B34FB")
-
-        override fun getConnectionState(scanResult: ScanResult): ConnectionState {
-            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
-
-            if (serviceData != null) {
-                // Change, previously we were comparing a bit that could indicate that a tracker was connected to a nearby tracker.
-                // It seems like this was not the case for all trackers, so we just report this tracker as Overmature offline as soon as it moves to tracking mode.
-
-                return ConnectionState.OVERMATURE_OFFLINE
-            }
-
-            return ConnectionState.UNKNOWN
-        }
     }
 }

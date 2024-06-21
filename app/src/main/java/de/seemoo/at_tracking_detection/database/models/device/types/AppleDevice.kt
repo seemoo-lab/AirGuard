@@ -40,7 +40,7 @@ class AppleDevice(val id: Int) : Device() {
             get() = DeviceType.APPLE
 
         override val defaultDeviceName: String
-            get() = "Apple Device"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_device_default_name)
 
         override val minTrackingTime: Int
             get() = 150 * 60

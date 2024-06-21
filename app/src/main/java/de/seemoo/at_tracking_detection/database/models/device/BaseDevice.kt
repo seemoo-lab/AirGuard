@@ -103,7 +103,7 @@ data class BaseDevice(
         DeviceType.UNKNOWN -> Unknown(deviceId)
         DeviceType.APPLE -> AppleDevice(deviceId)
         DeviceType.AIRPODS -> AirPods(deviceId)
-        DeviceType.FIND_MY -> FindMy(deviceId)
+        DeviceType.FIND_MY -> AppleFindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
         DeviceType.CHIPOLO -> Chipolo(deviceId)
         DeviceType.SAMSUNG -> SamsungDevice(deviceId)
