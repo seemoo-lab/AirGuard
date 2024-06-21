@@ -87,10 +87,9 @@ object BackgroundBluetoothScanner {
             return BackgroundScanResults(0, 0, 0, true)
         }
         try {
-            val bluetoothManager =
-                applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
-            if (bluetoothAdapter.bluetoothLeScanner == null) {
+            if (bluetoothAdapter.bluetoothLeScanner == null || !bluetoothAdapter.isEnabled) {
                 Timber.e("BluetoothLeScanner not found!")
                 return BackgroundScanResults(0, 0, 0, true)
             }
@@ -126,10 +125,9 @@ object BackgroundBluetoothScanner {
             }
         }
 
-        //Starting BLE Scan
+        // Starting BLE Scan
         Timber.d("Start Scanning for bluetooth le devices...")
-        val scanSettings =
-            ScanSettings.Builder().setScanMode(scanMode).build()
+        val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
         BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
