@@ -41,16 +41,7 @@ enum class DeviceType {
                 FIND_MY -> FindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
-                SAMSUNG_DEVICE -> {
-                    val subType: SamsungDeviceType = SamsungDevice.getSubType(wrappedScanResult)
-                    when (subType) {
-                        SamsungDeviceType.SMART_TAG_1 -> "SmartTag"
-                        SamsungDeviceType.SMART_TAG_1_PLUS -> "SmartTag Plus"
-                        SamsungDeviceType.SMART_TAG_2 -> "SmartTag 2"
-                        SamsungDeviceType.SOLUM -> "SOLUM SmartTag"
-                        SamsungDeviceType.UNKNOWN -> "Samsung Device"
-                    }
-                }
+                SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
         }
@@ -65,16 +56,7 @@ enum class DeviceType {
                 FIND_MY -> R.drawable.ic_chipolo
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
-                SAMSUNG_DEVICE -> {
-                    val subType: SamsungDeviceType = SamsungDevice.getSubType(wrappedScanResult)
-                    when (subType) {
-                        SamsungDeviceType.SMART_TAG_1 -> R.drawable.ic_smarttag_icon
-                        SamsungDeviceType.SMART_TAG_1_PLUS -> R.drawable.ic_smarttag_icon
-                        SamsungDeviceType.SMART_TAG_2 -> R.drawable.ic_baseline_device_unknown_24
-                        SamsungDeviceType.SOLUM -> R.drawable.ic_baseline_device_unknown_24
-                        SamsungDeviceType.UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
-                    }
-                }
+                SAMSUNG_DEVICE -> R.drawable.ic_smarttag_icon
                 GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
             }
         }

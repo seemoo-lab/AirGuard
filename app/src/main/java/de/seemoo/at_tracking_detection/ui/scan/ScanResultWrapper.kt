@@ -8,7 +8,6 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 
 data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boolean = false){
     val deviceAddress: String = scanResult.device.address
@@ -30,9 +29,6 @@ data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boo
         DeviceType.AIRTAG -> true
         else -> false
     }
-    val deviceName: String? = BLEScanner.deviceNames[deviceAddress]
-    val appearance: Int? = BLEScanner.appearances[deviceAddress]
-    val manufacturer: String? = BLEScanner.manufacturers[deviceAddress]
 
     override fun hashCode(): Int {
         return scanResult.hashCode()

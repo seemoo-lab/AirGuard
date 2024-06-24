@@ -334,6 +334,7 @@
     <string name="chipolo" translatable="false">Chipolo</string>
     <string name="find_my_device">FindMy Devices</string>
     <string name="samsung_device">Samsung Devices</string>
+    <string name="samsung_device_name">Samsung Device</string>
     <string name="smart_tag" translatable="false">SmartTags</string>
     <string name="tile" translatable="false">Tiles</string>
     <string name="google_find_my">Google "Find My Device" Devices</string>

@@ -101,8 +101,8 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -134,6 +134,9 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+
 
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     kapt 'androidx.hilt:hilt-compiler:1.2.0'
@@ -161,15 +164,15 @@ dependencies {
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.9.0'
     // Compose Material Design
-    implementation 'androidx.compose.material:material:1.6.7'
+    implementation 'androidx.compose.material:material:1.6.8'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.6.7'
+    implementation 'androidx.compose.animation:animation:1.6.8'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.6.7'
+    implementation 'androidx.compose.ui:ui-tooling:1.6.8'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.7'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 

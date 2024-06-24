@@ -298,6 +298,7 @@
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_device">Samsung Geräte</string>
+    <string name="samsung_device_name">Samsung Gerät</string>
     <string name="google_find_my">Google "Mein Gerät finden" Geräte</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>

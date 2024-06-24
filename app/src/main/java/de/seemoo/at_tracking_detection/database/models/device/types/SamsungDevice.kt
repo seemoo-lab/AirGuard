@@ -1,7 +1,19 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -14,6 +26,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
 import timber.log.Timber
+import java.util.UUID
 
 class SamsungDevice(val id: Int) : Device() {
     override val imageResource: Int
@@ -28,6 +41,13 @@ class SamsungDevice(val id: Int) : Device() {
         get() = SamsungDevice
 
     companion object : DeviceContext {
+        internal val GATT_GENERIC_ACCESS_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+        internal val GATT_DEVICE_NAME_UUID = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
+        internal val GATT_APPEARANCE_UUID = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
+
+        internal val GATT_DEVICE_INFORMATION_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
+        internal val GATT_MANUFACTURER_NAME_UUID = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
+
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setServiceData(
@@ -52,32 +72,116 @@ class SamsungDevice(val id: Int) : Device() {
             get() = "https://www.samsung.com/"
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.smarttag_no_uwb)
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_device_name)
 
         override val statusByteDeviceType: UInt
             get() = 0u
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
-        fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
+        @SuppressLint("MissingPermission")
+        suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String): Triple<String?, Int?, String?> =
+            suspendCancellableCoroutine { continuation ->
+                val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                val bluetoothAdapter = bluetoothManager.adapter
+                val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
+
+                val handler = Handler(Looper.getMainLooper())
+
+                val gattCallback = object : BluetoothGattCallback() {
+                    @SuppressLint("MissingPermission")
+                    override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+                        if (newState == BluetoothProfile.STATE_CONNECTED) {
+                            Timber.d("Connected to GATT server.")
+                            gatt?.discoverServices()
+                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                            Timber.d("Disconnected from GATT server.")
+                            if (continuation.isActive) {
+                                continuation.resume(Triple(null, null, null))
+                            }
+                        }
+                    }
+
+                    @SuppressLint("MissingPermission")
+                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                        if (status == BluetoothGatt.GATT_SUCCESS) {
+                            Timber.d("Services discovered.")
+                            gatt?.let {
+                                val deviceNameChar = it.getService(GATT_GENERIC_ACCESS_UUID)?.getCharacteristic(GATT_DEVICE_NAME_UUID)
+                                val appearanceChar = it.getService(GATT_GENERIC_ACCESS_UUID)?.getCharacteristic(GATT_APPEARANCE_UUID)
+                                val manufacturerNameChar = it.getService(GATT_DEVICE_INFORMATION_UUID)?.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)
+
+                                var deviceName: String? = null
+                                var appearance: Int? = null
+                                var manufacturerName: String? = null
+
+                                val readCharacteristics = {
+                                    if (deviceNameChar != null) {
+                                        it.readCharacteristic(deviceNameChar)
+                                    } else {
+                                        handler.post { if (continuation.isActive) continuation.resume(Triple(deviceName, appearance, manufacturerName)) }
+                                    }
+                                    if (appearanceChar != null) {
+                                        it.readCharacteristic(appearanceChar)
+                                    } else {
+                                        handler.post { if (continuation.isActive) continuation.resume(Triple(deviceName, appearance, manufacturerName)) }
+                                    }
+                                    if (manufacturerNameChar != null) {
+                                        it.readCharacteristic(manufacturerNameChar)
+                                    } else {
+                                        handler.post { if (continuation.isActive) continuation.resume(Triple(deviceName, appearance, manufacturerName)) }
+                                    }
+                                }
+
+                                readCharacteristics()
+                            }
+                        } else {
+                            Timber.w("onServicesDiscovered received: $status")
+                            if (continuation.isActive) {
+                                continuation.resumeWithException(Exception("Failed to discover services: $status"))
+                            }
+                        }
+                    }
+
+                    @SuppressLint("MissingPermission")
+                    override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                        if (status == BluetoothGatt.GATT_SUCCESS) {
+                            when (characteristic?.uuid) {
+                                GATT_DEVICE_NAME_UUID -> {
+                                    val deviceName = characteristic?.getStringValue(0)
+                                    handler.post { if (continuation.isActive) continuation.resume(Triple(deviceName, null, null)) }
+                                }
+                                GATT_APPEARANCE_UUID -> {
+                                    val appearance = characteristic?.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0)
+                                    handler.post { if (continuation.isActive) continuation.resume(Triple(null, appearance, null)) }
+                                }
+                                GATT_MANUFACTURER_NAME_UUID -> {
+                                    val manufacturerName = characteristic?.getStringValue(0)
+                                    handler.post { if (continuation.isActive) continuation.resume(Triple(null, null, manufacturerName)) }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                bluetoothDevice.connectGatt(context, false, gattCallback)
+            }
+
+        suspend fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
+            val (deviceName, appearance, manufacturerName) = connectAndRetrieveCharacteristics(
+                ATTrackingDetectionApplication.getAppContext(),
+                wrappedScanResult.deviceAddress
+            )
+
             val advertisedName = wrappedScanResult.advertisedName
             val hasUWB = wrappedScanResult.uwbCapable
-            val deviceName = wrappedScanResult.deviceName
-            val externalManufacturerName = wrappedScanResult.manufacturer // 0x180A, 0x2A29
-            val appearance = wrappedScanResult.appearance // 0x1800, 0x2A01, e.g.: SmartTag 2: 576, Solum: 512
 
-            println("Samsung Device: $deviceName, $advertisedName, $hasUWB, $externalManufacturerName, $appearance")
-
-            return if (hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2")) {
-                SamsungDeviceType.SMART_TAG_2
-            } else if (hasUWB == false && externalManufacturerName == "SOLUM") {
-                SamsungDeviceType.SOLUM
-            } else if (hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
-                SamsungDeviceType.SMART_TAG_1_PLUS
-            } else if (hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag")) {
-                SamsungDeviceType.SMART_TAG_1
-            } else {
-                SamsungDeviceType.UNKNOWN
+            return when {
+                hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2" || appearance == 576) -> SamsungDeviceType.SMART_TAG_2
+                hasUWB == false && manufacturerName == "SOLUM" -> SamsungDeviceType.SOLUM
+                hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") -> SamsungDeviceType.SMART_TAG_1_PLUS
+                hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") -> SamsungDeviceType.SMART_TAG_1
+                else -> SamsungDeviceType.UNKNOWN
             }
         }
 
