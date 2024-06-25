@@ -8,6 +8,7 @@ import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 
 class ScanDistanceViewModel: ViewModel() {
     // var bluetoothRssi = MutableLiveData<Int>()
+    var displayName = MutableLiveData<String>("UNKNOWN")
     var deviceAddress = MutableLiveData<String>()
     var connectionStateString = MutableLiveData<String>()
     var connectionState = MutableLiveData<ConnectionState>()
@@ -15,7 +16,6 @@ class ScanDistanceViewModel: ViewModel() {
     var batteryState = MutableLiveData<BatteryState>()
     var connectionQuality = MutableLiveData<Int>()
     var isFirstScanCallback = MutableLiveData<Boolean>(true)
-    var subType = MutableLiveData<String>()
 
     var bluetoothEnabled = MutableLiveData(true)
     init {
