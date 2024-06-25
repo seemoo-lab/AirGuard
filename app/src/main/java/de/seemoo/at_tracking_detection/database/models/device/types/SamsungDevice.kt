@@ -194,12 +194,6 @@ class SamsungDevice(val id: Int) : Device() {
             val advertisedName = wrappedScanResult.advertisedName
             val hasUWB = wrappedScanResult.uwbCapable
 
-            println("deviceName: $deviceName")
-            println("advertisedName: $advertisedName")
-            println("appearance: $appearance")
-            println("manufacturerName: $manufacturerName")
-            println("hasUWB: $hasUWB")
-
             return when {
                 hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2" || appearance == 576) -> SamsungDeviceType.SMART_TAG_2
                 hasUWB == false && manufacturerName == "SOLUM" -> SamsungDeviceType.SOLUM

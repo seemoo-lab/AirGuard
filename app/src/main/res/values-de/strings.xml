@@ -361,4 +361,5 @@
     <string name="device_marker">Standort an dem potenzieller Tracker gefunden wurde</string>
     <string name="times_seen">Anzahl gesehen</string>
 
+    <string name="samsung_determine_button">Bestimme genauen Tracker Typ</string>
 </resources>

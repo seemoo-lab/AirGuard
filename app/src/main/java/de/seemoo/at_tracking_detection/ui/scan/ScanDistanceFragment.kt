@@ -222,6 +222,7 @@ class ScanDistanceFragment : Fragment() {
 
         startBluetoothScan()
 
+        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) View.VISIBLE else View.GONE
         binding.performActionButton.setOnClickListener {
             performAction()
         }
@@ -235,6 +236,8 @@ class ScanDistanceFragment : Fragment() {
             lifecycleScope.launch {
                 subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
                 subType?.let {
+                    binding.subType.visibility = View.VISIBLE
+                    binding.performActionButton.visibility = View.GONE
                     viewModel.subType.postValue(SamsungDeviceType.subTypeToString(it))
                 }
             }
