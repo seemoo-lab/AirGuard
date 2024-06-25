@@ -13,6 +13,7 @@ import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.R
@@ -23,9 +24,12 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ScanDistanceFragment : Fragment() {
@@ -34,6 +38,8 @@ class ScanDistanceFragment : Fragment() {
 
     private var deviceAddress: String? = null
     private var deviceType: DeviceType? = null
+    private var latestWrappedScanResult: ScanResultWrapper? = null
+    private var subType: SamsungDeviceType? = null
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -68,8 +74,10 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    // TODO: inefficient
-                    binding.deviceTypeText.text = DeviceType.userReadableName(ScanResultWrapper(scanResult))
+                    latestWrappedScanResult = ScanResultWrapper(scanResult)
+                    binding.deviceTypeText.text = DeviceType.userReadableName(
+                        latestWrappedScanResult!!
+                    )
 
                     // setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
@@ -214,7 +222,23 @@ class ScanDistanceFragment : Fragment() {
 
         startBluetoothScan()
 
+        binding.performActionButton.setOnClickListener {
+            performAction()
+        }
+
         return binding.root
+    }
+
+    private fun performAction() {
+        // Use CoroutineScope to call the suspend function
+        if (deviceType == DeviceType.SAMSUNG_DEVICE && latestWrappedScanResult != null) {
+            lifecycleScope.launch {
+                subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
+                subType?.let {
+                    viewModel.subType.postValue(SamsungDeviceType.subTypeToString(it))
+                }
+            }
+        }
     }
 
     override fun onResume() {

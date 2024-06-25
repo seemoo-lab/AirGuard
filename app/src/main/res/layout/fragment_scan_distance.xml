@@ -135,14 +135,39 @@
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent">
 
+            <Button
+                android:id="@+id/perform_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perform Action"
+                bind:layout_constraintBottom_toTopOf="@id/connection_state"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="parent" />
+
             <TextView
                 android:id="@+id/connection_state"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@{vm.connectionStateString}"
                 android:textSize="16sp"
+                bind:layout_constraintBottom_toBottomOf="@id/sub_type"
+                bind:layout_constraintTop_toBottomOf="@id/perform_action_button"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintWidth_default="wrap"
+                bind:layout_constraintHorizontal_bias="0.5"
+                bind:layout_constraintHorizontal_chainStyle="packed"/>
+
+            <TextView
+                android:id="@+id/sub_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{vm.subType}"
+                android:textSize="16sp"
+                android:visibility="visible"
                 bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"
+                bind:layout_constraintTop_toBottomOf="@id/connection_state"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintWidth_default="wrap"
