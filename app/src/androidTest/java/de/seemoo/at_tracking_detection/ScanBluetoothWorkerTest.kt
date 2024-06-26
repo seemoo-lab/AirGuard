@@ -58,7 +58,7 @@ class ScanBluetoothWorkerTest {
             InstrumentationRegistry.getInstrumentation().targetContext,
             AppDatabase::class.java,
             TEST_DB
-        ).addMigrations(DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7)
+        ).addMigrations(DatabaseModule.MIGRATION_5_7, DatabaseModule.MIGRATION_6_7, DatabaseModule.MIGRATION_9_10, DatabaseModule.MIGRATION_16_17)
             .allowMainThreadQueries()
             .build().apply {
                 openHelper.writableDatabase.close()

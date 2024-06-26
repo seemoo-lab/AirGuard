@@ -63,7 +63,7 @@
                 android:layout_height="0dp"
                 android:layout_marginVertical="10dp"
                 android:contentDescription="@string/device_icon"
-                android:src="@{baseDevice.device.drawable}"
+                android:src="@{baseDevice.getDrawable}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/device_guideline_left"

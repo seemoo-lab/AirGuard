@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
@@ -59,6 +60,7 @@ class ScanDistanceFragment : Fragment() {
                 if (getPublicKey(scanResult) == filteredIdentifier){
                     if (deviceType == null) {
                         deviceType = DeviceManager.getDeviceType(scanResult)
+                        // TODO hide button if SubDeviceType already determined
                         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) View.VISIBLE else View.GONE
                     }
 
@@ -82,6 +84,7 @@ class ScanDistanceFragment : Fragment() {
 
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
+                        // TODO: set SubDeviceType Name if SamsungDevice
                         binding.deviceTypeText.text = DeviceType.userReadableName(
                             latestWrappedScanResult!!
                         )
@@ -230,18 +233,22 @@ class ScanDistanceFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     private fun performAction() {
         // Use CoroutineScope to call the suspend function
         if (deviceType == DeviceType.SAMSUNG_DEVICE && latestWrappedScanResult != null) {
             lifecycleScope.launch {
                 subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
-                subType?.let {
+                subType?.let { samsungDeviceType ->
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+
+                    if (device != null) {
+                        device.subDeviceType = SamsungDeviceType.subTypeToString(samsungDeviceType)
+                        deviceRepository.update(device)
+                    }
+
                     binding.performActionButton.visibility = View.GONE
-                    viewModel.displayName.postValue(SamsungDeviceType.subTypeToString(it))
+                    viewModel.displayName.postValue(SamsungDeviceType.visibleStringFromSubtype(samsungDeviceType))
                 }
             }
         }

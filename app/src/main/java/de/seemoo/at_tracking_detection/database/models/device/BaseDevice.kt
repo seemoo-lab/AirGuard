@@ -36,7 +36,7 @@ data class BaseDevice(
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
     @ColumnInfo(name = "deviceType") val deviceType: DeviceType?,
-    @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
+    @ColumnInfo(name = "subDeviceType") var subDeviceType: String = "UNKNOWN",    @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
@@ -64,6 +64,7 @@ data class BaseDevice(
         false,
         null,
         deviceType,
+        "UNKNOWN",
         0,
         lastSeen,
         null,
@@ -85,6 +86,7 @@ data class BaseDevice(
         false,
         null,
         DeviceManager.getDeviceType(scanResult),
+        "UNKNOWN",
         0,
         LocalDateTime.now(),
         null,
@@ -92,6 +94,13 @@ data class BaseDevice(
     )
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId
+
+    fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_DEVICE && subDeviceType != "UNKNOWN") {
+        val subType = SamsungDeviceType.stringToSubType(subDeviceType)
+        ATTrackingDetectionApplication.getAppContext().getDrawable(SamsungDeviceType.drawableForSubType(subType))
+    } else {
+        device.getDrawable()
+    }
 
     @Ignore
     private val dateTimeFormatter: DateTimeFormatter =

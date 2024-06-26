@@ -151,12 +151,27 @@ object DatabaseModule {
         }
     }
 
+    val MIGRATION_16_17 = object : Migration(16, 17) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            try {
+                Timber.d("Adding new column 'subDeviceType'")
+                db.execSQL("ALTER TABLE device ADD COLUMN subDeviceType TEXT NOT NULL DEFAULT 'UNKNOWN'")
+
+                Timber.d("Updating deviceType from 'SMART_TAG' and 'SMART_TAG_PLUS' to 'SAMSUNG_DEVICE'")
+                db.execSQL("UPDATE device SET deviceType = 'SAMSUNG_DEVICE' WHERE deviceType = 'SMART_TAG' OR deviceType = 'SMART_TAG_PLUS'")
+            } catch (e: SQLiteException) {
+                Timber.e("Migration error: ${e.message}")
+            } catch (e: Exception) {
+                Timber.e("Unexpected migration error: ${e.message}")
+            }
+        }
+    }
 
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "attd_db")
-            .addMigrations(MIGRATION_5_7, MIGRATION_6_7, MIGRATION_9_10)
+            .addMigrations(MIGRATION_5_7, MIGRATION_6_7, MIGRATION_9_10, MIGRATION_16_17)
             .allowMainThreadQueries().build()
     }
 
