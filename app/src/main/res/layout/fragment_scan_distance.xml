@@ -48,10 +48,23 @@
                 android:layout_height="wrap_content"
                 android:text="@{vm.displayName}"
                 android:textSize="30sp"
+                android:visibility="visible"
                 bind:layout_constraintLeft_toLeftOf="parent"
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintTop_toTopOf="parent"/>
+
+            <ProgressBar
+                android:id="@+id/progress_circular"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:visibility="gone"
+                bind:layout_constraintLeft_toLeftOf="parent"
+                bind:layout_constraintRight_toRightOf="parent"
+                bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

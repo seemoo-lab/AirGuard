@@ -196,9 +196,9 @@ class SamsungDevice(val id: Int) : Device() {
 
             return when {
                 hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2" || appearance == 576) -> SamsungDeviceType.SMART_TAG_2
-                hasUWB == false && manufacturerName == "SOLUM" -> SamsungDeviceType.SOLUM
-                hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") -> SamsungDeviceType.SMART_TAG_1_PLUS
-                hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag") -> SamsungDeviceType.SMART_TAG_1
+                manufacturerName == "SOLUM" -> SamsungDeviceType.SOLUM
+                hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungDeviceType.SMART_TAG_1_PLUS
+                hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungDeviceType.SMART_TAG_1
                 else -> SamsungDeviceType.UNKNOWN
             }
         }

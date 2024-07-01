@@ -254,6 +254,8 @@ class ScanDistanceFragment : Fragment() {
     private fun determineSubType() {
         if (deviceType == DeviceType.SAMSUNG_DEVICE && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
+            binding.deviceTypeText.visibility = View.GONE
+            binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
                 subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
                 ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType!!
@@ -280,6 +282,8 @@ class ScanDistanceFragment : Fragment() {
                             )
                         )
                     }
+                    binding.progressCircular.visibility = View.GONE
+                    binding.deviceTypeText.visibility = View.VISIBLE
                 }
             }
         }

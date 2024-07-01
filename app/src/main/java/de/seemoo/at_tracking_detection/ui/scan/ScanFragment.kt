@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
-import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import timber.log.Timber
 

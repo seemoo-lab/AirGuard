@@ -1,17 +1,30 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanResult
-import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.database.models.device.types.AirPods
+import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
+import de.seemoo.at_tracking_detection.database.models.device.types.FindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.Tile
+import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.*
+import java.util.UUID
 import kotlin.experimental.and
 
 @Entity(
