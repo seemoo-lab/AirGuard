@@ -138,7 +138,7 @@ class AirTag(val id: Int) : Device(), Connectable {
             get() = DeviceType.AIRTAG
 
         override val defaultDeviceName: String
-            get() = "AirTag"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airtag_default_name)
 
         override val statusByteDeviceType: UInt
             get() = 1u

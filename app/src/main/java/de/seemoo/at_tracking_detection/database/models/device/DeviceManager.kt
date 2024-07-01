@@ -10,8 +10,8 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, FindMy, AirPods, AppleDevice, SamsungDevice, Tile, Chipolo, GoogleFindMyNetwork)
-    private val appleDevices = listOf(AirTag, FindMy, AirPods, AppleDevice)
+    val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SamsungDevice, Tile, Chipolo, GoogleFindMyNetwork)
+    private val appleDevices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice)
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
     val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
 
@@ -79,7 +79,7 @@ object DeviceManager {
             DeviceType.APPLE -> AppleDevice.websiteManufacturer
             DeviceType.AIRPODS -> AirPods.websiteManufacturer
             DeviceType.TILE -> Tile.websiteManufacturer
-            DeviceType.FIND_MY -> FindMy.websiteManufacturer
+            DeviceType.FIND_MY -> AppleFindMy.websiteManufacturer
             DeviceType.CHIPOLO -> Chipolo.websiteManufacturer
             DeviceType.SAMSUNG_DEVICE -> SamsungDevice.websiteManufacturer
             DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.websiteManufacturer

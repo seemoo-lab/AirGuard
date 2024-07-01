@@ -23,7 +23,7 @@ enum class DeviceType {
                 AIRPODS -> AirPods.defaultDeviceName
                 AIRTAG -> AirTag.defaultDeviceName
                 APPLE -> AppleDevice.defaultDeviceName
-                FIND_MY -> FindMy.defaultDeviceName
+                FIND_MY -> AppleFindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
                 SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
@@ -38,7 +38,7 @@ enum class DeviceType {
                 AIRPODS -> AirPods.defaultDeviceName
                 AIRTAG -> AirTag.defaultDeviceName
                 APPLE -> AppleDevice.defaultDeviceName
-                FIND_MY -> FindMy.defaultDeviceName
+                FIND_MY -> AppleFindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
                 SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
@@ -100,7 +100,7 @@ enum class DeviceType {
             AIRPODS -> AirPods.numberOfHoursToBeConsideredForTrackingDetection
             AIRTAG -> AirTag.numberOfHoursToBeConsideredForTrackingDetection
             APPLE -> AppleDevice.numberOfHoursToBeConsideredForTrackingDetection
-            FIND_MY -> FindMy.numberOfHoursToBeConsideredForTrackingDetection
+            FIND_MY -> AppleFindMy.numberOfHoursToBeConsideredForTrackingDetection
             SAMSUNG_DEVICE -> SamsungDevice.numberOfHoursToBeConsideredForTrackingDetection
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfHoursToBeConsideredForTrackingDetection
         }
@@ -114,7 +114,7 @@ enum class DeviceType {
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionLow
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
-            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionLow
             SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionLow
         }
@@ -128,7 +128,7 @@ enum class DeviceType {
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
-            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionMedium
         }
@@ -142,7 +142,7 @@ enum class DeviceType {
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
-            FIND_MY -> FindMy.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionHigh
         }

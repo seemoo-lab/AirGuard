@@ -105,8 +105,8 @@
     <string name="onboarding_share_data_no">Nein</string>
     <string name="onboarding_share_data_yes">Ja</string>
     <string name="onboarding_share_data_dialog">Bitte entscheide dich, ob du an unserer Studie teilnimmst oder nicht.</string>
-    <string name="device_name_find_my_device">"Find My"-Gerät %s</string>
-    <string name="device_name_find_my_device_google">"Mein Gerät finden"-Gerät %s</string>
+    <string name="device_name_find_my_device_apple">Apple "Find My" %s</string>
+    <string name="device_name_find_my_device_google">Google "Mein Gerät finden" %s</string>
     <string name="title_data_deletion">Datenlöschung anfragen</string>
     <string name="title_article">Artikel</string>
     <string name="map_empty_text">Es wurden noch keine Geräte gefunden. Jedes Mal, wenn ein Gerät entdeckt wird, wird sein Standort auf der Karte angezeigt. Dies bedeutet nicht, dass jemand dich an jedem Standort geortet hat. In den meisten Fällen wirst Du Geräte von anderen Personen in öffentlichen Verkehrsmitteln oder von einem Deiner Nachbarn finden.</string>
@@ -300,6 +300,10 @@
     <string name="samsung_device">Samsung Geräte</string>
     <string name="samsung_device_name">Samsung Gerät</string>
     <string name="google_find_my">Google "Mein Gerät finden" Geräte</string>
+
+    <string name="google_find_my_default_name">Google "Mein Gerät finden"</string>
+    <string name="apple_find_my_default_name">Apple "FindMy"</string>
+    <string name="apple_device_default_name">Apple Gerät</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
     <string name="observe_tracker_stop_observation">Beobachtung stoppen</string>

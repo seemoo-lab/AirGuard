@@ -169,7 +169,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             get() = DeviceType.GOOGLE_FIND_MY_NETWORK
 
         override val defaultDeviceName: String
-            get() = "\"Find My Device\" Device"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_default_name)
 
         override val websiteManufacturer: String
             get() = "https://www.google.com/android/find/"
