@@ -58,10 +58,11 @@ class ScanDistanceFragment : Fragment() {
                 }
 
                 if (getPublicKey(scanResult) == filteredIdentifier){
+                    latestWrappedScanResult = ScanResultWrapper(scanResult)
+
                     if (deviceType == null) {
                         deviceType = DeviceManager.getDeviceType(scanResult)
-                        // TODO hide button if SubDeviceType already determined
-                        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) View.VISIBLE else View.GONE
+                        determineDeviceTypeButtonVisible()
                     }
 
                     val connectionState = getConnectionState(scanResult, deviceType!!)
@@ -77,21 +78,25 @@ class ScanDistanceFragment : Fragment() {
                     val displayedConnectionQuality = (connectionQuality * 100).toInt()
                     viewModel.connectionQuality.postValue(displayedConnectionQuality)
 
-                    latestWrappedScanResult = ScanResultWrapper(scanResult)
-
                     // setBattery(requireContext(), batteryState)
                     setHeight(connectionQuality)
 
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
-                        // TODO: set SubDeviceType Name if SamsungDevice
-                        binding.deviceTypeText.text = DeviceType.userReadableName(
-                            latestWrappedScanResult!!
-                        )
+
+                        // TODO: add drawable
+                        val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        if (samsungSubType != null && samsungSubType != SamsungDeviceType.UNKNOWN) {
+                            binding.deviceTypeText.text = SamsungDeviceType.visibleStringFromSubtype(samsungSubType)
+                        } else {
+                            binding.deviceTypeText.text = DeviceType.userReadableName(
+                                latestWrappedScanResult!!
+                            )
+                        }
+
                         removeSearchMessage()
                     }
                 }
-
             }
         }
 
@@ -139,6 +144,19 @@ class ScanDistanceFragment : Fragment() {
         binding.deviceNotFound.visibility = View.VISIBLE
 
         setHeight(1f, 100L)
+    }
+
+    private fun determineDeviceTypeButtonVisible() {
+        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) {
+            val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (samsungSubType == null || samsungSubType == SamsungDeviceType.UNKNOWN) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else {
+            View.GONE
+        }
     }
 
     private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
@@ -227,17 +245,18 @@ class ScanDistanceFragment : Fragment() {
         startBluetoothScan()
 
         binding.performActionButton.setOnClickListener {
-            performAction()
+            determineSubType()
         }
 
         return binding.root
     }
 
-    private fun performAction() {
-        // Use CoroutineScope to call the suspend function
+    private fun determineSubType() {
         if (deviceType == DeviceType.SAMSUNG_DEVICE && latestWrappedScanResult != null) {
+            binding.performActionButton.visibility = View.GONE
             lifecycleScope.launch {
                 subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
+                ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType!!
                 subType?.let { samsungDeviceType ->
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
@@ -247,8 +266,20 @@ class ScanDistanceFragment : Fragment() {
                         deviceRepository.update(device)
                     }
 
-                    binding.performActionButton.visibility = View.GONE
-                    viewModel.displayName.postValue(SamsungDeviceType.visibleStringFromSubtype(samsungDeviceType))
+                    if (samsungDeviceType == SamsungDeviceType.UNKNOWN) {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.samsung_determine_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        binding.performActionButton.visibility = View.VISIBLE
+                    } else {
+                        viewModel.displayName.postValue(
+                            SamsungDeviceType.visibleStringFromSubtype(
+                                samsungDeviceType
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -257,7 +288,7 @@ class ScanDistanceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.isFirstScanCallback.postValue(true)
-        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) View.VISIBLE else View.GONE
+        determineDeviceTypeButtonVisible()
         showSearchMessage()
         startBluetoothScan()
     }

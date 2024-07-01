@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 
 @BindingAdapter("setAdapter")
@@ -52,6 +53,9 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
         val subTypeString = deviceFromDb.subDeviceType
         val subType = SamsungDeviceType.stringToSubType(subTypeString)
         SamsungDeviceType.drawableForSubType(subType)
+    } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+        val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+        SamsungDeviceType.drawableForSubType(subType)
     } else {
         DeviceType.getImageDrawable(wrappedScanResult)
     }
@@ -70,6 +74,10 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     } else if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_DEVICE) {
         val subTypeString = deviceFromDb.subDeviceType
         val subType = SamsungDeviceType.stringToSubType(subTypeString)
+        ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
+        textView.text = SamsungDeviceType.visibleStringFromSubtype(subType)
+    } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+        val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
         textView.text = SamsungDeviceType.visibleStringFromSubtype(subType)
     } else {
         textView.text = DeviceType.userReadableName(wrappedScanResult)

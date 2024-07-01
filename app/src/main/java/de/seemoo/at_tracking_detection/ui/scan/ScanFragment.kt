@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
@@ -175,5 +176,6 @@ class ScanFragment : Fragment() {
 
     companion object {
         private const val SCAN_DURATION = 60_000L
+        val samsungSubDeviceTypeMap: MutableMap<String, SamsungDeviceType> = HashMap()
     }
 }

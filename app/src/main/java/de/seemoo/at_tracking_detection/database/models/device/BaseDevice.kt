@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanResult
+import android.graphics.drawable.Drawable
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.room.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -97,7 +99,7 @@ data class BaseDevice(
 
     fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_DEVICE && subDeviceType != "UNKNOWN") {
         val subType = SamsungDeviceType.stringToSubType(subDeviceType)
-        ATTrackingDetectionApplication.getAppContext().getDrawable(SamsungDeviceType.drawableForSubType(subType))
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungDeviceType.drawableForSubType(subType))
     } else {
         device.getDrawable()
     }

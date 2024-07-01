@@ -396,4 +396,5 @@
     <string name="connection_state_premature_offline_explanation_chipolo">Connection to owner in the last 30 minutes</string>
 
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
+    <string name="samsung_determine_failed">Exact device type could not be determined</string>
 </resources>
