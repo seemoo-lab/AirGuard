@@ -90,9 +90,9 @@
     <string name="settings_information_contact_summary">Bekomme Informationen über uns</string>
     <string name="settings_delete_study_data_title">Studiendaten löschen</string>
     <string name="settings_delete_study_data_summary">Anfrage der Löschung der Studiendaten</string>
-    <string name="settings_device_filter_title">Gerätetypen filtern</string>
-    <string name="settings_device_filter_dialog_title">Gerätetypen auswählen</string>
-    <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard scannen soll. Nicht markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
+    <string name="settings_device_filter_title">Gerätetypen herausfiltern</string>
+    <string name="settings_device_filter_dialog_title">Gerätetypen ignorieren</string>
+    <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard nicht scannen soll. Markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
 
 
 
@@ -298,7 +298,7 @@
     <string name="apple_device">Apple Geräte</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_device">Samsung Geräte</string>
-    <string name="google_find_my">Google "Mein Gerät finden" Geräte</string>
+    <string name="google_find_my">Google "Mein Gerät finden"</string>
 
     <string name="google_find_my_default_name">Google "Mein Gerät finden"</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
