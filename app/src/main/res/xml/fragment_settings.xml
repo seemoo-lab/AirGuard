@@ -45,7 +45,7 @@
         android:title="@string/settings_risk_sensitivity_title" />
 
     <MultiSelectListPreference
-        android:key="devices_filter"
+        android:key="devices_filter_unselected"
         android:title="@string/settings_device_filter_title"
         android:dialogTitle="@string/settings_device_filter_dialog_title"
         android:summary="@string/settings_device_filter_summary"
