@@ -43,14 +43,16 @@ class DataDeletionFragment : Fragment() {
             val token = SharedPrefs.token
 
             CoroutineScope(Dispatchers.Main).launch {
+                val rootView = requireView() // Get the root view of the fragment
+
                 if (!api.ping().isSuccessful) {
                     Timber.e("Server not available!")
                     val text = R.string.delete_data_server_error
-                    Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show() // Use rootView
                 } else if (token == null) {
                     Timber.e("Token is null! Could not delete data!")
                     val text = R.string.delete_data_no_data
-                    Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show() // Use rootView
                 } else {
                     val response = api.deleteStudyData(token)
 
@@ -59,18 +61,15 @@ class DataDeletionFragment : Fragment() {
                         SharedPrefs.token = null
                         sharedPreferences.edit().putBoolean("share_data", false).apply()
                         val text = R.string.delete_data_success
-                        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show() // Use rootView
                         findNavController().popBackStack()
                     } else {
                         Timber.e("Data Deletion Failed! Server sent error!")
                         val text = R.string.delete_data_error
-                        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show() // Use rootView
                     }
                 }
             }
-
-
         }
     }
-
 }
