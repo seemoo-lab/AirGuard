@@ -2,14 +2,13 @@ package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import timber.log.Timber
@@ -20,23 +19,18 @@ import javax.inject.Singleton
 
 @Singleton
 open class LocationProvider @Inject constructor(
-    private val locationManager: LocationManager): LocationListener {
+    private val locationManager: LocationManager
+) : LocationListener {
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var bestLastLocation: Location? = null
-
     private val locationRequesters = ArrayList<LocationRequester>()
 
     fun getLastLocation(checkRequirements: Boolean = true): Location? {
         if (ContextCompat.checkSelfPermission(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                ATTrackingDetectionApplication.getAppContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+            ) != PackageManager.PERMISSION_GRANTED) {
             return null
         }
 
@@ -51,10 +45,6 @@ open class LocationProvider @Inject constructor(
         if (ContextCompat.checkSelfPermission(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                ATTrackingDetectionApplication.getAppContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return null
@@ -65,15 +55,12 @@ open class LocationProvider @Inject constructor(
             return bestLocation
         }
 
-        // The fused location provider does not work reliably with Samsung + Android 12
-        // We just stay with the legacy location, because this just works
         val lastLocation = legacyGetLastLocationFromAnyProvider(checkRequirements)
 
         if (lastLocation != null && bestLocation != null && !checkRequirements) {
-            if (lastLocation.time > bestLocation.time) {
-                return lastLocation
-            }
-            return bestLocation
+            return if (lastLocation.time > bestLocation.time) {
+                lastLocation
+            } else bestLocation
         }
         return lastLocation
     }
@@ -83,10 +70,6 @@ open class LocationProvider @Inject constructor(
         if (ContextCompat.checkSelfPermission(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                ATTrackingDetectionApplication.getAppContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return null
@@ -133,10 +116,10 @@ open class LocationProvider @Inject constructor(
         if (location.accuracy <= MIN_ACCURACY_METER) {
             if (getSecondsSinceLocation(location) <= MAX_AGE_SECONDS) {
                 return true
-            }else {
+            } else {
                 Timber.d("Location too old")
             }
-        }else {
+        } else {
             Timber.d("Location accuracy is not good enough")
         }
         return false
@@ -272,11 +255,11 @@ open class LocationProvider @Inject constructor(
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location
-        }else {
+        } else {
             if (bestLastLocation.time - location.time > MAX_AGE_SECONDS * 1000L) {
                 // Current location is newer update
                 this.bestLastLocation = location
-            }else if (bestLastLocation.accuracy > location.accuracy) {
+            } else if (bestLastLocation.accuracy > location.accuracy) {
                 this.bestLastLocation = location
             }
         }
@@ -288,7 +271,7 @@ open class LocationProvider @Inject constructor(
                 locationRequester.receivedAccurateLocationUpdate(location)
             }
             this.locationRequesters.clear()
-        }else {
+        } else {
             Timber.d("New location does not satisfy requirements. Waiting for a better one")
         }
     }
@@ -307,11 +290,14 @@ open class LocationProvider @Inject constructor(
         fun isLocationTurnedOn(): Boolean {
             val context = ATTrackingDetectionApplication.getAppContext()
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                LocationManager.FUSED_PROVIDER)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                    LocationManager.FUSED_PROVIDER)
+            } else {
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            }
         }
     }
-
 }
 
 abstract class LocationRequester {

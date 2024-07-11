@@ -25,6 +25,7 @@
             app:argType="string"
             app:nullable="true" />
     </fragment>
+
     <fragment
         android:id="@+id/trackingFragment"
         android:name="de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment"
