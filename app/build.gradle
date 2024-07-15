@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'com.mikepenz.aboutlibraries.plugin'
     id 'org.jetbrains.kotlin.android'
@@ -33,12 +34,6 @@ android {
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
     }
 
     buildTypes {
@@ -134,13 +129,12 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
-
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
-    kapt 'androidx.hilt:hilt-compiler:1.2.0'
+    ksp "com.google.dagger:hilt-compiler:$hilt_version"
+    ksp 'androidx.hilt:hilt-compiler:1.2.0'
 
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
@@ -172,5 +166,8 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
+}
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
