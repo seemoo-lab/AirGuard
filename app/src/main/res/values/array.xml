@@ -40,4 +40,6 @@
         <item>tiles</item>
         <item>google_find_my_network</item>
     </string-array>
+    <string-array name="defaultFilterSetEmpty">
+    </string-array>
 </resources>
