@@ -6,7 +6,8 @@ plugins {
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'com.mikepenz.aboutlibraries.plugin'
-    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.compose'
+    id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version"
 }
 
 def apiPropertiesFile = rootProject.file("api.properties")
@@ -60,11 +61,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion "1.5.14"
-    }
-
-
     sourceSets {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
@@ -105,16 +101,16 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.12'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.work:work-testing:$work_version"
     implementation 'androidx.core:core-ktx:1.13.1'
-    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14'
 
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation 'androidx.hilt:hilt-work:1.2.0'
-    implementation 'androidx.hilt:hilt-navigation-fragment:1.2.0'
+    implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
+    implementation "androidx.hilt:hilt-work:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-fragment:$hilt_version"
 
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
@@ -129,8 +125,8 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
-    ksp "com.google.dagger:hilt-compiler:$hilt_version"
-    ksp 'androidx.hilt:hilt-compiler:1.2.0'
+    ksp "com.google.dagger:hilt-compiler:$hilt_compiler_version"
+    ksp "androidx.hilt:hilt-compiler:$hilt_version"
 
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
@@ -139,7 +135,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation "androidx.room:room-testing:$room_version"
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
     androidTestImplementation 'androidx.test:core:1.6.1'
     androidTestImplementation 'androidx.test:core-ktx:1.6.1'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
