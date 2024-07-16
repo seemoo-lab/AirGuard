@@ -89,6 +89,11 @@ class AllDevicesFragment : Fragment() {
             findNavController().navigate(directions)
         }
 
+        view.findViewById<MaterialCardView>(R.id.pebblebees_found_card).setOnClickListener {
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.PEBBLEBEE)
+            findNavController().navigate(directions)
+        }
+
         view.findViewById<MaterialCardView>(R.id.smarttags_found_card).setOnClickListener {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.SAMSUNG_DEVICE)
             findNavController().navigate(directions)

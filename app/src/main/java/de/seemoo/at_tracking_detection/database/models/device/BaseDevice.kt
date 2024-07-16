@@ -51,7 +51,8 @@ data class BaseDevice(
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
     @ColumnInfo(name = "deviceType") val deviceType: DeviceType?,
-    @ColumnInfo(name = "subDeviceType") var subDeviceType: String = "UNKNOWN",    @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
+    @ColumnInfo(name = "subDeviceType") var subDeviceType: String = "UNKNOWN",
+    @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
@@ -130,6 +131,7 @@ data class BaseDevice(
         DeviceType.FIND_MY -> AppleFindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
         DeviceType.CHIPOLO -> Chipolo(deviceId)
+        DeviceType.PEBBLEBEE -> PebbleBee(deviceId)
         DeviceType.SAMSUNG_DEVICE -> SamsungDevice(deviceId)
         DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork(deviceId)
         else -> {
@@ -166,6 +168,7 @@ data class BaseDevice(
             return when (deviceType) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
+                DeviceType.PEBBLEBEE -> PebbleBee.getConnectionState(scanResult)
                 DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getConnectionState(scanResult)
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,

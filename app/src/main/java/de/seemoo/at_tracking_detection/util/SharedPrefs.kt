@@ -28,6 +28,11 @@ object SharedPrefs {
                 oldSelectedOptions = oldSelectedOptions + it
             }
 
+            val pebbleBeeValue = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue).find { it == "pebblebees" }
+            pebbleBeeValue?.let {
+                oldSelectedOptions = oldSelectedOptions + it
+            }
+
             val allOptions = getAllDevicesFilterOptions()
             val newUnselectedOptions = allOptions - oldSelectedOptions
             sharedPreferences.edit().putStringSet(newDevicesFilterKey, newUnselectedOptions).apply()

@@ -247,6 +247,7 @@ object Utility {
             DeviceType.SAMSUNG_DEVICE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
             DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
             DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
+            DeviceType.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_pebblebee)
             else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_unknown)
         }
     }

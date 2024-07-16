@@ -13,6 +13,7 @@ enum class DeviceType {
     TILE,
     FIND_MY,
     CHIPOLO,
+    PEBBLEBEE,
     SAMSUNG_DEVICE,
     GOOGLE_FIND_MY_NETWORK;
 
@@ -25,6 +26,7 @@ enum class DeviceType {
                 APPLE -> AppleDevice.defaultDeviceName
                 FIND_MY -> AppleFindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
+                PEBBLEBEE -> PebbleBee.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
                 SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
@@ -41,6 +43,7 @@ enum class DeviceType {
                 FIND_MY -> AppleFindMy.defaultDeviceName
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
+                PEBBLEBEE -> PebbleBee.defaultDeviceName
                 SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
@@ -56,6 +59,7 @@ enum class DeviceType {
                 FIND_MY -> R.drawable.ic_chipolo
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
+                PEBBLEBEE -> R.drawable.ic_baseline_device_unknown_24
                 SAMSUNG_DEVICE -> R.drawable.ic_smarttag_icon
                 GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
             }
@@ -74,6 +78,7 @@ enum class DeviceType {
                     "find_my_devices" -> allowedDeviceTypes.add(FIND_MY)
                     "smart_tags" -> allowedDeviceTypes.add(SAMSUNG_DEVICE)
                     "tiles" -> allowedDeviceTypes.add(TILE)
+                    "pebblebees" -> allowedDeviceTypes.add(PEBBLEBEE)
                     "google_find_my_network" -> allowedDeviceTypes.add(GOOGLE_FIND_MY_NETWORK)
                 }
             }
@@ -88,6 +93,7 @@ enum class DeviceType {
         return when (this) {
             TILE -> true
             CHIPOLO -> true
+            PEBBLEBEE -> true
             else -> false
         }
     }
@@ -96,6 +102,7 @@ enum class DeviceType {
         return when (this) {
             TILE -> Tile.numberOfHoursToBeConsideredForTrackingDetection
             CHIPOLO -> Chipolo.numberOfHoursToBeConsideredForTrackingDetection
+            PEBBLEBEE -> PebbleBee.numberOfHoursToBeConsideredForTrackingDetection
             UNKNOWN -> Unknown.numberOfHoursToBeConsideredForTrackingDetection
             AIRPODS -> AirPods.numberOfHoursToBeConsideredForTrackingDetection
             AIRTAG -> AirTag.numberOfHoursToBeConsideredForTrackingDetection
@@ -110,6 +117,7 @@ enum class DeviceType {
         return when (this) {
             TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionLow
             CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            PEBBLEBEE -> PebbleBee.numberOfLocationsToBeConsideredForTrackingDetectionLow
             UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionLow
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionLow
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
@@ -124,6 +132,7 @@ enum class DeviceType {
         return when (this) {
             TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            PEBBLEBEE -> PebbleBee.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
@@ -138,6 +147,7 @@ enum class DeviceType {
         return when (this) {
             TILE -> Tile.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             CHIPOLO -> Chipolo.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            PEBBLEBEE -> PebbleBee.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             UNKNOWN -> Unknown.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             AIRPODS -> AirPods.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
