@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo, GoogleFindMyNetwork)
+    val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SmartTag, SmartTagPlus, Tile, Chipolo, PebbleBee, GoogleFindMyNetwork)
     private val appleDevices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice)
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
     val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
@@ -64,6 +64,7 @@ object DeviceManager {
                 when {
                     services.contains(Tile.offlineFindingServiceUUID) -> return Tile.deviceType
                     services.contains(Chipolo.offlineFindingServiceUUID) -> return Chipolo.deviceType
+                    services.contains(PebbleBee.offlineFindingServiceUUID) -> return PebbleBee.deviceType
                     services.contains(SmartTag.offlineFindingServiceUUID) -> return SamsungDevice.getSamsungDeviceType(scanResult)
                     else -> return Unknown.deviceType
                 }
@@ -81,6 +82,7 @@ object DeviceManager {
             DeviceType.TILE -> Tile.websiteManufacturer
             DeviceType.FIND_MY -> AppleFindMy.websiteManufacturer
             DeviceType.CHIPOLO -> Chipolo.websiteManufacturer
+            DeviceType.PEBBLEBEE -> PebbleBee.websiteManufacturer
             DeviceType.SAMSUNG -> SamsungDevice.websiteManufacturer
             DeviceType.GALAXY_SMART_TAG -> SmartTag.websiteManufacturer
             DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus.websiteManufacturer

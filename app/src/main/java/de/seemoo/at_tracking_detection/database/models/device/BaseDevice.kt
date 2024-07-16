@@ -106,6 +106,7 @@ data class BaseDevice(
         DeviceType.FIND_MY -> AppleFindMy(deviceId)
         DeviceType.TILE -> Tile(deviceId)
         DeviceType.CHIPOLO -> Chipolo(deviceId)
+        DeviceType.PEBBLEBEE -> PebbleBee(deviceId)
         DeviceType.SAMSUNG -> SamsungDevice(deviceId)
         DeviceType.GALAXY_SMART_TAG -> SmartTag(deviceId)
         DeviceType.GALAXY_SMART_TAG_PLUS -> SmartTagPlus(deviceId)
@@ -146,6 +147,7 @@ data class BaseDevice(
             return when (deviceType) {
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
+                DeviceType.PEBBLEBEE -> PebbleBee.getConnectionState(scanResult)
                 DeviceType.SAMSUNG,
                 DeviceType.GALAXY_SMART_TAG,
                 DeviceType.GALAXY_SMART_TAG_PLUS -> SamsungDevice.getConnectionState(scanResult)
