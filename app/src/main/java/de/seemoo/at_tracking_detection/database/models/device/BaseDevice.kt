@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
 import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
