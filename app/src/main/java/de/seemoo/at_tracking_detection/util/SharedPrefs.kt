@@ -19,7 +19,8 @@ object SharedPrefs {
 
     private fun migrateDevicesFilter() {
         val oldDevicesFilterKey = "devices_filter"
-        if (sharedPreferences.contains(oldDevicesFilterKey)) {
+        val newDevicesFilterKey = "devices_filter_unselected"
+        if (sharedPreferences.contains(oldDevicesFilterKey) && !sharedPreferences.contains(newDevicesFilterKey)) {
             var oldSelectedOptions = sharedPreferences.getStringSet(oldDevicesFilterKey, emptySet()) ?: emptySet()
 
             val googleFindMyNetworkValue = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue).find { it == "google_find_my_network" }
@@ -29,7 +30,7 @@ object SharedPrefs {
 
             val allOptions = getAllDevicesFilterOptions()
             val newUnselectedOptions = allOptions - oldSelectedOptions
-            sharedPreferences.edit().putStringSet("devices_filter_unselected", newUnselectedOptions).apply()
+            sharedPreferences.edit().putStringSet(newDevicesFilterKey, newUnselectedOptions).apply()
             sharedPreferences.edit().remove(oldDevicesFilterKey).apply()
         }
     }

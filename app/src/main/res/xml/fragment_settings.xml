@@ -52,7 +52,7 @@
         android:icon="@drawable/ic_baseline_devices_other_24"
         android:entries="@array/devicesFilter"
         android:entryValues="@array/devicesFilterValue"
-        android:defaultValue="@array/devicesFilterValue"
+        android:defaultValue="@array/defaultFilterSetEmpty"
         />
 
     <SwitchPreferenceCompat

@@ -3,9 +3,11 @@ plugins {
     id 'kotlin-android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'com.mikepenz.aboutlibraries.plugin'
-    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.compose'
+    id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version"
 }
 
 def apiPropertiesFile = rootProject.file("api.properties")
@@ -33,12 +35,6 @@ android {
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
     }
 
     buildTypes {
@@ -64,11 +60,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion "1.5.14"
-    }
-
 
     sourceSets {
         // Adds exported schema location as test app assets.
@@ -101,8 +92,8 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.2'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -110,16 +101,16 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.12'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.work:work-testing:$work_version"
     implementation 'androidx.core:core-ktx:1.13.1'
-    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14'
 
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation 'androidx.hilt:hilt-work:1.2.0'
-    implementation 'androidx.hilt:hilt-navigation-fragment:1.2.0'
+    implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
+    implementation "androidx.hilt:hilt-work:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-fragment:$hilt_version"
 
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
@@ -134,6 +125,8 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
+    ksp "com.google.dagger:hilt-compiler:$hilt_compiler_version"
+    ksp "androidx.hilt:hilt-compiler:$hilt_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
 
@@ -143,17 +136,17 @@ dependencies {
 
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation "androidx.room:room-testing:$room_version"
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0'
-    androidTestImplementation 'androidx.test:core:1.5.0'
-    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test:core-ktx:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
@@ -170,10 +163,13 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation 'androidx.compose.ui:ui-tooling:1.6.8'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3'
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
+}
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
