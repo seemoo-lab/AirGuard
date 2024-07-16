@@ -127,12 +127,9 @@ dependencies {
 
     ksp "com.google.dagger:hilt-compiler:$hilt_compiler_version"
     ksp "androidx.hilt:hilt-compiler:$hilt_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
 
-
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
-    kapt 'androidx.hilt:hilt-compiler:1.2.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
 
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
