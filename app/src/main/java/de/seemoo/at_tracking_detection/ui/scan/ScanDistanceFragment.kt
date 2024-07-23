@@ -25,6 +25,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
@@ -86,8 +87,11 @@ class ScanDistanceFragment : Fragment() {
 
                         // TODO: add drawable
                         val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
                         if (samsungSubType != null && samsungSubType != SamsungDeviceType.UNKNOWN) {
                             binding.deviceTypeText.text = SamsungDeviceType.visibleStringFromSubtype(samsungSubType)
+                        } else if (deviceName != null && deviceName != "") {
+                            binding.deviceTypeText.text = deviceName
                         } else {
                             binding.deviceTypeText.text = DeviceType.userReadableName(
                                 latestWrappedScanResult!!
@@ -150,6 +154,13 @@ class ScanDistanceFragment : Fragment() {
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) {
             val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (samsungSubType == null || samsungSubType == SamsungDeviceType.UNKNOWN) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else if (deviceType == DeviceType.FIND_MY) {
+            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (deviceName == null || deviceName == "" ||deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -285,6 +296,37 @@ class ScanDistanceFragment : Fragment() {
                     binding.progressCircular.visibility = View.GONE
                     binding.deviceTypeText.visibility = View.VISIBLE
                 }
+            }
+        } else if (deviceType == DeviceType.FIND_MY && latestWrappedScanResult != null) {
+            binding.performActionButton.visibility = View.GONE
+            binding.deviceTypeText.visibility = View.GONE
+            binding.progressCircular.visibility = View.VISIBLE
+            lifecycleScope.launch {
+                val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
+                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+                val findMyDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)
+
+                if (device != null && deviceName != findMyDefaultString) {
+                    device.name = deviceName
+                    deviceRepository.update(device)
+                }
+
+                if (deviceName == findMyDefaultString) {
+                    Snackbar.make(
+                        binding.root,
+                        R.string.samsung_determine_failed,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    binding.performActionButton.visibility = View.VISIBLE
+                } else {
+                    viewModel.displayName.postValue(deviceName)
+                }
+
+                binding.progressCircular.visibility = View.GONE
+                binding.deviceTypeText.visibility = View.VISIBLE
             }
         }
     }

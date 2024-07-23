@@ -39,12 +39,12 @@ class SamsungDevice(val id: Int) : Device() {
         get() = SamsungDevice
 
     companion object : DeviceContext {
-        internal val GATT_GENERIC_ACCESS_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-        internal val GATT_DEVICE_NAME_UUID = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
-        internal val GATT_APPEARANCE_UUID = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
+        internal val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+        internal val GATT_DEVICE_NAME_CHARACTERISTIC = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
+        internal val GATT_APPEARANCE_CHARACTERISTIC = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
 
-        internal val GATT_DEVICE_INFORMATION_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
-        internal val GATT_MANUFACTURER_NAME_UUID = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
+        internal val GATT_DEVICE_INFORMATION_SERVICE = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
+        internal val GATT_MANUFACTURER_NAME_CHARACTERISTIC = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
 
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
@@ -78,7 +78,7 @@ class SamsungDevice(val id: Int) : Device() {
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
         @SuppressLint("MissingPermission")
-        suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String): Triple<String?, Int?, String?> =
+        private suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String): Triple<String?, Int?, String?> =
             suspendCancellableCoroutine { continuation ->
                 val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
                 val bluetoothAdapter = bluetoothManager.adapter
@@ -122,17 +122,17 @@ class SamsungDevice(val id: Int) : Device() {
                     override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
                         if (status == BluetoothGatt.GATT_SUCCESS) {
                             when (characteristic?.uuid) {
-                                GATT_DEVICE_NAME_UUID -> {
+                                GATT_DEVICE_NAME_CHARACTERISTIC -> {
                                     if (characteristic != null) {
                                         deviceName = characteristic.getStringValue(0)
                                     }
                                 }
-                                GATT_APPEARANCE_UUID -> {
+                                GATT_APPEARANCE_CHARACTERISTIC -> {
                                     if (characteristic != null) {
                                         appearance = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0)
                                     }
                                 }
-                                GATT_MANUFACTURER_NAME_UUID -> {
+                                GATT_MANUFACTURER_NAME_CHARACTERISTIC -> {
                                     if (characteristic != null) {
                                         manufacturerName = characteristic.getStringValue(0)
                                     }
@@ -147,7 +147,7 @@ class SamsungDevice(val id: Int) : Device() {
                     private fun readNextCharacteristic(gatt: BluetoothGatt) {
                         when {
                             deviceName == null -> {
-                                val char = gatt.getService(GATT_GENERIC_ACCESS_UUID)?.getCharacteristic(GATT_DEVICE_NAME_UUID)
+                                val char = gatt.getService(GATT_GENERIC_ACCESS_SERVICE)?.getCharacteristic(GATT_DEVICE_NAME_CHARACTERISTIC)
                                 if (char != null) {
                                     gatt.readCharacteristic(char)
                                 } else {
@@ -156,7 +156,7 @@ class SamsungDevice(val id: Int) : Device() {
                                 }
                             }
                             appearance == null -> {
-                                val char = gatt.getService(GATT_GENERIC_ACCESS_UUID)?.getCharacteristic(GATT_APPEARANCE_UUID)
+                                val char = gatt.getService(GATT_GENERIC_ACCESS_SERVICE)?.getCharacteristic(GATT_APPEARANCE_CHARACTERISTIC)
                                 if (char != null) {
                                     gatt.readCharacteristic(char)
                                 } else {
@@ -165,7 +165,7 @@ class SamsungDevice(val id: Int) : Device() {
                                 }
                             }
                             manufacturerName == null -> {
-                                val char = gatt.getService(GATT_DEVICE_INFORMATION_UUID)?.getCharacteristic(GATT_MANUFACTURER_NAME_UUID)
+                                val char = gatt.getService(GATT_DEVICE_INFORMATION_SERVICE)?.getCharacteristic(GATT_MANUFACTURER_NAME_CHARACTERISTIC)
                                 if (char != null) {
                                     gatt.readCharacteristic(char)
                                 } else {
@@ -185,6 +185,7 @@ class SamsungDevice(val id: Int) : Device() {
 
                 bluetoothDevice.connectGatt(context, false, gattCallback)
             }
+
         suspend fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
             val (deviceName, appearance, manufacturerName) = connectAndRetrieveCharacteristics(
                 ATTrackingDetectionApplication.getAppContext(),

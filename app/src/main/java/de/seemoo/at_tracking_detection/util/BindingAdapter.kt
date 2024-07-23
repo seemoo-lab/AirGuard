@@ -79,6 +79,8 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
         textView.text = SamsungDeviceType.visibleStringFromSubtype(subType)
+    } else if (ScanFragment.deviceNameMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+        textView.text = ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
     } else {
         textView.text = DeviceType.userReadableName(wrappedScanResult)
     }

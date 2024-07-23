@@ -176,5 +176,6 @@ class ScanFragment : Fragment() {
     companion object {
         private const val SCAN_DURATION = 60_000L
         val samsungSubDeviceTypeMap: MutableMap<String, SamsungDeviceType> = HashMap()
+        val deviceNameMap: MutableMap<String, String> = HashMap()
     }
 }
