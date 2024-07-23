@@ -158,9 +158,9 @@ class ScanDistanceFragment : Fragment() {
             } else {
                 View.GONE
             }
-        } else if (deviceType == DeviceType.FIND_MY) {
+        } else if (deviceType in DeviceManager.appleDevicesWithInfoService) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
-            if (deviceName == null || deviceName == "" ||deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)) {
+            if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -297,7 +297,7 @@ class ScanDistanceFragment : Fragment() {
                     binding.deviceTypeText.visibility = View.VISIBLE
                 }
             }
-        } else if (deviceType == DeviceType.FIND_MY && latestWrappedScanResult != null) {
+        } else if (deviceType in DeviceManager.appleDevicesWithInfoService && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE

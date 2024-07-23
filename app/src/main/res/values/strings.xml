@@ -411,4 +411,8 @@
 
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
     <string name="samsung_determine_failed">Exact device type could not be determined</string>
+
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+
 </resources>

@@ -369,4 +369,7 @@
 
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>
     <string name="samsung_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
+
+    <string name="left">Links</string>
+    <string name="right">Rechts</string>
 </resources>

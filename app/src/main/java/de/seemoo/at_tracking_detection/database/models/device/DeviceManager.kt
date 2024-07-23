@@ -12,6 +12,7 @@ object DeviceManager {
 
     val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SamsungDevice, Tile, Chipolo, PebbleBee, GoogleFindMyNetwork)
     private val appleDevices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice)
+    val appleDevicesWithInfoService = listOf(AppleFindMy, AirPods).map { it.deviceType }
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
     val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
 

@@ -291,7 +291,13 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
 
                 if (deviceNameTrimmed == "left" || deviceNameTrimmed == "right") {
                     val airpodsString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airpods)
-                    return "$airpodsString - $deviceNameTrimmed"
+                    if (deviceNameTrimmed == "left") {
+                        val left = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.left)
+                        return "$airpodsString - $left"
+                    } else {
+                        val right = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.right)
+                        return "$airpodsString - $right"
+                    }
                 }
 
                 return deviceName
