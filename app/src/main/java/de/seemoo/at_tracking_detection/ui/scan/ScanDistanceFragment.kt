@@ -26,6 +26,7 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
@@ -161,6 +162,13 @@ class ScanDistanceFragment : Fragment() {
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else if (deviceType == DeviceType.PEBBLEBEE) {
+            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -328,7 +336,39 @@ class ScanDistanceFragment : Fragment() {
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
             }
+        } else if (deviceType == DeviceType.PEBBLEBEE && latestWrappedScanResult != null) {
+            binding.performActionButton.visibility = View.GONE
+            binding.deviceTypeText.visibility = View.GONE
+            binding.progressCircular.visibility = View.VISIBLE
+            lifecycleScope.launch {
+                val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
+                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+                val pebblebeeDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
+
+                if (device != null && deviceName != pebblebeeDefaultString) {
+                    device.name = deviceName
+                    deviceRepository.update(device)
+                }
+
+                if (deviceName == pebblebeeDefaultString) {
+                    Snackbar.make(
+                        binding.root,
+                        R.string.samsung_determine_failed,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    binding.performActionButton.visibility = View.VISIBLE
+                } else {
+                    viewModel.displayName.postValue(deviceName)
+                }
+
+                binding.progressCircular.visibility = View.GONE
+                binding.deviceTypeText.visibility = View.VISIBLE
+            }
         }
+
     }
 
     override fun onResume() {
