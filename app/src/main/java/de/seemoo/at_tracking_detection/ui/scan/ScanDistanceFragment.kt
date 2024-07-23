@@ -161,7 +161,7 @@ class ScanDistanceFragment : Fragment() {
             }
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
-            if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)) {
+            if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -310,12 +310,14 @@ class ScanDistanceFragment : Fragment() {
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
+                val findMyDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
                 val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
-                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                if (deviceName != findMyDefaultString) {
+                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-                val findMyDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)
 
                 if (device != null && deviceName != findMyDefaultString) {
                     device.name = deviceName
@@ -341,12 +343,14 @@ class ScanDistanceFragment : Fragment() {
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
+                val pebblebeeDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
                 val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
-                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                if (deviceName != pebblebeeDefaultString) {
+                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-                val pebblebeeDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
 
                 if (device != null && deviceName != pebblebeeDefaultString) {
                     device.name = deviceName

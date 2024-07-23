@@ -302,7 +302,7 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
 
                 return deviceName
             } else {
-                return ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_my_device)
+                return ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
             }
 
         }
