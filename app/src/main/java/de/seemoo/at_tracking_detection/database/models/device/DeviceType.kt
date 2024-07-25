@@ -14,7 +14,8 @@ enum class DeviceType {
     FIND_MY,
     CHIPOLO,
     PEBBLEBEE,
-    SAMSUNG_DEVICE,
+    SAMSUNG_TRACKER,
+    SAMSUNG_FIND_MY_MOBILE,
     GOOGLE_FIND_MY_NETWORK;
 
     companion object  {
@@ -28,7 +29,8 @@ enum class DeviceType {
                 TILE -> Tile.defaultDeviceName
                 PEBBLEBEE -> PebbleBee.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
-                SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
+                SAMSUNG_TRACKER -> SamsungTracker.defaultDeviceName
+                SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.defaultDeviceName
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
         }
@@ -44,7 +46,8 @@ enum class DeviceType {
                 TILE -> Tile.defaultDeviceName
                 CHIPOLO -> Chipolo.defaultDeviceName
                 PEBBLEBEE -> PebbleBee.defaultDeviceName
-                SAMSUNG_DEVICE -> SamsungDevice.defaultDeviceName
+                SAMSUNG_TRACKER -> SamsungTracker.defaultDeviceName
+                SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.defaultDeviceName
                 GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
             }
         }
@@ -60,7 +63,8 @@ enum class DeviceType {
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
                 PEBBLEBEE -> R.drawable.ic_baseline_device_unknown_24
-                SAMSUNG_DEVICE -> R.drawable.ic_smarttag_icon
+                SAMSUNG_TRACKER -> R.drawable.ic_smarttag_icon
+                SAMSUNG_FIND_MY_MOBILE -> R.drawable.ic_baseline_device_unknown_24
                 GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
             }
         }
@@ -76,7 +80,8 @@ enum class DeviceType {
                     "apple_devices" -> allowedDeviceTypes.add(APPLE)
                     "chipolos" -> allowedDeviceTypes.add(CHIPOLO)
                     "find_my_devices" -> allowedDeviceTypes.add(FIND_MY)
-                    "smart_tags" -> allowedDeviceTypes.add(SAMSUNG_DEVICE)
+                    "smart_tags" -> allowedDeviceTypes.add(SAMSUNG_TRACKER)
+                    "samsung_find_my_mobile" -> allowedDeviceTypes.add(SAMSUNG_FIND_MY_MOBILE)
                     "tiles" -> allowedDeviceTypes.add(TILE)
                     "pebblebees" -> allowedDeviceTypes.add(PEBBLEBEE)
                     "google_find_my_network" -> allowedDeviceTypes.add(GOOGLE_FIND_MY_NETWORK)
@@ -108,7 +113,8 @@ enum class DeviceType {
             AIRTAG -> AirTag.numberOfHoursToBeConsideredForTrackingDetection
             APPLE -> AppleDevice.numberOfHoursToBeConsideredForTrackingDetection
             FIND_MY -> AppleFindMy.numberOfHoursToBeConsideredForTrackingDetection
-            SAMSUNG_DEVICE -> SamsungDevice.numberOfHoursToBeConsideredForTrackingDetection
+            SAMSUNG_TRACKER -> SamsungTracker.numberOfHoursToBeConsideredForTrackingDetection
+            SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.numberOfHoursToBeConsideredForTrackingDetection
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfHoursToBeConsideredForTrackingDetection
         }
     }
@@ -123,7 +129,8 @@ enum class DeviceType {
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionLow
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
             FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionLow
-            SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            SAMSUNG_TRACKER -> SamsungTracker.numberOfLocationsToBeConsideredForTrackingDetectionLow
+            SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.numberOfLocationsToBeConsideredForTrackingDetectionLow
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionLow
         }
     }
@@ -138,7 +145,8 @@ enum class DeviceType {
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionMedium
-            SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            SAMSUNG_TRACKER -> SamsungTracker.numberOfLocationsToBeConsideredForTrackingDetectionMedium
+            SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.numberOfLocationsToBeConsideredForTrackingDetectionMedium
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionMedium
         }
     }
@@ -153,7 +161,8 @@ enum class DeviceType {
             AIRTAG -> AirTag.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             APPLE -> AppleDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             FIND_MY -> AppleFindMy.numberOfLocationsToBeConsideredForTrackingDetectionHigh
-            SAMSUNG_DEVICE -> SamsungDevice.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            SAMSUNG_TRACKER -> SamsungTracker.numberOfLocationsToBeConsideredForTrackingDetectionHigh
+            SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.numberOfLocationsToBeConsideredForTrackingDetectionHigh
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionHigh
         }
     }

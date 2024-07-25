@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 
@@ -49,13 +49,13 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
-    val drawableResId = if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_DEVICE) {
+    val drawableResId = if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_TRACKER) {
         val subTypeString = deviceFromDb.subDeviceType
-        val subType = SamsungDeviceType.stringToSubType(subTypeString)
-        SamsungDeviceType.drawableForSubType(subType)
+        val subType = SamsungTrackerType.stringToSubType(subTypeString)
+        SamsungTrackerType.drawableForSubType(subType)
     } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
-        SamsungDeviceType.drawableForSubType(subType)
+        SamsungTrackerType.drawableForSubType(subType)
     } else {
         DeviceType.getImageDrawable(wrappedScanResult)
     }
@@ -71,14 +71,14 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
 
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
-    } else if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_DEVICE) {
+    } else if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_TRACKER) {
         val subTypeString = deviceFromDb.subDeviceType
-        val subType = SamsungDeviceType.stringToSubType(subTypeString)
+        val subType = SamsungTrackerType.stringToSubType(subTypeString)
         ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
-        textView.text = SamsungDeviceType.visibleStringFromSubtype(subType)
+        textView.text = SamsungTrackerType.visibleStringFromSubtype(subType)
     } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
-        textView.text = SamsungDeviceType.visibleStringFromSubtype(subType)
+        textView.text = SamsungTrackerType.visibleStringFromSubtype(subType)
     } else if (ScanFragment.deviceNameMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         textView.text = ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
     } else {

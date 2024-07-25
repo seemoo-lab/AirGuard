@@ -27,8 +27,8 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
@@ -42,7 +42,7 @@ class ScanDistanceFragment : Fragment() {
     private var deviceAddress: String? = null
     private var deviceType: DeviceType? = null
     private var latestWrappedScanResult: ScanResultWrapper? = null
-    private var subType: SamsungDeviceType? = null
+    private var subType: SamsungTrackerType? = null
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -87,10 +87,10 @@ class ScanDistanceFragment : Fragment() {
                         viewModel.isFirstScanCallback.value = false
 
                         // TODO: add drawable
-                        val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val samsungSubType: SamsungTrackerType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
-                        if (samsungSubType != null && samsungSubType != SamsungDeviceType.UNKNOWN) {
-                            binding.deviceTypeText.text = SamsungDeviceType.visibleStringFromSubtype(samsungSubType)
+                        if (samsungSubType != null && samsungSubType != SamsungTrackerType.UNKNOWN) {
+                            binding.deviceTypeText.text = SamsungTrackerType.visibleStringFromSubtype(samsungSubType)
                         } else if (deviceName != null && deviceName != "") {
                             binding.deviceTypeText.text = deviceName
                         } else {
@@ -152,9 +152,9 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineDeviceTypeButtonVisible() {
-        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_DEVICE) {
-            val samsungSubType: SamsungDeviceType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
-            if (samsungSubType == null || samsungSubType == SamsungDeviceType.UNKNOWN) {
+        binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
+            val samsungSubType: SamsungTrackerType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (samsungSubType == null || samsungSubType == SamsungTrackerType.UNKNOWN) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -169,6 +169,13 @@ class ScanDistanceFragment : Fragment() {
         } else if (deviceType == DeviceType.PEBBLEBEE) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE) {
+            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -201,7 +208,7 @@ class ScanDistanceFragment : Fragment() {
     private fun getConnectionStateExplanation(connectionState: ConnectionState, deviceType: DeviceType): String {
         return when (connectionState) {
             ConnectionState.OVERMATURE_OFFLINE -> when(deviceType) {
-                DeviceType.SAMSUNG_DEVICE -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
+                DeviceType.SAMSUNG_TRACKER -> getString(R.string.connection_state_overmature_offline_explanation_samsung)
                 DeviceType.CHIPOLO -> getString(R.string.connection_state_overmature_offline_explanation_chipolo)
                 else -> getString(R.string.connection_state_overmature_offline_explanation)
             }
@@ -271,23 +278,23 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineSubType() {
-        if (deviceType == DeviceType.SAMSUNG_DEVICE && latestWrappedScanResult != null) {
+        if (deviceType == DeviceType.SAMSUNG_TRACKER && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
-                subType = SamsungDevice.getSubType(latestWrappedScanResult!!)
+                subType = SamsungTracker.getSubType(latestWrappedScanResult!!)
                 ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType!!
                 subType?.let { samsungDeviceType ->
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
                     if (device != null) {
-                        device.subDeviceType = SamsungDeviceType.subTypeToString(samsungDeviceType)
+                        device.subDeviceType = SamsungTrackerType.subTypeToString(samsungDeviceType)
                         deviceRepository.update(device)
                     }
 
-                    if (samsungDeviceType == SamsungDeviceType.UNKNOWN) {
+                    if (samsungDeviceType == SamsungTrackerType.UNKNOWN) {
                         Snackbar.make(
                             binding.root,
                             R.string.samsung_determine_failed,
@@ -296,7 +303,7 @@ class ScanDistanceFragment : Fragment() {
                         binding.performActionButton.visibility = View.VISIBLE
                     } else {
                         viewModel.displayName.postValue(
-                            SamsungDeviceType.visibleStringFromSubtype(
+                            SamsungTrackerType.visibleStringFromSubtype(
                                 samsungDeviceType
                             )
                         )
@@ -371,8 +378,28 @@ class ScanDistanceFragment : Fragment() {
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
             }
-        }
+        } else if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE && latestWrappedScanResult != null) {
+            binding.performActionButton.visibility = View.GONE
+            binding.deviceTypeText.visibility = View.GONE
+            binding.progressCircular.visibility = View.VISIBLE
+            lifecycleScope.launch {
+                val deviceName = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)
+                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
 
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+
+                if (device != null) {
+                    device.name = deviceName
+                    deviceRepository.update(device)
+                }
+
+                viewModel.displayName.postValue(deviceName)
+
+                binding.progressCircular.visibility = View.GONE
+                binding.deviceTypeText.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onResume() {

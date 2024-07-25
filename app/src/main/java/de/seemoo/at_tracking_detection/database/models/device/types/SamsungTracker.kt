@@ -26,17 +26,17 @@ import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class SamsungDevice(val id: Int) : Device() {
+class SamsungTracker(val id: Int) : Device() {
     override val imageResource: Int
         @DrawableRes
         get() = R.drawable.ic_smarttag_icon
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_smarttag)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_samsung_tracker)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = SamsungDevice
+        get() = SamsungTracker
 
     companion object : DeviceContext {
         internal val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
@@ -50,27 +50,19 @@ class SamsungDevice(val id: Int) : Device() {
             get() = ScanFilter.Builder()
                 .setServiceData(
                     offlineFindingServiceUUID,
-                    // First Byte:
-                    // 13, FF --> After 8 Hours,
-                    // 12, FE --> After 15 Minutes
-                    // 10, F8 --> Connected
-                    //
-                    // Twelve Byte:
-                    // 04, 00 --> UWB off,
-                    // 04, 04 --> UWB on
                     byteArrayOf((0x10).toByte()),
                     byteArrayOf((0xF8).toByte())
                 )
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.SAMSUNG_DEVICE
+            get() = DeviceType.SAMSUNG_TRACKER
 
         override val websiteManufacturer: String
             get() = "https://www.samsung.com/"
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_device_name)
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_tracker_name)
 
         override val statusByteDeviceType: UInt
             get() = 0u
@@ -186,7 +178,7 @@ class SamsungDevice(val id: Int) : Device() {
                 bluetoothDevice.connectGatt(context, false, gattCallback)
             }
 
-        suspend fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungDeviceType {
+        suspend fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungTrackerType {
             val (deviceName, appearance, manufacturerName) = connectAndRetrieveCharacteristics(
                 ATTrackingDetectionApplication.getAppContext(),
                 wrappedScanResult.deviceAddress
@@ -196,11 +188,11 @@ class SamsungDevice(val id: Int) : Device() {
             val hasUWB = wrappedScanResult.uwbCapable
 
             return when {
-                hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2" || appearance == 576) -> SamsungDeviceType.SMART_TAG_2
-                manufacturerName == "SOLUM" -> SamsungDeviceType.SOLUM
-                hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungDeviceType.SMART_TAG_1_PLUS
-                hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungDeviceType.SMART_TAG_1
-                else -> SamsungDeviceType.UNKNOWN
+                hasUWB == true && (deviceName == "Smart Tag2" || advertisedName == "Smart Tag2" || appearance == 576) -> SamsungTrackerType.SMART_TAG_2
+                manufacturerName == "SOLUM" -> SamsungTrackerType.SOLUM
+                hasUWB == true && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungTrackerType.SMART_TAG_1_PLUS
+                hasUWB == false && (deviceName == "Smart Tag" || advertisedName == "Smart Tag" || appearance == 512) -> SamsungTrackerType.SMART_TAG_1
+                else -> SamsungTrackerType.UNKNOWN
             }
         }
 

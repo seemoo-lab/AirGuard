@@ -17,8 +17,8 @@ import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
 import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
@@ -112,9 +112,9 @@ data class BaseDevice(
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId
 
-    fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_DEVICE && subDeviceType != "UNKNOWN") {
-        val subType = SamsungDeviceType.stringToSubType(subDeviceType)
-        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungDeviceType.drawableForSubType(subType))
+    fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_TRACKER && subDeviceType != "UNKNOWN") {
+        val subType = SamsungTrackerType.stringToSubType(subDeviceType)
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
     } else {
         device.getDrawable()
     }
@@ -133,7 +133,7 @@ data class BaseDevice(
         DeviceType.TILE -> Tile(deviceId)
         DeviceType.CHIPOLO -> Chipolo(deviceId)
         DeviceType.PEBBLEBEE -> PebbleBee(deviceId)
-        DeviceType.SAMSUNG_DEVICE -> SamsungDevice(deviceId)
+        DeviceType.SAMSUNG_TRACKER -> SamsungTracker(deviceId)
         DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork(deviceId)
         else -> {
             // For backwards compatibility
@@ -153,14 +153,14 @@ data class BaseDevice(
         fun getDeviceName(scanResult: ScanResult): String? {
             return when (DeviceManager.getDeviceType(scanResult)) {
                 // TODO
-                DeviceType.SAMSUNG_DEVICE -> null
+                DeviceType.SAMSUNG_TRACKER -> null
                 else -> scanResult.scanRecord?.deviceName
             }
         }
 
         fun getPublicKey(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
             return when (deviceType) {
-                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getPublicKey(scanResult)
+                DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getPublicKey(scanResult)
                 else -> scanResult.device.address // Default case to handle unknown types
             }
         }
@@ -170,7 +170,7 @@ data class BaseDevice(
                 DeviceType.TILE -> Tile.getConnectionState(scanResult)
                 DeviceType.CHIPOLO -> Chipolo.getConnectionState(scanResult)
                 DeviceType.PEBBLEBEE -> PebbleBee.getConnectionState(scanResult)
-                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getConnectionState(scanResult)
+                DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getConnectionState(scanResult)
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
@@ -182,7 +182,7 @@ data class BaseDevice(
 
         fun getBatteryState(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): BatteryState {
             return when (deviceType) {
-                DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getBatteryState(scanResult)
+                DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getBatteryState(scanResult)
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
                 DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)

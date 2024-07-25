@@ -27,7 +27,8 @@
         <item>@string/chipolo</item>
         <item>@string/pebblebee</item>
         <item>@string/find_my_device</item>
-        <item>@string/smart_tag</item>
+        <item>@string/samsung_tracker_name</item>
+        <item>@string/samsung_find_my_mobile_name</item>
         <item>@string/tile</item>
         <item>@string/google_find_my</item>
     </string-array>
@@ -39,6 +40,7 @@
         <item>pebblebees</item>
         <item>find_my_devices</item>
         <item>smart_tags</item>
+        <item>samsung_find_my_mobile</item>
         <item>tiles</item>
         <item>google_find_my_network</item>
     </string-array>

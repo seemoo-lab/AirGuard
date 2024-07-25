@@ -3,7 +3,7 @@ package de.seemoo.at_tracking_detection.database.models.device.types
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 
-enum class SamsungDeviceType{
+enum class SamsungTrackerType{
     SMART_TAG_1,
     SMART_TAG_1_PLUS,
     SMART_TAG_2,
@@ -11,17 +11,17 @@ enum class SamsungDeviceType{
     UNKNOWN;
 
     companion object {
-        fun visibleStringFromSubtype(subType: SamsungDeviceType): String {
+        fun visibleStringFromSubtype(subType: SamsungTrackerType): String {
             return when (subType) {
                 SMART_TAG_1 -> "SmartTag"
                 SMART_TAG_1_PLUS -> "SmartTag+"
                 SMART_TAG_2 -> "SmartTag 2"
                 SOLUM -> "Solum SmartTag"
-                UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_device_name)
+                UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_tracker_name)
             }
         }
 
-        fun subTypeToString(subType: SamsungDeviceType): String {
+        fun subTypeToString(subType: SamsungTrackerType): String {
             return when (subType) {
                 SMART_TAG_1 -> "SMART_TAG_1"
                 SMART_TAG_1_PLUS -> "SMART_TAG_1_PLUS"
@@ -31,7 +31,7 @@ enum class SamsungDeviceType{
             }
         }
 
-        fun stringToSubType(subType: String): SamsungDeviceType {
+        fun stringToSubType(subType: String): SamsungTrackerType {
             return when (subType) {
                 "SMART_TAG_1" -> SMART_TAG_1
                 "SMART_TAG_1_PLUS" -> SMART_TAG_1_PLUS
@@ -41,7 +41,7 @@ enum class SamsungDeviceType{
             }
         }
 
-        fun drawableForSubType(subType: SamsungDeviceType): Int {
+        fun drawableForSubType(subType: SamsungTrackerType): Int {
             return when (subType) {
                 SMART_TAG_1 -> R.drawable.ic_smarttag_icon
                 SMART_TAG_1_PLUS -> R.drawable.ic_smarttag_icon

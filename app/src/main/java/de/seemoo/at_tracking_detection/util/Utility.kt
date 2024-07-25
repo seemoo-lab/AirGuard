@@ -244,7 +244,7 @@ object Utility {
             DeviceType.AIRPODS,
             DeviceType.FIND_MY,
             DeviceType.AIRTAG -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_apple)
-            DeviceType.SAMSUNG_DEVICE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
+            DeviceType.SAMSUNG_TRACKER -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_samsung)
             DeviceType.TILE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_tile)
             DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
             DeviceType.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_pebblebee)

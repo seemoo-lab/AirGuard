@@ -7,7 +7,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 
 @SuppressLint("MissingPermission")
 data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boolean = false){
@@ -26,7 +26,7 @@ data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boo
     @SuppressLint("MissingPermission")
     val advertisedName: String? = scanResult.device.name
     val uwbCapable = when (deviceType) {
-        DeviceType.SAMSUNG_DEVICE -> SamsungDevice.getUwbAvailability(scanResult)
+        DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getUwbAvailability(scanResult)
         DeviceType.AIRTAG -> true
         else -> false
     }

@@ -10,7 +10,7 @@ import kotlin.experimental.and
 
 object DeviceManager {
 
-    val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SamsungDevice, Tile, Chipolo, PebbleBee, GoogleFindMyNetwork)
+    val devices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice, SamsungTracker, Tile, Chipolo, PebbleBee, GoogleFindMyNetwork)
     private val appleDevices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice)
     val appleDevicesWithInfoService = listOf(AppleFindMy, AirPods).map { it.deviceType }
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
@@ -66,7 +66,8 @@ object DeviceManager {
                     services.contains(Tile.offlineFindingServiceUUID) -> return Tile.deviceType
                     services.contains(Chipolo.offlineFindingServiceUUID) -> return Chipolo.deviceType
                     services.contains(PebbleBee.offlineFindingServiceUUID) -> return PebbleBee.deviceType
-                    services.contains(SamsungDevice.offlineFindingServiceUUID) -> return SamsungDevice.deviceType
+                    services.contains(SamsungTracker.offlineFindingServiceUUID) -> return SamsungTracker.deviceType
+                    services.contains(SamsungFindMyMobile.offlineFindingServiceUUID) -> return SamsungFindMyMobile.deviceType
                     else -> return Unknown.deviceType
                 }
             }
@@ -84,7 +85,8 @@ object DeviceManager {
             DeviceType.FIND_MY -> AppleFindMy.websiteManufacturer
             DeviceType.CHIPOLO -> Chipolo.websiteManufacturer
             DeviceType.PEBBLEBEE -> PebbleBee.websiteManufacturer
-            DeviceType.SAMSUNG_DEVICE -> SamsungDevice.websiteManufacturer
+            DeviceType.SAMSUNG_TRACKER -> SamsungTracker.websiteManufacturer
+            DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.websiteManufacturer
             DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.websiteManufacturer
         }
     }

@@ -157,8 +157,8 @@ object DatabaseModule {
                 Timber.d("Adding new column 'subDeviceType'")
                 db.execSQL("ALTER TABLE device ADD COLUMN subDeviceType TEXT NOT NULL DEFAULT 'UNKNOWN'")
 
-                Timber.d("Updating deviceType from 'SMART_TAG' and 'SMART_TAG_PLUS' to 'SAMSUNG_DEVICE'")
-                db.execSQL("UPDATE device SET deviceType = 'SAMSUNG_DEVICE' WHERE deviceType = 'SMART_TAG' OR deviceType = 'SMART_TAG_PLUS' OR deviceType = 'GALAXY_SMART_TAG' OR deviceType = 'GALAXY_SMART_TAG_PLUS'")
+                Timber.d("Updating deviceType from 'SMART_TAG' and 'SMART_TAG_PLUS' to 'SAMSUNG_TRACKER'")
+                db.execSQL("UPDATE device SET deviceType = 'SAMSUNG_TRACKER' WHERE deviceType = 'SMART_TAG' OR deviceType = 'SMART_TAG_PLUS' OR deviceType = 'GALAXY_SMART_TAG' OR deviceType = 'GALAXY_SMART_TAG_PLUS'")
             } catch (e: SQLiteException) {
                 Timber.e("Migration error: ${e.message}")
             } catch (e: Exception) {
