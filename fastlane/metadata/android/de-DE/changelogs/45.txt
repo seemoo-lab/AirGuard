@@ -1,0 +1,1 @@
+Mit diesem Update unterstützen wir von nun an auch Google Find My Device Tracker. 
