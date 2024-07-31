@@ -34,6 +34,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        deleteOldAndSafeTrackers()
+
         Timber.d("Tracking detection background job started!")
         // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync

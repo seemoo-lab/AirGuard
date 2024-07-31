@@ -1,8 +1,0 @@
-Diese Version behebt kleinere Probleme in Version 2.1
-- Suche nach Trackern mittels eines detaillierten Scans
-- Sortieroptionen für den manuellen Scan
-- Manueller Scan kann pausiert werden
-- Geräte aus den Scan-Benachrichtigungen entfernen
-- App-Sprache kann geändert werden
-- Benachrichtigungen müssen in Android 13 akzeptiert werden
-- Thematische Icons
