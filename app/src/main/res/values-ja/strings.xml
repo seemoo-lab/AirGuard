@@ -88,7 +88,9 @@
     <string name="onboarding_share_data_yes">はい</string>
     <string name="onboarding_share_data_dialog">匿名化されたデータを共有するかどうかを決定する必要があります</string>
     <string name="device_name_find_my_device_apple">Find My デバイス %s</string>
-    <string name="notification_text_base">詳細については、通知を開いてください。追跡タグが少なくとも%d分間あなたを追跡しています。</string>
+    <plurals name="notification_text_base">
+        <item quantity="other">詳細については、通知を開いてください。追跡タグが少なくとも%d分間あなたを追跡しています。</item>
+    </plurals>
     <string name="notification_title_base">追跡タグが発見されました!</string>
     <string name="notification_text_single">詳細については、通知を開いてください。%sが少なくとも%d分間あなたを追跡しています。</string>
     <string name="notification_text_multiple">詳細については、通知を開いてください。%sが少なくとも%d分間あなたをフォローしています。</string>
