@@ -12,6 +12,34 @@ object SharedPrefs {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ATTrackingDetectionApplication.getAppContext())
 
+    init {
+        // Migrate old devices filter to new format
+        migrateDevicesFilter()
+    }
+
+    private fun migrateDevicesFilter() {
+        val oldDevicesFilterKey = "devices_filter"
+        val newDevicesFilterKey = "devices_filter_unselected"
+        if (sharedPreferences.contains(oldDevicesFilterKey) && !sharedPreferences.contains(newDevicesFilterKey)) {
+            var oldSelectedOptions = sharedPreferences.getStringSet(oldDevicesFilterKey, emptySet()) ?: emptySet()
+
+            val googleFindMyNetworkValue = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue).find { it == "google_find_my_network" }
+            googleFindMyNetworkValue?.let {
+                oldSelectedOptions = oldSelectedOptions + it
+            }
+
+            val pebbleBeeValue = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue).find { it == "pebblebees" }
+            pebbleBeeValue?.let {
+                oldSelectedOptions = oldSelectedOptions + it
+            }
+
+            val allOptions = getAllDevicesFilterOptions()
+            val newUnselectedOptions = allOptions - oldSelectedOptions
+            sharedPreferences.edit().putStringSet(newDevicesFilterKey, newUnselectedOptions).apply()
+            sharedPreferences.edit().remove(oldDevicesFilterKey).apply()
+        }
+    }
+
     var isScanningInBackground: Boolean
         get() {
             return sharedPreferences.getBoolean("isScanningInBackground", false)
@@ -194,14 +222,15 @@ object SharedPrefs {
         }
 
     var devicesFilter: Set<String>
-        // 0: Low
-        // 1: Medium
-        // 2: High
         get() {
-            return sharedPreferences.getStringSet("devices_filter", getDefaultDevicesFilterSet())?:getDefaultDevicesFilterSet()
+            val allOptions = getAllDevicesFilterOptions()
+            val selectedOptions = sharedPreferences.getStringSet("devices_filter_unselected", emptySet())?: emptySet()
+            return allOptions - selectedOptions
         }
         set(value) {
-            sharedPreferences.edit().putStringSet("devices_filter", value).apply()
+            val allOptions = getAllDevicesFilterOptions()
+            val unselectedOptions = allOptions - value
+            sharedPreferences.edit().putStringSet("devices_filter_unselected", unselectedOptions).apply()
         }
 
     var notificationPriorityHigh: Boolean
@@ -212,8 +241,8 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("notification_priority_high", value).apply()
         }
 
-    private fun getDefaultDevicesFilterSet(): Set<String> {
-        val defaultValues = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
-        return defaultValues.toSet()
+    private fun getAllDevicesFilterOptions(): Set<String> {
+        val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
+        return allOptions.toSet()
     }
 }

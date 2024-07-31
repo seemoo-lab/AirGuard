@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.DrawableRes
@@ -19,18 +20,19 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import java.util.*
 
-class AirPods(val id: Int) : Device(), Connectable {
+class AppleFindMy(val id: Int) : Device(), Connectable {
 
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_airpods
+        get() = R.drawable.ic_chipolo
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_airpods)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device_apple)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = AppleFindMy
+
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -65,7 +67,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                 Timber.d("Found UUIDS $uuids")
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                        AIRPODS_SOUND_SERVICE.lowercase()
+                        FINDMY_SOUND_SERVICE.lowercase()
                     )
                 }
 
@@ -76,21 +78,30 @@ class AirPods(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val characteristic = service.getCharacteristic(AIRPODS_SOUND_CHARACTERISTIC)
+                val characteristic = service.getCharacteristic(FINDMY_SOUND_CHARACTERISTIC)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = AIRPODS_START_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, FINDMY_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    }else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = FINDMY_START_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
                     broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
                 }
             }
 
+
             @SuppressLint("MissingPermission")
-            fun stopSoundOnAirPods(gatt: BluetoothGatt) {
+            fun stopSoundOnFindMyDevice(gatt: BluetoothGatt) {
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                       AIRPODS_SOUND_SERVICE.lowercase()
+                        FINDMY_SOUND_SERVICE
                     )
                 }
 
@@ -99,12 +110,20 @@ class AirPods(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val uuid = AIRPODS_SOUND_CHARACTERISTIC
+                val uuid = FINDMY_SOUND_CHARACTERISTIC
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = AIRPODS_STOP_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, FINDMY_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    }else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = FINDMY_STOP_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Stopping sound on Find My device with ${it.uuid}")
 
                 }
@@ -118,13 +137,13 @@ class AirPods(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(AIRPODS_START_SOUND_OPCODE) && gatt != null) {
+                    if (characteristic?.value.contentEquals(FINDMY_START_SOUND_OPCODE) && gatt != null) {
                         Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnAirPods(gatt)
+                            stopSoundOnFindMyDevice(gatt)
                         }, 5000)
                     }
 
-                    if (characteristic?.value.contentEquals(AIRPODS_STOP_SOUND_OPCODE)) {
+                    if (characteristic?.value.contentEquals(FINDMY_STOP_SOUND_OPCODE)) {
                         disconnect(gatt)
                         broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
                     }
@@ -139,36 +158,34 @@ class AirPods(val id: Int) : Device(), Connectable {
         }
 
     companion object : DeviceContext {
-        internal const val AIRPODS_SOUND_SERVICE = "fd44"
-        internal val AIRPODS_SOUND_CHARACTERISTIC =
+        internal const val FINDMY_SOUND_SERVICE = "fd44"
+        internal val FINDMY_SOUND_CHARACTERISTIC =
             UUID.fromString("4F860003-943B-49EF-BED4-2F730304427A")
-        internal val AIRPODS_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
-        internal val AIRPODS_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
-
-        // What does this scan filter do?
+        internal val FINDMY_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
+        internal val FINDMY_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setManufacturerData(
                     0x4C,
                     // Only Offline Devices:
-                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()), // Empty status byte?
-                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte()) // ff?
+                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
+                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte())
                     // All Devices:
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()),
+                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x10).toByte()),
                     byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
                 )
                 .build()
 
         override val deviceType: DeviceType
-            get() = DeviceType.AIRPODS
+            get() = DeviceType.FIND_MY
 
         override val websiteManufacturer: String
-            get() = "https://www.apple.com/airpods/"
+            get() = "https://www.apple.com/"
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airpods_default_name)
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
 
         override val statusByteDeviceType: UInt
-            get() = 3u
+            get() = 2u
     }
 }

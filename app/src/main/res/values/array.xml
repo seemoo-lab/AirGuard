@@ -25,17 +25,23 @@
         <item>@string/airtag</item>
         <item>@string/apple_device</item>
         <item>@string/chipolo</item>
+        <item>@string/pebblebee</item>
         <item>@string/find_my_device</item>
         <item>@string/smart_tag</item>
         <item>@string/tile</item>
+        <item>@string/google_find_my</item>
     </string-array>
     <string-array name="devicesFilterValue">
         <item>airpods</item>
         <item>airtags</item>
         <item>apple_devices</item>
         <item>chipolos</item>
+        <item>pebblebees</item>
         <item>find_my_devices</item>
         <item>smart_tags</item>
         <item>tiles</item>
+        <item>google_find_my_network</item>
+    </string-array>
+    <string-array name="defaultFilterSetEmpty">
     </string-array>
 </resources>

@@ -51,25 +51,25 @@ class NotificationBuilder @Inject constructor(
 
     }
 
-    private fun pendingIntentMainActivity(): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            action = NotificationConstants.CLICKED_ACTION
-        }
-
-        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: ATTrackingDetectionApplication.getAppContext()
-        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
-            addNextIntentWithParentStack(intent)
-            var flags = PendingIntent.FLAG_UPDATE_CURRENT
-            // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                flags = flags or PendingIntent.FLAG_IMMUTABLE
-            }
-            getPendingIntent(1654, flags)
-        }
-        return resultPendingIntent
-
-    }
+//    private fun pendingIntentMainActivity(): PendingIntent {
+//        val intent = Intent(context, MainActivity::class.java).apply {
+//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            action = NotificationConstants.CLICKED_ACTION
+//        }
+//
+//        val context = ATTrackingDetectionApplication.getCurrentActivity() ?: ATTrackingDetectionApplication.getAppContext()
+//        val resultPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
+//            addNextIntentWithParentStack(intent)
+//            var flags = PendingIntent.FLAG_UPDATE_CURRENT
+//            // For S+ the FLAG_IMMUTABLE or FLAG_MUTABLE must be set
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                flags = flags or PendingIntent.FLAG_IMMUTABLE
+//            }
+//            getPendingIntent(1654, flags)
+//        }
+//        return resultPendingIntent
+//
+//    }
 
 
     private fun packBundle(deviceAddress: String, notificationId: Int): Bundle = Bundle().apply {

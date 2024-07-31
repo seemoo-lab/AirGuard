@@ -107,8 +107,9 @@ class ScanViewModel @Inject constructor(
             bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
         }
 
-        bluetoothDeviceListHighRiskValue.sortByDescending { it.rssiValue }
-        bluetoothDeviceListLowRiskValue.sortByDescending { it.rssiValue }
+        // Sorting list by detection date is not so restless
+//        bluetoothDeviceListHighRiskValue.sortByDescending { it.rssiValue }
+//        bluetoothDeviceListLowRiskValue.sortByDescending { it.rssiValue }
 
         bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
         bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)

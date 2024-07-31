@@ -111,13 +111,13 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/tiles_found_card"
+                    android:id="@+id/google_found_card"
                     layout="@layout/include_number_card"
                     android:layout_height="0dp"
                     android:layout_width="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
-                    app:cardName="@{@string/tile_found}"
-                    app:cardNumber="@{viewModel.countTile}"
+                    app:cardName="@{@string/google_found}"
+                    app:cardNumber="@{viewModel.countGoogle}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -149,13 +149,52 @@
                 android:orientation="horizontal">
 
                 <include
-                    android:id="@+id/chipolos_found_card"
+                    android:id="@+id/tiles_found_card"
                     layout="@layout/include_number_card"
                     android:layout_height="0dp"
                     android:layout_width="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
+                    app:cardName="@{@string/tile_found}"
+                    app:cardNumber="@{viewModel.countTile}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                    />
+
+                <include
+                    android:id="@+id/chipolos_found_card"
+                    layout="@layout/include_number_card"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColorInt="@{@color/blue_card_background}"
                     app:cardName="@{@string/chipolo_found}"
                     app:cardNumber="@{viewModel.countChipolo}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.48"
+                    app:layout_constraintDimensionRatio="1:1"
+                     />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/pebblebees_found_card"
+                    layout="@layout/include_number_card"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColorInt="@{@color/blue_card_background}"
+                    app:cardName="@{@string/pebblebee_found}"
+                    app:cardNumber="@{viewModel.CountPebblebee}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -176,10 +215,10 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.48"
                     app:layout_constraintDimensionRatio="1:1"
-                     />
-
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </LinearLayout>
 

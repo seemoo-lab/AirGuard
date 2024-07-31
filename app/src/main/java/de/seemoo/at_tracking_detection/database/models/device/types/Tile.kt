@@ -33,7 +33,10 @@ class Tile(val id: Int) : Device(){
             get() = DeviceType.TILE
 
         override val defaultDeviceName: String
-            get() = "Tile"
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.tile_default_name)
+
+        override val websiteManufacturer: String
+            get() = "https://www.tile.com/"
 
         override val websiteManufacturer: String
             get() = "https://www.tile.com/"

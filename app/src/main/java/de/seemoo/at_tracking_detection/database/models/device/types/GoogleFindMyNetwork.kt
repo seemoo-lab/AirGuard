@@ -6,31 +6,36 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
+import android.os.ParcelUuid
+import android.bluetooth.le.ScanResult
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 
-class AirPods(val id: Int) : Device(), Connectable {
+class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_airpods
+        get() = R.drawable.ic_chipolo
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_airpods)
+        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device_google)
             .format(id)
 
     override val deviceContext: DeviceContext
-        get() = AirPods
+        get() = GoogleFindMyNetwork
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -61,11 +66,11 @@ class AirPods(val id: Int) : Device(), Connectable {
 
             @SuppressLint("MissingPermission")
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-                val uuids = gatt.services.map { it.uuid.toString() }
+                val uuids = gatt.services.map { it.uuid }
                 Timber.d("Found UUIDS $uuids")
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                        AIRPODS_SOUND_SERVICE.lowercase()
+                        GOOGLE_SOUND_SERVICE.lowercase()
                     )
                 }
 
@@ -76,21 +81,30 @@ class AirPods(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val characteristic = service.getCharacteristic(AIRPODS_SOUND_CHARACTERISTIC)
+                val characteristic = service.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC)
+
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = AIRPODS_START_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, GOOGLE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    } else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = GOOGLE_START_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
                     broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
                 }
             }
 
             @SuppressLint("MissingPermission")
-            fun stopSoundOnAirPods(gatt: BluetoothGatt) {
+            fun stopSoundOnGoogleDevice(gatt: BluetoothGatt) {
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                       AIRPODS_SOUND_SERVICE.lowercase()
+                        GOOGLE_SOUND_SERVICE
                     )
                 }
 
@@ -99,14 +113,21 @@ class AirPods(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val uuid = AIRPODS_SOUND_CHARACTERISTIC
+                val uuid = GOOGLE_SOUND_CHARACTERISTIC
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    it.value = AIRPODS_STOP_SOUND_OPCODE
-                    gatt.writeCharacteristic(it)
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        it.writeType
+                        gatt.writeCharacteristic(it, GOOGLE_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    } else {
+                        // Deprecated since 33
+                        @Suppress("DEPRECATION")
+                        it.value = GOOGLE_STOP_SOUND_OPCODE
+                        @Suppress("DEPRECATION")
+                        gatt.writeCharacteristic(it)
+                    }
                     Timber.d("Stopping sound on Find My device with ${it.uuid}")
-
                 }
             }
 
@@ -118,13 +139,13 @@ class AirPods(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(AIRPODS_START_SOUND_OPCODE) && gatt != null) {
+                    if (characteristic?.value.contentEquals(GOOGLE_START_SOUND_OPCODE) && gatt != null) {
                         Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnAirPods(gatt)
+                            stopSoundOnGoogleDevice(gatt)
                         }, 5000)
                     }
 
-                    if (characteristic?.value.contentEquals(AIRPODS_STOP_SOUND_OPCODE)) {
+                    if (characteristic?.value.contentEquals(GOOGLE_STOP_SOUND_OPCODE)) {
                         disconnect(gatt)
                         broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
                     }
@@ -139,36 +160,54 @@ class AirPods(val id: Int) : Device(), Connectable {
         }
 
     companion object : DeviceContext {
-        internal const val AIRPODS_SOUND_SERVICE = "fd44"
-        internal val AIRPODS_SOUND_CHARACTERISTIC =
-            UUID.fromString("4F860003-943B-49EF-BED4-2F730304427A")
-        internal val AIRPODS_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
-        internal val AIRPODS_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
-
-        // What does this scan filter do?
-        override val bluetoothFilter: ScanFilter
-            get() = ScanFilter.Builder()
-                .setManufacturerData(
-                    0x4C,
-                    // Only Offline Devices:
-                    // byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()), // Empty status byte?
-                    // byteArrayOf((0xFF).toByte(), (0xFF).toByte(), (0x18).toByte()) // ff?
-                    // All Devices:
-                    byteArrayOf((0x12).toByte(), (0x19).toByte(), (0x18).toByte()),
-                    byteArrayOf((0xFF).toByte(), (0x00).toByte(), (0x18).toByte())
-                )
-                .build()
+        internal const val GOOGLE_SOUND_SERVICE = "12F4"
+        internal val GOOGLE_SOUND_CHARACTERISTIC = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
+        internal val GOOGLE_START_SOUND_OPCODE = byteArrayOf(0x00, 0x03)
+        internal val GOOGLE_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x03)
 
         override val deviceType: DeviceType
-            get() = DeviceType.AIRPODS
-
-        override val websiteManufacturer: String
-            get() = "https://www.apple.com/airpods/"
+            get() = DeviceType.GOOGLE_FIND_MY_NETWORK
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airpods_default_name)
+            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_default_name)
+
+        override val websiteManufacturer: String
+            get() = "https://www.google.com/android/find/"
 
         override val statusByteDeviceType: UInt
-            get() = 3u
+            get() = 0u
+
+        override val bluetoothFilter: ScanFilter
+            get() = ScanFilter.Builder()
+                .setServiceData(
+                    offlineFindingServiceUUID,
+                    byteArrayOf((0x40).toByte()),
+                    byteArrayOf((0x00).toByte()))
+                .build()
+
+        val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB")
+
+        override fun getConnectionState(scanResult: ScanResult): ConnectionState {
+            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+            if (serviceData != null) {
+                // The last bit of the first byte indicates the offline mode
+                // 0 --> Device was connected in the last 4 hours
+                // 1 --> Last Connection with owner device was longer than 4 hours ago
+
+                val statusBit = Utility.getBitsFromByte(serviceData[0], 0)
+
+                return if (statusBit) {
+                    Timber.d("Google Find My: Overmature Offline Mode")
+                    ConnectionState.OVERMATURE_OFFLINE
+                } else {
+                    Timber.d("Google Find My: Premature Offline Mode")
+                    ConnectionState.PREMATURE_OFFLINE
+                }
+            }
+
+            return ConnectionState.UNKNOWN
+        }
     }
+
 }

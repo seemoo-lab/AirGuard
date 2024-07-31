@@ -90,7 +90,7 @@ class DevicesTabUITest {
 
         //Disabling all devices
         onView(withText("AirTag")).perform(click())
-        onView(withText("FindMy Device")).perform(click())
+        onView(withText("AppleFindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
         onView(withText("Galaxy SmartTag")).perform(click())
@@ -101,7 +101,7 @@ class DevicesTabUITest {
 
         //Enabling all devices
         onView(withText("AirTag")).perform(click())
-        onView(withText("FindMy Device")).perform(click())
+        onView(withText("AppleFindMy Device")).perform(click())
         onView(withText("AirPods")).perform(click())
         onView(withText("Apple Device")).perform(click())
         onView(withText("Galaxy SmartTag")).perform(click())

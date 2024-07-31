@@ -67,6 +67,14 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
 
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
+
+        Timber.d("Deleting old trackers")
+        try {
+            deleteOldAndSafeTrackers()
+        }catch (e:Exception) {
+            Timber.e("Deleting trackers failed ${e}")
+        }
+
         return Result.success(
             Data.Builder()
                 .putInt("sentNotifications", notificationsSent)

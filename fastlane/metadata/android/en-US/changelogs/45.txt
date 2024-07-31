@@ -1,0 +1,1 @@
+From this release on we also support the new Google Find My Device Trackers.
