@@ -38,9 +38,6 @@ class Tile(val id: Int) : Device(){
         override val websiteManufacturer: String
             get() = "https://www.tile.com/"
 
-        override val websiteManufacturer: String
-            get() = "https://www.tile.com/"
-
         override val statusByteDeviceType: UInt
             get() = 0u
 
