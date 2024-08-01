@@ -92,8 +92,8 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.3'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.4'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -149,7 +149,7 @@ dependencies {
 
     //Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.9.0'
+    implementation 'androidx.activity:activity-compose:1.9.1'
     // Compose Material Design
     implementation 'androidx.compose.material:material:1.6.8'
     // Animations
@@ -157,7 +157,7 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation 'androidx.compose.ui:ui-tooling:1.6.8'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4'
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
     // When using a MDC theme
