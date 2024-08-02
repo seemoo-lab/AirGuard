@@ -30,7 +30,7 @@ import kotlin.coroutines.resumeWithException
 class PebbleBee (val id: Int) : Device(), Connectable {
     override val imageResource: Int
         @DrawableRes
-        get() = R.drawable.ic_baseline_device_unknown_24
+        get() = R.drawable.ic_pebblebee_clip
 
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_pebblebee)

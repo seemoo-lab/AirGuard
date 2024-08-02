@@ -62,7 +62,7 @@ enum class DeviceType {
                 FIND_MY -> R.drawable.ic_chipolo
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
-                PEBBLEBEE -> R.drawable.ic_baseline_device_unknown_24
+                PEBBLEBEE -> R.drawable.ic_pebblebee_clip
                 SAMSUNG_TRACKER -> R.drawable.ic_smarttag_icon
                 SAMSUNG_FIND_MY_MOBILE -> R.drawable.ic_baseline_device_unknown_24
                 GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo

@@ -84,3 +84,6 @@
 
 # Keep ProGuard/R8 from stripping out important methods or classes
 -keep class * implements com.google.gson.reflect.TypeToken { *; }
+
+# Ensure that the DeviceType class is not stripped or obfuscated
+-keep class de.seemoo.at_tracking_detection.database.models.device.DeviceType { *; }
