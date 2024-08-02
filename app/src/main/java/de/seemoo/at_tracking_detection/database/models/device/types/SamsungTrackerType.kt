@@ -45,8 +45,8 @@ enum class SamsungTrackerType{
             return when (subType) {
                 SMART_TAG_1 -> R.drawable.ic_smarttag_icon
                 SMART_TAG_1_PLUS -> R.drawable.ic_smarttag_icon
-                SMART_TAG_2 -> R.drawable.ic_baseline_device_unknown_24 // TODO
-                SOLUM -> R.drawable.ic_baseline_device_unknown_24 // TODO
+                SMART_TAG_2 -> R.drawable.ic_samsung_smarttag_2
+                SOLUM -> R.drawable.ic_solum_smarttag
                 UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
             }
         }
