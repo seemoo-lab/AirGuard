@@ -98,10 +98,11 @@ class DebugFragment : Fragment() {
                 payloadData = null,
                 firstDiscovery = LocalDateTime.now(),
                 lastSeen = LocalDateTime.now(),
-                deviceType = DeviceType.AIRTAG
+                deviceType = DeviceType.SAMSUNG_TRACKER
             ).apply {
                 notificationSent = true
                 lastNotificationSent = LocalDateTime.now()
+                subDeviceType = "SMART_TAG_2"
             }
 
             debugViewModel.viewModelScope.launch { notificationService.sendTrackingNotification(testBaseDevice) }

@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -120,6 +121,12 @@ class NotificationBuilder @Inject constructor(
                 }else {
                     context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
                 }
+            }
+            DeviceType.SAMSUNG_TRACKER -> {
+                val subType = SamsungTrackerType.stringToSubType(baseDevice.subDeviceType)
+                val deviceName = SamsungTrackerType.visibleStringFromSubtype(subType)
+                notificationTitle = context.getString(R.string.notification_title_consonant, deviceName )
+                notificationText = context.getString(R.string.notification_text_single, deviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
             }
             else -> {
                 notificationTitle = context.getString(R.string.notification_title_consonant, device.deviceContext.defaultDeviceName )
