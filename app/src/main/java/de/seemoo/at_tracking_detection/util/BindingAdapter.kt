@@ -57,7 +57,6 @@ fun setDeviceName (textView: TextView, wrappedScanResult: ScanResultWrapper) {
     if (deviceFromDb?.name != null) {
         textView.text = deviceFromDb.getDeviceNameWithID()
     } else {
-        // TODO: this can be optimized
         val device =  BaseDevice(wrappedScanResult.scanResult).device
         textView.text = device.deviceContext.defaultDeviceName
     }
