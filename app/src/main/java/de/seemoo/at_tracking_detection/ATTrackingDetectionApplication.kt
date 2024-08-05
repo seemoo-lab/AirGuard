@@ -71,8 +71,8 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 
-    override fun getWorkManagerConfiguration() =
-        Configuration.Builder()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
             .setMinimumLoggingLevel(Log.DEBUG)
             .setWorkerFactory(workerFactory)
             .build()
