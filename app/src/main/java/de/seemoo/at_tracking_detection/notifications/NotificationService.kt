@@ -28,21 +28,6 @@ class NotificationService @Inject constructor(
     private val notificationViewModel: NotificationViewModel
 ) {
     @SuppressLint("MissingPermission")
-    suspend fun sendTrackingNotification(deviceAddress: String) {
-        val notificationId = generateUniqueNotificationId()
-        notificationViewModel.insert(deviceAddress)
-        with(notificationManagerCompat) {
-            if (this.areNotificationsEnabled()) {
-                notify(
-                    TRACKING_NOTIFICATION_TAG,
-                    notificationId,
-                    notificationBuilder.buildTrackingNotification(deviceAddress, notificationId)
-                )
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
     suspend fun sendTrackingNotification(baseDevice: BaseDevice) {
         val notificationId = generateUniqueNotificationId()
         notificationViewModel.insert(deviceAddress = baseDevice.address)
@@ -58,14 +43,14 @@ class NotificationService @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun sendObserveTrackerNotification(deviceAddress: String, observationDuration: Long, observationPositive: Boolean) {
+    fun sendObserveTrackerNotification(deviceAddress: String, deviceTypeString: String, observationDuration: Long, observationPositive: Boolean) {
         val notificationId = generateUniqueNotificationId()
         with(notificationManagerCompat) {
             if (this.areNotificationsEnabled()) {
                 notify(
                     OBSERVE_TRACKER_NOTIFICATION_TAG,
                     notificationId,
-                    notificationBuilder.buildObserveTrackerNotification(deviceAddress, notificationId, observationDuration, observationPositive)
+                    notificationBuilder.buildObserveTrackerNotification(deviceAddress, deviceTypeString, notificationId, observationDuration, observationPositive)
                 )
             }
         }
@@ -84,23 +69,6 @@ class NotificationService @Inject constructor(
             }
         }
     }
-
-    /*
-    @SuppressLint("MissingPermission")
-    suspend fun sendObserveTrackerNotification(baseDevice: BaseDevice) {
-        val notificationId = notificationViewModel.insert(deviceAddress = baseDevice.address)
-        with(notificationManagerCompat) {
-            if (this.areNotificationsEnabled()) {
-                notify(
-                    OBSERVE_TRACKER_NOTIFICATION_TAG,
-                    notificationId,
-                    notificationBuilder.buildTrackingNotification(baseDevice, notificationId)
-                )
-            }
-        }
-    }
-
-     */
 
 
     @SuppressLint("MissingPermission")
