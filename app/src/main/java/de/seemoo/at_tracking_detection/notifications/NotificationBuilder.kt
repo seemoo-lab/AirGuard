@@ -15,7 +15,6 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -72,8 +71,9 @@ class NotificationBuilder @Inject constructor(
 //    }
 
 
-    private fun packBundle(deviceAddress: String, notificationId: Int): Bundle = Bundle().apply {
+    private fun packBundle(deviceAddress: String, deviceTypeString: String, notificationId: Int): Bundle = Bundle().apply {
         putString("deviceAddress", deviceAddress)
+        putString("deviceTypeAsString", deviceTypeString)
         putInt("notificationId", notificationId)
     }
 
@@ -95,71 +95,20 @@ class NotificationBuilder @Inject constructor(
     }
 
     fun buildTrackingNotification(
-        deviceAddress: String,
-        notificationId: Int
-    ): Notification {
-        Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
-        val bundle: Bundle = packBundle(deviceAddress, notificationId)
-        val minutesAtLeastTracked = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm()
-        val notifyText = context.resources.getQuantityString(
-            R.plurals.notification_text_base,
-            minutesAtLeastTracked.toInt(),
-            minutesAtLeastTracked
-        )
-
-        var notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.notification_title_base))
-            .setContentText(notifyText)
-            .setPriority(getNotificationPriority())
-            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
-            .setCategory(getNotificationCategory())
-            .setSmallIcon(R.drawable.ic_warning)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(notifyText))
-            .addAction(
-                R.drawable.ic_warning,
-                context.getString(R.string.notification_false_alarm),
-                buildPendingIntent(
-                    bundle,
-                    NotificationConstants.FALSE_ALARM_ACTION,
-                    NotificationConstants.FALSE_ALARM_CODE
-                )
-            )
-
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-        val device = deviceRepository.getDevice(deviceAddress)
-
-        if (device?.deviceType != null && device.deviceType.canBeIgnored()) {
-            notification = notification.addAction(
-                R.drawable.ic_warning,
-                context.getString(R.string.notification_ignore_device),
-                buildPendingIntent(
-                    bundle,
-                    NotificationConstants.IGNORE_DEVICE_ACTION,
-                    NotificationConstants.IGNORE_DEVICE_CODE
-                )
-            )
-        }
-
-        notification = notification.setDeleteIntent(
-            buildPendingIntent(
-                bundle,
-                NotificationConstants.DISMISSED_ACTION,
-                NotificationConstants.DISMISSED_CODE
-            )
-        ).setAutoCancel(true)
-
-        return notification.build()
-
-    }
-
-    fun buildTrackingNotification(
         baseDevice: BaseDevice,
         notificationId: Int
     ): Notification {
         Timber.d("Notification with id $notificationId for device ${baseDevice.address} has been build!")
-        val deviceAddress = baseDevice.address
 
-        val bundle: Bundle = packBundle(deviceAddress, notificationId)
+        val deviceAddress = baseDevice.address
+        val deviceTypeString: String = baseDevice.deviceType?.let {
+            DeviceManager.deviceTypeToString(
+                it
+            )
+        }
+            ?: "UNKNOWN"
+
+        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId)
         val device = baseDevice.device
         val notificationText: String
         val notificationTitle: String
@@ -223,12 +172,13 @@ class NotificationBuilder @Inject constructor(
 
     fun buildObserveTrackerNotification(
         deviceAddress: String,
+        deviceTypeString: String,
         notificationId: Int,
         observationDuration: Long,
         observationPositive: Boolean
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
-        val bundle: Bundle = packBundle(deviceAddress, notificationId)
+        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId)
 
         val notifyText = if (observationPositive) {
             context.resources.getQuantityString(

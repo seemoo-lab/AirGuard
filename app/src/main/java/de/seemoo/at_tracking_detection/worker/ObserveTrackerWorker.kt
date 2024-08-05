@@ -6,6 +6,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import timber.log.Timber
 
@@ -16,8 +17,8 @@ class ObserveTrackerWorker(
 
     override suspend fun doWork(): Result {
         Timber.d("ObserveTrackerWorker doWork() called")
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return Result.failure()
-        val notificationService = ATTrackingDetectionApplication.getCurrentApp()?.notificationService ?: return Result.failure()
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+        val notificationService = ATTrackingDetectionApplication.getCurrentApp().notificationService
 
         // Call ScanBluetoothWorker to scan for devices
         val workRequest = OneTimeWorkRequest.Builder(ScanBluetoothWorker::class.java)
@@ -40,7 +41,15 @@ class ObserveTrackerWorker(
                     Timber.d("Observation for device ${device.address} is over... Sending Notification!")
                     device.nextObservationNotification = null
                     device.currentObservationDuration = null
-                    notificationService.sendObserveTrackerNotification(device.address, currentObservationDuration, observationPositive)
+
+                    val deviceTypeString: String = device.deviceType?.let {
+                        DeviceManager.deviceTypeToString(
+                            it
+                        )
+                    }
+                        ?: "UNKNOWN"
+
+                    notificationService.sendObserveTrackerNotification(device.address, deviceTypeString, currentObservationDuration, observationPositive)
 
                     // Update device
                     deviceRepository.update(device)
