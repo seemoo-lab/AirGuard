@@ -102,6 +102,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".notifications.ScheduledNotificationReceiver"
             android:exported="false"/>
@@ -117,12 +118,6 @@
         </activity>
         <activity android:name=".ui.OnboardingActivity">
         </activity>
-
-        <service
-            android:name=".util.ble.BluetoothLeService"
-            android:enabled="true"
-            android:foregroundServiceType="connectedDevice"
-            android:exported="false"/>
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
