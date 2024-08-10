@@ -6,7 +6,7 @@ buildscript {
     ext.room_version = '2.6.1'
     ext.compose_version = '1.6.10'
     ext.about_libraries_version = '11.2.2'
-    ext.work_version = '2.8.1'
+    ext.work_version = '2.9.0'
     ext.ksp_version = '2.0.0-1.0.23'
 
     repositories {
@@ -19,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7"

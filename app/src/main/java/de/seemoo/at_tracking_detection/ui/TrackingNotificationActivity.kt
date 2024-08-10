@@ -23,6 +23,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         val deviceAddress = intent.getStringExtra("deviceAddress")
+        val deviceTypeAsString = intent.getStringExtra("deviceTypeAsString") ?: "UNKNOWN"
         val notificationId = intent.getIntExtra("notificationId", -1)
         Timber.d("Tracking Activity with device $deviceAddress and notification $notificationId started!")
 
@@ -32,6 +33,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
         } else {
             val args = TrackingFragmentArgs(
                 deviceAddress = deviceAddress,
+                deviceTypeAsString = deviceTypeAsString,
                 notificationId = notificationId
             ).toBundle()
             navController.setGraph(R.navigation.tracking_navigation, args)

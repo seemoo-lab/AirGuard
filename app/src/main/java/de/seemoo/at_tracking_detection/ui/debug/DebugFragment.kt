@@ -27,6 +27,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentDebugBinding
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.statistics.api.Api
@@ -36,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -89,7 +91,20 @@ class DebugFragment : Fragment() {
             scanLeDevice()
         }
         view.findViewById<Button>(R.id.button2)?.setOnClickListener {
-            debugViewModel.viewModelScope.launch { notificationService.sendTrackingNotification("Some device address") }
+            val testBaseDevice = BaseDevice(
+                address = "00:11:22:33:44:55",
+                ignore = false,
+                connectable = true,
+                payloadData = null,
+                firstDiscovery = LocalDateTime.now(),
+                lastSeen = LocalDateTime.now(),
+                deviceType = DeviceType.AIRTAG
+            ).apply {
+                notificationSent = true
+                lastNotificationSent = LocalDateTime.now()
+            }
+
+            debugViewModel.viewModelScope.launch { notificationService.sendTrackingNotification(testBaseDevice) }
         }
         view.findViewById<ListView>(R.id.bluetoothList)
             .setOnItemClickListener { _, _, position, _ ->
