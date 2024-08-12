@@ -2,28 +2,20 @@ package de.seemoo.at_tracking_detection.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import timber.log.Timber
 
 class ObserveTrackerWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
-
+    // TODO: Test if this still works
     override suspend fun doWork(): Result {
         Timber.d("ObserveTrackerWorker doWork() called")
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val notificationService = ATTrackingDetectionApplication.getCurrentApp().notificationService
-
-        // Call ScanBluetoothWorker to scan for devices
-        val workRequest = OneTimeWorkRequest.Builder(ScanBluetoothWorker::class.java)
-            .build()
-        WorkManager.getInstance(applicationContext).enqueue(workRequest)
 
         val inputData = inputData
         val deviceAddress = inputData.getString(DEVICE_ADDRESS_PARAM)

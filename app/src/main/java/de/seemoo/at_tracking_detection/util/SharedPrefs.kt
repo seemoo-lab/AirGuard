@@ -144,14 +144,6 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("show_onboarding", value).apply()
         }
 
-    var useLowPowerBLEScan: Boolean
-        get() {
-            return sharedPreferences.getBoolean("use_low_power_ble", false)
-        }
-        set(value) {
-            sharedPreferences.edit().putBoolean("use_low_power_ble", value).apply()
-        }
-
     var lastTimeOpened: LocalDateTime?
         get() {
             val dateString = sharedPreferences.getString("last_time_opened", null)

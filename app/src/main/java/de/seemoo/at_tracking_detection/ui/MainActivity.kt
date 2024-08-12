@@ -99,9 +99,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onResume()
         Timber.d("MainActivity onResume called")
         BLEScanner.startBluetoothScan(this.applicationContext)
-
-        Timber.d("Scheduling an immediate background scan onResume of MainActivity")
-        backgroundWorkScheduler.scheduleImmediateBackgroundScan()
     }
 
 

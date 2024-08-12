@@ -10,16 +10,12 @@ import androidx.lifecycle.map
 import androidx.work.*
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
-import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import android.Manifest
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import java.time.Instant
-import java.util.TimeZone
 
 @Singleton
 class BackgroundWorkScheduler @Inject constructor(
@@ -33,26 +29,6 @@ class BackgroundWorkScheduler @Inject constructor(
         // We cancel all periodic scans
         workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SCAN_WORKER)
     }
-
-    fun legacyLaunch() {
-        Timber.d("Work scheduler started!")
-        workManager.enqueueUniquePeriodicWork(
-            WorkerConstants.PERIODIC_SCAN_WORKER,
-            ExistingPeriodicWorkPolicy.KEEP,
-            backgroundWorkBuilder.buildScanWorker()
-        ).also { operation ->
-            operation.logOperationSchedule(WorkerConstants.PERIODIC_SCAN_WORKER)
-            operation.result.addListener({ scheduleTrackingDetector() }, { it.run() })
-        }
-    }
-
-    fun scheduleImmediateBackgroundScan() {
-        Timber.d("Scheduling Immediate Background Scan Worker ")
-        workManager.enqueueUniqueWork(WorkerConstants.SCAN_IMMEDIATELY,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
-            backgroundWorkBuilder.buildImmediateScanWorker())
-    }
-
 
     fun getState(uniqueWorkName: String): LiveData<WorkInfo.State?> =
         workManager.getWorkInfosByTagLiveData(uniqueWorkName).map { it.lastOrNull()?.state }
@@ -78,19 +54,6 @@ class BackgroundWorkScheduler @Inject constructor(
     fun removeShareData() =
         workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SEND_STATISTICS_WORKER)
 
-    fun scheduleIgnoreDevice(deviceAddress: String, notificationId: Int) =
-        workManager.enqueueUniqueWork(
-            WorkerConstants.IGNORE_DEVICE_WORKER,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
-            backgroundWorkBuilder.buildIgnoreDeviceWorker(deviceAddress, notificationId)
-        ).also { it.logOperationSchedule(WorkerConstants.IGNORE_DEVICE_WORKER) }
-
-    fun scheduleFalseAlarm(notificationId: Int) = workManager.enqueueUniqueWork(
-        WorkerConstants.IGNORE_DEVICE_WORKER,
-        ExistingWorkPolicy.APPEND_OR_REPLACE,
-        backgroundWorkBuilder.buildFalseAlarmWorker(notificationId)
-    ).also { it.logOperationSchedule(WorkerConstants.FALSE_ALARM_WORKER) }
-
     private fun Operation.logOperationSchedule(uniqueWorker: String) =
         this.result.addListener({ Timber.d("$uniqueWorker completed!") }, { it.run() })
             .also { Timber.d("$uniqueWorker scheduled!") }
@@ -101,9 +64,10 @@ class BackgroundWorkScheduler @Inject constructor(
          */
         // @SuppressLint("UnspecifiedImmutableFlag")
         fun scheduleAlarmWakeupIfScansFail() {
-            //Run in 2 hours
-//            val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
-            // Run in 60minBack
+            // Run in 2 hours
+            // val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
+
+            // Run in 60min Back
             val timeInMillisUntilNotification: Long = 60 * 60 * 1000
 
             val alarmDate =
@@ -141,7 +105,7 @@ class BackgroundWorkScheduler @Inject constructor(
         }
 
         fun scheduleScanWithAlarm() {
-            //Run in 15 min
+            // Run in 15 min
             val timeInMillisUntilNotification: Long = if (BuildConfig.DEBUG) {
                 15 * 60 * 1000
             } else {
@@ -188,8 +152,7 @@ class BackgroundWorkScheduler @Inject constructor(
             SharedPrefs.nextScanDate = alarmDate
         }
 
-
-        fun scheduleAlarmExactAndAllowWhileIdle(
+        private fun scheduleAlarmExactAndAllowWhileIdle(
             alarmManager: AlarmManager,
             alarmTime: Long,
             alarmDate: LocalDateTime,
@@ -214,7 +177,7 @@ class BackgroundWorkScheduler @Inject constructor(
             }
         }
 
-        fun scheduleAlarmExact(
+        private fun scheduleAlarmExact(
             alarmManager: AlarmManager,
             alarmTime: Long,
             alarmDate: LocalDateTime,
@@ -235,7 +198,7 @@ class BackgroundWorkScheduler @Inject constructor(
             }
         }
 
-        fun scheduleAlarm(
+        private fun scheduleAlarm(
             alarmManager: AlarmManager,
             alarmTime: Long,
             alarmDate: LocalDateTime,
@@ -248,11 +211,9 @@ class BackgroundWorkScheduler @Inject constructor(
                     "Scheduled an set alarm to start a scan at $alarmDate"
                 )
             } catch (exception: SecurityException) {
-                Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
-                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+                Timber.e("Failed to schedule any kind of alarm. $exception")
             } catch (exception: Exception) {
-                Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
-                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+                Timber.e("Failed to schedule any kind of alarm. $exception")
             }
         }
     }

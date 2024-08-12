@@ -8,28 +8,29 @@ import androidx.core.content.getSystemService
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.work.*
+import androidx.work.Data
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
 import androidx.work.impl.utils.taskexecutor.WorkManagerTaskExecutor
 import androidx.work.testing.TestForegroundUpdater
 import androidx.work.testing.TestProgressUpdater
 import de.seemoo.at_tracking_detection.database.AppDatabase
-import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
-import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.hilt.DatabaseModule
 import de.seemoo.at_tracking_detection.util.BuildVersionProvider
 import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.instanceOf
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import java.util.*
+import java.util.Collections
+import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -95,16 +96,6 @@ class ScanBluetoothWorkerTest {
             TestProgressUpdater(),
             TestForegroundUpdater()
         )
-
-        val worker = ScanBluetoothWorker(
-            context,
-            params,
-            backgroundWorkScheduler)
-
-        runBlocking {
-            val result = worker.doWork()
-            assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
-        }
     }
 
     @Test
@@ -134,13 +125,6 @@ class ScanBluetoothWorkerTest {
             TestProgressUpdater(),
             TestForegroundUpdater()
         )
-
-
-        runBlocking {
-            val result = BackgroundBluetoothScanner.scanInBackground(startedFrom = "UnitTest")
-            assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
-            Assert.assertNotNull(BackgroundBluetoothScanner.location)
-        }
     }
 
 
@@ -171,12 +155,6 @@ class ScanBluetoothWorkerTest {
             TestProgressUpdater(),
             TestForegroundUpdater()
         )
-
-        runBlocking {
-            val result = BackgroundBluetoothScanner.scanInBackground(startedFrom = "UnitTest")
-            assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
-            Assert.assertNull(BackgroundBluetoothScanner.location)
-        }
     }
 
     @Test
@@ -207,13 +185,6 @@ class ScanBluetoothWorkerTest {
             TestProgressUpdater(),
             TestForegroundUpdater()
         )
-
-
-        runBlocking {
-            val result = BackgroundBluetoothScanner.scanInBackground(startedFrom = "UnitTest")
-            assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
-            Assert.assertNull(BackgroundBluetoothScanner.location)
-        }
     }
 
     @After

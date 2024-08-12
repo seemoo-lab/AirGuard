@@ -10,6 +10,8 @@ import java.lang.ref.WeakReference
  */
 object BLEScanCallback {
 
+    // TODO: remove eventually
+
     private var scanCallback: WeakReference<ScanCallback>? = null
 
     fun startScanning(leScanner: BluetoothLeScanner, filters: List<ScanFilter>, settings: ScanSettings, callback: ScanCallback) {

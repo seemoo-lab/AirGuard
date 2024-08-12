@@ -14,7 +14,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import timber.log.Timber
 
-class BluetoothLeService : Service() {
+class BluetoothLeService : Service() { // TODO: this whole class delete and replace with functions that replace the functionality (this should only be used to playing sound)
     private var bluetoothAdapter: BluetoothAdapter? = null
 
     private var bluetoothGatt: BluetoothGatt? = null

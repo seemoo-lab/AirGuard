@@ -28,13 +28,6 @@
         android:summary="@string/settings_use_location_summary"
         android:title="@string/settings_use_location_title" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_baseline_bluetooth_24"
-        android:key="use_low_power_ble"
-        android:summary="@string/settings_use_low_power_ble_summary"
-        android:title="@string/settings_use_low_power_ble_title" />
-
     <ListPreference
         android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"
