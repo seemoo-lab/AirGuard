@@ -6,7 +6,7 @@ buildscript {
     ext.room_version = '2.6.1'
     ext.compose_version = '1.6.10'
     ext.about_libraries_version = '11.2.2'
-    ext.work_version = '2.9.0'
+    ext.work_version = '2.9.1'
     ext.ksp_version = '2.0.0-1.0.23'
 
     repositories {
