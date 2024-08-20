@@ -91,7 +91,7 @@
 
             <TextView
                 android:id="@+id/scan_explanation"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/scan_explanation"
                 android:textSize="16sp"
@@ -99,7 +99,7 @@
                 bind:layout_constraintTop_toTopOf="parent"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintWidth_default="wrap"
+                bind:layout_constrainedWidth="true"
                 bind:layout_constraintHorizontal_bias="0.5"
                 bind:layout_constraintHorizontal_chainStyle="packed"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -161,7 +161,7 @@
 
             <TextView
                 android:id="@+id/connection_state"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{vm.connectionStateString}"
                 android:textSize="16sp"
@@ -169,7 +169,7 @@
                 bind:layout_constraintTop_toBottomOf="@id/perform_action_button"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintWidth_default="wrap"
+                bind:layout_constrainedWidth="true"
                 bind:layout_constraintHorizontal_bias="0.5"
                 bind:layout_constraintHorizontal_chainStyle="packed"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
