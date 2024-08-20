@@ -7,6 +7,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
@@ -277,6 +278,13 @@ open class LocationProvider @Inject constructor(
     }
 
     // Android Phones with SDK < 30 need these methods
+
+    @Deprecated("Deprecated in Java")
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        // This method is deprecated, but required to avoid AbstractMethodError in API Level 29 and below
+        Timber.d("Provider status changed: $provider, status: $status")
+    }
+
     override fun onProviderEnabled(provider: String) {}
 
     override fun onProviderDisabled(provider: String) {}

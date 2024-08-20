@@ -33,7 +33,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object BackgroundBluetoothScanner {
-    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private var bluetoothAdapter: BluetoothAdapter? = null
 
     private var scanResultDictionary: ConcurrentHashMap<String, DiscoveredDevice> = ConcurrentHashMap()
 
@@ -89,8 +89,14 @@ object BackgroundBluetoothScanner {
         try {
             val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
-            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled || bluetoothAdapter.bluetoothLeScanner == null) {
-                Timber.e("Bluetooth is disabled or BLE is not supported on this device.")
+            if (bluetoothAdapter == null) {
+                Timber.e("BluetoothAdapter is null, cannot perform scan.")
+                return BackgroundScanResults(0, 0, 0, true)
+            } else if (!bluetoothAdapter!!.isEnabled) {
+                Timber.e("Bluetooth is disabled, cannot perform scan.")
+                return BackgroundScanResults(0, 0, 0, true)
+            } else if (bluetoothAdapter!!.bluetoothLeScanner == null) {
+                Timber.e("BLE is not supported on this device.")
                 return BackgroundScanResults(0, 0, 0, true)
             }
         } catch (e: Throwable) {
@@ -130,11 +136,11 @@ object BackgroundBluetoothScanner {
         val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
-        BLEScanCallback.startScanning(bluetoothAdapter.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
+        BLEScanCallback.startScanning(bluetoothAdapter!!.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
-        BLEScanCallback.stopScanning(bluetoothAdapter.bluetoothLeScanner)
+        BLEScanCallback.stopScanning(bluetoothAdapter!!.bluetoothLeScanner)
         isScanning = false
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
