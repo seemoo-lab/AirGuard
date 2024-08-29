@@ -25,19 +25,30 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    private var scanResultDictionary: ConcurrentHashMap<String, DiscoveredDevice> = ConcurrentHashMap()
+    private var scanResultDictionary: ConcurrentHashMap<String, DiscoveredDevice> =
+        ConcurrentHashMap()
 
     private var applicationContext: Context = ATTrackingDetectionApplication.getAppContext()
+
+    // Mutexes for scheduling when adding to the database to avoid double entries
+    private val insertScanResultMutex = Mutex()
+    private val beaconMutex = Mutex()
+    private val deviceMutex = Mutex()
+    private val locationMutex = Mutex()
 
     var location: android.location.Location? = null
         set(value) {
@@ -58,8 +69,8 @@ object BackgroundBluetoothScanner {
 
     val notificationService: NotificationService
         get() {
-        return ATTrackingDetectionApplication.getCurrentApp().notificationService
-    }
+            return ATTrackingDetectionApplication.getCurrentApp().notificationService
+        }
     private val locationProvider: LocationProvider
         get() {
             return ATTrackingDetectionApplication.getCurrentApp().locationProvider
@@ -71,7 +82,14 @@ object BackgroundBluetoothScanner {
         }
 
     private var isScanning = false
-    class BackgroundScanResults(var duration: Long, var scanMode: Int, var numberDevicesFound: Int, var failed: Boolean)
+
+    class BackgroundScanResults(
+        var duration: Long,
+        var scanMode: Int,
+        var numberDevicesFound: Int,
+        var failed: Boolean
+    )
+
     suspend fun scanInBackground(startedFrom: String): BackgroundScanResults {
         if (isScanning) {
             Timber.w("BackgroundBluetoothScanner scan already running")
@@ -80,14 +98,21 @@ object BackgroundBluetoothScanner {
 
         Timber.d("Starting BackgroundBluetoothScanner from $startedFrom")
         val scanMode = getScanMode()
-        val scanId = scanRepository.insert(Scan(startDate = LocalDateTime.now(), isManual = false, scanMode = scanMode))
+        val scanId = scanRepository.insert(
+            Scan(
+                startDate = LocalDateTime.now(),
+                isManual = false,
+                scanMode = scanMode
+            )
+        )
 
         if (!Utility.checkBluetoothPermission()) {
             Timber.d("Permission to perform bluetooth scan missing")
             return BackgroundScanResults(0, 0, 0, true)
         }
         try {
-            val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val bluetoothManager =
+                applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
             if (bluetoothAdapter == null) {
                 Timber.e("BluetoothAdapter is null, cannot perform scan.")
@@ -109,7 +134,8 @@ object BackgroundBluetoothScanner {
         location = null
 
         // Set a wake lock to keep the CPU running while we complete the scanning
-        val powerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager =
+            applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock: PowerManager.WakeLock? = powerManager.run {
             try {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
@@ -125,7 +151,10 @@ object BackgroundBluetoothScanner {
         if (useLocation) {
             // Returns the last known location if this matches our requirements or starts new location updates
             locationFetchStarted = System.currentTimeMillis()
-            location = locationProvider.lastKnownOrRequestLocationUpdates(locationRequester =  locationRequester, timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L)
+            location = locationProvider.lastKnownOrRequestLocationUpdates(
+                locationRequester = locationRequester,
+                timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
+            )
             if (location == null) {
                 Timber.e("Failed to retrieve location")
             }
@@ -136,7 +165,12 @@ object BackgroundBluetoothScanner {
         val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
-        BLEScanCallback.startScanning(bluetoothAdapter!!.bluetoothLeScanner, DeviceManager.scanFilter, scanSettings, leScanCallback)
+        BLEScanCallback.startScanning(
+            bluetoothAdapter!!.bluetoothLeScanner,
+            DeviceManager.scanFilter,
+            scanSettings,
+            leScanCallback
+        )
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
@@ -195,7 +229,7 @@ object BackgroundBluetoothScanner {
             scanMode = scanMode,
             numberDevicesFound = scanResultDictionary.size,
             failed = false
-            )
+        )
     }
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
@@ -222,7 +256,7 @@ object BackgroundBluetoothScanner {
     private val locationRequester: LocationRequester = object : LocationRequester() {
         override fun receivedAccurateLocationUpdate(location: android.location.Location) {
             val started = locationFetchStarted ?: System.currentTimeMillis()
-            Timber.d("Got location in ${(System.currentTimeMillis()-started)/1000}s")
+            Timber.d("Got location in ${(System.currentTimeMillis() - started) / 1000}s")
             this@BackgroundBluetoothScanner.location = location
             this@BackgroundBluetoothScanner.locationRetrievedCallback?.let { it() }
         }
@@ -279,199 +313,222 @@ object BackgroundBluetoothScanner {
         }
     }
 
-        class DiscoveredDevice(var wrappedScanResult: ScanResultWrapper, var discoveryDate: LocalDateTime)
+    class DiscoveredDevice(
+        var wrappedScanResult: ScanResultWrapper,
+        var discoveryDate: LocalDateTime
+    )
 
-        const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
-        const val TIME_BETWEEN_BEACONS: Long =
-            15 // 15 minutes until the same beacon gets saved again in the db
-        private const val LOCATION_UPDATE_MAX_TIME_MS: Long =
-            122_000L // Wait maximum 122s to get a location update
+    const val MAX_DISTANCE_UNTIL_NEW_LOCATION: Float = 150f // in meters
+    const val TIME_BETWEEN_BEACONS: Long =
+        15 // 15 minutes until the same beacon gets saved again in the db
+    private const val LOCATION_UPDATE_MAX_TIME_MS: Long =
+        122_000L // Wait maximum 122s to get a location update
 
-        suspend fun insertScanResult(
-            wrappedScanResult: ScanResultWrapper,
-            latitude: Double?,
-            longitude: Double?,
-            altitude: Double?,
-            accuracy: Float?,
-            discoveryDate: LocalDateTime,
-        ): Pair<BaseDevice?, Beacon?> {
-            if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_DEVICE_ABOVE_ALTITUDE) {
-                Timber.d("Ignoring device for locations above ${TrackingDetectorConstants.IGNORE_DEVICE_ABOVE_ALTITUDE}m, we assume the User is on a plane!")
-                // Do not save device at all in case we assume it is on a plane
-                return Pair(null, null)
+    suspend fun insertScanResult(
+        wrappedScanResult: ScanResultWrapper,
+        latitude: Double?,
+        longitude: Double?,
+        altitude: Double?,
+        accuracy: Float?,
+        discoveryDate: LocalDateTime,
+    ): Pair<BaseDevice?, Beacon?> {
+        return withContext(Dispatchers.IO) {
+            insertScanResultMutex.withLock {
+                if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_DEVICE_ABOVE_ALTITUDE) {
+                    Timber.d("Ignoring device for locations above ${TrackingDetectorConstants.IGNORE_DEVICE_ABOVE_ALTITUDE}m, we assume the User is on a plane!")
+                    // Do not save device at all in case we assume it is on a plane
+                    return@withLock Pair(null, null)
+                }
+
+                val deviceSaved = saveDevice(wrappedScanResult, discoveryDate) ?: return@withLock Pair(
+                    null,
+                    null
+                ) // return when device does not qualify to be saved
+
+                // set locationId to null if gps location could not be retrieved
+                val locId: Int? = saveLocation(
+                    latitude = latitude,
+                    longitude = longitude,
+                    altitude = altitude,
+                    discoveryDate = discoveryDate,
+                    accuracy = accuracy
+                )?.locationId
+
+                val beaconSaved =
+                    saveBeacon(wrappedScanResult, discoveryDate, locId) ?: return@withLock Pair(null, null)
+
+                return@withLock Pair(deviceSaved, beaconSaved)
             }
-
-            val deviceSaved = saveDevice(wrappedScanResult, discoveryDate) ?: return Pair(
-                null,
-                null
-            ) // return when device does not qualify to be saved
-
-            // set locationId to null if gps location could not be retrieved
-            val locId: Int? = saveLocation(
-                latitude = latitude,
-                longitude = longitude,
-                altitude = altitude,
-                discoveryDate = discoveryDate,
-                accuracy = accuracy
-            )?.locationId
-
-            val beaconSaved =
-                saveBeacon(wrappedScanResult, discoveryDate, locId) ?: return Pair(null, null)
-
-            return Pair(deviceSaved, beaconSaved)
         }
+    }
 
-        private suspend fun saveBeacon(
-            wrappedScanResult: ScanResultWrapper,
-            discoveryDate: LocalDateTime,
-            locId: Int?
-        ): Beacon? {
-            val beaconRepository =
-                ATTrackingDetectionApplication.getCurrentApp().beaconRepository
-            val uuids = wrappedScanResult.serviceUuids
-            val uniqueIdentifier = wrappedScanResult.uniqueIdentifier
+    private suspend fun saveBeacon(
+        wrappedScanResult: ScanResultWrapper,
+        discoveryDate: LocalDateTime,
+        locId: Int?
+    ): Beacon? {
+        return withContext(Dispatchers.IO) {
+            beaconMutex.withLock {
+                val beaconRepository =
+                    ATTrackingDetectionApplication.getCurrentApp().beaconRepository
+                val uuids = wrappedScanResult.serviceUuids
+                val uniqueIdentifier = wrappedScanResult.uniqueIdentifier
 
-            val connectionState: ConnectionState = wrappedScanResult.connectionState
-            val connectionStateString = Utility.connectionStateToString(connectionState)
+                val connectionState: ConnectionState = wrappedScanResult.connectionState
+                val connectionStateString = Utility.connectionStateToString(connectionState)
 
-            var beacon: Beacon? = null
-            val beacons = beaconRepository.getDeviceBeaconsSince(
-                deviceAddress = uniqueIdentifier,
-                since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
-            ) // sorted by newest first
+                var beacon: Beacon? = null
+                val beacons = beaconRepository.getDeviceBeaconsSince(
+                    deviceAddress = uniqueIdentifier,
+                    since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
+                ) // sorted by newest first
 
-            if (beacons.isEmpty()) {
-                Timber.d("Add new Beacon to the database!")
-                beacon = if (BuildConfig.DEBUG) {
-                    // Save the manufacturer data to the beacon
-                    Beacon(
-                        discoveryDate, wrappedScanResult.rssiValue, wrappedScanResult.uniqueIdentifier, locId,
-                        wrappedScanResult.mfg, uuids, connectionStateString
-                    )
+                if (beacons.isEmpty()) {
+                    Timber.d("Add new Beacon to the database!")
+                    beacon = if (BuildConfig.DEBUG) {
+                        // Save the manufacturer data to the beacon
+                        Beacon(
+                            discoveryDate,
+                            wrappedScanResult.rssiValue,
+                            wrappedScanResult.uniqueIdentifier,
+                            locId,
+                            wrappedScanResult.mfg,
+                            uuids,
+                            connectionStateString
+                        )
+                    } else {
+                        Beacon(
+                            discoveryDate,
+                            wrappedScanResult.rssiValue,
+                            wrappedScanResult.uniqueIdentifier,
+                            locId,
+                            null,
+                            uuids,
+                            connectionStateString
+                        )
+                    }
+                    beaconRepository.insert(beacon)
+                } else if (beacons[0].locationId == null && locId != null && locId != 0) {
+                    Timber.d("Beacon already in the database... Adding Location")
+                    beacon = beacons[0]
+                    beacon.locationId = locId
+                    if (beacon.connectionState == "UNKNOWN" && connectionState != ConnectionState.UNKNOWN) {
+                        beacon.connectionState = connectionStateString
+                    }
+                    beaconRepository.update(beacon)
+                }
+
+                Timber.d("Beacon: $beacon")
+                return@withLock beacon
+            }
+        }
+    }
+
+    private suspend fun saveDevice(
+        wrappedScanResult: ScanResultWrapper,
+        discoveryDate: LocalDateTime
+    ): BaseDevice? {
+        return withContext(Dispatchers.IO) {
+            deviceMutex.withLock {
+                val deviceRepository =
+                    ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+
+                val deviceAddress = wrappedScanResult.uniqueIdentifier
+
+                // Checks if Device already exists in device database
+                var device = deviceRepository.getDevice(deviceAddress)
+                if (device == null) {
+                    // Do not Save Samsung Devices
+                    device = BaseDevice(wrappedScanResult.scanResult)
+
+                    // Check if ConnectionState qualifies Device to be saved
+                    // Only Save when Device is offline long enough
+                    if (wrappedScanResult.connectionState !in DeviceManager.savedConnectionStates) {
+                        Timber.d("Device not in a saved connection state... Skipping!")
+                        return@withLock null
+                    }
+
+                    if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
+                        Timber.d("Device is safe and will be hidden to the user!")
+                        device.safeTracker = true
+                    }
+
+                    Timber.d("Add new Device to the database!")
+                    deviceRepository.insert(device)
                 } else {
-                    Beacon(
-                        discoveryDate, wrappedScanResult.rssiValue, wrappedScanResult.uniqueIdentifier, locId,
-                        null, uuids, connectionStateString
-                    )
+                    Timber.d("Device already in the database... Updating the last seen date!")
+                    device.lastSeen = discoveryDate
+                    deviceRepository.update(device)
                 }
-                beaconRepository.insert(beacon)
-            } else if (beacons[0].locationId == null && locId != null && locId != 0) {
-                // Update beacon within the last TIME_BETWEEN_BEACONS minutes with location
-                Timber.d("Beacon already in the database... Adding Location")
-                beacon = beacons[0]
-                beacon.locationId = locId
-                if (beacon.connectionState == "UNKNOWN" && connectionState != ConnectionState.UNKNOWN) {
-                    beacon.connectionState = connectionStateString
-                }
-                beaconRepository.update(beacon)
+
+                Timber.d("Device: $device")
+                return@withLock device
             }
-
-            Timber.d("Beacon: $beacon")
-
-            return beacon
         }
+    }
 
-        private suspend fun saveDevice(
-            wrappedScanResult: ScanResultWrapper,
-            discoveryDate: LocalDateTime
-        ): BaseDevice? {
-            val deviceRepository =
-                ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-
-            val deviceAddress = wrappedScanResult.uniqueIdentifier
-
-            // Checks if Device already exists in device database
-            var device = deviceRepository.getDevice(deviceAddress)
-            if (device == null) {
-                // Do not Save Samsung Devices
-                device = BaseDevice(wrappedScanResult.scanResult)
-
-                // Check if ConnectionState qualifies Device to be saved
-                // Only Save when Device is offline long enough
-                if (wrappedScanResult.connectionState !in DeviceManager.savedConnectionStates) {
-                    Timber.d("Device not in a saved connection state... Skipping!")
-                    return null
+    private suspend fun saveLocation(
+        latitude: Double?,
+        longitude: Double?,
+        altitude: Double?,
+        discoveryDate: LocalDateTime,
+        accuracy: Float?
+    ): Location? {
+        return withContext(Dispatchers.IO) {
+            locationMutex.withLock {
+                if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE) {
+                    Timber.d("Ignoring location above ${TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE}m, we assume the User might be on a plane!")
+                    // Do not save location object
+                    return@withLock null
                 }
 
-                if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
-                    Timber.d("Device is safe and will be hidden to the user!")
-                    device.safeTracker = true
-                }
+                val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
 
-                Timber.d("Add new Device to the database!")
-                deviceRepository.insert(device)
-            } else {
-                Timber.d("Device already in the database... Updating the last seen date!")
-                device.lastSeen = discoveryDate
-                deviceRepository.update(device)
-            }
+                // set location to null if gps location could not be retrieved
+                var location: Location? = null
 
-            Timber.d("Device: $device")
-            return device
-        }
+                if (latitude != null && longitude != null) {
+                    // Get closest location from database
+                    location = locationRepository.closestLocation(latitude, longitude)
 
-        private suspend fun saveLocation(
-            latitude: Double?,
-            longitude: Double?,
-            altitude: Double?,
-            discoveryDate: LocalDateTime,
-            accuracy: Float?
-        ): Location? {
-            if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE) {
-                Timber.d("Ignoring location above ${TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE}m, we assume the User might be on a plane!")
-                // Do not save location object
-                return null
-            }
+                    var distanceBetweenLocations: Float = Float.MAX_VALUE
 
-            val locationRepository =
-                ATTrackingDetectionApplication.getCurrentApp().locationRepository
-
-            // set location to null if gps location could not be retrieved
-            var location: Location? = null
-
-            if (latitude != null && longitude != null) {
-                // Get closest location from database
-                location = locationRepository.closestLocation(latitude, longitude)
-
-                var distanceBetweenLocations: Float = Float.MAX_VALUE
-
-                if (location != null) {
-                    val locationA = TrackingDetectorWorker.getLocation(latitude, longitude)
-                    val locationB =
-                        TrackingDetectorWorker.getLocation(location.latitude, location.longitude)
-                    distanceBetweenLocations = locationA.distanceTo(locationB)
-                }
-
-                if (location == null || distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
-                    // Create new location entry
-                    Timber.d("Add new Location to the database!")
-                    location = Location(
-                        firstDiscovery = discoveryDate,
-                        longitude = longitude,
-                        latitude = latitude,
-                        altitude = altitude,
-                        accuracy = accuracy,
-                    )
-                    locationRepository.insert(location)
-                }
-                else {
-                    // If location is within the set limit, just use that location and update lastSeen
-                    Timber.d("Location already in the database... Updating the last seen date!")
-                    location.lastSeen = discoveryDate
-                    if (altitude != null) {
-                        location.altitude = altitude
+                    if (location != null) {
+                        val locationA = TrackingDetectorWorker.getLocation(latitude, longitude)
+                        val locationB = TrackingDetectorWorker.getLocation(location.latitude, location.longitude)
+                        distanceBetweenLocations = locationA.distanceTo(locationB)
                     }
-                    if (accuracy != null && (location.accuracy == null || location.accuracy!! > accuracy)) {
-                        location.accuracy = accuracy
-                        location.longitude = longitude
-                        location.latitude = latitude
+
+                    if (location == null || distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
+                        // Create new location entry
+                        Timber.d("Add new Location to the database!")
+                        location = Location(
+                            firstDiscovery = discoveryDate,
+                            longitude = longitude,
+                            latitude = latitude,
+                            altitude = altitude,
+                            accuracy = accuracy,
+                        )
+                        locationRepository.insert(location)
+                    } else {
+                        // If location is within the set limit, just use that location and update lastSeen
+                        Timber.d("Location already in the database... Updating the last seen date!")
+                        location.lastSeen = discoveryDate
+                        if (altitude != null) {
+                            location.altitude = altitude
+                        }
+                        if (accuracy != null && (location.accuracy == null || location.accuracy!! > accuracy)) {
+                            location.accuracy = accuracy
+                            location.longitude = longitude
+                            location.latitude = latitude
+                        }
+                        locationRepository.update(location)
                     }
-                    locationRepository.update(location)
+
+                    Timber.d("Location: $location")
                 }
-
-                Timber.d("Location: $location")
+                return@withLock location
             }
-            return location
         }
-
+    }
 }
