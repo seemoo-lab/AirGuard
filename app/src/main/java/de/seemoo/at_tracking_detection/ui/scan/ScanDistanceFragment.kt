@@ -27,6 +27,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
@@ -383,8 +384,11 @@ class ScanDistanceFragment : Fragment() {
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
-                val deviceName = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)
-                ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                val samsungFindMyMobileDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)
+                val deviceName = SamsungFindMyMobile.getSubTypeName(latestWrappedScanResult!!)
+                if (deviceName != samsungFindMyMobileDefaultString) {
+                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
