@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
@@ -134,6 +135,7 @@ data class BaseDevice(
         DeviceType.CHIPOLO -> Chipolo(deviceId)
         DeviceType.PEBBLEBEE -> PebbleBee(deviceId)
         DeviceType.SAMSUNG_TRACKER -> SamsungTracker(deviceId)
+        DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile(deviceId)
         DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork(deviceId)
         else -> {
             // For backwards compatibility
