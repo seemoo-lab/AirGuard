@@ -304,6 +304,8 @@
     <string name="google_find_my">Google "Mein Gerät finden"</string>
 
     <string name="google_find_my_default_name">Google "Mein Gerät finden"</string>
+    <string name="google_find_my_tag_name">Google "Mein Gerät finden" Tracker</string>
+    <string name="google_find_my_phone_name">Android Smartphone</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Apple Gerät</string>
 
@@ -369,7 +371,7 @@
     <string name="times_seen">Anzahl gesehen</string>
 
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>
-    <string name="samsung_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
+    <string name="device_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
 
     <string name="left">Links</string>
     <string name="right">Rechts</string>

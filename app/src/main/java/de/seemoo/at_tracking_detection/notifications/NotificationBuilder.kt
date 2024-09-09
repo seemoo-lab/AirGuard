@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -125,6 +126,12 @@ class NotificationBuilder @Inject constructor(
             DeviceType.SAMSUNG_TRACKER -> {
                 val subType = SamsungTrackerType.stringToSubType(baseDevice.subDeviceType)
                 val deviceName = SamsungTrackerType.visibleStringFromSubtype(subType)
+                notificationTitle = context.getString(R.string.notification_title_consonant, deviceName )
+                notificationText = context.getString(R.string.notification_text_single, deviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
+            }
+            DeviceType.GOOGLE_FIND_MY_NETWORK -> {
+                val subType = GoogleFindMyNetworkType.stringToSubType(baseDevice.subDeviceType)
+                val deviceName = GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
                 notificationTitle = context.getString(R.string.notification_title_consonant, deviceName )
                 notificationText = context.getString(R.string.notification_text_single, deviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
             }

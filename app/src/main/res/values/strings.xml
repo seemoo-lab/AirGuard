@@ -347,6 +347,8 @@
     <string name="contact_us">Contact Us</string>
 
     <string name="google_find_my_default_name">Google "Find My Device"</string>
+    <string name="google_find_my_tag_name">Google "Find My Device" Tracker</string>
+    <string name="google_find_my_phone_name">Android Smartphone</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Apple Device</string>
     <string name="airtag_default_name" translatable="false">AirTag</string>
@@ -411,7 +413,7 @@
     <string name="connection_state_premature_offline_explanation_chipolo">Connection to owner in the last 30 minutes</string>
 
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
-    <string name="samsung_determine_failed">Exact device type could not be determined</string>
+    <string name="device_determine_failed">Exact device type could not be determined</string>
 
     <string name="left">Left</string>
     <string name="right">Right</string>

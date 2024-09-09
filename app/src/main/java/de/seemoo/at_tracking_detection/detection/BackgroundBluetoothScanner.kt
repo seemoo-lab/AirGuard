@@ -18,6 +18,8 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
@@ -463,6 +465,13 @@ object BackgroundBluetoothScanner {
                 } else {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
+                    deviceRepository.update(device)
+                }
+
+                if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+                    Timber.d("Google Find My Network Device found! Trying to detect Subtype")
+                    val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
+                    device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
                 }
 

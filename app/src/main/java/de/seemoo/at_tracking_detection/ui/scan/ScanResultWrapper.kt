@@ -21,8 +21,9 @@ data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boo
     var connectionState = getConnectionState(scanResult, deviceType)
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes
+    val advertisementFlags = scanResult.scanRecord?.advertiseFlags
 
-    // Information for Subcategorization
+    // Information for Sub categorization
     @SuppressLint("MissingPermission")
     val advertisedName: String? = scanResult.device.name
     val uwbCapable = when (deviceType) {

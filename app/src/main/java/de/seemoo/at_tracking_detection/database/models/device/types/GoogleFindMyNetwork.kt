@@ -19,6 +19,7 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
@@ -186,6 +187,14 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 .build()
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB")
+
+        fun getSubType(wrappedScanResult: ScanResultWrapper): GoogleFindMyNetworkType {
+            return when (wrappedScanResult.advertisementFlags) {
+                0x02 -> GoogleFindMyNetworkType.SMARTPHONE
+                0x06 -> GoogleFindMyNetworkType.TAG
+                else -> GoogleFindMyNetworkType.UNKNOWN
+            }
+        }
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
