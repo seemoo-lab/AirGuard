@@ -327,10 +327,19 @@ class ScanDistanceFragment : Fragment() {
             binding.progressCircular.visibility = View.VISIBLE
 
             lifecycleScope.launch {
+                // Detect Subtype
                 subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
                 ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subTypeGoogle!!
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+
+                // Retrieve Device Name
+                val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
+                if (deviceName != "" && device != null) {
+                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                    device.name = deviceName
+                    deviceRepository.update(device)
+                }
 
                 if (device != null) {
                     device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
