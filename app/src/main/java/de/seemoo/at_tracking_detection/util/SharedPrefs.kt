@@ -48,6 +48,14 @@ object SharedPrefs {
             sharedPreferences.edit().putBoolean("isScanningInBackground", value).apply()
         }
 
+    var deactivateBackgroundScanning: Boolean
+        get() {
+            return sharedPreferences.getBoolean("deactivate_background_scanning", false)
+        }
+        set(value) {
+            sharedPreferences.edit().putBoolean("deactivate_background_scanning", value).apply()
+        }
+
     var useLocationInTrackingDetection: Boolean
         get() {
             return sharedPreferences.getBoolean("use_location", true)
