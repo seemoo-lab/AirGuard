@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import android.app.AlertDialog
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -52,6 +53,36 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = false
         }
+
+        val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
+        deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue as Boolean) {
+                // Show confirmation dialog
+                AlertDialog.Builder(requireContext())
+                    .setTitle(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_title))
+                    .setMessage(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_text))
+                    .setPositiveButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_yes)) { _, _ ->
+                        // User confirmed, allow the change
+                        if (deactivateBackgroundScanningPref != null) {
+                            deactivateBackgroundScanningPref.isChecked = true
+                        }
+                    }
+                    .setNegativeButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_no)) { _, _ ->
+                        // User canceled, revert the change
+                        if (deactivateBackgroundScanningPref != null) {
+                            deactivateBackgroundScanningPref.isChecked = false
+                        }
+                    }
+                    .show()
+                // Return false to prevent the change until user confirms
+                false
+            } else {
+                // Allow the change immediately
+                true
+            }
+        }
+
+
 
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {

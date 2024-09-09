@@ -373,6 +373,12 @@
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>
     <string name="device_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
 
+    <string name="confirm_deactivating_background_scan_title">Bestätige die Deaktivierung des Hintergrundscans</string>
+    <string name="confirm_deactivating_background_scan_text">Bist du sicher, dass du den Hintergrundscan deaktivieren möchtest? Du wirst dann keine Benachrichtigungen über Tracker mehr bekommen, die dich potenziell verfolgen?</string>
+    <string name="confirm_deactivating_background_scan_yes">Ja, deaktivieren</string>
+    <string name="confirm_deactivating_background_scan_no">Nein, geschützt bleiben</string>
+
+
     <string name="left">Links</string>
     <string name="right">Rechts</string>
 </resources>

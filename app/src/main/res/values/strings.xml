@@ -415,6 +415,11 @@
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
     <string name="device_determine_failed">Exact device type could not be determined</string>
 
+    <string name="confirm_deactivating_background_scan_title">Confirm deactivating the background scan</string>
+    <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that are following you anymore.</string>
+    <string name="confirm_deactivating_background_scan_yes">Yes, deactivate</string>
+    <string name="confirm_deactivating_background_scan_no">No, stay protected</string>
+
     <string name="left">Left</string>
     <string name="right">Right</string>
 
