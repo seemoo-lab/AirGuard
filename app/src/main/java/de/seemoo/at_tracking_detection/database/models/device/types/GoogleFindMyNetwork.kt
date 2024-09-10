@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -22,8 +24,11 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.net.URL
 import java.util.UUID
+import kotlin.coroutines.resume
 
 class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
@@ -220,6 +225,103 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             }
         }
 
+        suspend fun getOwnerInformationURL(wrappedScanResult: ScanResultWrapper): URL? {
+            // Write the request opcode to the characteristic first
+            val isWriteSuccessful = writeOwnerInformationRequest(wrappedScanResult.deviceAddress)
+
+            if (!isWriteSuccessful) {
+                Timber.e("Failed to write owner information request")
+                return null
+            }
+
+            // After writing, we read the response characteristic
+            val characteristicsToRead = listOf(
+                Triple(GOOGLE_SOUND_SERVICE_UUID, GOOGLE_SOUND_CHARACTERISTIC, "string") // Expecting a String response
+            )
+
+            val characteristicData = Utility.connectAndRetrieveCharacteristics(
+                ATTrackingDetectionApplication.getAppContext(),
+                wrappedScanResult.deviceAddress,
+                characteristicsToRead
+            )[GOOGLE_SOUND_CHARACTERISTIC] as? String
+
+            if (characteristicData != null) {
+                // Extract and process the owner information from the characteristic
+                val ownerHex = characteristicData.drop(4) // Assuming first 4 bytes are not needed
+
+                // Build the URL with the extracted information
+                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHex")
+
+                // Validate the URL by checking for a 404 error
+                return if (Utility.isValidURL(url)) {
+                    Timber.d("Valid owner information URL: $url")
+                    url
+                } else {
+                    Timber.e("Owner information URL is invalid (404): $url")
+                    null
+                }
+            }
+
+            Timber.e("Failed to retrieve owner information characteristic")
+            return null
+        }
+
+        @SuppressLint("MissingPermission")
+        suspend fun writeOwnerInformationRequest(deviceAddress: String): Boolean = suspendCancellableCoroutine { continuation ->
+            val context = ATTrackingDetectionApplication.getAppContext()
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val bluetoothAdapter = bluetoothManager.adapter
+            val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
+
+            val gattCallback = object : BluetoothGattCallback() {
+                @SuppressLint("MissingPermission")
+                override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        Timber.d("Connected to GATT server for writing.")
+                        gatt?.discoverServices()
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        Timber.d("Disconnected from GATT server.")
+                        continuation.resume(false)
+                    }
+                }
+
+                @SuppressLint("MissingPermission")
+                override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        gatt?.let { gattInstance ->
+                            val service = gattInstance.getService(GOOGLE_SOUND_SERVICE_UUID)
+                            val characteristic = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC)
+
+                            if (characteristic != null) {
+                                // Write opcode for requesting owner info (assuming it's 0x04, 0x04)
+                                characteristic.value = byteArrayOf(0x04, 0x04)
+                                gattInstance.writeCharacteristic(characteristic)
+                            } else {
+                                Timber.e("Characteristic not found")
+                                continuation.resume(false)
+                                gattInstance.disconnect()
+                            }
+                        }
+                    } else {
+                        Timber.e("Failed to discover services: $status")
+                        continuation.resume(false)
+                    }
+                }
+
+                override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        Timber.d("Successfully wrote characteristic")
+                        continuation.resume(true)
+                    } else {
+                        Timber.e("Failed to write characteristic: $status")
+                        continuation.resume(false)
+                    }
+                    gatt?.disconnect()
+                }
+            }
+
+            bluetoothDevice.connectGatt(context, false, gattCallback)
+        }
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 

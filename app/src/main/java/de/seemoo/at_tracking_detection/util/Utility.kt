@@ -39,6 +39,8 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -349,6 +351,23 @@ object Utility {
         }
 
         bluetoothDevice.connectGatt(context, false, gattCallback)
+    }
+
+    fun isValidURL(url: URL): Boolean {
+        try {
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 5000
+            connection.readTimeout = 5000
+            val responseCode = connection.responseCode
+            connection.disconnect()
+
+            // Check if the response code is 404
+            return responseCode != HttpURLConnection.HTTP_NOT_FOUND
+        } catch (e: Exception) {
+            Timber.e("Error checking URL: ${e.message}")
+            return false
+        }
     }
 
     private fun rssiToQuality(percentage: Float): Int {
