@@ -4,15 +4,13 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
-import android.os.ParcelUuid
 import android.bluetooth.le.ScanResult
-import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -24,11 +22,8 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
@@ -167,8 +162,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
     companion object : DeviceContext {
         internal const val GOOGLE_SOUND_SERVICE = "12F4"
-        internal val GOOGLE_SOUND_SERVICE_UUID = UUID.fromString("A3C812F4-0005-1000-8000-001A11000100")
-        internal val SMARTPHONE_SERVICE = UUID.fromString("A3C87600-0005-1000-8000-001A11000100")
+        private val GOOGLE_SOUND_SERVICE_UUID = UUID.fromString("A3C812F4-0005-1000-8000-001A11000100")
+        // TODO: internal val SMARTPHONE_SERVICE = UUID.fromString("A3C87600-0005-1000-8000-001A11000100")
         internal val GOOGLE_SOUND_CHARACTERISTIC = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
         internal val GOOGLE_START_SOUND_OPCODE = byteArrayOf(0x00, 0x03)
         internal val GOOGLE_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x03)
@@ -203,96 +198,16 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             }
         }
 
-        @SuppressLint("MissingPermission")
-        private suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String, inputService: UUID, inputCharacteristic: UUID): String? =
-
-            suspendCancellableCoroutine { continuation ->
-                val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                val bluetoothAdapter = bluetoothManager.adapter
-                val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
-
-                val gattCallback = object : BluetoothGattCallback() {
-                    var deviceName: String? = null
-
-                    @SuppressLint("MissingPermission")
-                    override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-                        if (newState == BluetoothProfile.STATE_CONNECTED) {
-                            Timber.d("Connected to GATT server.")
-                            gatt?.discoverServices()
-                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                            Timber.d("Disconnected from GATT server.")
-                            if (continuation.isActive) {
-                                continuation.resume(deviceName)
-                            }
-                        }
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            Timber.d("Services discovered.")
-                            gatt?.let {
-                                readNextCharacteristic(it)
-                            }
-                        } else {
-                            Timber.w("onServicesDiscovered received: $status")
-                            if (continuation.isActive) {
-                                continuation.resumeWithException(Exception("Failed to discover services: $status"))
-                            }
-                        }
-                    }
-
-                    @Deprecated("Deprecated in Java")
-                    @SuppressLint("MissingPermission")
-                    override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            when (characteristic?.uuid) {
-                                inputCharacteristic -> {
-                                    if (characteristic != null) {
-                                        deviceName = characteristic.getStringValue(0)
-                                    }
-                                }
-                            }
-                        } else {
-                            Timber.w("Failed to read characteristic: $status")
-                        }
-                        gatt?.let { readNextCharacteristic(it) }
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    private fun readNextCharacteristic(gatt: BluetoothGatt) {
-                        when {
-                            deviceName == null -> {
-                                val char = gatt.getService(inputService)?.getCharacteristic(
-                                    inputCharacteristic
-                                )
-                                if (char != null) {
-                                    gatt.readCharacteristic(char)
-                                } else {
-                                    deviceName = "Unknown"
-                                    readNextCharacteristic(gatt)
-                                }
-                            }
-                            else -> {
-                                if (continuation.isActive) {
-                                    continuation.resume(deviceName)
-                                }
-                                gatt.disconnect()
-                            }
-                        }
-                    }
-                }
-
-                bluetoothDevice.connectGatt(context, false, gattCallback)
-            }
-
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
-            val deviceName =  connectAndRetrieveCharacteristics(
+            val characteristicsToRead = listOf(
+                Triple(GOOGLE_SOUND_SERVICE_UUID, GOOGLE_SOUND_CHARACTERISTIC, "string")
+            )
+
+            val deviceName = Utility.connectAndRetrieveCharacteristics(
                 ATTrackingDetectionApplication.getAppContext(),
                 wrappedScanResult.deviceAddress,
-                inputCharacteristic = GOOGLE_SOUND_CHARACTERISTIC,
-                inputService = GOOGLE_SOUND_SERVICE_UUID,
-            )
+                characteristicsToRead
+            )[GOOGLE_SOUND_CHARACTERISTIC] as? String
 
             if (!deviceName.isNullOrEmpty()) {
                 val advName = wrappedScanResult.advertisedName

@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
-import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -19,12 +17,10 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class AppleFindMy(val id: Int) : Device(), Connectable {
 
@@ -170,8 +166,8 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
         internal val FINDMY_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
         internal val FINDMY_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
 
-        internal val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("87290102-3C51-43B1-A1A9-11B9DC38478B")
-        internal val GATT_DEVICE_NAME_CHARACTERISTIC = UUID.fromString("6AA50003-6352-4D57-A7B4-003A416FBB0B")
+        private val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("87290102-3C51-43B1-A1A9-11B9DC38478B")
+        private val GATT_DEVICE_NAME_CHARACTERISTIC = UUID.fromString("6AA50003-6352-4D57-A7B4-003A416FBB0B")
 
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
@@ -198,93 +194,16 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
         override val statusByteDeviceType: UInt
             get() = 2u
 
-        @SuppressLint("MissingPermission")
-        private suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String): String? =
-            suspendCancellableCoroutine { continuation ->
-                val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                val bluetoothAdapter = bluetoothManager.adapter
-                val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
-
-                val gattCallback = object : BluetoothGattCallback() {
-                    var deviceName: String? = null
-
-                    @SuppressLint("MissingPermission")
-                    override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-                        if (newState == BluetoothProfile.STATE_CONNECTED) {
-                            Timber.d("Connected to GATT server.")
-                            gatt?.discoverServices()
-                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                            Timber.d("Disconnected from GATT server.")
-                            if (continuation.isActive) {
-                                continuation.resume(deviceName)
-                            }
-                        }
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            Timber.d("Services discovered.")
-                            gatt?.let {
-                                readNextCharacteristic(it)
-                            }
-                        } else {
-                            Timber.w("onServicesDiscovered received: $status")
-                            if (continuation.isActive) {
-                                continuation.resumeWithException(Exception("Failed to discover services: $status"))
-                            }
-                        }
-                    }
-
-                    @Deprecated("Deprecated in Java")
-                    @SuppressLint("MissingPermission")
-                    override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            when (characteristic?.uuid) {
-                                GATT_DEVICE_NAME_CHARACTERISTIC -> {
-                                    if (characteristic != null) {
-                                        deviceName = characteristic.getStringValue(0)
-                                    }
-                                }
-                            }
-                        } else {
-                            Timber.w("Failed to read characteristic: $status")
-                        }
-                        gatt?.let { readNextCharacteristic(it) }
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    private fun readNextCharacteristic(gatt: BluetoothGatt) {
-                        when {
-                            deviceName == null -> {
-                                val char = gatt.getService(GATT_GENERIC_ACCESS_SERVICE)?.getCharacteristic(
-                                    GATT_DEVICE_NAME_CHARACTERISTIC
-                                )
-                                if (char != null) {
-                                    gatt.readCharacteristic(char)
-                                } else {
-                                    deviceName = "Unknown"
-                                    readNextCharacteristic(gatt)
-                                }
-                            }
-                            else -> {
-                                if (continuation.isActive) {
-                                    continuation.resume(deviceName)
-                                }
-                                gatt.disconnect()
-                            }
-                        }
-                    }
-                }
-
-                bluetoothDevice.connectGatt(context, false, gattCallback)
-            }
-
         suspend fun getSubTypeName(wrappedScanResult: ScanResultWrapper): String {
-            val deviceName = connectAndRetrieveCharacteristics(
-                ATTrackingDetectionApplication.getAppContext(),
-                wrappedScanResult.deviceAddress
+            val characteristicsToRead = listOf(
+                Triple(GATT_GENERIC_ACCESS_SERVICE, GATT_DEVICE_NAME_CHARACTERISTIC, "string")
             )
+
+            val deviceName = Utility.connectAndRetrieveCharacteristics(
+                ATTrackingDetectionApplication.getAppContext(),
+                wrappedScanResult.deviceAddress,
+                characteristicsToRead
+            )[GATT_DEVICE_NAME_CHARACTERISTIC] as? String
 
             if (!deviceName.isNullOrEmpty()) {
                 val deviceNameTrimmed = deviceName.trim()
