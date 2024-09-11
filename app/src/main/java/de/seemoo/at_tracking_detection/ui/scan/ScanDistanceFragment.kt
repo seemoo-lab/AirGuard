@@ -189,6 +189,17 @@ class ScanDistanceFragment : Fragment() {
             } else {
                 View.GONE
             }
+        } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+
+            // Also make Owner Information Button Visible
+            binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+
+            if (deviceName == null || deviceName == "") {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         } else {
             View.GONE
         }
@@ -281,6 +292,23 @@ class ScanDistanceFragment : Fragment() {
 
         binding.performActionButton.setOnClickListener {
             determineSubType()
+        }
+
+        binding.retrieveOwnerInformationButton.setOnClickListener {
+            lifecycleScope.launch {
+                val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
+                if (ownerInformationURL != null) {
+                    context?.let {
+                        assumedContext -> Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                    }
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        R.string.retrieve_owner_information_failed,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
 
         return binding.root

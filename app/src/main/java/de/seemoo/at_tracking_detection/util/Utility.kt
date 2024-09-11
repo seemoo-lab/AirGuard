@@ -11,13 +11,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -367,6 +370,27 @@ object Utility {
         } catch (e: Exception) {
             Timber.e("Error checking URL: ${e.message}")
             return false
+        }
+    }
+
+    fun openBrowser(context: Context, url: String, view: View) {
+        val finalUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            "http://$url"
+        } else {
+            url
+        }
+
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(finalUrl)
+        // Check if there is an app to handle this intent
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+        } else {
+            Snackbar.make(
+                view,
+                R.string.retrieve_owner_information_failed,
+                Snackbar.LENGTH_LONG
+            ).show()
         }
     }
 

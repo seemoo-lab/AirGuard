@@ -154,10 +154,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/samsung_determine_button"
                 android:visibility="visible"
-                bind:layout_constraintBottom_toTopOf="@id/connection_state"
+                bind:layout_constraintBottom_toTopOf="@id/retrieve_owner_information_button"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="parent" />
+
+            <Button
+                android:id="@+id/retrieve_owner_information_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retrieve_owner_information"
+                android:visibility="gone"
+                bind:layout_constraintBottom_toTopOf="@id/connection_state"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@id/perform_action_button" />
 
             <TextView
                 android:id="@+id/connection_state"
@@ -166,7 +177,7 @@
                 android:text="@{vm.connectionStateString}"
                 android:textSize="16sp"
                 bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toBottomOf="@id/perform_action_button"
+                bind:layout_constraintTop_toBottomOf="@id/retrieve_owner_information_button"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constrainedWidth="true"
