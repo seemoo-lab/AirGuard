@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AirGuard</string>
+    <string name="title_ignored_devices">Игнорируемые</string>
+    <string name="title_dashboard">Информационная панель</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_debug">Отладка</string>
+    <string name="title_feedback">Обратная связь</string>
+    <string name="title_tracking">За вами следует устройство с серийным номером {deviceAddress}</string>
+    <string name="title_devices_tracking">Серийный номер устройства: {deviceAddress}</string>
+    <string name="title_scan">Поиск</string>
+    <string name="title_scan_detail">Обнаружение {deviceAddress}</string>
+    <string name="title_observe_tracker">Проследить за {deviceAddress}</string>
+    <string name="title_device_map">Все устройства</string>
+    <string name="title_devices">Устройства</string>
+    <string name="title_data_deletion">Запрос на удаление данных</string>
+    <string name="title_article">Статья</string>
+    <string name="map_empty_text">Пока нет обнаруженных устройств. Каждый раз, когда будет найдено устройство, будет показана карта с указанием места обнаружения. Обычно это не означает, что за вами действительно следили. В большинстве случаев это означает, что устройство было с собой у вашего попутчика в общественном транспорте</string>
+    <string name="mark_false_alarm">ЛОЖНОЕ СРАБАТЫВАНИЕ</string>
+    <string name="channel_name">Обнаружение слежки</string>
+    <string name="statistics_beacons">Устройств найдено</string>
+    <string name="statistics_devices">Местоположений</string>
+    <string name="statistics_alerts">Уведомлений об обнаружении</string>
+    <string name="statistics_false_alarms">Ложные срабатывания</string>
+    <string name="statistics_devices_monitored">Отслеживаемые сейчас устройства</string>
+    <string name="settings_share_data_summary">Отправлять анонимные данные, помогающие в развитии проекта</string>
+    <string name="settings_share_data_title">Участие в исследовании</string>
+    <string name="settings_advanced_mode_summary">Показывает больше настроек. Предназначено для продвинутых пользователей</string>
+    <string name="settings_advanced_mode_title">Режим эксперта</string>
+    <string name="device_item_first_discovery">Обнаружено:</string>
+    <string name="beacons">Маячки</string>
+    <string name="times_seen">Встречалось раз</string>
+    <string name="devices_swipe">Смахнуть для удаления</string>
+    <string name="ignored_device_list_empty">Всякий раз, когда вы получаете уведомление о слежке от известного устройства (например, вашего собственного AirTag), вы можете пометить его как ложное срабатывание. Устройства, которые не меняют собственный bluetooth mac-адрес (такие как Tile, Chipolo, Pebblebee), также можно игнорировать. Все эти устройства будут перечислены здесь. Помните: AirTag меняет собственный bluetooth mac-адрес каждый день, так что если вы отметили его как ложное срабатывание, он всё равно может быть обнаружен снова на следующий день</string>
+    <string name="settings_use_location_summary">Если включено, информация о слежке будет более полной</string>
+    <string name="settings_use_location_title">Использовать местоположение</string>
+    <string name="error_requesting_location_permission">Ошибка получения разрешения на запрос местоположения в фоне</string>
+    <string name="tracking_locate_at_title">Проиграть звук</string>
+    <string name="tracking_locate_at_subtitle">Обнаружение AirTag</string>
+    <string name="permissions_background_location_title">Определение местоположения в фоне</string>
+    <string name="permission_background_location_message">Если предоставить это разрешение, информация о слежке будет более полной. Не обязательная настройка</string>
+    <string name="ok_button">OK</string>
+    <string name="tracking_feedback_title">Обратная связь</string>
+    <string name="tracking_feedback_subtitle">Поделитесь мыслями</string>
+    <string name="tracking_detail_scan_title">Местопожение маячка</string>
+    <string name="tracking_detail_scan_subtitle">Показать больше информации об этом маячке</string>
+    <string name="tracking_ignore_device_title">Игнорировать устройство</string>
+    <string name="tracking_ignore_device_subtitle">Выключить уведомления об этом устройстве</string>
+    <string name="tracking_false_alarm_title">Ложное срабатывание</string>
+    <string name="tracking_false_alarm_subtitle">Пометить это уведомление как ложное срабатывание</string>
+    <string name="tracking_missing_beacons_info">Некоторые маячки были обнаружены без привязки к местоположению, потому они не показаны</string>
+    <string name="feedback_question1">Где был спрятан обнаруженный вами жучок?</string>
+    <string name="feedback_location_backpack">Рюкзак</string>
+    <string name="feedback_location_clothes">Одежда</string>
+    <string name="feedback_location_car">Машина</string>
+    <string name="feedback_location_bike">Велосипед/мотоцикл</string>
+    <string name="feedback_location_other">Другое</string>
+    <string name="feedback_location_not_found">Жучок найти не удалось</string>
+    <string name="feedback_success">Результаты опроса успешно отправлены</string>
+    <string name="feedback_close">Закрыть</string>
+    <string name="tracking_locate_at_playing_sound">Проигрывание звука…</string>
+    <string name="permission_required">Требуется разрешение</string>
+    <string name="permission_required_message">Вам нужно предоставить это разрешение, чтобы нормально использовать приложение</string>
+    <string name="rssi">RSSI</string>
+    <string name="device_item_last_seen">Последнее обнаружение:</string>
+    <string name="dashboard_tile_change">+%d</string>
+    <string name="onboarding_share_data_title">Участвуете в нашем исследовании?</string>
+    <string name="onboarding_share_data_switch">Участие в исследовании</string>
+    <string name="onboarding_share_data_description">
+        Это приложение было разработано исследователями из Технического университета Дармштадта, Германия. В ходе нашего исследования мы хотели выяснить, сколько людей пострадали от попыток вредоносного отслеживания.
+        Используются ли Find My устройства от Apple для отслеживания людей. И, в конечном счете, насколько хорошо мы можем защитить людей от этого с помощью нашего приложения.\n
+        <b>Чтобы присоединиться, вам должно быть не менее 18 лет.</b>
+        \n\n
+
+        • Мы будем собирать некоторую информацию об обнаруженных устройствах, такую как <b>тип устройства</b>, <b>значение RSSI</b> (уровень сигнала) и <b>дата и время</b> обнаружения\n\n
+        • Сколько <b>уведомлений</b> было отправлено вам, <b>дата и время</b> оповещения, а также <b>обратную связь</b>, которую вы
+        можете предоставить при желании\n\n
+
+        Мы <b>НЕ БУДЕМ</b> разглашать какие-либо данные о местоположении или данные, которые могут идентифицировать вас! Участие полностью
+        анонимно.</string>
+    <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами следят с помощью таких устройств как AirTag, устройства, совместимые с Find My от Apple, устройства, совместимые с Find My Device от Google, SmartTag, Pebblebee, Chipolo и Tile</string>
+    <string name="location_permission_title">Разрешение на доступ к местоположению</string>
+    <string name="location_permission_message">Приложению нужно разрешение на доступ к местоположению, чтобы обнаруживать жучки через Bluetooth вне зависимости от того, запущено приложение или нет. Дополнительно, вы можете позволить приложению сохранять координаты места, где вас пытались отследить</string>
+    <string name="onboarding_ignore_battery_optimization_title">Оптимизация энергопотребления</string>
+    <string name="onboarding_ignore_battery_optimization_description">Чтобы не давать Android останавливать приложение, пока оно в фоне, мы рекомендуем выключить для него оптимизацию энергопотребления</string>
+    <string name="onboarding_ignore_battery_optimization">Игнорировать оптимизацию энергопотребления</string>
+    <string name="onboarding_4_title">Разрешение на доступ к местоположению из фона</string>
+</resources>
