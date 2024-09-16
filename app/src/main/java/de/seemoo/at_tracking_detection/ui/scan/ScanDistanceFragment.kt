@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
@@ -162,9 +163,8 @@ class ScanDistanceFragment : Fragment() {
 
     private fun determineDeviceTypeButtonVisible() {
         binding.retrieveOwnerInformationButton.visibility = if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-            if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
+            if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState && GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!) == GoogleFindMyNetworkType.TAG) {
                 // make Owner Information Button Visible
-                // TODO Click on physical Tracker necessary
                 View.VISIBLE
             } else {
                 View.GONE
@@ -311,20 +311,33 @@ class ScanDistanceFragment : Fragment() {
         }
 
         binding.retrieveOwnerInformationButton.setOnClickListener {
-            lifecycleScope.launch {
-                val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
-                if (ownerInformationURL != null) {
-                    context?.let {
-                        assumedContext -> Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(R.string.retrieve_owner_information_alert_title)
+            builder.setMessage(R.string.retrieve_owner_information_explanation)
+
+            builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
+                lifecycleScope.launch {
+                    val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
+                    if (ownerInformationURL != null) {
+                        context?.let {
+                                assumedContext -> Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                        }
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.retrieve_owner_information_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
-                } else {
-                    Snackbar.make(
-                        binding.root,
-                        R.string.retrieve_owner_information_failed,
-                        Snackbar.LENGTH_LONG
-                    ).show()
                 }
             }
+
+            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close)  { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog = builder.create()
+            dialog.show()
         }
 
         return binding.root

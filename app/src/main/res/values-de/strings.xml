@@ -375,6 +375,10 @@
 
     <string name="retrieve_owner_information">Zeige Informationen zum Besitzer an</string>
     <string name="retrieve_owner_information_failed">Besitzer konnte nicht ermittelt werden</string>
+    <string name="retrieve_owner_information_alert_title">Besitzer ermitteln</string>
+    <string name="retrieve_owner_information_explanation">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn sie den Tracker gefunden haben, dann drücke den Knopf auf dem Tracker. Danach drücke auf /"weiter/".</string>
+    <string name="retrieve_owner_information_alert_next">Weiter</string>
+    <string name="retrieve_owner_information_alert_close">Beenden</string>
 
     <string name="confirm_deactivating_background_scan_title">Bestätige die Deaktivierung des Hintergrundscans</string>
     <string name="confirm_deactivating_background_scan_text">Bist du sicher, dass du den Hintergrundscan deaktivieren möchtest? Du wirst dann keine Benachrichtigungen über Tracker mehr bekommen, die dich potenziell verfolgen?</string>
