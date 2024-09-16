@@ -161,6 +161,18 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineDeviceTypeButtonVisible() {
+        binding.retrieveOwnerInformationButton.visibility = if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+            if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
+                // make Owner Information Button Visible
+                // TODO Click on physical Tracker necessary
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else {
+            View.GONE
+        }
+
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
             val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (samsungSubType == null || samsungSubType == SamsungTrackerType.UNKNOWN) {
@@ -192,11 +204,15 @@ class ScanDistanceFragment : Fragment() {
         } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
 
-            // Also make Owner Information Button Visible
-            binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
-
             if (deviceName == null || deviceName == "") {
-                View.VISIBLE
+                if (latestWrappedScanResult!!.connectionState !in DeviceManager.unsafeConnectionState && ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] == null) {
+                    binding.performActionButton.text = getString(R.string.tracker_or_phone)
+                    View.VISIBLE
+                } else if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             } else {
                 View.GONE
             }
@@ -358,20 +374,23 @@ class ScanDistanceFragment : Fragment() {
                 // Detect Subtype
                 subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
                 ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subTypeGoogle!!
-                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-                val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
-                // Retrieve Device Name
-                val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
-                if (deviceName != "" && device != null) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                    device.name = deviceName
-                    deviceRepository.update(device)
-                }
+                if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState){
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
-                if (device != null) {
-                    device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
-                    deviceRepository.update(device)
+                    // Retrieve Device Name
+                    val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
+                    if (deviceName != "" && device != null) {
+                        ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
+                        device.name = deviceName
+                        deviceRepository.update(device)
+                    }
+
+                    if (device != null) {
+                        device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
+                        deviceRepository.update(device)
+                    }
                 }
 
                 if (subTypeGoogle == GoogleFindMyNetworkType.UNKNOWN) {

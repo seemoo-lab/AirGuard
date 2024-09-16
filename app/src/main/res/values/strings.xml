@@ -347,7 +347,7 @@
     <string name="contact_us">Contact Us</string>
 
     <string name="google_find_my_default_name">Google "Find My Device"</string>
-    <string name="google_find_my_tag_name">Google "Find My Device" Tracker</string>
+    <string name="google_find_my_tag_name">"Find My Device" Tracker</string>
     <string name="google_find_my_phone_name">Android Smartphone</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Apple Device</string>
@@ -356,7 +356,6 @@
     <string name="chipolo_default_name" translatable="false">Chipolo</string>
     <string name="tile_default_name" translatable="false">Tile</string>
     <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
-
 
     <string name="article_image_description">Preview Image for this article</string>
     <string name="info_button_description">Show explanation text</string>
@@ -422,6 +421,8 @@
     <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that are following you anymore.</string>
     <string name="confirm_deactivating_background_scan_yes">Yes, deactivate</string>
     <string name="confirm_deactivating_background_scan_no">No, stay protected</string>
+
+    <string name="tracker_or_phone">Determine if Tracker or Smartphone</string>
 
     <string name="left">Left</string>
     <string name="right">Right</string>

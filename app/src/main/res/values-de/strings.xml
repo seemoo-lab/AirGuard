@@ -256,7 +256,7 @@
     <string name="settings_notification_priority_high">Benachrichtigungen werden als Alarm mit hoher Priorität erstellt</string>
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
     <string name="pebblebee_found">Gefundene Pebblebee Geräte</string>
-    <string name="google_found">Gefundene Google Find My Geräte</string>
+    <string name="google_found">Gefundene Google Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="location_off_explanation">Standort ist ausgeschaltet. Diese App benötigt die Standort-Berechtigung, um nach Trackern in der Nähe zu scannen. Bitte aktivieren sie Standorte in ihren System-Einstellungen.\n\nEs kann sein, dass die App neu gestartet werden muss, dass der Scan funktioniert.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
@@ -301,12 +301,12 @@
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_tracker">Samsung Tracker</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
-    <string name="google_find_my">Google "Mein Gerät finden"</string>
+    <string name="google_find_my">Google \"Mein Gerät finden\"</string>
 
-    <string name="google_find_my_default_name">Google "Mein Gerät finden"</string>
-    <string name="google_find_my_tag_name">Google "Mein Gerät finden" Tracker</string>
+    <string name="google_find_my_default_name">Google \"Mein Gerät finden\"</string>
+    <string name="google_find_my_tag_name">\"Mein Gerät finden\" Tracker</string>
     <string name="google_find_my_phone_name">Android Smartphone</string>
-    <string name="apple_find_my_default_name">Apple "FindMy"</string>
+    <string name="apple_find_my_default_name">Apple \"FindMy\"</string>
     <string name="apple_device_default_name">Apple Gerät</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
@@ -331,7 +331,7 @@
     <string name="website_manufacturer_detail">Öffnet die Webseite des Herstellers</string>
     <string name="no_browser">Kein Browser gefunden</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
-    <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf "Ja" bei der Studienteilnahme klicken.</string>
+    <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf \"Ja\" bei der Studienteilnahme klicken.</string>
     <string name="delete_data_success">Datenlöschung erfolgreich</string>
     <string name="delete_data_error">Etwas ist schief gelaufen</string>
     <string name="delete_data_server_error">Server nicht erreichbar. Versuche es später nochmal.</string>
@@ -381,6 +381,7 @@
     <string name="confirm_deactivating_background_scan_yes">Ja, deaktivieren</string>
     <string name="confirm_deactivating_background_scan_no">Nein, geschützt bleiben</string>
 
+    <string name="tracker_or_phone">Ermitteln ob Tracker oder Smartphone</string>
 
     <string name="left">Links</string>
     <string name="right">Rechts</string>

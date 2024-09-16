@@ -469,7 +469,7 @@ object BackgroundBluetoothScanner {
                 }
 
                 if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-                    Timber.d("Google Find My Network Device found! Trying to detect Subtype")
+                    Timber.d("Google Find My Network Device found! Detecting Subtype...")
                     val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
                     device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
