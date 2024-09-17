@@ -394,13 +394,14 @@ class ScanDistanceFragment : Fragment() {
 
                     // Retrieve Device Name
                     val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
-                    if (deviceName != "" && device != null) {
+                    if (deviceName != "" && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_default_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_tag_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_phone_name)) {
                         ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                        device.name = deviceName
-                        deviceRepository.update(device)
                     }
 
                     if (device != null) {
+                        if (deviceName != "") {
+                            device.name = deviceName
+                        }
                         device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
                         deviceRepository.update(device)
                     }

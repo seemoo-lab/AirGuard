@@ -168,10 +168,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
     companion object : DeviceContext {
         internal const val GOOGLE_SOUND_SERVICE = "12F4"
         private val GOOGLE_SOUND_SERVICE_UUID = UUID.fromString("A3C812F4-0005-1000-8000-001A11000100")
-        // TODO: internal val SMARTPHONE_SERVICE = UUID.fromString("A3C87600-0005-1000-8000-001A11000100")
         internal val GOOGLE_SOUND_CHARACTERISTIC = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
         internal val GOOGLE_START_SOUND_OPCODE = byteArrayOf(0x00, 0x03)
         internal val GOOGLE_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x03)
+        private val GOOGLE_RETRIEVE_NAME_OPCODE = byteArrayOf(0x05, 0x00)
+        private val GOOGLE_GET_OWNER_INFORMATION_OPCODE = byteArrayOf(0x04, 0x04)
 
         override val deviceType: DeviceType
             get() = DeviceType.GOOGLE_FIND_MY_NETWORK
@@ -204,22 +205,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         }
 
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
-            val characteristicsToRead = listOf(
-                Triple(GOOGLE_SOUND_SERVICE_UUID, GOOGLE_SOUND_CHARACTERISTIC, "string")
-            )
+            val retrievedData: ByteArray? = writeRequestAndReadResponse(wrappedScanResult.deviceAddress, GOOGLE_RETRIEVE_NAME_OPCODE)
 
-            val deviceName = Utility.connectAndRetrieveCharacteristics(
-                ATTrackingDetectionApplication.getAppContext(),
-                wrappedScanResult.deviceAddress,
-                characteristicsToRead
-            )[GOOGLE_SOUND_CHARACTERISTIC] as? String
-
-            if (!deviceName.isNullOrEmpty()) {
-                val advName = wrappedScanResult.advertisedName
-                if (advName != null && advName.startsWith("PB - ") && advName.length == 9) {
-                    return deviceName + advName.takeLast(7)
-                }
-                return deviceName
+            if (retrievedData != null && retrievedData.isNotEmpty()) {
+                val nameString = retrievedData.toString(Charsets.UTF_8)
+                return nameString
             } else {
                 return GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
             }
@@ -227,30 +217,16 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         suspend fun getOwnerInformationURL(wrappedScanResult: ScanResultWrapper): URL? {
             // Write the request opcode to the characteristic first
-            val isWriteSuccessful = writeOwnerInformationRequest(wrappedScanResult.deviceAddress)
+            val retrievedData: ByteArray? = writeRequestAndReadResponse(wrappedScanResult.deviceAddress, GOOGLE_GET_OWNER_INFORMATION_OPCODE)
 
-            if (!isWriteSuccessful) {
-                Timber.e("Failed to write owner information request")
-                return null
-            }
+            if (retrievedData != null) {
+                val ownerHex = retrievedData.joinToString("") { "%02x".format(it) }
 
-            // After writing, we read the response characteristic
-            val characteristicsToRead = listOf(
-                Triple(GOOGLE_SOUND_SERVICE_UUID, GOOGLE_SOUND_CHARACTERISTIC, "string") // Expecting a String response
-            )
-
-            val characteristicData = Utility.connectAndRetrieveCharacteristics(
-                ATTrackingDetectionApplication.getAppContext(),
-                wrappedScanResult.deviceAddress,
-                characteristicsToRead
-            )[GOOGLE_SOUND_CHARACTERISTIC] as? String
-
-            if (characteristicData != null) {
                 // Extract and process the owner information from the characteristic
-                val ownerHex = characteristicData.drop(4) // Assuming first 4 bytes are not needed
+                val ownerHexShortend = ownerHex.drop(4) // Assuming first 4 bytes are not needed
 
                 // Build the URL with the extracted information
-                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHex")
+                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHexShortend")
 
                 // Validate the URL by checking for a 404 error
                 return if (Utility.isValidURL(url)) {
@@ -267,7 +243,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         }
 
         @SuppressLint("MissingPermission")
-        suspend fun writeOwnerInformationRequest(deviceAddress: String): Boolean = suspendCancellableCoroutine { continuation ->
+        suspend fun writeRequestAndReadResponse(deviceAddress: String, command: ByteArray): ByteArray? = suspendCancellableCoroutine { continuation ->
             val context = ATTrackingDetectionApplication.getAppContext()
             val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val bluetoothAdapter = bluetoothManager.adapter
@@ -281,7 +257,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                         gatt?.discoverServices()
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         Timber.d("Disconnected from GATT server.")
-                        continuation.resume(false)
+                        continuation.resume(null)
                     }
                 }
 
@@ -293,28 +269,41 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                             val characteristic = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC)
 
                             if (characteristic != null) {
-                                // Write opcode for requesting owner info (assuming it's 0x04, 0x04)
-                                characteristic.value = byteArrayOf(0x04, 0x04)
+                                // Write command
+                                characteristic.value = command
                                 gattInstance.writeCharacteristic(characteristic)
                             } else {
                                 Timber.e("Characteristic not found")
-                                continuation.resume(false)
+                                continuation.resume(null)
                                 gattInstance.disconnect()
                             }
                         }
                     } else {
                         Timber.e("Failed to discover services: $status")
-                        continuation.resume(false)
+                        continuation.resume(null)
                     }
                 }
 
                 override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
                     if (status == BluetoothGatt.GATT_SUCCESS) {
-                        Timber.d("Successfully wrote characteristic")
-                        continuation.resume(true)
+                        Timber.d("Successfully wrote characteristic. Now reading response.")
+                        // After successful write, initiate a read
+                        gatt?.readCharacteristic(characteristic)
                     } else {
                         Timber.e("Failed to write characteristic: $status")
-                        continuation.resume(false)
+                        continuation.resume(null)
+                        gatt?.disconnect()
+                    }
+                }
+
+                override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        Timber.d("Successfully read characteristic")
+                        // Return the value read from the characteristic
+                        continuation.resume(characteristic?.value)
+                    } else {
+                        Timber.e("Failed to read characteristic: $status")
+                        continuation.resume(null)
                     }
                     gatt?.disconnect()
                 }
@@ -322,6 +311,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
             bluetoothDevice.connectGatt(context, false, gattCallback)
         }
+
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
