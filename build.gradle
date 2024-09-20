@@ -19,10 +19,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.android.tools.build:gradle:8.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.0"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.1"
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$about_libraries_version"
         classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:$ksp_version"
         classpath "org.jetbrains.compose:compose-gradle-plugin:$compose_version"
