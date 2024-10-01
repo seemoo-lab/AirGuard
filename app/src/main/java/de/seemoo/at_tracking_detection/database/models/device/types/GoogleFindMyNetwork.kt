@@ -229,7 +229,10 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 val receivedValue = connectAndWrite(context, device, dataToSend)
 
                 // If receivedValue is not empty, return the device name, else fallback to error case
-                receivedValue?.toString(Charsets.UTF_8) ?: errorCaseName
+                receivedValue?.let {
+                    val nameBytes = it.drop(2).toByteArray() // Drop the first two bytes
+                    String(nameBytes, Charsets.UTF_8)
+                } ?: errorCaseName
             } catch (e: Exception) {
                 Timber.e("Error during connectAndWrite: ${e.message}")
                 errorCaseName
@@ -297,6 +300,17 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     }
                 }
 
+                override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        // Descriptor write successful, now write the characteristic
+                        val characteristic = descriptor?.characteristic
+                        characteristic?.value = dataToSend
+                        gatt?.writeCharacteristic(characteristic)
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
+
                 override fun onCharacteristicWrite(
                     gatt: BluetoothGatt?,
                     characteristic: BluetoothGattCharacteristic?,
@@ -310,14 +324,19 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     }
                 }
 
-                override fun onCharacteristicChanged(
+                override fun onCharacteristicRead(
                     gatt: BluetoothGatt?,
-                    characteristic: BluetoothGattCharacteristic?
+                    characteristic: BluetoothGattCharacteristic?,
+                    status: Int
                 ) {
-                    // Indication received, pass the value back to the coroutine
-                    val receivedValue = characteristic?.value
-                    if (receivedValue != null) {
-                        continuation.resume(receivedValue)
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        // Indication received, pass the value back to the coroutine
+                        val receivedValue = characteristic?.value
+                        if (receivedValue != null) {
+                            continuation.resume(receivedValue)
+                        } else {
+                            continuation.resume(null)
+                        }
                     } else {
                         continuation.resume(null)
                     }

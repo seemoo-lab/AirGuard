@@ -61,6 +61,9 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
     } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
         SamsungTrackerType.drawableForSubType(subType)
+    } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+        val subType = ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+        GoogleFindMyNetworkType.drawableForSubType(subType)
     } else {
         DeviceType.getImageDrawable(wrappedScanResult)
     }
