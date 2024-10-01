@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
@@ -91,6 +92,7 @@ class SamsungFindMyMobile(val id: Int) : Device()  {
             )[GATT_DEVICE_NAME_CHARACTERISTIC] as? String
 
             return if (!deviceName.isNullOrEmpty()) {
+                ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
                 deviceName
             } else {
                 ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)

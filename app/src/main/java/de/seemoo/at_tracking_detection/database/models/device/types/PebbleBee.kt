@@ -19,6 +19,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -283,7 +284,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
             }
 
         suspend fun getSubTypeName(wrappedScanResult: ScanResultWrapper): String {
-            val deviceName = connectAndRetrieveCharacteristics(
+            var deviceName = connectAndRetrieveCharacteristics(
                 ATTrackingDetectionApplication.getAppContext(),
                 wrappedScanResult.deviceAddress
             )
@@ -291,8 +292,9 @@ class PebbleBee (val id: Int) : Device(), Connectable {
             if (!deviceName.isNullOrEmpty()) {
                 val advName = wrappedScanResult.advertisedName
                 if (advName != null && advName.startsWith("PB - ") && advName.length == 9) {
-                    return deviceName + advName.takeLast(7)
+                    deviceName += advName.takeLast(7)
                 }
+                ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
                 return deviceName
             } else {
                 return ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)

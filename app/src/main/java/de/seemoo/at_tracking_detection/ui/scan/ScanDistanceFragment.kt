@@ -98,12 +98,26 @@ class ScanDistanceFragment : Fragment() {
 
                         // TODO: add drawable
                         val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                        val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+                        val deviceNameFromDB = device?.name
+
                         if (samsungSubType != null && samsungSubType != SamsungTrackerType.UNKNOWN) {
-                            binding.deviceTypeText.text = SamsungTrackerType.visibleStringFromSubtype(samsungSubType)
+                            Timber.d("Display Name - Samsung Subtype: $samsungSubType")
+                            viewModel.displayName.postValue(SamsungTrackerType.visibleStringFromSubtype(samsungSubType))
                         } else if (deviceName != null && deviceName != "") {
+                            Timber.d("Display Name - Device Name: $deviceName")
                             binding.deviceTypeText.text = deviceName
+                        } else if (deviceNameFromDB != null && deviceNameFromDB != "") {
+                            Timber.d("Display Name - Device Name from DB: $deviceNameFromDB")
+                            binding.deviceTypeText.text = deviceNameFromDB
+                        } else if (googleSubType != null) {
+                            Timber.d("Display Name - Google Subtype: $googleSubType")
+                            viewModel.displayName.postValue(GoogleFindMyNetworkType.visibleStringFromSubtype(googleSubType))
                         } else {
+                            Timber.d("Display Name - Default")
                             binding.deviceTypeText.text = DeviceType.userReadableName(
                                 latestWrappedScanResult!!
                             )
@@ -382,10 +396,10 @@ class ScanDistanceFragment : Fragment() {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
-
             lifecycleScope.launch {
                 // Detect Subtype
                 subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
                 ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subTypeGoogle!!
 
                 if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState){
@@ -395,6 +409,7 @@ class ScanDistanceFragment : Fragment() {
                     // Retrieve Device Name
                     val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
                     if (deviceName != "" && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_default_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_tag_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_phone_name)) {
+                        // TODO: this in the Name determination Code
                         ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
                     }
 
@@ -407,20 +422,6 @@ class ScanDistanceFragment : Fragment() {
                     }
                 }
 
-                if (subTypeGoogle == GoogleFindMyNetworkType.UNKNOWN) {
-                    Snackbar.make(
-                        binding.root,
-                        R.string.device_determine_failed,
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                    binding.performActionButton.visibility = View.VISIBLE
-                } else {
-                    viewModel.displayName.postValue(
-                        GoogleFindMyNetworkType.visibleStringFromSubtype(
-                            subTypeGoogle!!
-                        )
-                    )
-                }
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
             }
@@ -431,9 +432,6 @@ class ScanDistanceFragment : Fragment() {
             lifecycleScope.launch {
                 val findMyDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
                 val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != findMyDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
@@ -464,9 +462,6 @@ class ScanDistanceFragment : Fragment() {
             lifecycleScope.launch {
                 val pebblebeeDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
                 val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != pebblebeeDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
@@ -495,11 +490,7 @@ class ScanDistanceFragment : Fragment() {
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
-                val samsungFindMyMobileDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)
                 val deviceName = SamsungFindMyMobile.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != samsungFindMyMobileDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)

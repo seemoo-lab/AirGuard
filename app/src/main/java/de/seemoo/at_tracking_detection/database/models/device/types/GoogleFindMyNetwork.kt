@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
@@ -25,7 +27,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.net.URL
 import java.util.UUID
@@ -171,6 +172,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         internal const val GOOGLE_SOUND_SERVICE = "12F4"
         private val GOOGLE_SOUND_SERVICE_UUID: UUID = UUID.fromString("15190001-12F4-C226-88ED-2AC5579F2A85")
         internal val GOOGLE_SOUND_CHARACTERISTIC_UUID: UUID = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
+        internal val GOOGLE_DESCRIPTOR_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
         internal val GOOGLE_START_SOUND_OPCODE = byteArrayOf(0x00, 0x03)
         internal val GOOGLE_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x03)
         private val GOOGLE_RETRIEVE_NAME_OPCODE = byteArrayOf(0x05, 0x00)
@@ -207,13 +209,30 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         }
 
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
-            val retrievedData: ByteArray? = writeRequestAndReadResponse(wrappedScanResult.deviceAddress, GOOGLE_RETRIEVE_NAME_OPCODE)
+            val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
+            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+            val context: Context = ATTrackingDetectionApplication.getAppContext()
 
-            if (retrievedData != null && retrievedData.isNotEmpty()) {
-                val nameString = retrievedData.toString(Charsets.UTF_8)
-                return nameString
-            } else {
-                return GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
+            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+                Timber.e("Bluetooth adapter is null or not enabled")
+                return errorCaseName
+            } else if (!BluetoothAdapter.checkBluetoothAddress(wrappedScanResult.deviceAddress)) {
+                Timber.e("Invalid Bluetooth address")
+                return errorCaseName
+            }
+
+            val device = bluetoothAdapter.getRemoteDevice(wrappedScanResult.deviceAddress)
+            val dataToSend = GOOGLE_RETRIEVE_NAME_OPCODE
+
+            return try {
+                // Await the result of the GATT operation
+                val receivedValue = connectAndWrite(context, device, dataToSend)
+
+                // If receivedValue is not empty, return the device name, else fallback to error case
+                receivedValue?.toString(Charsets.UTF_8) ?: errorCaseName
+            } catch (e: Exception) {
+                Timber.e("Error during connectAndWrite: ${e.message}")
+                errorCaseName
             }
         }
 
@@ -242,6 +261,68 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
             Timber.e("Failed to retrieve owner information characteristic")
             return null
+        }
+
+        @SuppressLint("MissingPermission")
+        suspend fun connectAndWrite(
+            context: Context,
+            device: BluetoothDevice,
+            dataToSend: ByteArray
+        ): ByteArray? = suspendCoroutine { continuation ->
+            val bluetoothGatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
+
+                override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        // Discover services after successful connection
+                        gatt?.discoverServices()
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        gatt?.close()
+                        continuation.resume(null)
+                    }
+                }
+
+                override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        val service = gatt?.getService(GOOGLE_SOUND_SERVICE_UUID)
+                        val characteristic = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
+
+                        // Enable indications for the characteristic by writing to the descriptor
+                        val descriptor = characteristic?.getDescriptor(GOOGLE_DESCRIPTOR_UUID)
+                        descriptor?.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                        gatt?.writeDescriptor(descriptor)
+
+                        // Write data to the characteristic
+                        characteristic?.value = dataToSend
+                        gatt?.writeCharacteristic(characteristic)
+                    }
+                }
+
+                override fun onCharacteristicWrite(
+                    gatt: BluetoothGatt?,
+                    characteristic: BluetoothGattCharacteristic?,
+                    status: Int
+                ) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        // Successfully wrote to the characteristic, now read the response
+                        gatt?.readCharacteristic(characteristic)
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
+
+                override fun onCharacteristicChanged(
+                    gatt: BluetoothGatt?,
+                    characteristic: BluetoothGattCharacteristic?
+                ) {
+                    // Indication received, pass the value back to the coroutine
+                    val receivedValue = characteristic?.value
+                    if (receivedValue != null) {
+                        continuation.resume(receivedValue)
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
+            })
         }
 
         @SuppressLint("MissingPermission")
@@ -321,6 +402,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             // Connect to the device and initiate GATT communication
             gatt = bluetoothDevice.connectGatt(context, false, bluetoothGattCallback)
         }
+
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
