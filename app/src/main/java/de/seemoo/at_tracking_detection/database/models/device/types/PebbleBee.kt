@@ -100,12 +100,13 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 }
 
                 gatt.setCharacteristicNotification(characteristic, true)
+
                 if (Build.VERSION.SDK_INT >= 33) {
-                    characteristic.writeType
-                    gatt.writeCharacteristic(characteristic, PEBBLEBEE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    gatt.writeCharacteristic(characteristic, PEBBLEBEE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
                 } else {
                     @Suppress("DEPRECATION")
                     characteristic.value = PEBBLEBEE_START_SOUND_OPCODE
+                    characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
                     @Suppress("DEPRECATION")
                     gatt.writeCharacteristic(characteristic)
                 }
