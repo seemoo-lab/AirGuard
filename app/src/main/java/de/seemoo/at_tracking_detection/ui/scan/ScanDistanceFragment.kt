@@ -405,20 +405,25 @@ class ScanDistanceFragment : Fragment() {
                 if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState){
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-
-                    // Retrieve Device Name
                     val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
-                    if (deviceName != "" && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_default_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_tag_name) && deviceName != ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.google_find_my_phone_name)) {
-                        // TODO: this in the Name determination Code
-                        ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                    }
 
-                    if (device != null) {
+                    if (device != null && deviceName != errorCaseName) {
                         if (deviceName != "") {
                             device.name = deviceName
                         }
                         device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
                         deviceRepository.update(device)
+                    }
+
+                    if (deviceName == errorCaseName || deviceName == "") {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.device_determine_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        binding.performActionButton.visibility = View.VISIBLE
+                    } else {
+                        viewModel.displayName.postValue(deviceName)
                     }
                 }
 
@@ -441,7 +446,7 @@ class ScanDistanceFragment : Fragment() {
                     deviceRepository.update(device)
                 }
 
-                if (deviceName == findMyDefaultString) {
+                if (deviceName == findMyDefaultString || deviceName == "") {
                     Snackbar.make(
                         binding.root,
                         R.string.device_determine_failed,
@@ -471,7 +476,7 @@ class ScanDistanceFragment : Fragment() {
                     deviceRepository.update(device)
                 }
 
-                if (deviceName == pebblebeeDefaultString) {
+                if (deviceName == pebblebeeDefaultString || deviceName == "") {
                     Snackbar.make(
                         binding.root,
                         R.string.device_determine_failed,

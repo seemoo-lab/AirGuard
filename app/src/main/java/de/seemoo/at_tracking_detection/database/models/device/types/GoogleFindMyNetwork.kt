@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
@@ -230,7 +231,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 // If receivedValue is not empty, return the device name, else fallback to error case
                 receivedValue?.let {
                     val nameBytes = it.drop(2).toByteArray() // Drop the first two bytes
-                    String(nameBytes, Charsets.UTF_8)
+                    val finalResult = String(nameBytes, Charsets.UTF_8)
+                    ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = finalResult
+                    finalResult
                 } ?: errorCaseName
             } catch (e: Exception) {
                 Timber.e("Error during connectAndWrite: ${e.message}")
@@ -263,10 +266,14 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 }
 
                 val ownerHex = retrievedData.joinToString("") { "%02x".format(it) }
-                val ownerHexShortend = ownerHex.drop(4) // Assuming first 4 bytes are not needed
-                // Build the URL with the extracted information
-                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHexShortend")
+                Timber.d("Owner information hex: $ownerHex")
+                val ownerHexShortened = ownerHex.drop(4) // Assuming first 4 bytes are not needed
+                Timber.d("Owner information hex shortened: $ownerHexShortened")
 
+                // Build the URL with the extracted information
+                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHexShortened")
+
+                Timber.d("Owner information URL: $url")
                 // Validate the URL by checking for a 404 error
                 return if (Utility.isValidURL(url)) {
                     Timber.d("Valid owner information URL: $url")
