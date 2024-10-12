@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,6 +73,12 @@ class ScanViewModel @Inject constructor(
             // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
             val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
             Timber.d("Got location $location in ScanViewModel")
+            val skipDevice = Utility.getSkipDevice(wrappedScanResult = wrappedScanResult)
+
+            if (skipDevice) {
+                Timber.d("Skipping device ${wrappedScanResult.uniqueIdentifier}")
+                return@launch
+            }
 
             BackgroundBluetoothScanner.insertScanResult(
                 wrappedScanResult = wrappedScanResult,

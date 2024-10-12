@@ -200,8 +200,9 @@ object BackgroundBluetoothScanner {
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
             val deviceType = discoveredDevice.wrappedScanResult.deviceType
+            val skipDevice = Utility.getSkipDevice(wrappedScanResult = discoveredDevice.wrappedScanResult)
 
-            if (deviceType in validDeviceTypes) {
+            if (deviceType in validDeviceTypes && !skipDevice) {
                 insertScanResult(
                     wrappedScanResult = discoveredDevice.wrappedScanResult,
                     latitude = location?.latitude,
@@ -445,7 +446,7 @@ object BackgroundBluetoothScanner {
                 // Checks if Device already exists in device database
                 var device = deviceRepository.getDevice(deviceAddress)
                 if (device == null) {
-                    // Do not Save Samsung Devices
+                    // TODO Do not Save Samsung Devices
                     device = BaseDevice(wrappedScanResult.scanResult)
 
                     // Check if ConnectionState qualifies Device to be saved

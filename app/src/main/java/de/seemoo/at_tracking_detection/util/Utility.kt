@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -398,6 +399,17 @@ object Utility {
                 Snackbar.LENGTH_LONG
             ).show()
         }
+    }
+
+    fun getSkipDevice(wrappedScanResult: ScanResultWrapper) : Boolean {
+        val deviceType = wrappedScanResult.deviceType
+        val securityLevel = SharedPrefs.riskSensitivity
+
+        if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE) {
+            return securityLevel != "high"
+        }
+
+        return false
     }
 
     private fun rssiToQuality(percentage: Float): Int {

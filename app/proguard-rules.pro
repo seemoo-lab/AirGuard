@@ -87,3 +87,25 @@
 
 # Ensure that the DeviceType class is not stripped or obfuscated
 -keep class de.seemoo.at_tracking_detection.database.models.device.DeviceType { *; }
+
+# Keep all data classes
+-keep class de.seemoo.at_tracking_detection.database.models.** { *; }
+
+# Keep all fields in data classes
+-keepclassmembers class de.seemoo.at_tracking_detection.database.models.** {
+    <fields>;
+}
+
+# Keep all methods in data classes
+-keepclassmembers class de.seemoo.at_tracking_detection.database.models.** {
+    <methods>;
+}
+
+# Keep the SendStatisticsWorker class and its methods
+-keep class de.seemoo.at_tracking_detection.statistics.SendStatisticsWorker { *; }
+
+# Keep the Api class and its methods
+-keep class de.seemoo.at_tracking_detection.statistics.api.Api { *; }
+
+# Keep the SharedPrefs class and its methods
+-keep class de.seemoo.at_tracking_detection.util.SharedPrefs { *; }
