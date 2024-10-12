@@ -446,7 +446,6 @@ object BackgroundBluetoothScanner {
                 // Checks if Device already exists in device database
                 var device = deviceRepository.getDevice(deviceAddress)
                 if (device == null) {
-                    // TODO Do not Save Samsung Devices
                     device = BaseDevice(wrappedScanResult.scanResult)
 
                     // Check if ConnectionState qualifies Device to be saved
