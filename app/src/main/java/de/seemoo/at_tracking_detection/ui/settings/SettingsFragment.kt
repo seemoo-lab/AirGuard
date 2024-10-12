@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
@@ -34,6 +36,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.fragment_settings, rootKey)
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
+
+        val riskSensitivityPref = findPreference<ListPreference>("risk_sensitivity")
+        val devicesFilterPref = findPreference<MultiSelectListPreference>("devices_filter_unselected")
+
+        val updateDevicesFilter = { sensitivity: String ->
+            val entries = resources.getStringArray(R.array.devicesFilter).toMutableList()
+            val entryValues = resources.getStringArray(R.array.devicesFilterValue).toMutableList()
+
+            if (sensitivity == "high") {
+                // Add samsung_find_my_mobile if not already present
+                if (!entryValues.contains("samsung_find_my_mobile")) {
+                    entries.add(getString(R.string.samsung_find_my_mobile_name))
+                    entryValues.add("samsung_find_my_mobile")
+                }
+            } else {
+                // Remove samsung_find_my_mobile if present
+                val index = entryValues.indexOf("samsung_find_my_mobile")
+                if (index != -1) {
+                    entries.removeAt(index)
+                    entryValues.removeAt(index)
+                }
+            }
+
+            devicesFilterPref?.entries = entries.toTypedArray()
+            devicesFilterPref?.entryValues = entryValues.toTypedArray()
+        }
+
+        riskSensitivityPref?.value?.let { updateDevicesFilter(it) }
+
+        riskSensitivityPref?.setOnPreferenceChangeListener { _, newValue ->
+            updateDevicesFilter(newValue as String)
+            true
+        }
 
         if (SharedPrefs.token == null && !SharedPrefs.shareData) {
             findPreference<Preference>("delete_study_data")?.isVisible = false
