@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.app.ActivityCompat.startActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -356,36 +357,41 @@ object Utility {
         bluetoothDevice.connectGatt(context, false, gattCallback)
     }
 
-    fun isValidURL(url: URL): Boolean {
+    suspend fun isValidURL(url: URL): Boolean = withContext(Dispatchers.IO) {
+        var connection: HttpURLConnection? = null
         try {
-            val connection = url.openConnection() as HttpURLConnection
+            connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.connectTimeout = 5000
             connection.readTimeout = 5000
+            connection.connect()
             val responseCode = connection.responseCode
-            connection.disconnect()
-
-            // Check if the response code is 404
-            return responseCode != HttpURLConnection.HTTP_NOT_FOUND
+            Timber.d("Response code: $responseCode")
+            responseCode < 400
         } catch (e: Exception) {
             Timber.e("Error checking URL: ${e.message}")
-            return false
+            false
+        } finally {
+            connection?.disconnect()
         }
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     fun openBrowser(context: Context, url: String, view: View) {
+        Timber.d("Opening browser with URL: $url")
         val finalUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
             "http://$url"
         } else {
             url
         }
 
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(finalUrl)
-        // Check if there is an app to handle this intent
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-        } else {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+
+        // Check if there's an app to handle this intent
+        try {
+            startActivity(context, intent, null)
+        } catch (e: Exception) {
+            Timber.e("Error opening browser: ${e.localizedMessage}")
             Snackbar.make(
                 view,
                 R.string.retrieve_owner_information_failed,

@@ -331,22 +331,48 @@ class ScanDistanceFragment : Fragment() {
 
             builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
                 lifecycleScope.launch {
+                    binding.retrieveOwnerInformationButton.visibility = View.GONE
+                    binding.performActionButton.visibility = View.GONE
+                    binding.progressCircular.visibility = View.VISIBLE
+                    binding.deviceTypeText.visibility = View.GONE
                     val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
                     if (ownerInformationURL != null) {
-                        context?.let {
-                                assumedContext -> Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                        try {
+                            // Use requireContext() to ensure non-null context
+                            requireContext().let { assumedContext ->
+                                Timber.d("Opening browser with URL: $ownerInformationURL")
+                                Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                            }
+                        } catch (e: Exception) {
+                            // Catch and log any potential exception during the intent launch
+                            Timber.e("Error launching browser: ${e.localizedMessage}")
+                            Snackbar.make(
+                                binding.root,
+                                R.string.retrieve_owner_information_failed,
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
                     } else {
+                        Timber.e("Owner information URL is null")
                         Snackbar.make(
                             binding.root,
                             R.string.retrieve_owner_information_failed,
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                    binding.progressCircular.visibility = View.GONE
+                    binding.deviceTypeText.visibility = View.VISIBLE
+
+                    subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                    val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
+                    if (binding.deviceTypeText.text == errorCaseName) {
+                        binding.performActionButton.visibility = View.VISIBLE
+                    }
                 }
             }
 
-            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close)  { dialog, _ ->
+            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
                 dialog.dismiss()
             }
 
