@@ -397,6 +397,24 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
             return ConnectionState.UNKNOWN
         }
+
+        fun getGoogleManufacturerFromNameString(name: String): GoogleFindMyNetworkManufacturer {
+            Timber.d("Name: $name")
+            return when {
+                name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
+                name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
+                else -> GoogleFindMyNetworkManufacturer.UNKNOWN
+            }
+        }
+
+        fun getGoogleInformationRetrievalText(manufacturer: GoogleFindMyNetworkManufacturer): String {
+            Timber.d("Manufacturer: $manufacturer")
+            return when (manufacturer) {
+                GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
+                GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
+                GoogleFindMyNetworkManufacturer.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
+            }
+        }
     }
 
 }

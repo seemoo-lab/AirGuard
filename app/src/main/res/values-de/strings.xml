@@ -376,7 +376,9 @@
     <string name="retrieve_owner_information">Zeige Informationen zum Besitzer an</string>
     <string name="retrieve_owner_information_failed">Besitzer konnte nicht ermittelt werden</string>
     <string name="retrieve_owner_information_alert_title">Besitzer ermitteln</string>
-    <string name="retrieve_owner_information_explanation">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, dann drücke den Knopf auf dem Tracker. Dies funktioniert möglicherweise nicht immer. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_explanation_unknown">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, musst du ihn in einem speziellen Modus versetzen. Wie dieser Modus erreicht wird ist unterschiedlich und könnte durch 30 Sekunden den Button drücken oder dreimal den Button drücken geschehen. Der Modus wird durch ein piepsen bestätigt. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, dann drücke den Knopf auf dem Tracker dreimal. Dies sollte durch ein piepsen bestätigt werden. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_explanation_chipolo">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, dann halten den Knopf für 30 Sekunden gedrückt. Lasse den Knopf exakt nach dem zweiten piepsen los. Dies wird durch einen weiteren Ton bestätigt. Danach drücke auf \"weiter\".</string>
     <string name="retrieve_owner_information_alert_next">Weiter</string>
     <string name="retrieve_owner_information_alert_close">Beenden</string>
 

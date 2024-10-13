@@ -28,6 +28,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent

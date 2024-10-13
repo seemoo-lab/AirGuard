@@ -28,6 +28,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
@@ -178,7 +179,6 @@ class ScanDistanceFragment : Fragment() {
     private fun determineDeviceTypeButtonVisible() {
         binding.retrieveOwnerInformationButton.visibility = if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
             if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState && GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!) == GoogleFindMyNetworkType.TAG) {
-                // make Owner Information Button Visible
                 View.VISIBLE
             } else {
                 View.GONE
@@ -321,69 +321,77 @@ class ScanDistanceFragment : Fragment() {
         startBluetoothScan()
 
         binding.performActionButton.setOnClickListener {
-            determineSubType()
+            determineSubType {
+                // No additional actions needed after determining the subtype
+            }
         }
 
         binding.retrieveOwnerInformationButton.setOnClickListener {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(R.string.retrieve_owner_information_alert_title)
-            builder.setMessage(R.string.retrieve_owner_information_explanation)
+            determineSubType {
+                binding.retrieveOwnerInformationButton.visibility = View.GONE
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle(R.string.retrieve_owner_information_alert_title)
 
-            builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
-                lifecycleScope.launch {
-                    binding.retrieveOwnerInformationButton.visibility = View.GONE
-                    binding.performActionButton.visibility = View.GONE
-                    binding.progressCircular.visibility = View.VISIBLE
-                    binding.deviceTypeText.visibility = View.GONE
-                    val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
-                    if (ownerInformationURL != null) {
-                        try {
-                            // Use requireContext() to ensure non-null context
-                            requireContext().let { assumedContext ->
-                                Timber.d("Opening browser with URL: $ownerInformationURL")
-                                Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                val displayName: String = viewModel.displayName.value ?: ""
+                val manufacturer: GoogleFindMyNetworkManufacturer = GoogleFindMyNetwork.getGoogleManufacturerFromNameString(displayName)
+                val explanationText: String = GoogleFindMyNetwork.getGoogleInformationRetrievalText(manufacturer)
+
+                builder.setMessage(explanationText)
+
+                builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
+                    lifecycleScope.launch {
+                        binding.performActionButton.visibility = View.GONE
+                        binding.progressCircular.visibility = View.VISIBLE
+                        binding.deviceTypeText.visibility = View.GONE
+                        val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
+                        if (ownerInformationURL != null) {
+                            try {
+                                requireContext().let { assumedContext ->
+                                    Timber.d("Opening browser with URL: $ownerInformationURL")
+                                    Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                                }
+                            } catch (e: Exception) {
+                                Timber.e("Error launching browser: ${e.localizedMessage}")
+                                Snackbar.make(
+                                    binding.root,
+                                    R.string.retrieve_owner_information_failed,
+                                    Snackbar.LENGTH_LONG
+                                ).show()
                             }
-                        } catch (e: Exception) {
-                            // Catch and log any potential exception during the intent launch
-                            Timber.e("Error launching browser: ${e.localizedMessage}")
+                        } else {
+                            Timber.e("Owner information URL is null")
                             Snackbar.make(
                                 binding.root,
                                 R.string.retrieve_owner_information_failed,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
-                    } else {
-                        Timber.e("Owner information URL is null")
-                        Snackbar.make(
-                            binding.root,
-                            R.string.retrieve_owner_information_failed,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
-                    binding.progressCircular.visibility = View.GONE
-                    binding.deviceTypeText.visibility = View.VISIBLE
+                        binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                        binding.progressCircular.visibility = View.GONE
+                        binding.deviceTypeText.visibility = View.VISIBLE
 
-                    subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
-                    val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
-                    if (binding.deviceTypeText.text == errorCaseName) {
-                        binding.performActionButton.visibility = View.VISIBLE
+                        subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                        val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
+                        if (binding.deviceTypeText.text == errorCaseName) {
+                            binding.performActionButton.visibility = View.VISIBLE
+                        }
                     }
                 }
-            }
 
-            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
-                dialog.dismiss()
-            }
+                builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                    dialog.dismiss()
+                }
 
-            val dialog = builder.create()
-            dialog.show()
+                val dialog = builder.create()
+                dialog.show()
+            }
         }
 
         return binding.root
     }
 
-    private fun determineSubType() {
+    private fun determineSubType(onSubTypeDetermined: () -> Unit) {
         if (deviceType == DeviceType.SAMSUNG_TRACKER && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
@@ -416,10 +424,12 @@ class ScanDistanceFragment : Fragment() {
                     }
                     binding.progressCircular.visibility = View.GONE
                     binding.deviceTypeText.visibility = View.VISIBLE
+                    onSubTypeDetermined()
                 }
             }
         } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
+            binding.retrieveOwnerInformationButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
@@ -455,6 +465,8 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
+                binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                onSubTypeDetermined()
             }
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -485,6 +497,7 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
+                onSubTypeDetermined()
             }
         } else if (deviceType == DeviceType.PEBBLEBEE && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -515,6 +528,7 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
+                onSubTypeDetermined()
             }
         } else if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -535,6 +549,7 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
+                onSubTypeDetermined()
             }
         }
     }
