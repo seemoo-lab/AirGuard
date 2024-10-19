@@ -463,7 +463,7 @@ class ScanDistanceFragment : Fragment() {
                         ).show()
                         binding.performActionButton.visibility = View.VISIBLE
                     } else {
-                        viewModel.displayName.postValue(deviceName)
+                        viewModel.displayName.value = deviceName
                     }
                 }
 
