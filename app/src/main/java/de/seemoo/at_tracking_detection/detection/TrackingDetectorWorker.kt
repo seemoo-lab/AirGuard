@@ -134,32 +134,45 @@ class TrackingDetectorWorker @AssistedInject constructor(
         Timber.d("Start deleting old and safe Trackers")
         val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
         val beaconsToBeDeleted = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-        if (beaconsToBeDeleted.isNotEmpty()) {
-            Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
-            beaconRepository.deleteBeacons(beaconsToBeDeleted)
-            Timber.d("Deleting Beacons successful")
-        } else {
-            Timber.d("No old beacons to delete")
+
+        try {
+            if (beaconsToBeDeleted.isNotEmpty()) {
+                Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
+                beaconRepository.deleteBeacons(beaconsToBeDeleted)
+                Timber.d("Deleting Beacons successful")
+            } else {
+                Timber.d("No old beacons to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Deleting Beacons failed $e")
         }
 
-        val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-        if (devicesToBeDeleted.isNotEmpty()) {
-            Timber.d("Deleting ${devicesToBeDeleted.size} devices")
-            deviceRepository.deleteDevices(devicesToBeDeleted)
-            Timber.d("Deleting Devices successful")
-        }
-        if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
-            Timber.d("No old devices or beacons to delete")
+        try {
+            val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+            if (devicesToBeDeleted.isNotEmpty()) {
+                Timber.d("Deleting ${devicesToBeDeleted.size} devices")
+                deviceRepository.deleteDevices(devicesToBeDeleted)
+                Timber.d("Deleting Devices successful")
+            }
+            if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
+                Timber.d("No old devices or beacons to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Deleting Devices failed $e")
         }
 
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository ?: return
-        val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
-        if (locationsToBeDeleted.isNotEmpty()) {
-            Timber.d("Deleting ${locationsToBeDeleted.size} locations")
-            locationRepository.deleteLocations(locationsToBeDeleted)
-            Timber.d("Deleting Locations successful")
-        } else {
-            Timber.d("No locations to delete")
+        try {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
+            if (locationsToBeDeleted.isNotEmpty()) {
+                Timber.d("Deleting ${locationsToBeDeleted.size} locations")
+                locationRepository.deleteLocations(locationsToBeDeleted)
+                Timber.d("Deleting Locations successful")
+            } else {
+                Timber.d("No locations to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Deleting Locations failed $e")
         }
     }
 
