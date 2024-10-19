@@ -403,6 +403,10 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return when {
                 name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
                 name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
+                name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
+                name.contains("motorola", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
+                name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
                 else -> GoogleFindMyNetworkManufacturer.UNKNOWN
             }
         }
@@ -412,7 +416,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return when (manufacturer) {
                 GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
                 GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
-                GoogleFindMyNetworkManufacturer.UNKNOWN -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
+                else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
             }
         }
     }
