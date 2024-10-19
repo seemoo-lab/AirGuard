@@ -379,11 +379,15 @@ class ScanDistanceFragment : Fragment() {
                 }
 
                 builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
-                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
                     dialog.dismiss()
                 }
 
                 val dialog = builder.create()
+
+                dialog.setOnDismissListener {
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                }
+
                 dialog.show()
             }
         }
