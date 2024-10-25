@@ -47,7 +47,7 @@ data class BaseDevice(
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
     @ColumnInfo(name = "connectable", defaultValue = "0") val connectable: Boolean?,
-    @ColumnInfo(name = "payloadData") val payloadData: Byte?,
+    @ColumnInfo(name = "payloadData") var payloadData: Byte?,
     @ColumnInfo(name = "firstDiscovery") val firstDiscovery: LocalDateTime,
     @ColumnInfo(name = "lastSeen") var lastSeen: LocalDateTime,
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,

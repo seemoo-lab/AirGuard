@@ -68,6 +68,16 @@ class SamsungFindMyMobile(val id: Int) : Device()  {
             return null
         }
 
+        fun getPropertiesByte(scanResult: ScanResult): Byte? {
+            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+            if (serviceData != null && serviceData.size >= 13) {
+                return serviceData[13]
+            }
+
+            return null
+        }
+
         override fun getPublicKey(scanResult: ScanResult): String {
             try {
                 val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)

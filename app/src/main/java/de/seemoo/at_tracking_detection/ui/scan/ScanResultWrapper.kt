@@ -10,7 +10,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 
 @SuppressLint("MissingPermission")
-data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boolean = false){
+data class ScanResultWrapper(val scanResult: ScanResult){
     val deviceAddress: String = scanResult.device.address
     val rssi: ObservableField<Int> = ObservableField(scanResult.rssi) // This is so the image can update itself live
     var rssiValue: Int = scanResult.rssi
@@ -22,7 +22,7 @@ data class ScanResultWrapper(val scanResult: ScanResult, var isInfoComplete: Boo
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes
 
-    // Information for Subcategorization
+    // Information for Sub categorization
     @SuppressLint("MissingPermission")
     val advertisedName: String? = scanResult.device.name
     val uwbCapable = when (deviceType) {

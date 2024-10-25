@@ -18,6 +18,8 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
@@ -355,8 +357,13 @@ object BackgroundBluetoothScanner {
                     accuracy = accuracy
                 )?.locationId
 
-                val beaconSaved =
-                    saveBeacon(wrappedScanResult, discoveryDate, locId) ?: return@withLock Pair(null, null)
+                // For 15 minute algorithm
+                var overrideIdentifier: String? = null
+                if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm){
+                    overrideIdentifier = deviceSaved.address
+                }
+
+                val beaconSaved = saveBeacon(wrappedScanResult, discoveryDate, locId, overrideIdentifier) ?: return@withLock Pair(null, null)
 
                 return@withLock Pair(deviceSaved, beaconSaved)
             }
@@ -366,14 +373,15 @@ object BackgroundBluetoothScanner {
     private suspend fun saveBeacon(
         wrappedScanResult: ScanResultWrapper,
         discoveryDate: LocalDateTime,
-        locId: Int?
+        locId: Int?,
+        overrideIdentifier: String? = null
     ): Beacon? {
         return withContext(Dispatchers.IO) {
             beaconMutex.withLock {
                 val beaconRepository =
                     ATTrackingDetectionApplication.getCurrentApp().beaconRepository
                 val uuids = wrappedScanResult.serviceUuids
-                val uniqueIdentifier = wrappedScanResult.uniqueIdentifier
+                val uniqueIdentifier = overrideIdentifier ?: wrappedScanResult.uniqueIdentifier
 
                 val connectionState: ConnectionState = wrappedScanResult.connectionState
                 val connectionStateString = Utility.connectionStateToString(connectionState)
@@ -391,7 +399,7 @@ object BackgroundBluetoothScanner {
                         Beacon(
                             discoveryDate,
                             wrappedScanResult.rssiValue,
-                            wrappedScanResult.uniqueIdentifier,
+                            uniqueIdentifier,
                             locId,
                             wrappedScanResult.mfg,
                             uuids,
@@ -442,19 +450,47 @@ object BackgroundBluetoothScanner {
                     device = BaseDevice(wrappedScanResult.scanResult)
 
                     // Check if ConnectionState qualifies Device to be saved
-                    // Only Save when Device is offline long enough
-                    if (wrappedScanResult.connectionState !in DeviceManager.savedConnectionStates) {
+                    // Only Save when Device is in Overmature Offline Mode or qualifies for the 15 Minute Algorithm
+                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates) {
+                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
+                            Timber.d("Device is safe and will be hidden to the user!")
+                            device.safeTracker = true
+                        }
+
+                        Timber.d("Add new Device to the database!")
+                        deviceRepository.insert(device)
+                    } else if (wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
+                        val deviceType = wrappedScanResult.deviceType
+                        val connectionState = wrappedScanResult.connectionState
+                        val trackerProperties: Byte? = when (deviceType) {
+                            DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getPropertiesByte(wrappedScanResult.scanResult)
+                            DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getPropertiesByte(wrappedScanResult.scanResult)
+                            else -> null
+                        }
+
+                        if (trackerProperties == null) {
+                            Timber.d("Device not in a saved connection state... Skipping!")
+                            return@withLock null
+                        }
+
+                        val correspondingDevice: BaseDevice? = deviceRepository.getDeviceWithRecentBeacon(
+                            deviceType = deviceType,
+                            connectionState = connectionState,
+                            payload = trackerProperties,
+                            since = LocalDateTime.now().minusMinutes(30),
+                            until = LocalDateTime.now().minusMinutes(15)
+                        )
+
+                        if (correspondingDevice == null) {
+                            Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
+                            device.payloadData = trackerProperties
+                        } else {
+                            device = correspondingDevice
+                        }
+                    } else {
                         Timber.d("Device not in a saved connection state... Skipping!")
                         return@withLock null
                     }
-
-                    if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
-                        Timber.d("Device is safe and will be hidden to the user!")
-                        device.safeTracker = true
-                    }
-
-                    Timber.d("Add new Device to the database!")
-                    deviceRepository.insert(device)
                 } else {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
