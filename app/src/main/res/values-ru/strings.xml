@@ -15,7 +15,7 @@
     <string name="filter_title_device_types">Типы устройств</string>
     <string name="notification_ignore_device">ИГНОРИРОВАТЬ УСТРОЙСТВО</string>
     <string name="notification_false_alarm">ЛОЖНОЕ СРАБАТЫВАНИЕ</string>
-    <string name="last_scans">Последний поиск</string>
+    <string name="last_scans">Последние сканирования</string>
     <string name="tip_airtag_testing"><b>Тестируете приложение?</b> Подключенные к iPhone/iPad устройства AirTag может быть обнаружены только если это разрешено в настройках. В этом случае устройства AirTag / SmartTag нужно отключить от Bluetooth и повторить поиск через 15 минут. AirGuard не сохраняет подключенные к устройствам владельцев устройства слежения</string>
     <string name="title_observe_tracker">Наблюдаемое устройство: {deviceAddress}</string>
     <string name="title_device_map">Все устройства</string>
@@ -26,6 +26,7 @@
     <string name="settings_theme_dark">Тёмная</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_use_low_power_ble_summary">Будет меньше тратить заряд, но будет хуже обнаруживать слежку</string>
+    <string name="already_scanning_warning">Приложение уже выполняет сканирование в фоне. Пожалуйста, подождите 10 секунд и перезапустите сканирование вручную</string>
     <string name="settings_use_low_power_ble_title">Режим сканирования с экономией заряда</string>
     <string name="tracking_device_not_connectable">Это устройство не способно проигрывать звук</string>
     <string name="tracking_info">Отсканируйте этот AirTag через NFC, чтобы получить больше информации</string>
@@ -44,6 +45,7 @@
     <string name="settings_risk_sensitivity_summary">Эта настройка управляет чувствительностью обнаружения устройств слежки. На высокой чувствительности обнаружение будет быстрее, но могут быть ложные срабатывания</string>
     <string name="settings_app_theme_title">Тема приложения</string>
     <string name="settings_app_theme_summary">Выбрать тему</string>
+    <string name="settings_notification_priority_high">Если включено, уведомления будут отрабатывать как тревога с высоким приоритетом</string>
     <string name="settings_third_party_libraries_title">Библиотеки от сторонних разработчиков</string>
     <string name="settings_third_party_libraries_summary">Показать список всех используемых библиотек от сторонных разработчиков и их лицензии</string>
     <string name="onboarding_share_data_no">Нет</string>
@@ -75,7 +77,7 @@
     <string name="settings_use_location_summary">Если включено, информация о слежке будет более полной</string>
     <string name="settings_use_location_title">Использовать местоположение</string>
     <string name="settings_show_connected_devices_title">Показать подключенные устройства</string>
-    <string name="settings_show_connected_devices">Показывать устройства, которые подключены к \"хозяевам\" на вкладке сканирования</string>
+    <string name="settings_show_connected_devices">Показывать на вкладке сканирования устройства, которые подключены к владельцам</string>
     <string name="error_requesting_location_permission">Ошибка получения разрешения на запрос местоположения в фоне</string>
     <string name="tracking_locate_at_title">Проиграть звук</string>
     <string name="tracking_locate_at_subtitle">Обнаружение AirTag</string>
@@ -159,11 +161,12 @@
     <string name="empty_list_trackers">В этом списке перечислены только те устройства, которые следовали за вами за последние 14 дней. И поскольку список пуст, никакое устройства за вами не следовало. Но, как бы то ни было, если таковое будет обнаружено, вы получите уведомление об этом. Не выключайте Bluetooth, чтобы обнаруживать устройства слежки. Кнопка внизу покажет все устройства, даже те, которые не определены как устройства слежки</string>
     <string name="show_all_button">Показать все устройства</string>
     <string name="empty_image_content_description">Изображение пустого списка</string>
+    <string name="notification_title_multiple">%s следуют за вами</string>
     <string name="notification_title_ble_error">Сбой поиска через BLE</string>
     <string name="beacon_locations">Местоположение маячков</string>
     <string name="other_devices_found">Найдены другие устройства</string>
     <string name="info_text_all_locations">Здесь показаны все места, где устройство было найдено. Не показаны те устройства, которые не следовали за вами</string>
-    <string name="play_sound_error_fail">Не удалось проиграть звук. Попробуйте снова</string>
+    <string name="play_sound_error_fail">Не удалось воспроизвести звук. Попробуйте снова</string>
     <string name="play_sound_error_init">Не удаётся подключиться к сервису Bluetooth</string>
     <string name="play_sound_error_connect">Не удалось подключиться к устройству</string>
     <string name="tracking_missing_beacons_info">Некоторые маячки были обнаружены без привязки к местоположению, потому они не показаны</string>
@@ -197,6 +200,7 @@
         Мы <b>НЕ БУДЕМ</b> разглашать какие-либо данные о местоположении или данные, которые могут идентифицировать вас! Участие полностью
         анонимно.</string>
     <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами следят с помощью таких устройств как AirTag, устройства, совместимые с Find My от Apple, устройства, совместимые с Find My Device от Google, SmartTag, Pebblebee, Chipolo и Tile</string>
+    <string name="settings_attributions_summary">Показать список свойств</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
     <string name="settings_privacy_policy_summary">Взглянуть нашу краткую и простую политику конфиденциальности</string>
     <string name="alert_sent_icon">Иконка уведомления</string>
@@ -220,4 +224,81 @@
         • Возможно ложное срабатывание. Потому что кто-нибудь рядом с вами, может использовать жучок. Например, ваш сосед в общественном транспорте\n<br />
         • Если вы полчаете несколько уведомлений в разные дни, обязательно воспользуйтесь возможностью воспроизвести звук!
     </string>
+    <string name="settings_notification_priority_high_title">Уведомления высокого приоритета</string>
+    <string name="settings_attributions_title">Свойства</string>
+    <string name="notification_title_base">Устройство следовало за вами</string>
+    <string name="notification_text_single">Откройте уведомление, чтобы получить больше информации. %s следовал за вами как минимум %d минут</string>
+    <string name="notification_text_multiple">Откройте уведомление, чтобы получить больше информации. % следовали за вами как минимум %d минут</string>
+    <string name="notification_title_vocal">%s следует за вами</string>
+    <string name="notification_title_consonant">%s следует за вами</string>
+    <string name="device_name_samsung_device">Устройство Samdung %s</string>
+    <string name="none">Нет</string>
+    <string name="ignored_devices">Проигнорированные устройства</string>
+    <string name="airtags_found">Найденные AirTag</string>
+    <string name="findmy_found">Найденные Apple Find My</string>
+    <string name="tile_found">Найденные Tile</string>
+    <string name="chipolo_found">Найденные Chipolo</string>
+    <string name="google_found">Найденные Google Find My</string>
+    <string name="survey_card_title">Мы проводим опрос</string>
+    <string name="survey_card_info_text">Мы пытаемся выясинить, сколько людей подвергаются слежке. Мы призываем принять участие в этом исследовании, даже если вы не являетесь жертвой слежки. Этот опрос - важная часть нашего исследовательского проекта в Техническом Университете Дармштадта</string>
+    <string name="participate">Участвовать</string>
+    <string name="survey_info_1">Как много людей сталкивались со слежкой?</string>
+    <string name="survey_info_2">Как мы можем их защитить?</string>
+    <string name="survey_info_3">Пожалуйста, примите участие, даже если вы не подвергались подобным атакам</string>
+    <string name="survey_info_4">Проведён Техническим университетом Дармштадта, Германия</string>
+    <string name="remind_later">" Напомнить позже"</string>
+    <string name="show_not_again">Больше не показывать</string>
+    <string name="survey_alert_title">Информация об опросе</string>
+    <string name="survey_alert_message">Вы хотите получить уведомление об опросе позже?</string>
+    <string name="survery_settings_summary">Технический Университет Дармштадта проводит исследование, чтобы выяснить, сколько человек подвергались слежке</string>
+    <string name="survey_settings_title">Опрос о слежке</string>
+    <string name="pebblebee_found">Наденные Pebblebee</string>
+    <string name="smarttag_found">Найденные SmartTag</string>
+    <string name="onboarding_setting_summary">Всегда проводить процедуру знакомства с приложением</string>
+    <string name="onboarding_setting_title">Показывать процедуру знакомства</string>
+    <string name="bluetooth_off_explanation">Bluetooth выключен. Приложению требуется Bluetooth для обнаружения рядом находящихся устройств слежки</string>
+    <string name="location_off_explanation">Геолокация выключена. Приложению требуется разрешение определения местоположения для поиска устройств слежки вокруг Вас. Пожалуйста, включите геолокацию в настройках системы. По возможности, перезапустите приложение</string>
+    <string name="open_bluetooth_settings">Открыть настройки Bluetooth</string>
+    <string name="open_location_settings">Открыть настройки местоположения</string>
+    <string name="battery_text">"Уровень заряда батареи: "</string>
+    <string name="battery_full">Полный</string>
+    <string name="battery_medium">Достаточно</string>
+    <string name="battery_low">Низкий</string>
+    <string name="battery_very_low">Очень низкий</string>
+    <string name="battery_unknown">Не известно</string>
+    <string name="connection_state_offline">Вне сети</string>
+    <string name="connection_state_offline_explanation">Устройство не связано с владельцем</string>
+    <string name="connection_state_overmature_offline">Давно отключено</string>
+    <string name="connection_state_overmature_offline_explanation_samsung">Устройство отключено от владельца минимум 8 часов</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">Устройство отключено от владельца минимум 30 минут</string>
+    <string name="connection_state_premature_offline">Недавно отключено</string>
+    <string name="connection_state_overmature_offline_explanation">Устройство отключено от владельца минимум 15 минут</string>
+    <string name="connection_state_premature_offline_explanation">Подключалось к владельцу максимум 15 минут назад</string>
+    <string name="connection_state_connected">Подключено</string>
+    <string name="connection_state_connected_explanation">Устройство подключено к владельцу</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">Подключалось к владельцу максимум 30 минут назад</string>
+    <string name="connection_state_unknown">Не известно</string>
+    <string name="connection_state_content_description">Информация о статус подключения устройства</string>
+    <string name="connection_state_unknown_explanation">Не получилось определить статус подключения устройства слежки</string>
+    <string name="scan_accessibility">Запускает или останавливает сканирование</string>
+    <string name="scan_sorting_by_rssi">по уровню сигнала</string>
+    <string name="scan_sorting_by_recently">по времени обнаружения</string>
+    <string name="scan_sorting_by_address">по MAC адресам</string>
+    <string name="scan_sorting_by_name">По имени</string>
+    <string name="scan_sorting_by_type">по типу</string>
+    <string name="scan_not_in_range">Устройство вне зоны видимости</string>
+    <string name="scan_battery_icon_description">Иконка показывает статус батарейки в устройстве слежки</string>
+    <string name="scan_state_info_icon_description">Нажатие на эту иконку покажет пояснение по статусу подключения</string>
+    <string name="scan_explanation">Двигайтесь медленно и найдите место с максимальным уровнем сигнала от устройства слежки</string>
+    <string name="play_sound_description">Воспроизвести звук на устройстве слежки</string>
+    <string name="bell_icon_description">Устройство было определено как устройство слежки</string>
+    <string name="searching_for_device">Поиск устройства</string>
+    <string name="battery_status_text">"Батарея: "</string>
+    <string name="apple_device">Устройства Apple</string>
+    <string name="find_my_device">Устройства Apple FindMy</string>
+    <string name="samsung_device">Устройства Samsung</string>
+    <string name="google_find_my">Устройства Google Find My</string>
+    <string name="google_find_my_default_name">Google Find My</string>
+    <string name="apple_find_my_default_name">Apple Find My</string>
+    <string name="apple_device_default_name">Устройство Apple</string>
 </resources>

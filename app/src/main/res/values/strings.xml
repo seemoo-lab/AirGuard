@@ -295,7 +295,7 @@
     <string name="battery_text">Battery Level: </string>
     <string name="battery_full">Full</string>
     <string name="battery_medium">Medium</string>
-    <string name="battery_low" translatable="false">Low</string>
+    <string name="battery_low">Low</string>
     <string name="battery_very_low">Very Low</string>
     <string name="battery_unknown">Unknown</string>
 
