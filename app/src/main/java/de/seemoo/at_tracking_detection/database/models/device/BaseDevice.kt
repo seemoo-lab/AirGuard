@@ -53,7 +53,7 @@ data class BaseDevice(
     @ColumnInfo(name = "notificationSent") var notificationSent: Boolean,
     @ColumnInfo(name = "lastNotificationSent") var lastNotificationSent: LocalDateTime?,
     @ColumnInfo(name = "deviceType") val deviceType: DeviceType?,
-    @ColumnInfo(name = "subDeviceType") var subDeviceType: String = "UNKNOWN",
+    @ColumnInfo(name = "subDeviceType", defaultValue = "UNKNOWN") var subDeviceType: String = "UNKNOWN",
     @ColumnInfo(name = "riskLevel", defaultValue = "0") var riskLevel: Int,
     @ColumnInfo(name = "lastCalculatedRiskDate") var lastCalculatedRiskDate: LocalDateTime?,
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
