@@ -28,7 +28,7 @@ interface LocationDao {
     @Query("SELECT COUNT(*) FROM location, beacon WHERE location.locationId = :locationId AND location.locationId = beacon.locationId")
     fun getNumberOfBeaconsForLocation(locationId: Int): Int
 
-    @Query("SELECT * FROM location WHERE locationId NOT IN (SELECT DISTINCT locationId FROM beacon)")
+    @Query("SELECT * FROM location WHERE locationId NOT IN (SELECT DISTINCT locationId FROM beacon WHERE locationId IS NOT NULL)")
     fun getLocationsWithNoBeacons(): List<LocationModel>
 
     @Query("SELECT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress")

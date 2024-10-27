@@ -76,7 +76,7 @@ class MigrationTest {
 
     fun insertDummyData(db: SupportSQLiteDatabase) {
         db.execSQL("INSERT INTO `beacon` (`receivedAt`, `rssi`, `deviceAddress`, `longitude`, `latitude`) VALUES ('2022-03-25T10:00:00', -78, 'aa:bb:cc:dd:ee', 50.04231, 8.34423)")
-        db.execSQL("INSERT INTO `device` (`address` , `ignore`, `connectable`, `firstDiscovery`, `lastSeen`, `notificationSent`) VALUES ('aa:bb:cc:dd:ee', false, true, '2022-03-25', '2022-03-25T10:00:00', false)")
+        db.execSQL("INSERT INTO `device` (`address` , `ignore`, `connectable`, `firstDiscovery`, `lastSeen`, `notificationSent`) VALUES ('aa:bb:cc:dd:ee', 0, 1, '2022-03-25', '2022-03-25T10:00:00', 0)")
     }
 
     fun insertNewBeacon(db: SupportSQLiteDatabase) {
