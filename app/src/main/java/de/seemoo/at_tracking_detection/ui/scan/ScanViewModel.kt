@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
@@ -16,6 +17,7 @@ import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -84,33 +86,39 @@ class ScanViewModel @Inject constructor(
             )
         }
 
-        val device = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+        val device: BaseDevice? = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
-        val elementHighRisk: ScanResultWrapper? = bluetoothDeviceListHighRiskValue.find {
-            it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
-        }
-        val elementLowRisk: ScanResultWrapper? = bluetoothDeviceListLowRiskValue.find {
-            it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
-        }
+        val isElementHighRisk = isElementHighRisk(device, wrappedScanResult)
 
-        if (elementHighRisk != null) {
-            elementHighRisk.rssi.set(wrappedScanResult.rssi.get())
-            elementHighRisk.rssiValue = wrappedScanResult.rssiValue
-            elementHighRisk.txPower = wrappedScanResult.txPower
-            elementHighRisk.isConnectable = wrappedScanResult.isConnectable
-        } else if (wrappedScanResult.connectionState in DeviceManager.unsafeConnectionState && ((device != null && !device.ignore) || device==null)) {
-            // only add possible devices to list
-            bluetoothDeviceListHighRiskValue.add(wrappedScanResult)
-        }
+        if (isElementHighRisk) {
+            val elementHighRisk: ScanResultWrapper? = bluetoothDeviceListHighRiskValue.find {
+                it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
+            }
 
-        if (elementLowRisk != null) {
-            elementLowRisk.rssi.set(wrappedScanResult.rssi.get())
-            elementLowRisk.rssiValue = wrappedScanResult.rssiValue
-            elementLowRisk.txPower = wrappedScanResult.txPower
-            elementLowRisk.isConnectable = wrappedScanResult.isConnectable
-        } else if ((wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState || (device == null || device.ignore)) && elementHighRisk == null ) {
-            // only add possible devices to list
-            bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
+            if (elementHighRisk != null) {
+                elementHighRisk.rssi.set(wrappedScanResult.rssi.get())
+                elementHighRisk.rssiValue = wrappedScanResult.rssiValue
+                elementHighRisk.txPower = wrappedScanResult.txPower
+                elementHighRisk.isConnectable = wrappedScanResult.isConnectable
+            } else {
+                // only add possible devices to list
+                bluetoothDeviceListHighRiskValue.add(wrappedScanResult)
+            }
+
+        } else {
+            val elementLowRisk: ScanResultWrapper? = bluetoothDeviceListLowRiskValue.find {
+                it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
+            }
+
+            if (elementLowRisk != null) {
+                elementLowRisk.rssi.set(wrappedScanResult.rssi.get())
+                elementLowRisk.rssiValue = wrappedScanResult.rssiValue
+                elementLowRisk.txPower = wrappedScanResult.txPower
+                elementLowRisk.isConnectable = wrappedScanResult.isConnectable
+            } else {
+                // only add possible devices to list
+                bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
+            }
         }
 
         // Sorting list by detection date is not so restless
@@ -133,8 +141,8 @@ class ScanViewModel @Inject constructor(
     val isListEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
         // Function to update the isListEmpty LiveData
         fun update() {
-            val highRiskEmpty = bluetoothDeviceListHighRisk.value?.isEmpty() ?: true
-            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() ?: true
+            val highRiskEmpty = bluetoothDeviceListHighRisk.value?.isEmpty() != false
+            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() != false
             this.value = highRiskEmpty && lowRiskEmpty
         }
 
@@ -145,10 +153,38 @@ class ScanViewModel @Inject constructor(
     val lowRiskIsEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
         // Function to update the isListEmpty LiveData
         fun update() {
-            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() ?: true
+            val lowRiskEmpty = bluetoothDeviceListLowRisk.value?.isEmpty() != false
             this.value = lowRiskEmpty
         }
 
         addSource(bluetoothDeviceListLowRisk) { update() }
+    }
+
+    fun isElementHighRisk (device: BaseDevice?, wrappedScanResult: ScanResultWrapper): Boolean {
+        val isUnsafeConnectionState = wrappedScanResult.connectionState in DeviceManager.unsafeConnectionState
+        val deviceIsIgnored = device?.ignore == true
+        val deviceIsSafeTracker = device?.safeTracker == true
+        val notificationSent = device?.notificationSent == true
+        val notificationRecent = device?.lastNotificationSent?.isAfter(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)) == true
+        val riskLevelExistent = (device?.riskLevel ?: 0) > 0
+
+        return if (deviceIsIgnored) {
+            // Highest Priority: If user ignores device it is automatically low risk
+            false
+        } else if (deviceIsSafeTracker) {
+            // If device is a safe tracker it is automatically low risk
+            false
+        } else if (isUnsafeConnectionState) {
+            // Every unsafeConnectionState is potentially high risk
+            true
+        } else if (notificationSent && notificationRecent) {
+            // This case is relevant for the 15 minute algorithm
+            true
+        } else if (riskLevelExistent) {
+            // This case is relevant for the 15 minute algorithm
+            true
+        } else {
+            false
+        }
     }
 }
