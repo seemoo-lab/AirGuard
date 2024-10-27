@@ -360,6 +360,7 @@ object BackgroundBluetoothScanner {
                 // For 15 minute algorithm
                 var overrideIdentifier: String? = null
                 if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm){
+                    Timber.d("Device ${wrappedScanResult.uniqueIdentifier} ${wrappedScanResult.deviceType} ${wrappedScanResult.connectionState} is in a saved connection state for the 15 Minute Algorithm!")
                     overrideIdentifier = deviceSaved.address
                 }
 
@@ -409,7 +410,7 @@ object BackgroundBluetoothScanner {
                         Beacon(
                             discoveryDate,
                             wrappedScanResult.rssiValue,
-                            wrappedScanResult.uniqueIdentifier,
+                            uniqueIdentifier,
                             locId,
                             null,
                             uuids,
@@ -477,15 +478,19 @@ object BackgroundBluetoothScanner {
                             deviceType = deviceType,
                             connectionState = connectionState,
                             payload = trackerProperties,
-                            since = LocalDateTime.now().minusMinutes(30),
-                            until = LocalDateTime.now().minusMinutes(15)
+                            since = LocalDateTime.now().minusMinutes(31),
+                            until = LocalDateTime.now().minusMinutes(14)
                         )
 
                         if (correspondingDevice == null) {
                             Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
                             device.payloadData = trackerProperties
+                            deviceRepository.insert(device)
                         } else {
+                            Timber.d("Update Device to the database using the 15 Minute Algorithm!")
                             device = correspondingDevice
+                            device.lastSeen = discoveryDate
+                            deviceRepository.update(device)
                         }
                     } else {
                         Timber.d("Device not in a saved connection state... Skipping!")
