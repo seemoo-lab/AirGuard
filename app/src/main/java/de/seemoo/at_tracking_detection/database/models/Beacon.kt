@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.models
 
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.Converters
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -13,6 +14,14 @@ import java.time.format.FormatStyle
         Index(value = ["receivedAt"]),
         Index(value = ["deviceAddress"]),
         Index(value = ["connectionState"])
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = BaseDevice::class,
+            parentColumns = ["address"],
+            childColumns = ["deviceAddress"],
+            onDelete = ForeignKey.CASCADE  // Automatically deletes beacons when device is deleted
+        )
     ]
 )
 @TypeConverters(DateTimeConverter::class, Converters::class)

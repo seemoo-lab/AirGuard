@@ -34,8 +34,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        deleteOldAndSafeTrackers()
-
         Timber.d("Tracking detection background job started!")
         // Just writing a new comment in here.
         val ignoredDevices = deviceRepository.ignoredDevicesSync
@@ -68,7 +66,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
 
-        Timber.d("Deleting old trackers")
         try {
             deleteOldAndSafeTrackers()
         }catch (e:Exception) {
@@ -133,19 +130,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
         // Delete old devices and beacons from the database
         Timber.d("Start deleting old and safe Trackers")
         val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
-        val beaconsToBeDeleted = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-
-        try {
-            if (beaconsToBeDeleted.isNotEmpty()) {
-                Timber.d("Deleting ${beaconsToBeDeleted.size} beacons")
-                beaconRepository.deleteBeacons(beaconsToBeDeleted)
-                Timber.d("Deleting Beacons successful")
-            } else {
-                Timber.d("No old beacons to delete")
-            }
-        } catch (e: Exception) {
-            Timber.e("Deleting Beacons failed $e")
-        }
 
         try {
             val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
@@ -154,8 +138,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
                 deviceRepository.deleteDevices(devicesToBeDeleted)
                 Timber.d("Deleting Devices successful")
             }
-            if (beaconsToBeDeleted.isEmpty() && devicesToBeDeleted.isEmpty()) {
-                Timber.d("No old devices or beacons to delete")
+            if (devicesToBeDeleted.isEmpty()) {
+                Timber.d("No old devices to delete")
             }
         } catch (e: Exception) {
             Timber.e("Deleting Devices failed $e")
@@ -174,6 +158,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Timber.e("Deleting Locations failed $e")
         }
+
+        Timber.d("Deleting old and safe Trackers finished")
     }
 
     companion object {
