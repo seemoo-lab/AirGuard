@@ -461,6 +461,7 @@ object BackgroundBluetoothScanner {
                         Timber.d("Add new Device to the database!")
                         deviceRepository.insert(device)
                     } else if (wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
+                        val timeTolerance: Long = 2 // in minutes
                         val deviceType = wrappedScanResult.deviceType
                         val connectionState = wrappedScanResult.connectionState
                         val trackerProperties: Byte? = when (deviceType) {
@@ -478,8 +479,8 @@ object BackgroundBluetoothScanner {
                             deviceType = deviceType,
                             connectionState = connectionState,
                             payload = trackerProperties,
-                            since = LocalDateTime.now().minusMinutes(31),
-                            until = LocalDateTime.now().minusMinutes(14)
+                            since = LocalDateTime.now().minusMinutes(30+timeTolerance),
+                            until = LocalDateTime.now().minusMinutes(15-timeTolerance)
                         )
 
                         if (correspondingDevice == null) {
