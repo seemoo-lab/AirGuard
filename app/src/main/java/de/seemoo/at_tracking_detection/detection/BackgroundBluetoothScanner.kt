@@ -29,14 +29,14 @@ import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -167,16 +167,24 @@ object BackgroundBluetoothScanner {
         val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
-        BLEScanCallback.startScanning(
-            bluetoothAdapter!!.bluetoothLeScanner,
-            DeviceManager.scanFilter,
-            scanSettings,
-            leScanCallback
-        )
+        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
+            BLEScanCallback.startScanning(
+                scanner,
+                DeviceManager.scanFilter,
+                scanSettings,
+                leScanCallback
+            )
+        } ?: run {
+            Timber.e("Bluetooth LE Scanner is null, cannot perform scan.")
+            isScanning = false
+            return BackgroundScanResults(0, 0, 0, true)
+        }
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
-        BLEScanCallback.stopScanning(bluetoothAdapter!!.bluetoothLeScanner)
+        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
+            BLEScanCallback.stopScanning(scanner)
+        }
         isScanning = false
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
