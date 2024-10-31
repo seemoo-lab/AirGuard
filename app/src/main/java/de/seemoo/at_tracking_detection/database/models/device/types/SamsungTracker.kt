@@ -216,6 +216,16 @@ class SamsungTracker(val id: Int) : Device() {
             return null
         }
 
+        fun getInternalAgingCounter(scanResult: ScanResult): ByteArray? {
+            val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+            if (serviceData != null && serviceData.size >= 12) {
+                return byteArrayOf(serviceData[1], serviceData[2], serviceData[3])
+            }
+
+            return null
+        }
+
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 

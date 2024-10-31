@@ -403,7 +403,19 @@ object BackgroundBluetoothScanner {
 
                 if (beacons.isEmpty()) {
                     Timber.d("Add new Beacon to the database!")
-                    beacon = if (BuildConfig.DEBUG) {
+
+                    beacon = if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
+                        // Samsung Tracker have Aging Counter, we use this to further optimize the 15 Minute Algorithm
+                        Beacon(
+                            discoveryDate,
+                            wrappedScanResult.rssiValue,
+                            uniqueIdentifier,
+                            locId,
+                            SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult),
+                            uuids,
+                            connectionStateString
+                        )
+                    } else if (BuildConfig.DEBUG) {
                         // Save the manufacturer data to the beacon
                         Beacon(
                             discoveryDate,
@@ -481,6 +493,35 @@ object BackgroundBluetoothScanner {
                         if (trackerProperties == null) {
                             Timber.d("Device not in a saved connection state... Skipping!")
                             return@withLock null
+                        }
+
+                        if (deviceType == DeviceType.SAMSUNG_TRACKER) {
+                            // Additional Check: Aging Counter for Samsung Tracker has to be exactly 1 smaller in the previous Beacon
+                            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
+                            val currentAgingCounter = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
+                            val beaconBefore: Beacon? = beaconRepository.getRecentBeaconForDevice(deviceType, connectionState, trackerProperties, LocalDateTime.now().minusMinutes(30), LocalDateTime.now().minusMinutes(15))
+
+                            if (beaconBefore != null && currentAgingCounter != null) {
+                                fun byteArrayToInt(byteArray: ByteArray): Int {
+                                    require(byteArray.size == 3) { "ByteArray must have exactly 3 bytes" }
+                                    return (byteArray[0].toInt() and 0xFF shl 16) or
+                                            (byteArray[1].toInt() and 0xFF shl 8) or
+                                            (byteArray[2].toInt() and 0xFF)
+                                }
+
+                                val previousAgingCounter = beaconBefore.manufacturerData
+                                if (previousAgingCounter != null && previousAgingCounter.size == 3) {
+                                    val currentAgingCounterInt = byteArrayToInt(currentAgingCounter)
+                                    val previousAgingCounterInt = byteArrayToInt(previousAgingCounter)
+                                    Timber.d("Current Aging Counter: $currentAgingCounterInt, Previous Aging Counter: $previousAgingCounterInt")
+                                    if (currentAgingCounterInt != previousAgingCounterInt - 1) {
+                                        Timber.d("Aging Counter does not match the previous Aging Counter... Skipping!")
+                                        return@withLock null
+                                    } else {
+                                        Timber.d("Aging Counter equals the previous Aging Counter plus 1 (Difference of 15 minutes)!")
+                                    }
+                                }
+                            }
                         }
 
                         val correspondingDevice: BaseDevice? = deviceRepository.getDeviceWithRecentBeacon(
