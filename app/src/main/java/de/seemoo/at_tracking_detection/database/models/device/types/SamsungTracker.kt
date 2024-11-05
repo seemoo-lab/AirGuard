@@ -220,7 +220,7 @@ class SamsungTracker(val id: Int) : Device() {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
             if (serviceData != null && serviceData.size >= 12) {
-                return byteArrayOf(serviceData[1], serviceData[2], serviceData[3])
+                return byteArrayOf(serviceData[3], serviceData[2], serviceData[1])
             }
 
             return null
