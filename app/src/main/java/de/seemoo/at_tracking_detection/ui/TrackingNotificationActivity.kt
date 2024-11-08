@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -31,27 +32,36 @@ class TrackingNotificationActivity : AppCompatActivity() {
             Timber.e("Device address is needed! Going home...")
             this.onSupportNavigateUp()
         } else {
+            // Workaround: Somehow not possible to use getString with deviceAddress as an Argument
+            var getTitle = getString(R.string.title_devices_tracking)
+            getTitle = getTitle.replace("{deviceAddress}", deviceAddress.toString())
+            supportActionBar?.title = getTitle
+
             val args = TrackingFragmentArgs(
                 deviceAddress = deviceAddress,
                 deviceTypeAsString = deviceTypeAsString,
                 notificationId = notificationId
             ).toBundle()
-            navController.setGraph(R.navigation.tracking_navigation, args)
+            navController.setGraph(R.navigation.main_navigation)
+            val navOptions = NavOptions.Builder()
+                // .setPopUpTo(R.id.navigation_dashboard, true)
+                .build()
+            navController.navigate(R.id.trackingFragment, args, navOptions)
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                onNavigateUp()
+                onSupportNavigateUp()
             }
         })
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        if (!navController.navigateUp()) {
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
+        return if (navController.currentDestination?.id == R.id.trackingFragment) {
+            finish()
+            true
+        } else {
+            navController.navigateUp()
         }
-        return true
     }
 }

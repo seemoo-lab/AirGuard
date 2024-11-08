@@ -120,15 +120,29 @@ class TrackingFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this) {
             if (safeArgs.notificationId != -1) {
-                val intent = Intent(context, MainActivity::class.java)
-                intent.apply {
-                    flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-                startActivity(intent)
+                activity?.finish()
             } else {
                 findNavController().navigateUp()
             }
+        }
+    }
+
+    private fun initializeMap() {
+        mapView.addMapListener(object : MapListener {
+            override fun onZoom(event: ZoomEvent?): Boolean {
+                if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {
+                    zoomToMarkers()
+                }
+                return true
+            }
+
+            override fun onScroll(event: ScrollEvent?): Boolean {
+                return true
+            }
+        })
+
+        if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
+            zoomToMarkers()
         }
     }
 
@@ -137,24 +151,8 @@ class TrackingFragment : Fragment() {
 
         mapView = view.findViewById(R.id.map)
 
-        mapView.addMapListener(object : MapListener {
-            override fun onZoom(event: ZoomEvent?): Boolean {
-                // Check if the map is fully loaded and ready for zoom operations
-                if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {
-                    // Call the method to zoom to the bounding box of markers
-                    zoomToMarkers()
-                }
-                return true
-            }
-
-            override fun onScroll(event: ScrollEvent?): Boolean {
-                // Handle scroll event
-                return true
-            }
-        })
-
-        if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
-            zoomToMarkers()
+        view.post {
+            initializeMap()
         }
 
         trackingViewModel.deviceType.observe(viewLifecycleOwner) { deviceType ->
