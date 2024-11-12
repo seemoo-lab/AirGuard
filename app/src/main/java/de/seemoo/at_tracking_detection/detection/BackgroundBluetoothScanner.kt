@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
@@ -189,11 +190,21 @@ object BackgroundBluetoothScanner {
 
         //Waiting for updated location to come in
         Timber.d("Waiting for location update")
+        LocationLogger.log("BackgroundBluetoothScanner: Request fetched Location")
         val fetchedLocation = waitForRequestedLocation()
         Timber.d("Fetched location? $fetchedLocation")
+        LocationLogger.log("BackgroundBluetoothScanner: Could location be Fetched?: $fetchedLocation")
         if (location == null) {
+            LocationLogger.log("BackgroundBluetoothScanner: Failed to fetch location, get last known location and ignore requirements")
             // Get the last location no matter if the requirements match or not
             location = locationProvider.getLastLocation(checkRequirements = false)
+            if (location == null) {
+                LocationLogger.log("BackgroundBluetoothScanner: Failed to retrieve location again, location is null")
+            } else {
+                LocationLogger.log("BackgroundBluetoothScanner: Got Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+            }
+        } else {
+            LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
         }
 
         val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
