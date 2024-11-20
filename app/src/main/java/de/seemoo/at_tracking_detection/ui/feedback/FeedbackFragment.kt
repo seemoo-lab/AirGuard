@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.feedback
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,7 @@ class FeedbackFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,7 +67,7 @@ class FeedbackFragment : Fragment() {
         for (locationItem in locations) {
             val locationCard = MaterialCardView(context)
 
-            val layout = LayoutInflater.from(context).inflate(R.layout.item_feedback_selection, null)
+            val layout = LayoutInflater.from(context).inflate(R.layout.item_feedback_selection, null, false)
             val text = layout.findViewById<TextView>(R.id.text)
             val icon = layout.findViewById<ImageView>(R.id.icon)
 
