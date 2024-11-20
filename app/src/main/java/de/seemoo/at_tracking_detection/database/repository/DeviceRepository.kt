@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.database.repository
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.DeviceDao
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -56,6 +57,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
 
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
+
+    fun getDeviceWithRecentBeacon(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice? = deviceDao.getDeviceWithRecentBeacon(deviceType.name, connectionState.ordinal, payload, since, until)
 
 //    @WorkerThread
 //    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {

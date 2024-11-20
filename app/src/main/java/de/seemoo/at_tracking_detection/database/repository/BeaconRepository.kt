@@ -4,6 +4,8 @@ import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.BeaconDao
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -49,6 +51,8 @@ class BeaconRepository @Inject constructor(
             beaconDao.getDeviceBeacons(it.address)
         }.flatten()
     }
+
+    fun getRecentBeaconForDevice(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime): Beacon? = beaconDao.getRecentBeaconForDevice(deviceType.name, connectionState.ordinal, payload, since, until)
 
     @WorkerThread
     suspend fun insert(beacon: Beacon): Long = beaconDao.insert(beacon)

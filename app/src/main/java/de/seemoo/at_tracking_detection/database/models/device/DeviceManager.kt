@@ -1,4 +1,4 @@
-package de.seemoo.at_tracking_detection.database.models.device
+﻿package de.seemoo.at_tracking_detection.database.models.device
 
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -14,7 +14,16 @@ object DeviceManager {
     private val appleDevices = listOf(AirTag, AppleFindMy, AirPods, AppleDevice)
     val appleDevicesWithInfoService = listOf(AppleFindMy, AirPods).map { it.deviceType }
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
-    val savedConnectionStates = unsafeConnectionState //enumValues<ConnectionState>().toList()
+    val savedConnectionStates = unsafeConnectionState // All: enumValues<ConnectionState>().toList()
+
+    // 15 minute algorithm: If a tracker changes its advertisement every 15 minutes we try to identify with a level of uncertainty if they are still the same
+    // savedDeviceTypesWith15MinuteAlgorithm: Device types that are considered by this algorithm
+    val savedDeviceTypesWith15MinuteAlgorithm = listOf(DeviceType.SAMSUNG_TRACKER, DeviceType.SAMSUNG_FIND_MY_MOBILE)
+    // deviceTypesWith15MinuteAlgorithm: Device types that need to not only appear every 15 minute but also have their agingCounter be +1 compared to the previous advertisement
+    // Note: it is necessary that the tracker implements an aging counter function for this to work (see: BackgroundBluetoothScanner.saveDevice)
+    val strict15MinuteAlgorithm = listOf(DeviceType.SAMSUNG_TRACKER)
+    // savedConnectionStatesWith15MinuteAlgorithm: Connection states that are considered by the 15 minute algorithm
+    val savedConnectionStatesWith15MinuteAlgorithm = listOf(ConnectionState.OFFLINE)
 
     private val deviceTypeCache = mutableMapOf<String, DeviceType>()
 

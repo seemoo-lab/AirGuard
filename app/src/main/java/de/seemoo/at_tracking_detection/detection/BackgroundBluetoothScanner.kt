@@ -20,11 +20,14 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
@@ -196,11 +199,21 @@ object BackgroundBluetoothScanner {
 
         //Waiting for updated location to come in
         Timber.d("Waiting for location update")
+        LocationLogger.log("BackgroundBluetoothScanner: Request fetched Location")
         val fetchedLocation = waitForRequestedLocation()
         Timber.d("Fetched location? $fetchedLocation")
+        LocationLogger.log("BackgroundBluetoothScanner: Could location be Fetched?: $fetchedLocation")
         if (location == null) {
+            LocationLogger.log("BackgroundBluetoothScanner: Failed to fetch location, get last known location and ignore requirements")
             // Get the last location no matter if the requirements match or not
             location = locationProvider.getLastLocation(checkRequirements = false)
+            if (location == null) {
+                LocationLogger.log("BackgroundBluetoothScanner: Failed to retrieve location again, location is null")
+            } else {
+                LocationLogger.log("BackgroundBluetoothScanner: Got Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+            }
+        } else {
+            LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
         }
 
         val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
@@ -370,8 +383,14 @@ object BackgroundBluetoothScanner {
                     accuracy = accuracy
                 )?.locationId
 
-                val beaconSaved =
-                    saveBeacon(wrappedScanResult, discoveryDate, locId) ?: return@withLock Pair(null, null)
+                // For 15 minute algorithm
+                var overrideIdentifier: String? = null
+                if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm){
+                    Timber.d("Device ${wrappedScanResult.uniqueIdentifier} ${wrappedScanResult.deviceType} ${wrappedScanResult.connectionState} is in a saved connection state for the 15 Minute Algorithm!")
+                    overrideIdentifier = deviceSaved.address
+                }
+
+                val beaconSaved = saveBeacon(wrappedScanResult, discoveryDate, locId, overrideIdentifier) ?: return@withLock Pair(null, null)
 
                 return@withLock Pair(deviceSaved, beaconSaved)
             }
@@ -381,14 +400,15 @@ object BackgroundBluetoothScanner {
     private suspend fun saveBeacon(
         wrappedScanResult: ScanResultWrapper,
         discoveryDate: LocalDateTime,
-        locId: Int?
+        locId: Int?,
+        overrideIdentifier: String? = null
     ): Beacon? {
         return withContext(Dispatchers.IO) {
             beaconMutex.withLock {
                 val beaconRepository =
                     ATTrackingDetectionApplication.getCurrentApp().beaconRepository
                 val uuids = wrappedScanResult.serviceUuids
-                val uniqueIdentifier = wrappedScanResult.uniqueIdentifier
+                val uniqueIdentifier = overrideIdentifier ?: wrappedScanResult.uniqueIdentifier
 
                 val connectionState: ConnectionState = wrappedScanResult.connectionState
                 val connectionStateString = Utility.connectionStateToString(connectionState)
@@ -401,12 +421,24 @@ object BackgroundBluetoothScanner {
 
                 if (beacons.isEmpty()) {
                     Timber.d("Add new Beacon to the database!")
-                    beacon = if (BuildConfig.DEBUG) {
+
+                    beacon = if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
+                        // Samsung Tracker have Aging Counter, we use this to further optimize the 15 Minute Algorithm
+                        Beacon(
+                            discoveryDate,
+                            wrappedScanResult.rssiValue,
+                            uniqueIdentifier,
+                            locId,
+                            SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult),
+                            uuids,
+                            connectionStateString
+                        )
+                    } else if (BuildConfig.DEBUG) {
                         // Save the manufacturer data to the beacon
                         Beacon(
                             discoveryDate,
                             wrappedScanResult.rssiValue,
-                            wrappedScanResult.uniqueIdentifier,
+                            uniqueIdentifier,
                             locId,
                             wrappedScanResult.mfg,
                             uuids,
@@ -416,7 +448,7 @@ object BackgroundBluetoothScanner {
                         Beacon(
                             discoveryDate,
                             wrappedScanResult.rssiValue,
-                            wrappedScanResult.uniqueIdentifier,
+                            uniqueIdentifier,
                             locId,
                             null,
                             uuids,
@@ -457,19 +489,81 @@ object BackgroundBluetoothScanner {
                     device = BaseDevice(wrappedScanResult.scanResult)
 
                     // Check if ConnectionState qualifies Device to be saved
-                    // Only Save when Device is offline long enough
-                    if (wrappedScanResult.connectionState !in DeviceManager.savedConnectionStates) {
+                    // Only Save when Device is in Overmature Offline Mode or qualifies for the 15 Minute Algorithm
+                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates) {
+                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
+                            Timber.d("Device is safe and will be hidden to the user!")
+                            device.safeTracker = true
+                        }
+
+                        Timber.d("Add new Device to the database!")
+                        deviceRepository.insert(device)
+                    } else if (wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
+                        val timeTolerance: Long = 2 // in minutes
+                        val deviceType = wrappedScanResult.deviceType
+                        val connectionState = wrappedScanResult.connectionState
+                        val trackerProperties: Byte? = when (deviceType) {
+                            DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getPropertiesByte(wrappedScanResult.scanResult)
+                            DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getPropertiesByte(wrappedScanResult.scanResult)
+                            else -> null
+                        }
+
+                        if (trackerProperties == null) {
+                            Timber.d("Device not in a saved connection state... Skipping!")
+                            return@withLock null
+                        }
+
+                        if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
+                            // Additional Check: Aging Counter for Samsung Tracker has to be exactly 1 smaller in the previous Beacon
+                            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
+                            val currentAgingCounter = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
+                            val beaconBefore: Beacon? = beaconRepository.getRecentBeaconForDevice(deviceType, connectionState, trackerProperties, LocalDateTime.now().minusMinutes(30), LocalDateTime.now().minusMinutes(15))
+
+                            if (beaconBefore != null && currentAgingCounter != null) {
+                                fun byteArrayToInt(byteArray: ByteArray): Int {
+                                    require(byteArray.size == 3) { "ByteArray must have exactly 3 bytes" }
+                                    return (byteArray[0].toInt() and 0xFF shl 16) or
+                                            (byteArray[1].toInt() and 0xFF shl 8) or
+                                            (byteArray[2].toInt() and 0xFF)
+                                }
+
+                                val previousAgingCounter = beaconBefore.manufacturerData
+                                if (previousAgingCounter != null && previousAgingCounter.size == 3) {
+                                    val currentAgingCounterInt = byteArrayToInt(currentAgingCounter)
+                                    val previousAgingCounterInt = byteArrayToInt(previousAgingCounter)
+                                    Timber.d("Current Aging Counter: $currentAgingCounterInt, Previous Aging Counter: $previousAgingCounterInt")
+                                    if (currentAgingCounterInt != previousAgingCounterInt - 1) {
+                                        Timber.d("Aging Counter does not match the previous Aging Counter... Skipping!")
+                                        return@withLock null
+                                    } else {
+                                        Timber.d("Aging Counter equals the previous Aging Counter plus 1 (Difference of 15 minutes)!")
+                                    }
+                                }
+                            }
+                        }
+
+                        val correspondingDevice: BaseDevice? = deviceRepository.getDeviceWithRecentBeacon(
+                            deviceType = deviceType,
+                            connectionState = connectionState,
+                            payload = trackerProperties,
+                            since = LocalDateTime.now().minusMinutes(30+timeTolerance),
+                            until = LocalDateTime.now().minusMinutes(15-timeTolerance)
+                        )
+
+                        if (correspondingDevice == null) {
+                            Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
+                            device.payloadData = trackerProperties
+                            deviceRepository.insert(device)
+                        } else {
+                            Timber.d("Update Device to the database using the 15 Minute Algorithm!")
+                            device = correspondingDevice
+                            device.lastSeen = discoveryDate
+                            deviceRepository.update(device)
+                        }
+                    } else {
                         Timber.d("Device not in a saved connection state... Skipping!")
                         return@withLock null
                     }
-
-                    if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
-                        Timber.d("Device is safe and will be hidden to the user!")
-                        device.safeTracker = true
-                    }
-
-                    Timber.d("Add new Device to the database!")
-                    deviceRepository.insert(device)
                 } else {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
