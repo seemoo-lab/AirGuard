@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.util
 
 import android.Manifest
-import android.content.Context
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -30,7 +29,6 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -49,9 +47,9 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 import java.io.File
 import java.io.FileWriter
-import java.time.LocalDateTime
 import java.net.HttpURLConnection
 import java.net.URL
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
