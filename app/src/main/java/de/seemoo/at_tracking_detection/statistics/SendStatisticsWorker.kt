@@ -37,7 +37,7 @@ class SendStatisticsWorker @AssistedInject constructor(
             }
         }catch (e: Error) {
             Timber.e("Failed pinging server")
-            Timber.e(e.message)
+            Timber.e(e)
             return Result.retry()
         }
 
@@ -49,7 +49,7 @@ class SendStatisticsWorker @AssistedInject constructor(
                 SharedPrefs.token = token
             }catch (e: Error) {
                 Timber.e("Failed getting token")
-                Timber.e(e.message)
+                Timber.e(e)
                 return Result.retry()
             }
         }
@@ -105,7 +105,7 @@ class SendStatisticsWorker @AssistedInject constructor(
             }
         }catch (e: Error) {
             Timber.e("Failed uploading devices")
-            Timber.e(e.message)
+            Timber.e(e)
             return Result.retry()
         }
 
