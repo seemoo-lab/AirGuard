@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.util
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
@@ -32,6 +34,9 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.io.File
+import java.io.FileWriter
+import java.time.LocalDateTime
 
 object Utility {
 
@@ -277,6 +282,27 @@ object Utility {
             }
             else -> {
                 0
+            }
+        }
+    }
+
+    object LocationLogger {
+        private const val LOG_FILE_NAME = "location_log.log"
+        val loggingTurnedOn: Boolean = BuildConfig.DEBUG
+
+        fun log(message: String) {
+            if (!loggingTurnedOn) return
+
+            // Timber.d(message)
+
+            val context = ATTrackingDetectionApplication.getAppContext()
+            val logFile = File(context.filesDir, LOG_FILE_NAME)
+            try {
+                FileWriter(logFile, true).use { writer ->
+                    writer.appendLine("${LocalDateTime.now()}: $message")
+                }
+            } catch (e: Exception) {
+                Timber.e("Failed to write to log file: ${e.message}")
             }
         }
     }

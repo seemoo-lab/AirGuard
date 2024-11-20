@@ -32,7 +32,7 @@ class NotificationBuilder @Inject constructor(
 
     private fun pendingNotificationIntent(bundle: Bundle, notificationId: Int): PendingIntent {
         val intent = Intent(context, TrackingNotificationActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             action = NotificationConstants.CLICKED_ACTION
             putExtras(bundle)
         }

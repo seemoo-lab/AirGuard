@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.Dispatchers
@@ -66,14 +67,21 @@ class ScanViewModel @Inject constructor(
                 deviceAddress = wrappedScanResult.uniqueIdentifier,
                 since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
             ) == 0) {
-            // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
-            val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
-            Timber.d("Got location $location in ScanViewModel")
             val skipDevice = Utility.getSkipDevice(wrappedScanResult = wrappedScanResult)
-
             if (skipDevice) {
                 Timber.d("Skipping device ${wrappedScanResult.uniqueIdentifier}")
                 return@launch
+            }
+
+            // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
+            LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
+            val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
+            Timber.d("Got location $location in ScanViewModel")
+
+            if (location == null) {
+                LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
+            } else {
+                LocationLogger.log("ScanViewModel: Got Location: Latitude: ${location.latitude}, Longitude: ${location.longitude}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
             }
 
             BackgroundBluetoothScanner.insertScanResult(

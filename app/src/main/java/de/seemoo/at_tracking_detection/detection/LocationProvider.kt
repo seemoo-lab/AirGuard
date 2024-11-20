@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.util.Date
 import javax.inject.Inject
@@ -32,6 +33,7 @@ open class LocationProvider @Inject constructor(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED) {
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
             return null
         }
 
@@ -48,11 +50,13 @@ open class LocationProvider @Inject constructor(
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
             return null
         }
 
         val bestLocation = bestLastLocation
         if (bestLocation != null && locationMatchesMinimumRequirements(bestLocation)) {
+            Utility.LocationLogger.log("LocationProvider: return best location (checkRequirements: $checkRequirements): ${bestLocation.latitude}, Longitude: ${bestLocation.longitude}, Altitude: ${bestLocation.altitude}, Accuracy: ${bestLocation.accuracy}")
             return bestLocation
         }
 
@@ -60,8 +64,18 @@ open class LocationProvider @Inject constructor(
 
         if (lastLocation != null && bestLocation != null && !checkRequirements) {
             return if (lastLocation.time > bestLocation.time) {
+                Utility.LocationLogger.log("LocationProvider: return last location (checkRequirements: $checkRequirements): ${lastLocation.latitude}, Longitude: ${lastLocation.longitude}, Altitude: ${lastLocation.altitude}, Accuracy: ${lastLocation.accuracy}")
                 lastLocation
-            } else bestLocation
+            } else {
+                Utility.LocationLogger.log("LocationProvider: return best location (checkRequirements: $checkRequirements): ${bestLocation.latitude}, Longitude: ${bestLocation.longitude}, Altitude: ${bestLocation.altitude}, Accuracy: ${bestLocation.accuracy}")
+                bestLocation
+            }
+        }
+
+        if (lastLocation != null) {
+            Utility.LocationLogger.log("LocationProvider: return last location (checkRequirements: $checkRequirements): ${lastLocation.latitude}, Longitude: ${lastLocation.longitude}, Altitude: ${lastLocation.altitude}, Accuracy: ${lastLocation.accuracy}")
+        } else {
+            Utility.LocationLogger.log("LocationProvider: return null (checkRequirements: $checkRequirements)")
         }
         return lastLocation
     }
@@ -73,35 +87,52 @@ open class LocationProvider @Inject constructor(
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
             return null
         }
 
         // Get the last known locations from both providers
+        Utility.LocationLogger.log("LocationProvider: Request last known location from network and gps provider")
         val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        if (networkLocation != null) {
+            Utility.LocationLogger.log("LocationProvider: Got network location: Latitude: ${networkLocation.latitude}, Longitude: ${networkLocation.longitude}, Altitude: ${networkLocation.altitude}, Accuracy: ${networkLocation.accuracy}")
+        } else {
+            Utility.LocationLogger.log("LocationProvider: Network location is null")
+        }
         val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (gpsLocation != null) {
+            Utility.LocationLogger.log("LocationProvider: Got gps location: Latitude: ${gpsLocation.latitude}, Longitude: ${gpsLocation.longitude}, Altitude: ${gpsLocation.altitude}, Accuracy: ${gpsLocation.accuracy}")
+        } else {
+            Utility.LocationLogger.log("LocationProvider: GPS location is null")
+        }
 
         // If both locations are available, return the one that is more current and meets the minimum requirements
         if (networkLocation != null && gpsLocation != null) {
             val bestLocation = if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation
             if (locationMatchesMinimumRequirements(bestLocation)) {
+                Utility.LocationLogger.log("LocationProvider: Both network and gps location available, return best location: ${bestLocation.latitude}, Longitude: ${bestLocation.longitude}, Altitude: ${bestLocation.altitude}, Accuracy: ${bestLocation.accuracy}")
                 return bestLocation
             }
         }
 
         // If only one location is available, return it if it meets the minimum requirements
         if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
+            Utility.LocationLogger.log("LocationProvider: only network location meets requirements: ${networkLocation.latitude}, Longitude: ${networkLocation.longitude}, Altitude: ${networkLocation.altitude}, Accuracy: ${networkLocation.accuracy}")
             return networkLocation
         }
         if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
+            Utility.LocationLogger.log("LocationProvider: only gps location meets requirements: ${gpsLocation.latitude}, Longitude: ${gpsLocation.longitude}, Altitude: ${gpsLocation.altitude}, Accuracy: ${gpsLocation.accuracy}")
             return gpsLocation
         }
 
         // If neither location meets the minimum requirements, return null
         if (checkRequirements) {
+            Utility.LocationLogger.log("LocationProvider: Neither network nor gps meets requirements, return null")
             return null
         }
 
         // If no location requirements are specified, return the last known location from either provider, or null if none are available
+        Utility.LocationLogger.log("LocationProvider: Neither network nor gps meets requirements, return last known location")
         return networkLocation ?: gpsLocation
     }
 
@@ -143,6 +174,7 @@ open class LocationProvider @Inject constructor(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED) {
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
             return null
         }
 
@@ -151,10 +183,12 @@ open class LocationProvider @Inject constructor(
 
         // If the last location is available and meets the minimum requirements, return it
         if (lastLocation != null && locationMatchesMinimumRequirements(lastLocation)) {
+            Utility.LocationLogger.log("LocationProvider: Last known location meets requirements, return last location: ${lastLocation.latitude}, Longitude: ${lastLocation.longitude}, Altitude: ${lastLocation.altitude}, Accuracy: ${lastLocation.accuracy}")
             return lastLocation
         }
 
         // Add the location requester to the list of active requesters
+        Utility.LocationLogger.log("LocationProvider: Requesting location updates")
         this.locationRequesters.add(locationRequester)
 
         // Request location updates from all enabled providers
@@ -219,6 +253,7 @@ open class LocationProvider @Inject constructor(
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             Timber.w("Not requesting location, permission not granted")
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
             return
         }
 
@@ -226,8 +261,11 @@ open class LocationProvider @Inject constructor(
         val enabledProviders = locationManager.allProviders
             .filter { locationManager.isProviderEnabled(it) }
 
+        Utility.LocationLogger.log("LocationProvider: These providers are enabled, Requesting location updates from $enabledProviders")
+
         // Request location updates from all enabled providers
         enabledProviders.forEach {
+            Utility.LocationLogger.log("LocationProvider: Requesting location updates from $it")
             locationManager.requestLocationUpdates(
                 it,
                 MIN_UPDATE_TIME_MS,
@@ -241,6 +279,7 @@ open class LocationProvider @Inject constructor(
 
         // If no location providers are enabled, log an error and stop location updates
         if (enabledProviders.isEmpty()) {
+            Utility.LocationLogger.log("LocationProvider: No location provider available, stopping location updates")
             Timber.e("ERROR: No location provider available")
             stopLocationUpdates()
         }
