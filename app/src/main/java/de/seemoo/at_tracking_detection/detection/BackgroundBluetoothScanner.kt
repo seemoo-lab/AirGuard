@@ -495,7 +495,7 @@ object BackgroundBluetoothScanner {
                             return@withLock null
                         }
 
-                        if (deviceType == DeviceType.SAMSUNG_TRACKER) {
+                        if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             // Additional Check: Aging Counter for Samsung Tracker has to be exactly 1 smaller in the previous Beacon
                             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
                             val currentAgingCounter = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
