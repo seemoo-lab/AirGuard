@@ -6,13 +6,14 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.Location
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
@@ -53,7 +54,7 @@ object BackgroundBluetoothScanner {
     private val deviceMutex = Mutex()
     private val locationMutex = Mutex()
 
-    var location: android.location.Location? = null
+    var location: Location? = null
         set(value) {
             field = value
             if (value != null) {
@@ -93,7 +94,7 @@ object BackgroundBluetoothScanner {
         var failed: Boolean
     )
 
-    suspend fun scanInBackground(startedFrom: String): BackgroundScanResults {
+    suspend fun scanInBackground(startedFrom: String, useOnlyPassiveLocation: Boolean = false, locationProvided: Location? = null): BackgroundScanResults {
         if (isScanning) {
             Timber.w("BackgroundBluetoothScanner scan already running")
             return BackgroundScanResults(0, 0, 0, true)
@@ -150,16 +151,20 @@ object BackgroundBluetoothScanner {
             }
         }
 
-        val useLocation = SharedPrefs.useLocationInTrackingDetection
-        if (useLocation) {
-            // Returns the last known location if this matches our requirements or starts new location updates
-            locationFetchStarted = System.currentTimeMillis()
-            location = locationProvider.lastKnownOrRequestLocationUpdates(
-                locationRequester = locationRequester,
-                timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
-            )
-            if (location == null) {
-                Timber.e("Failed to retrieve location")
+        if (locationProvided != null) {
+            location = locationProvided
+        } else {
+            val useLocation = SharedPrefs.useLocationInTrackingDetection
+            if (useLocation) {
+                // Returns the last known location if this matches our requirements or starts new location updates
+                locationFetchStarted = System.currentTimeMillis()
+                location = locationProvider.lastKnownOrRequestLocationUpdates(
+                    locationRequester = locationRequester,
+                    timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
+                )
+                if (location == null) {
+                    Timber.e("Failed to retrieve location")
+                }
             }
         }
 
@@ -190,13 +195,13 @@ object BackgroundBluetoothScanner {
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
 
-        //Waiting for updated location to come in
+        // Waiting for updated location to come in
         Timber.d("Waiting for location update")
         LocationLogger.log("BackgroundBluetoothScanner: Request fetched Location")
         val fetchedLocation = waitForRequestedLocation()
         Timber.d("Fetched location? $fetchedLocation")
         LocationLogger.log("BackgroundBluetoothScanner: Could location be Fetched?: $fetchedLocation")
-        if (location == null) {
+        if (location == null && !useOnlyPassiveLocation) {
             LocationLogger.log("BackgroundBluetoothScanner: Failed to fetch location, get last known location and ignore requirements")
             // Get the last location no matter if the requirements match or not
             location = locationProvider.getLastLocation(checkRequirements = false)
@@ -276,7 +281,7 @@ object BackgroundBluetoothScanner {
     }
 
     private val locationRequester: LocationRequester = object : LocationRequester() {
-        override fun receivedAccurateLocationUpdate(location: android.location.Location) {
+        override fun receivedAccurateLocationUpdate(location: Location) {
             val started = locationFetchStarted ?: System.currentTimeMillis()
             Timber.d("Got location in ${(System.currentTimeMillis() - started) / 1000}s")
             this@BackgroundBluetoothScanner.location = location
@@ -575,7 +580,7 @@ object BackgroundBluetoothScanner {
         altitude: Double?,
         discoveryDate: LocalDateTime,
         accuracy: Float?
-    ): Location? {
+    ): LocationModel? {
         return withContext(Dispatchers.IO) {
             locationMutex.withLock {
                 if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE) {
@@ -587,7 +592,7 @@ object BackgroundBluetoothScanner {
                 val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
 
                 // set location to null if gps location could not be retrieved
-                var location: Location? = null
+                var location: LocationModel? = null
 
                 if (latitude != null && longitude != null) {
                     // Get closest location from database
@@ -604,7 +609,7 @@ object BackgroundBluetoothScanner {
                     if (location == null || distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
                         // Create new location entry
                         Timber.d("Add new Location to the database!")
-                        location = Location(
+                        location = LocationModel(
                             firstDiscovery = discoveryDate,
                             longitude = longitude,
                             latitude = latitude,

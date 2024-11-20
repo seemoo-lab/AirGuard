@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -102,6 +103,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         Timber.d("Scheduling an immediate background scan onResume of MainActivity")
         backgroundWorkScheduler.scheduleImmediateBackgroundScan()
+
+        stopForegroundServiceIfNeeded()
     }
 
 
@@ -109,6 +112,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onPause()
         Timber.d("MainActivity onPause called")
         BLEScanner.stopBluetoothScan()
+
+        stopForegroundServiceIfNeeded()
     }
 
 
@@ -134,7 +139,31 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
             val menu = navView.menu
             val item = menu.findItem(R.id.navigation_allDevicesFragment)
-            item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
+            item.isVisible = sharedPreferences?.getBoolean(key, false) == true
         }
+    }
+
+    private fun stopForegroundServiceIfNeeded() {
+        if (isLowPowerLocationModeEnabled() || !isAppUnrestricted()) {
+            stopForegroundService()
+        }
+    }
+
+    private fun isLowPowerLocationModeEnabled(): Boolean {
+        // TODO: Check if low power location mode is enabled
+        return true
+    }
+
+    private fun isAppUnrestricted(): Boolean {
+        // TODO: Check if the app is unrestricted by the user
+        return true
+    }
+
+    private fun stopForegroundService() {
+        // TODO: Implement logic to stop the foreground service
+        // For example, stop a service if it is running
+        // TODO: val intent = Intent(this, YourForegroundService::class.java)
+        // TODO: stopService(intent)
+        Timber.d("Stopping foreground service")
     }
 }
