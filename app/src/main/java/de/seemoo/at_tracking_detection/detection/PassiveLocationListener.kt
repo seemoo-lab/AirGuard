@@ -5,13 +5,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Bundle
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.MAX_AGE_OF_LOCATION
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.PASSIVE_SCAN_TIME_BETWEEN_SCANS
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -19,7 +20,7 @@ import java.time.ZoneOffset
 @SuppressLint("MissingPermission")
 class PassiveLocationListener(private val context: Context) : LocationListener {
 
-    // TODO: The Low Power Toggle from the system menu still has to be switched to using this
+    // TODO: This should work while the app is running, it is now necessary to deactivate the old approach while use low power mode is activated
 
     private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -27,24 +28,24 @@ class PassiveLocationListener(private val context: Context) : LocationListener {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0L, 0f, this)
         } else {
-            // TODO: Handle missing permission
+            // Do nothing, the location updates will be requested only when the permission is granted
         }
     }
 
     override fun onLocationChanged(location: Location) {
         Timber.d("Passive location update received: ${location.latitude}, ${location.longitude}")
-        if (shouldTriggerScan(location)) {
+        if (shouldTriggerScan()) {
             Timber.d("Triggering scan based on passive location update")
             triggerScan(location)
         }
     }
 
-    // TODO: check if this is necessary
+    // TODO: check if this is necessary, onStatusChanged is Deprecated
     // override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
     override fun onProviderEnabled(provider: String) {}
     override fun onProviderDisabled(provider: String) {}
 
-    private fun shouldTriggerScan(location: Location): Boolean {
+    private fun shouldTriggerScan(): Boolean {
         val scanRepository = ATTrackingDetectionApplication.getCurrentApp().scanRepository
         val lastScan = scanRepository.lastScan
         val lastScanEndDate = lastScan.endDate
@@ -57,17 +58,18 @@ class PassiveLocationListener(private val context: Context) : LocationListener {
     }
 
     private fun triggerScan(location: Location) {
-        // TODO: maybe run blocking is a bad idea, check this?
-        runBlocking {
+        Timber.d("Triggering background scan from PassiveLocationListener")
+        CoroutineScope(Dispatchers.IO).launch {
             BackgroundBluetoothScanner.scanInBackground(
                 startedFrom = "PassiveLocationListener",
                 useOnlyPassiveLocation = true,
                 locationProvided = location
             )
+            Timber.d("PassiveLocationListener scan done")
         }
     }
 
-    // TODO: this is currently not called from anywhere
+    // This is currently not used, check in the future if we even need this
     fun requestLocationUpdateIfNeeded() {
         val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
         if (lastKnownLocation == null || isLocationUpdateTooOld(lastKnownLocation)) {

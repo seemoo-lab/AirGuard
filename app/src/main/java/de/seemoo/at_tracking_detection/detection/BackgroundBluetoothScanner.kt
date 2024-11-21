@@ -153,6 +153,7 @@ object BackgroundBluetoothScanner {
         }
 
         if (locationProvided != null) {
+            LocationLogger.log("BackgroundBluetoothScanner: Use provided location from PassiveLocationListener: Latitude: ${locationProvided.latitude}, Longitude: ${locationProvided.longitude}, Altitude: ${locationProvided.altitude}, Accuracy: ${locationProvided.accuracy}")
             location = locationProvided
         } else {
             val useLocation = SharedPrefs.useLocationInTrackingDetection

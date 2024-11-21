@@ -1,9 +1,14 @@
 package de.seemoo.at_tracking_detection.ui
 
+import PassiveLocationListener
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -33,6 +38,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     @Inject
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
+
+    private lateinit var passiveLocationListener: PassiveLocationListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +101,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
             return@setOnItemSelectedListener true
         }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        } else {
+            startPassiveLocationListener()
+        }
     }
 
     override fun onResume() {
@@ -103,8 +116,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         Timber.d("Scheduling an immediate background scan onResume of MainActivity")
         backgroundWorkScheduler.scheduleImmediateBackgroundScan()
-
-        stopForegroundServiceIfNeeded()
     }
 
 
@@ -112,8 +123,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onPause()
         Timber.d("MainActivity onPause called")
         BLEScanner.stopBluetoothScan()
-
-        stopForegroundServiceIfNeeded()
     }
 
 
@@ -128,8 +137,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startPassiveLocationListener()
+        } else {
+            Timber.e("Location permission not granted")
+        }
+    }
+
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -143,27 +162,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun stopForegroundServiceIfNeeded() {
-        if (isLowPowerLocationModeEnabled() || !isAppUnrestricted()) {
-            stopForegroundService()
-        }
-    }
-
     private fun isLowPowerLocationModeEnabled(): Boolean {
-        // TODO: Check if low power location mode is enabled
-        return true
+        return SharedPrefs.useLowPowerBLEScan
     }
 
-    private fun isAppUnrestricted(): Boolean {
-        // TODO: Check if the app is unrestricted by the user
-        return true
-    }
-
-    private fun stopForegroundService() {
-        // TODO: Implement logic to stop the foreground service
-        // For example, stop a service if it is running
-        // TODO: val intent = Intent(this, YourForegroundService::class.java)
-        // TODO: stopService(intent)
-        Timber.d("Stopping foreground service")
+    private fun startPassiveLocationListener() {
+        passiveLocationListener = PassiveLocationListener(this)
     }
 }
