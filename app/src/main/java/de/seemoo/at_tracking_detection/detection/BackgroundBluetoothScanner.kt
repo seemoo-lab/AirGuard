@@ -28,6 +28,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.MAX_AGE_OF_LOCATION
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -160,7 +161,7 @@ object BackgroundBluetoothScanner {
                 locationFetchStarted = System.currentTimeMillis()
                 location = locationProvider.lastKnownOrRequestLocationUpdates(
                     locationRequester = locationRequester,
-                    timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
+                    timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - MAX_AGE_OF_LOCATION
                 )
                 if (location == null) {
                     Timber.e("Failed to retrieve location")
