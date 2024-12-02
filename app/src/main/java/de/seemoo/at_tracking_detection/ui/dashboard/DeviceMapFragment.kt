@@ -46,6 +46,9 @@ class DeviceMapFragment : Fragment() {
 
         deviceAddress = safeArgs.deviceAddress
         viewModel.deviceAddress.postValue(deviceAddress)
+
+        setTitle()
+
         return binding.root
     }
 
@@ -57,6 +60,7 @@ class DeviceMapFragment : Fragment() {
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
+        setTitle()
 
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
@@ -72,6 +76,21 @@ class DeviceMapFragment : Fragment() {
             } finally {
                 viewModel.isMapLoading.postValue(false)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setTitle()
+    }
+
+    fun setTitle() {
+        if (deviceAddress != null) {
+            activity?.setTitle(getString(R.string.title_devices_map_device, deviceAddress))
+            // activity?.title = getString(R.string.title_devices_map_device, deviceAddress)
+        } else {
+            activity?.setTitle(getString(R.string.title_device_map))
+            // activity?.title = getString(R.string.title_device_map)
         }
     }
 }

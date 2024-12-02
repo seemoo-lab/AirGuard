@@ -11,6 +11,7 @@
     <string name="title_scan_detail">Orten: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
     <string name="title_device_map">Alle Geräte</string>
+    <string name="title_devices_map_device">Karte: %1$s</string>
     <string name="title_devices">Geräte</string>
     <string name="mark_false_alarm">FEHLALARM</string>
     <string name="statistics_beacons">Geräte gefunden</string>
