@@ -12,6 +12,7 @@
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
+    <string name="title_devices_map_device">Map: %1$s</string>
     <string name="title_devices">Devices</string>
     <string name="title_data_deletion">Data deletion request</string>
     <string name="title_article">Article</string>
