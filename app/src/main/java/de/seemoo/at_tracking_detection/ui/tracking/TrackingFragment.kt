@@ -33,7 +33,6 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
-import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
@@ -57,6 +56,8 @@ class TrackingFragment : Fragment() {
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     private lateinit var mapView: MapView
+
+    private var isReceiverRegistered = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,11 +110,15 @@ class TrackingFragment : Fragment() {
                 DeviceManager.gattIntentFilter
             )
         }
+        isReceiverRegistered = true
     }
 
     override fun onPause() {
         super.onPause()
-        context?.unregisterReceiver(gattUpdateReceiver)
+        if (isReceiverRegistered) {
+            context?.unregisterReceiver(gattUpdateReceiver)
+            isReceiverRegistered = false
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -46,6 +47,9 @@ class DeviceMapFragment : Fragment() {
 
         deviceAddress = safeArgs.deviceAddress
         viewModel.deviceAddress.postValue(deviceAddress)
+
+        setTitle()
+
         return binding.root
     }
 
@@ -57,6 +61,7 @@ class DeviceMapFragment : Fragment() {
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
+        setTitle()
 
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
@@ -72,6 +77,19 @@ class DeviceMapFragment : Fragment() {
             } finally {
                 viewModel.isMapLoading.postValue(false)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setTitle()
+    }
+
+    fun setTitle() {
+        if (deviceAddress != null) {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_devices_map_device, deviceAddress)
+        } else {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_device_map)
         }
     }
 }

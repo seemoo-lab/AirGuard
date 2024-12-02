@@ -213,8 +213,7 @@
     <!-- All Devices Map -->
     <fragment
         android:id="@+id/deviceMapFragment"
-        android:name="de.seemoo.at_tracking_detection.ui.dashboard.DeviceMapFragment"
-        android:label="@string/title_device_map">
+        android:name="de.seemoo.at_tracking_detection.ui.dashboard.DeviceMapFragment">
         <!--<action
             android:id="@+id/action_deviceMapFragment_to_trackingFragment"
             app:destination="@id/trackingFragment"

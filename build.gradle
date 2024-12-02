@@ -4,10 +4,10 @@ buildscript {
     ext.hilt_compiler_version = '2.52'
     ext.hilt_version = '1.2.0'
     ext.room_version = '2.6.1'
-    ext.compose_version = '1.7.0'
+    ext.compose_version = '1.7.1'
     ext.about_libraries_version = '11.2.3'
     ext.work_version = '2.9.1'
-    ext.ksp_version = '2.0.21-1.0.26'
+    ext.ksp_version = '2.0.21-1.0.28'
 
     repositories {
         google()
@@ -19,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath 'com.android.tools.build:gradle:8.7.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.4"
