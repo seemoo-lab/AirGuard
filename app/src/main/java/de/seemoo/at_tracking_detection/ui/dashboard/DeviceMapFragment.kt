@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -86,11 +87,9 @@ class DeviceMapFragment : Fragment() {
 
     fun setTitle() {
         if (deviceAddress != null) {
-            activity?.setTitle(getString(R.string.title_devices_map_device, deviceAddress))
-            // activity?.title = getString(R.string.title_devices_map_device, deviceAddress)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_devices_map_device, deviceAddress)
         } else {
-            activity?.setTitle(getString(R.string.title_device_map))
-            // activity?.title = getString(R.string.title_device_map)
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_device_map)
         }
     }
 }
