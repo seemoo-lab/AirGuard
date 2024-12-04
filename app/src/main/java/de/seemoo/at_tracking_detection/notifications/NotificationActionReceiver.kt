@@ -68,7 +68,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 }
             }
         }
-        notificationManagerCompat.cancelAll()
+        notificationManagerCompat.cancel(notificationId)
     }
 }
 
