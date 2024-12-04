@@ -1,6 +1,5 @@
 package de.seemoo.at_tracking_detection.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
 import timber.log.Timber
 
@@ -62,6 +62,28 @@ class TrackingNotificationActivity : AppCompatActivity() {
             true
         } else {
             navController.navigateUp()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val fragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment)
+        if (fragment is NavHostFragment) {
+            val trackingFragment = fragment.childFragmentManager.primaryNavigationFragment
+            if (trackingFragment is TrackingFragment) {
+                trackingFragment.mapView.onResume()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val fragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment)
+        if (fragment is NavHostFragment) {
+            val trackingFragment = fragment.childFragmentManager.primaryNavigationFragment
+            if (trackingFragment is TrackingFragment) {
+                trackingFragment.mapView.onPause()
+            }
         }
     }
 }
