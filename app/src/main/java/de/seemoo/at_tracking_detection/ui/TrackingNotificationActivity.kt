@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -23,31 +24,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        val deviceAddress = intent.getStringExtra("deviceAddress")
-        val deviceTypeAsString = intent.getStringExtra("deviceTypeAsString") ?: "UNKNOWN"
-        val notificationId = intent.getIntExtra("notificationId", -1)
-        Timber.d("Tracking Activity with device $deviceAddress and notification $notificationId started!")
-
-        if (deviceAddress == null) {
-            Timber.e("Device address is needed! Going home...")
-            this.onSupportNavigateUp()
-        } else {
-            // Workaround: Somehow not possible to use getString with deviceAddress as an Argument
-            var getTitle = getString(R.string.title_devices_tracking)
-            getTitle = getTitle.replace("{deviceAddress}", deviceAddress.toString())
-            supportActionBar?.title = getTitle
-
-            val args = TrackingFragmentArgs(
-                deviceAddress = deviceAddress,
-                deviceTypeAsString = deviceTypeAsString,
-                notificationId = notificationId
-            ).toBundle()
-            navController.setGraph(R.navigation.main_navigation)
-            val navOptions = NavOptions.Builder()
-                // .setPopUpTo(R.id.navigation_dashboard, true)
-                .build()
-            navController.navigate(R.id.trackingFragment, args, navOptions)
-        }
+        navigateToTrackingFragment()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -84,6 +61,41 @@ class TrackingNotificationActivity : AppCompatActivity() {
             if (trackingFragment is TrackingFragment) {
                 trackingFragment.mapView.onPause()
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        navigateToTrackingFragment()
+    }
+
+    private fun navigateToTrackingFragment() {
+        val deviceAddress = intent.getStringExtra("deviceAddress")
+        val deviceTypeAsString = intent.getStringExtra("deviceTypeAsString") ?: "UNKNOWN"
+        val notificationId = intent.getIntExtra("notificationId", -1)
+        Timber.d("Tracking Activity with device $deviceAddress and notification $notificationId started!")
+
+        if (deviceAddress == null) {
+            Timber.e("Device address is needed! Going home...")
+            this.onSupportNavigateUp()
+        } else {
+            // Workaround: Somehow not possible to use getString with deviceAddress as an Argument
+            var getTitle = getString(R.string.title_devices_tracking)
+            getTitle = getTitle.replace("{deviceAddress}", deviceAddress.toString())
+            supportActionBar?.title = getTitle
+
+            val args = TrackingFragmentArgs(
+                deviceAddress = deviceAddress,
+                deviceTypeAsString = deviceTypeAsString,
+                notificationId = notificationId
+            ).toBundle()
+            navController.setGraph(R.navigation.main_navigation)
+            val navOptions = NavOptions.Builder()
+                // .setPopUpTo(R.id.navigation_dashboard, true)
+                .build()
+            navController.navigate(R.id.trackingFragment, args, navOptions)
         }
     }
 }
