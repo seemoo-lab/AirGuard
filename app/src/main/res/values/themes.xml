@@ -5,6 +5,8 @@
         <item name="android:actionBarStyle">@style/ThemeActionBar</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/ThemeActionBar</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="ThemeActionBar"
