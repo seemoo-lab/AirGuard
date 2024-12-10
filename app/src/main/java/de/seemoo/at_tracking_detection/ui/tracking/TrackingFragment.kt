@@ -55,7 +55,7 @@ class TrackingFragment : Fragment() {
 
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
-    private lateinit var mapView: MapView
+    lateinit var mapView: MapView
 
     private var isReceiverRegistered = false
 
