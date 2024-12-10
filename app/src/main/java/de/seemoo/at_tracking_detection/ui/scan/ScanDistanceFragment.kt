@@ -105,6 +105,10 @@ class ScanDistanceFragment : Fragment() {
                         val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
                         val deviceNameFromDB = device?.name
 
+                        if (device?.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && googleSubType == GoogleFindMyNetworkType.TAG && deviceNameFromDB != null && deviceNameFromDB != "") {
+                            defineRetrieveOwnerOnClickBehaviour(deviceNameFromDB)
+                        }
+
                         if (samsungSubType != null && samsungSubType != SamsungTrackerType.UNKNOWN) {
                             Timber.d("Display Name - Samsung Subtype: $samsungSubType")
                             viewModel.displayName.postValue(SamsungTrackerType.visibleStringFromSubtype(samsungSubType))
@@ -177,14 +181,20 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineDeviceTypeButtonVisible() {
-        binding.retrieveOwnerInformationButton.visibility = if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-            if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState && GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!) == GoogleFindMyNetworkType.TAG) {
-                View.VISIBLE
-            } else {
-                View.GONE
+        if (latestWrappedScanResult != null) {
+            val savedGoogleSubType = ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && savedGoogleSubType != null) {
+                binding.performActionButton.visibility = View.GONE
+                binding.retrieveOwnerInformationButton.visibility = if (savedGoogleSubType == GoogleFindMyNetworkType.TAG) {
+                    defineRetrieveOwnerOnClickBehaviour()
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+                return
             }
         } else {
-            View.GONE
+            binding.retrieveOwnerInformationButton.visibility = View.GONE
         }
 
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
@@ -321,81 +331,78 @@ class ScanDistanceFragment : Fragment() {
         startBluetoothScan()
 
         binding.performActionButton.setOnClickListener {
-            determineSubType {
-                // No additional actions needed after determining the subtype
-            }
+            determineSubType()
         }
 
+        return binding.root
+    }
+
+    private fun defineRetrieveOwnerOnClickBehaviour(deviceNameFromDB: String? = null) {
         binding.retrieveOwnerInformationButton.setOnClickListener {
-            determineSubType {
-                binding.retrieveOwnerInformationButton.visibility = View.GONE
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle(R.string.retrieve_owner_information_alert_title)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(R.string.retrieve_owner_information_alert_title)
 
-                val displayName: String = viewModel.displayName.value ?: ""
-                val manufacturer: GoogleFindMyNetworkManufacturer = GoogleFindMyNetwork.getGoogleManufacturerFromNameString(displayName)
-                val explanationText: String = GoogleFindMyNetwork.getGoogleInformationRetrievalText(manufacturer)
+            val displayName: String = deviceNameFromDB ?: viewModel.displayName.value ?: ""
+            val manufacturer: GoogleFindMyNetworkManufacturer = GoogleFindMyNetwork.getGoogleManufacturerFromNameString(displayName)
+            val explanationText: String = GoogleFindMyNetwork.getGoogleInformationRetrievalText(manufacturer)
 
-                builder.setMessage(explanationText)
+            builder.setMessage(explanationText)
 
-                builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
-                    lifecycleScope.launch {
-                        binding.performActionButton.visibility = View.GONE
-                        binding.progressCircular.visibility = View.VISIBLE
-                        binding.deviceTypeText.visibility = View.GONE
-                        val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
-                        if (ownerInformationURL != null) {
-                            try {
-                                requireContext().let { assumedContext ->
-                                    Timber.d("Opening browser with URL: $ownerInformationURL")
-                                    Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
-                                }
-                            } catch (e: Exception) {
-                                Timber.e("Error launching browser: ${e.localizedMessage}")
-                                Snackbar.make(
-                                    binding.root,
-                                    R.string.retrieve_owner_information_failed,
-                                    Snackbar.LENGTH_LONG
-                                ).show()
+            builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
+                lifecycleScope.launch {
+                    binding.performActionButton.visibility = View.GONE
+                    binding.progressCircular.visibility = View.VISIBLE
+                    binding.deviceTypeText.visibility = View.GONE
+                    val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
+                    if (ownerInformationURL != null) {
+                        try {
+                            requireContext().let { assumedContext ->
+                                Timber.d("Opening browser with URL: $ownerInformationURL")
+                                Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
                             }
-                        } else {
-                            Timber.e("Owner information URL is null")
+                        } catch (e: Exception) {
+                            Timber.e("Error launching browser: ${e.localizedMessage}")
                             Snackbar.make(
                                 binding.root,
                                 R.string.retrieve_owner_information_failed,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
-                        binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
-                        binding.progressCircular.visibility = View.GONE
-                        binding.deviceTypeText.visibility = View.VISIBLE
+                    } else {
+                        Timber.e("Owner information URL is null")
+                        Snackbar.make(
+                            binding.root,
+                            R.string.retrieve_owner_information_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                    binding.progressCircular.visibility = View.GONE
+                    binding.deviceTypeText.visibility = View.VISIBLE
 
-                        subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
-                        val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
-                        if (binding.deviceTypeText.text == errorCaseName) {
-                            binding.performActionButton.visibility = View.VISIBLE
-                        }
+                    subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                    val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
+                    if (binding.deviceTypeText.text == errorCaseName) {
+                        binding.performActionButton.visibility = View.VISIBLE
                     }
                 }
-
-                builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
-                    dialog.dismiss()
-                }
-
-                val dialog = builder.create()
-
-                dialog.setOnDismissListener {
-                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
-                }
-
-                dialog.show()
             }
-        }
 
-        return binding.root
+            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog = builder.create()
+
+            dialog.setOnDismissListener {
+                binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+            }
+
+            dialog.show()
+        }
     }
 
-    private fun determineSubType(onSubTypeDetermined: () -> Unit) {
+    private fun determineSubType() {
         if (deviceType == DeviceType.SAMSUNG_TRACKER && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
@@ -428,14 +435,13 @@ class ScanDistanceFragment : Fragment() {
                     }
                     binding.progressCircular.visibility = View.GONE
                     binding.deviceTypeText.visibility = View.VISIBLE
-                    onSubTypeDetermined()
                 }
             }
         } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
-            binding.retrieveOwnerInformationButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
+
             lifecycleScope.launch {
                 // Detect Subtype
                 subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
@@ -463,14 +469,16 @@ class ScanDistanceFragment : Fragment() {
                         ).show()
                         binding.performActionButton.visibility = View.VISIBLE
                     } else {
-                        viewModel.displayName.value = deviceName
+                        viewModel.displayName.postValue(deviceName)
+                        if (subTypeGoogle == GoogleFindMyNetworkType.TAG) {
+                            defineRetrieveOwnerOnClickBehaviour()
+                            binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                        }
                     }
                 }
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
-                binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
-                onSubTypeDetermined()
             }
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -501,7 +509,6 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
-                onSubTypeDetermined()
             }
         } else if (deviceType == DeviceType.PEBBLEBEE && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -532,7 +539,6 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
-                onSubTypeDetermined()
             }
         } else if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
@@ -553,7 +559,6 @@ class ScanDistanceFragment : Fragment() {
 
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
-                onSubTypeDetermined()
             }
         }
     }
