@@ -181,20 +181,10 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineDeviceTypeButtonVisible() {
-        if (latestWrappedScanResult != null) {
-            val savedGoogleSubType = ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
-            if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && savedGoogleSubType != null) {
-                binding.performActionButton.visibility = View.GONE
-                binding.retrieveOwnerInformationButton.visibility = if (savedGoogleSubType == GoogleFindMyNetworkType.TAG) {
-                    defineRetrieveOwnerOnClickBehaviour()
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-                return
-            }
-        } else {
+        if (latestWrappedScanResult == null) {
+            binding.performActionButton.visibility = View.GONE
             binding.retrieveOwnerInformationButton.visibility = View.GONE
+            return
         }
 
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
@@ -227,17 +217,22 @@ class ScanDistanceFragment : Fragment() {
             }
         } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
             val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val subType = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+            ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType
 
-            if (deviceName == null || deviceName == "") {
-                if (latestWrappedScanResult!!.connectionState !in DeviceManager.unsafeConnectionState && ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] == null) {
-                    binding.performActionButton.text = getString(R.string.tracker_or_phone)
-                    View.VISIBLE
-                } else if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
+            if (subType == GoogleFindMyNetworkType.TAG) {
+                val savedGoogleExactTag = ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier]
+                val deviceNameEmpty = deviceName == null || deviceName == ""
+                val showPerformActionButton = deviceNameEmpty || savedGoogleExactTag == null || savedGoogleExactTag == false
+                if (showPerformActionButton) {
+                    binding.retrieveOwnerInformationButton.visibility = View.GONE
                     View.VISIBLE
                 } else {
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
                     View.GONE
                 }
             } else {
+                binding.retrieveOwnerInformationButton.visibility = View.GONE
                 View.GONE
             }
         } else {
@@ -471,6 +466,7 @@ class ScanDistanceFragment : Fragment() {
                     } else {
                         viewModel.displayName.postValue(deviceName)
                         if (subTypeGoogle == GoogleFindMyNetworkType.TAG) {
+                            ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier] = true
                             defineRetrieveOwnerOnClickBehaviour()
                             binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
                         }

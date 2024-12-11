@@ -178,6 +178,7 @@ class ScanFragment : Fragment() {
         private const val SCAN_DURATION = 60_000L
         val samsungSubDeviceTypeMap: MutableMap<String, SamsungTrackerType> = HashMap()
         val googleSubDeviceTypeMap: MutableMap<String, GoogleFindMyNetworkType> = HashMap()
+        val googleExactTagDeterminedMap: MutableMap<String, Boolean> = HashMap()
         val deviceNameMap: MutableMap<String, String> = HashMap()
     }
 }
