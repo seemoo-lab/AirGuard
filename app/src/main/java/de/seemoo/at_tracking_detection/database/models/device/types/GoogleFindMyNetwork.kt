@@ -23,6 +23,9 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.SMARTPHONE
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.TAG
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.UNKNOWN
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
@@ -408,6 +411,14 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
                 name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
                 else -> GoogleFindMyNetworkManufacturer.UNKNOWN
+            }
+        }
+
+        fun getGoogleDrawableFromNameString(name: String): Int {
+            return when {
+                name.contains("pebblebee clip", ignoreCase = true) -> R.drawable.ic_pebblebee_clip
+                name.contains("chipolo one", ignoreCase = true) -> R.drawable.ic_chipolo
+                else -> R.drawable.ic_chipolo
             }
         }
 

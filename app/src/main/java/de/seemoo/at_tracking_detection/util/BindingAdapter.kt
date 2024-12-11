@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
@@ -57,13 +58,14 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
     } else if (deviceFromDb != null && deviceFromDb.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
         val subTypeString = deviceFromDb.subDeviceType
         val subType = GoogleFindMyNetworkType.stringToSubType(subTypeString)
-        GoogleFindMyNetworkType.drawableForSubType(subType)
+        GoogleFindMyNetworkType.drawableForSubType(subType, deviceFromDb.name)
     } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
         SamsungTrackerType.drawableForSubType(subType)
     } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
         val subType = ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
-        GoogleFindMyNetworkType.drawableForSubType(subType)
+        val deviceNameFromCache = ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
+        GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache)
     } else {
         DeviceType.getImageDrawable(wrappedScanResult)
     }

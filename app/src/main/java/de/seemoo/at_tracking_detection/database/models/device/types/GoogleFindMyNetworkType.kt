@@ -33,10 +33,14 @@ enum class GoogleFindMyNetworkType {
             }
         }
 
-        fun drawableForSubType(subType: GoogleFindMyNetworkType): Int {
+        fun drawableForSubType(subType: GoogleFindMyNetworkType, deviceName: String? = null): Int {
             return when (subType) {
                 SMARTPHONE -> R.drawable.ic_baseline_device_unknown_24
-                TAG -> R.drawable.ic_chipolo
+                TAG ->  if (deviceName != null) {
+                            GoogleFindMyNetwork.getGoogleDrawableFromNameString(deviceName)
+                        } else {
+                            R.drawable.ic_baseline_device_unknown_24
+                        }
                 UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
             }
         }

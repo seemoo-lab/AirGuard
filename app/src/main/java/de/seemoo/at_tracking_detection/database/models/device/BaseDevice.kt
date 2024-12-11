@@ -119,7 +119,7 @@ data class BaseDevice(
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
     } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && subDeviceType != "UNKNOWN") {
         val subType = GoogleFindMyNetworkType.stringToSubType(subDeviceType)
-        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType))
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, name))
     }
     else {
         device.getDrawable()
