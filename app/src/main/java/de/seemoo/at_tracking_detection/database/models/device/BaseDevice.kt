@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
 import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
@@ -116,7 +117,11 @@ data class BaseDevice(
     fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_TRACKER && subDeviceType != "UNKNOWN") {
         val subType = SamsungTrackerType.stringToSubType(subDeviceType)
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
-    } else {
+    } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && subDeviceType != "UNKNOWN") {
+        val subType = GoogleFindMyNetworkType.stringToSubType(subDeviceType)
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, name))
+    }
+    else {
         device.getDrawable()
     }
 

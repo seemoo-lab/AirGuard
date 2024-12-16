@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Bundle
@@ -26,6 +27,9 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
@@ -43,7 +47,13 @@ class ScanDistanceFragment : Fragment() {
     private var deviceAddress: String? = null
     private var deviceType: DeviceType? = null
     private var latestWrappedScanResult: ScanResultWrapper? = null
-    private var subType: SamsungTrackerType? = null
+    private var subTypeSamsung: SamsungTrackerType? = null
+    private var subTypeGoogle: GoogleFindMyNetworkType? = null
+
+//    sealed class SubType {
+//        data class SamsungValue(val value: SamsungTrackerType) : SubType()
+//        data class GoogleValue(val value: GoogleFindMyNetworkType) : SubType()
+//    }
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -88,13 +98,31 @@ class ScanDistanceFragment : Fragment() {
                         viewModel.isFirstScanCallback.value = false
 
                         // TODO: add drawable
-                        val samsungSubType: SamsungTrackerType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                        val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+                        val deviceNameFromDB = device?.name
+
+                        if (device?.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && googleSubType == GoogleFindMyNetworkType.TAG && deviceNameFromDB != null && deviceNameFromDB != "") {
+                            defineRetrieveOwnerOnClickBehaviour(deviceNameFromDB)
+                        }
+
                         if (samsungSubType != null && samsungSubType != SamsungTrackerType.UNKNOWN) {
-                            binding.deviceTypeText.text = SamsungTrackerType.visibleStringFromSubtype(samsungSubType)
+                            Timber.d("Display Name - Samsung Subtype: $samsungSubType")
+                            viewModel.displayName.postValue(SamsungTrackerType.visibleStringFromSubtype(samsungSubType))
                         } else if (deviceName != null && deviceName != "") {
+                            Timber.d("Display Name - Device Name: $deviceName")
                             binding.deviceTypeText.text = deviceName
+                        } else if (deviceNameFromDB != null && deviceNameFromDB != "") {
+                            Timber.d("Display Name - Device Name from DB: $deviceNameFromDB")
+                            binding.deviceTypeText.text = deviceNameFromDB
+                        } else if (googleSubType != null) {
+                            Timber.d("Display Name - Google Subtype: $googleSubType")
+                            viewModel.displayName.postValue(GoogleFindMyNetworkType.visibleStringFromSubtype(googleSubType))
                         } else {
+                            Timber.d("Display Name - Default")
                             binding.deviceTypeText.text = DeviceType.userReadableName(
                                 latestWrappedScanResult!!
                             )
@@ -153,8 +181,14 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineDeviceTypeButtonVisible() {
+        if (latestWrappedScanResult == null) {
+            binding.performActionButton.visibility = View.GONE
+            binding.retrieveOwnerInformationButton.visibility = View.GONE
+            return
+        }
+
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
-            val samsungSubType: SamsungTrackerType? = subType ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (samsungSubType == null || samsungSubType == SamsungTrackerType.UNKNOWN) {
                 View.VISIBLE
             } else {
@@ -179,6 +213,26 @@ class ScanDistanceFragment : Fragment() {
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)) {
                 View.VISIBLE
             } else {
+                View.GONE
+            }
+        } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val subType = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+            ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType
+
+            if (subType == GoogleFindMyNetworkType.TAG) {
+                val savedGoogleExactTag = ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier]
+                val deviceNameEmpty = deviceName == null || deviceName == ""
+                val showPerformActionButton = deviceNameEmpty || savedGoogleExactTag == null || savedGoogleExactTag == false
+                if (showPerformActionButton) {
+                    binding.retrieveOwnerInformationButton.visibility = View.GONE
+                    View.VISIBLE
+                } else {
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                    View.GONE
+                }
+            } else {
+                binding.retrieveOwnerInformationButton.visibility = View.GONE
                 View.GONE
             }
         } else {
@@ -278,15 +332,80 @@ class ScanDistanceFragment : Fragment() {
         return binding.root
     }
 
+    private fun defineRetrieveOwnerOnClickBehaviour(deviceNameFromDB: String? = null) {
+        binding.retrieveOwnerInformationButton.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(R.string.retrieve_owner_information_alert_title)
+
+            val displayName: String = deviceNameFromDB ?: viewModel.displayName.value ?: ""
+            val manufacturer: GoogleFindMyNetworkManufacturer = GoogleFindMyNetwork.getGoogleManufacturerFromNameString(displayName)
+            val explanationText: String = GoogleFindMyNetwork.getGoogleInformationRetrievalText(manufacturer)
+
+            builder.setMessage(explanationText)
+
+            builder.setPositiveButton(R.string.retrieve_owner_information_alert_next) { _, _ ->
+                lifecycleScope.launch {
+                    binding.performActionButton.visibility = View.GONE
+                    binding.progressCircular.visibility = View.VISIBLE
+                    binding.deviceTypeText.visibility = View.GONE
+                    val ownerInformationURL = GoogleFindMyNetwork.getOwnerInformationURL(latestWrappedScanResult!!)
+                    if (ownerInformationURL != null) {
+                        try {
+                            requireContext().let { assumedContext ->
+                                Timber.d("Opening browser with URL: $ownerInformationURL")
+                                Utility.openBrowser(assumedContext, ownerInformationURL.toString(), binding.root)
+                            }
+                        } catch (e: Exception) {
+                            Timber.e("Error launching browser: ${e.localizedMessage}")
+                            Snackbar.make(
+                                binding.root,
+                                R.string.retrieve_owner_information_failed,
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    } else {
+                        Timber.e("Owner information URL is null")
+                        Snackbar.make(
+                            binding.root,
+                            R.string.retrieve_owner_information_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                    binding.progressCircular.visibility = View.GONE
+                    binding.deviceTypeText.visibility = View.VISIBLE
+
+                    subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                    val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
+                    if (binding.deviceTypeText.text == errorCaseName) {
+                        binding.performActionButton.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            builder.setNegativeButton(R.string.retrieve_owner_information_alert_close) { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog = builder.create()
+
+            dialog.setOnDismissListener {
+                binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+            }
+
+            dialog.show()
+        }
+    }
+
     private fun determineSubType() {
         if (deviceType == DeviceType.SAMSUNG_TRACKER && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
-                subType = SamsungTracker.getSubType(latestWrappedScanResult!!)
-                ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType!!
-                subType?.let { samsungDeviceType ->
+                subTypeSamsung = SamsungTracker.getSubType(latestWrappedScanResult!!)
+                ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subTypeSamsung!!
+                subTypeSamsung?.let { samsungDeviceType ->
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
@@ -298,7 +417,7 @@ class ScanDistanceFragment : Fragment() {
                     if (samsungDeviceType == SamsungTrackerType.UNKNOWN) {
                         Snackbar.make(
                             binding.root,
-                            R.string.samsung_determine_failed,
+                            R.string.device_determine_failed,
                             Snackbar.LENGTH_LONG
                         ).show()
                         binding.performActionButton.visibility = View.VISIBLE
@@ -313,6 +432,50 @@ class ScanDistanceFragment : Fragment() {
                     binding.deviceTypeText.visibility = View.VISIBLE
                 }
             }
+        } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && latestWrappedScanResult != null) {
+            binding.performActionButton.visibility = View.GONE
+            binding.deviceTypeText.visibility = View.GONE
+            binding.progressCircular.visibility = View.VISIBLE
+
+            lifecycleScope.launch {
+                // Detect Subtype
+                subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
+                val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
+                ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subTypeGoogle!!
+
+                if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState){
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+                    val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
+
+                    if (device != null && deviceName != errorCaseName) {
+                        if (deviceName != "") {
+                            device.name = deviceName
+                        }
+                        device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
+                        deviceRepository.update(device)
+                    }
+
+                    if (deviceName == errorCaseName || deviceName == "") {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.device_determine_failed,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        binding.performActionButton.visibility = View.VISIBLE
+                    } else {
+                        viewModel.displayName.postValue(deviceName)
+                        if (subTypeGoogle == GoogleFindMyNetworkType.TAG) {
+                            ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier] = true
+                            defineRetrieveOwnerOnClickBehaviour()
+                            binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                binding.progressCircular.visibility = View.GONE
+                binding.deviceTypeText.visibility = View.VISIBLE
+            }
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService && latestWrappedScanResult != null) {
             binding.performActionButton.visibility = View.GONE
             binding.deviceTypeText.visibility = View.GONE
@@ -320,9 +483,6 @@ class ScanDistanceFragment : Fragment() {
             lifecycleScope.launch {
                 val findMyDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
                 val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != findMyDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
@@ -332,10 +492,10 @@ class ScanDistanceFragment : Fragment() {
                     deviceRepository.update(device)
                 }
 
-                if (deviceName == findMyDefaultString) {
+                if (deviceName == findMyDefaultString || deviceName == "") {
                     Snackbar.make(
                         binding.root,
-                        R.string.samsung_determine_failed,
+                        R.string.device_determine_failed,
                         Snackbar.LENGTH_LONG
                     ).show()
                     binding.performActionButton.visibility = View.VISIBLE
@@ -353,9 +513,6 @@ class ScanDistanceFragment : Fragment() {
             lifecycleScope.launch {
                 val pebblebeeDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
                 val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != pebblebeeDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
@@ -365,10 +522,10 @@ class ScanDistanceFragment : Fragment() {
                     deviceRepository.update(device)
                 }
 
-                if (deviceName == pebblebeeDefaultString) {
+                if (deviceName == pebblebeeDefaultString || deviceName == "") {
                     Snackbar.make(
                         binding.root,
-                        R.string.samsung_determine_failed,
+                        R.string.device_determine_failed,
                         Snackbar.LENGTH_LONG
                     ).show()
                     binding.performActionButton.visibility = View.VISIBLE
@@ -384,11 +541,7 @@ class ScanDistanceFragment : Fragment() {
             binding.deviceTypeText.visibility = View.GONE
             binding.progressCircular.visibility = View.VISIBLE
             lifecycleScope.launch {
-                val samsungFindMyMobileDefaultString = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)
                 val deviceName = SamsungFindMyMobile.getSubTypeName(latestWrappedScanResult!!)
-                if (deviceName != samsungFindMyMobileDefaultString) {
-                    ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier] = deviceName
-                }
 
                 val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)

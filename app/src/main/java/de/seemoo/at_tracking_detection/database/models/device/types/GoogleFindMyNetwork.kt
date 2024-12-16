@@ -1,16 +1,20 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
-import android.os.ParcelUuid
 import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -19,10 +23,18 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.SMARTPHONE
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.TAG
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.UNKNOWN
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
+import java.net.URL
 import java.util.UUID
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
@@ -81,7 +93,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val characteristic = service.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC)
+                val characteristic = service.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
 
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
@@ -113,7 +125,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val uuid = GOOGLE_SOUND_CHARACTERISTIC
+                val uuid = GOOGLE_SOUND_CHARACTERISTIC_UUID
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
@@ -161,9 +173,13 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
     companion object : DeviceContext {
         internal const val GOOGLE_SOUND_SERVICE = "12F4"
-        internal val GOOGLE_SOUND_CHARACTERISTIC = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
+        private val GOOGLE_SOUND_SERVICE_UUID: UUID = UUID.fromString("15190001-12F4-C226-88ED-2AC5579F2A85")
+        internal val GOOGLE_SOUND_CHARACTERISTIC_UUID: UUID = UUID.fromString("8E0C0001-1D68-FB92-BF61-48377421680E")
+        internal val GOOGLE_DESCRIPTOR_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
         internal val GOOGLE_START_SOUND_OPCODE = byteArrayOf(0x00, 0x03)
         internal val GOOGLE_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x03)
+        private val GOOGLE_RETRIEVE_NAME_OPCODE = byteArrayOf(0x05, 0x00)
+        private val GOOGLE_GET_OWNER_INFORMATION_OPCODE = byteArrayOf(0x04, 0x04)
 
         override val deviceType: DeviceType
             get() = DeviceType.GOOGLE_FIND_MY_NETWORK
@@ -187,6 +203,182 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB")
 
+        fun getSubType(wrappedScanResult: ScanResultWrapper): GoogleFindMyNetworkType {
+            return when (wrappedScanResult.advertisementFlags) {
+                0x02 -> GoogleFindMyNetworkType.SMARTPHONE
+                0x06 -> GoogleFindMyNetworkType.TAG
+                else -> GoogleFindMyNetworkType.UNKNOWN
+            }
+        }
+
+        suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
+            val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
+            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+            val context: Context = ATTrackingDetectionApplication.getAppContext()
+
+            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+                Timber.e("Bluetooth adapter is null or not enabled")
+                return errorCaseName
+            } else if (!BluetoothAdapter.checkBluetoothAddress(wrappedScanResult.deviceAddress)) {
+                Timber.e("Invalid Bluetooth address")
+                return errorCaseName
+            }
+
+            val device = bluetoothAdapter.getRemoteDevice(wrappedScanResult.deviceAddress)
+            val dataToSend = GOOGLE_RETRIEVE_NAME_OPCODE
+
+            return try {
+                // Await the result of the GATT operation
+                val receivedValue = connectToDeviceAndWriteToIndication(context, device, dataToSend)
+
+                // If receivedValue is not empty, return the device name, else fallback to error case
+                receivedValue?.let {
+                    val nameBytes = it.drop(2).toByteArray() // Drop the first two bytes
+                    val finalResult = String(nameBytes, Charsets.UTF_8)
+                    ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = finalResult
+                    finalResult
+                } ?: errorCaseName
+            } catch (e: Exception) {
+                Timber.e("Error during connectAndWrite: ${e.message}")
+                errorCaseName
+            }
+        }
+
+        suspend fun getOwnerInformationURL(wrappedScanResult: ScanResultWrapper): URL? {
+            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+            val context: Context = ATTrackingDetectionApplication.getAppContext()
+
+            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+                Timber.e("Bluetooth adapter is null or not enabled")
+                return null
+            } else if (!BluetoothAdapter.checkBluetoothAddress(wrappedScanResult.deviceAddress)) {
+                Timber.e("Invalid Bluetooth address")
+                return null
+            }
+
+            val device = bluetoothAdapter.getRemoteDevice(wrappedScanResult.deviceAddress)
+            val dataToSend = GOOGLE_GET_OWNER_INFORMATION_OPCODE
+
+            try {
+                // Await the result of the GATT operation
+                val retrievedData = connectToDeviceAndWriteToIndication(context, device, dataToSend)
+
+                if (retrievedData == null) {
+                    Timber.e("Failed to retrieve owner information characteristic")
+                    return null
+                }
+
+                val ownerHex = retrievedData.joinToString("") { "%02x".format(it) }
+                Timber.d("Owner information hex: $ownerHex")
+                val ownerHexShortened = ownerHex.drop(4) // Assuming first 4 bytes are not needed
+                Timber.d("Owner information hex shortened: $ownerHexShortened")
+
+                // Build the URL with the extracted information
+                val url = URL("https://spot-pa.googleapis.com/lookup?e=$ownerHexShortened")
+
+                Timber.d("Owner information URL: $url")
+                // Validate the URL by checking for a 404 error
+                return if (Utility.isValidURL(url)) {
+                    Timber.d("Valid owner information URL: $url")
+                    url
+                } else {
+                    Timber.e("Owner information URL is invalid (404): $url")
+                    null
+                }
+
+            } catch (e: Exception) {
+                Timber.e("Error during connectAndWrite: ${e.message}")
+                return null
+            }
+        }
+
+        @SuppressLint("MissingPermission")
+        suspend fun connectToDeviceAndWriteToIndication(
+            context: Context,
+            device: BluetoothDevice,
+            dataToSend: ByteArray
+        ): ByteArray? = suspendCoroutine { continuation ->
+            device.connectGatt(context, false, object : BluetoothGattCallback() {
+                override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        // Discover services after successful connection
+                        gatt?.discoverServices()
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        gatt?.close()
+                        continuation.resume(null)
+                    }
+                }
+
+                override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        val service = gatt?.getService(GOOGLE_SOUND_SERVICE_UUID)
+                        val characteristic = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
+                        if (characteristic == null) {
+                            continuation.resume(null)
+                            return
+                        }
+
+                        val indicationsSuccessfullySet = gatt.setCharacteristicNotification(characteristic, true)
+                        Timber.d("Indications set: $indicationsSuccessfullySet")
+
+                        val descriptor = characteristic.getDescriptor(GOOGLE_DESCRIPTOR_UUID)
+
+                        // Write data to the descriptor
+                        if (Build.VERSION.SDK_INT >= 33) {
+                            gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            descriptor.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                            @Suppress("DEPRECATION")
+                            gatt.writeDescriptor(descriptor)
+                        }
+                    }
+                }
+
+                override fun onCharacteristicWrite(
+                    gatt: BluetoothGatt?,
+                    characteristic: BluetoothGattCharacteristic?,
+                    status: Int
+                ) {
+                    if (status != BluetoothGatt.GATT_SUCCESS) {
+                        continuation.resume(null)
+                    }
+                }
+
+                override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        val service = gatt?.getService(GOOGLE_SOUND_SERVICE_UUID)
+                        val characteristicToWrite = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
+                        if (characteristicToWrite == null) {
+                            continuation.resume(null)
+                            return
+                        }
+
+                        if (Build.VERSION.SDK_INT >= 33) {
+                            gatt.writeCharacteristic(characteristicToWrite, dataToSend, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            characteristicToWrite.value = dataToSend
+                            characteristicToWrite.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                            @Suppress("DEPRECATION")
+                            (gatt.writeCharacteristic(characteristicToWrite))
+                        }
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
+
+                override fun onCharacteristicChanged(
+                    gatt: BluetoothGatt,
+                    characteristic: BluetoothGattCharacteristic,
+                    value: ByteArray
+                ) {
+                    // Resume the coroutine with the received value
+                    continuation.resume(value)
+                }
+            })
+        }
+
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
@@ -207,6 +399,36 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             }
 
             return ConnectionState.UNKNOWN
+        }
+
+        fun getGoogleManufacturerFromNameString(name: String): GoogleFindMyNetworkManufacturer {
+            Timber.d("Name: $name")
+            return when {
+                name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
+                name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
+                name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
+                name.contains("motorola", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
+                name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
+                else -> GoogleFindMyNetworkManufacturer.UNKNOWN
+            }
+        }
+
+        fun getGoogleDrawableFromNameString(name: String): Int {
+            return when {
+                name.contains("pebblebee clip", ignoreCase = true) -> R.drawable.ic_pebblebee_clip
+                name.contains("chipolo one", ignoreCase = true) -> R.drawable.ic_chipolo
+                else -> R.drawable.ic_chipolo
+            }
+        }
+
+        fun getGoogleInformationRetrievalText(manufacturer: GoogleFindMyNetworkManufacturer): String {
+            Timber.d("Manufacturer: $manufacturer")
+            return when (manufacturer) {
+                GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
+                GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
+                else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
+            }
         }
     }
 

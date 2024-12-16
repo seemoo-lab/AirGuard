@@ -27,7 +27,8 @@
     <string name="channel_description">Warnt dich vor "Find My"-Geräten, die dich evtl. verfolgen</string>
     <string name="devices_list_empty">Sobald AirGuard einen AirTag oder einen anderen Tracker in Deiner Nähe findet, wird es hier aufgelistet. Die Liste wird daher auch Geräte enthalten, die zufällig in Deiner Umgebung waren und dich nicht verfolgen. Du erhältst eine Benachrichtigung für Geräte, die dich verfolgen.</string>
     <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem Tile, den Du besitzt) verfolgt wirst, dann kannst Du dies als Fehlalarm kennzeichnen. Geräte, die ihre Bluetooth-Adresse nicht ändern (z.B. Pebblebee, Tile oder Chipolo) kannst Du auch ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag, kann also nicht ignoriert werden und wird am nächsten Tag als neuer AirTag angezeigt.</string>
-
+    <string name="settings_deactivate_scanning_title">Hintergrundscan deaktivieren</string>
+    <string name="settings_deactivate_scanning_summary">Diese Option deaktiviert den Hintergrundscan. Achtung: Wenn diese Option aktiviert ist, bekommst du keine Benachrichtigungen mehr, wenn dir ein Tracker folgt.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>
@@ -256,7 +257,7 @@
     <string name="settings_notification_priority_high">Benachrichtigungen werden als Alarm mit hoher Priorität erstellt</string>
     <string name="chipolo_found">Gefundene Chipolo Geräte</string>
     <string name="pebblebee_found">Gefundene Pebblebee Geräte</string>
-    <string name="google_found">Gefundene Google Find My Geräte</string>
+    <string name="google_found">Gefundene Google Geräte</string>
     <string name="bluetooth_off_explanation">Bluetooth ist ausgeschaltet. Diese App benötigt Bluetooth, um nach Trackern in der Nähe zu scannen.</string>
     <string name="location_off_explanation">Standort ist ausgeschaltet. Diese App benötigt die Standort-Berechtigung, um nach Trackern in der Nähe zu scannen. Bitte aktivieren sie Standorte in ihren System-Einstellungen.\n\nEs kann sein, dass die App neu gestartet werden muss, dass der Scan funktioniert.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
@@ -301,10 +302,12 @@
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_tracker">Samsung Tracker</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
-    <string name="google_find_my">Google "Mein Gerät finden"</string>
+    <string name="google_find_my">Google \"Mein Gerät finden\"</string>
 
-    <string name="google_find_my_default_name">Google "Mein Gerät finden"</string>
-    <string name="apple_find_my_default_name">Apple "FindMy"</string>
+    <string name="google_find_my_default_name">Google \"Mein Gerät finden\"</string>
+    <string name="google_find_my_tag_name">\"Mein Gerät finden\" Tracker</string>
+    <string name="google_find_my_phone_name">Android Smartphone</string>
+    <string name="apple_find_my_default_name">Apple \"FindMy\"</string>
     <string name="apple_device_default_name">Apple Gerät</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
@@ -329,7 +332,7 @@
     <string name="website_manufacturer_detail">Öffnet die Webseite des Herstellers</string>
     <string name="no_browser">Kein Browser gefunden</string>
     <string name="delete_data_button">Datenlöschung anfragen</string>
-    <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf "Ja" bei der Studienteilnahme klicken.</string>
+    <string name="delete_data_explanation">Wenn Sie möchten, dass wir alle Daten, die wir im Rahmen unserer Studie von Ihnen erhoben haben, löschen, klicken Sie bitte auf die Schaltfläche unten. Dadurch werden Sie auch von der weiteren Teilnahme an der Studie ausgeschlossen und es werden keine weiteren Daten von Ihnen erhoben. Wenn Sie unsere Forschung weiterhin unterstützen möchten, können Sie einfach den Onboarding-Dialog erneut durchlaufen und auf \"Ja\" bei der Studienteilnahme klicken.</string>
     <string name="delete_data_success">Datenlöschung erfolgreich</string>
     <string name="delete_data_error">Etwas ist schief gelaufen</string>
     <string name="delete_data_server_error">Server nicht erreichbar. Versuche es später nochmal.</string>
@@ -369,7 +372,23 @@
     <string name="times_seen">Anzahl gesehen</string>
 
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>
-    <string name="samsung_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
+    <string name="device_determine_failed">Genauer Gerätetyp konnte nicht ermittelt werden</string>
+
+    <string name="retrieve_owner_information">Zeige Informationen zum Besitzer an</string>
+    <string name="retrieve_owner_information_failed">Besitzer konnte nicht ermittelt werden</string>
+    <string name="retrieve_owner_information_alert_title">Besitzer ermitteln</string>
+    <string name="retrieve_owner_information_explanation_unknown">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, musst du ihn in einem speziellen Modus versetzen. Wie dieser Modus erreicht wird ist unterschiedlich und könnte durch 30 Sekunden den Button drücken oder dreimal den Button drücken geschehen. Der Modus wird durch ein piepsen bestätigt. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, dann drücke den Knopf auf dem Tracker dreimal. Dies sollte durch ein piepsen bestätigt werden. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_explanation_chipolo">Um Informationen zum Besitzer des Trackers zu erhalten musst du den Tracker gefunden und physisch vor dir haben. Wenn du den Tracker gefunden hast, dann halten den Knopf für 30 Sekunden gedrückt. Lasse den Knopf exakt nach dem zweiten piepsen los. Dies wird durch einen weiteren Ton bestätigt. Danach drücke auf \"weiter\".</string>
+    <string name="retrieve_owner_information_alert_next">Weiter</string>
+    <string name="retrieve_owner_information_alert_close">Beenden</string>
+
+    <string name="confirm_deactivating_background_scan_title">Bestätige die Deaktivierung des Hintergrundscans</string>
+    <string name="confirm_deactivating_background_scan_text">Bist du sicher, dass du den Hintergrundscan deaktivieren möchtest? Du wirst dann keine Benachrichtigungen über Tracker mehr bekommen, die dich potenziell verfolgen?</string>
+    <string name="confirm_deactivating_background_scan_yes">Ja, deaktivieren</string>
+    <string name="confirm_deactivating_background_scan_no">Nein, geschützt bleiben</string>
+
+    <string name="tracker_or_phone">Ermitteln ob Tracker oder Smartphone</string>
 
     <string name="left">Links</string>
     <string name="right">Rechts</string>

@@ -21,6 +21,7 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     var connectionState = getConnectionState(scanResult, deviceType)
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes
+    val advertisementFlags = scanResult.scanRecord?.advertiseFlags
 
     // Information for Sub categorization
     @SuppressLint("MissingPermission")

@@ -131,24 +131,32 @@ class TrackingDetectorWorker @AssistedInject constructor(
         Timber.d("Start deleting old and safe Trackers")
         val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
 
-        val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-        if (devicesToBeDeleted.isNotEmpty()) {
-            Timber.d("Deleting ${devicesToBeDeleted.size} devices")
-            deviceRepository.deleteDevices(devicesToBeDeleted)
-            Timber.d("Deleting Devices successful")
-        }
-        if (devicesToBeDeleted.isEmpty()) {
-            Timber.d("No old devices to delete")
+        try {
+            val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+            if (devicesToBeDeleted.isNotEmpty()) {
+                Timber.d("Deleting ${devicesToBeDeleted.size} devices")
+                deviceRepository.deleteDevices(devicesToBeDeleted)
+                Timber.d("Deleting Devices successful")
+            }
+            if (devicesToBeDeleted.isEmpty()) {
+                Timber.d("No old devices to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Deleting Devices failed $e")
         }
 
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
-        val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
-        if (locationsToBeDeleted.isNotEmpty()) {
-            Timber.d("Deleting ${locationsToBeDeleted.size} locations")
-            locationRepository.deleteLocations(locationsToBeDeleted)
-            Timber.d("Deleting Locations successful")
-        } else {
-            Timber.d("No locations to delete")
+        try {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
+            if (locationsToBeDeleted.isNotEmpty()) {
+                Timber.d("Deleting ${locationsToBeDeleted.size} locations")
+                locationRepository.deleteLocations(locationsToBeDeleted)
+                Timber.d("Deleting Locations successful")
+            } else {
+                Timber.d("No locations to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Deleting Locations failed $e")
         }
 
         Timber.d("Deleting old and safe Trackers finished")

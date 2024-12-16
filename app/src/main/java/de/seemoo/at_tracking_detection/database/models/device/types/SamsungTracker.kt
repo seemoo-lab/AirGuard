@@ -1,14 +1,7 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
-import android.content.Context
 import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -19,12 +12,10 @@ import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.getBitsFromByte
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class SamsungTracker(val id: Int) : Device() {
     override val imageResource: Int
@@ -39,12 +30,12 @@ class SamsungTracker(val id: Int) : Device() {
         get() = SamsungTracker
 
     companion object : DeviceContext {
-        internal val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-        internal val GATT_DEVICE_NAME_CHARACTERISTIC = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
-        internal val GATT_APPEARANCE_CHARACTERISTIC = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
+        private val GATT_GENERIC_ACCESS_SERVICE = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
+        private val GATT_DEVICE_NAME_CHARACTERISTIC = UUID.fromString("00002a00-0000-1000-8000-00805f9b34fb")
+        private val GATT_APPEARANCE_CHARACTERISTIC = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb")
 
-        internal val GATT_DEVICE_INFORMATION_SERVICE = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
-        internal val GATT_MANUFACTURER_NAME_CHARACTERISTIC = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
+        private val GATT_DEVICE_INFORMATION_SERVICE = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
+        private val GATT_MANUFACTURER_NAME_CHARACTERISTIC = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")
 
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
@@ -69,120 +60,22 @@ class SamsungTracker(val id: Int) : Device() {
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FD5A-0000-1000-8000-00805F9B34FB")
 
-        @SuppressLint("MissingPermission")
-        private suspend fun connectAndRetrieveCharacteristics(context: Context, deviceAddress: String): Triple<String?, Int?, String?> =
-            suspendCancellableCoroutine { continuation ->
-                val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                val bluetoothAdapter = bluetoothManager.adapter
-                val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
-
-                val gattCallback = object : BluetoothGattCallback() {
-                    var deviceName: String? = null
-                    var appearance: Int? = null
-                    var manufacturerName: String? = null
-
-                    @SuppressLint("MissingPermission")
-                    override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-                        if (newState == BluetoothProfile.STATE_CONNECTED) {
-                            Timber.d("Connected to GATT server.")
-                            gatt?.discoverServices()
-                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                            Timber.d("Disconnected from GATT server.")
-                            if (continuation.isActive) {
-                                continuation.resume(Triple(deviceName, appearance, manufacturerName))
-                            }
-                        }
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            Timber.d("Services discovered.")
-                            gatt?.let {
-                                readNextCharacteristic(it)
-                            }
-                        } else {
-                            Timber.w("onServicesDiscovered received: $status")
-                            if (continuation.isActive) {
-                                continuation.resumeWithException(Exception("Failed to discover services: $status"))
-                            }
-                        }
-                    }
-
-                    @Deprecated("Deprecated in Java")
-                    @SuppressLint("MissingPermission")
-                    override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            when (characteristic?.uuid) {
-                                GATT_DEVICE_NAME_CHARACTERISTIC -> {
-                                    if (characteristic != null) {
-                                        deviceName = characteristic.getStringValue(0)
-                                    }
-                                }
-                                GATT_APPEARANCE_CHARACTERISTIC -> {
-                                    if (characteristic != null) {
-                                        appearance = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0)
-                                    }
-                                }
-                                GATT_MANUFACTURER_NAME_CHARACTERISTIC -> {
-                                    if (characteristic != null) {
-                                        manufacturerName = characteristic.getStringValue(0)
-                                    }
-                                }
-                            }
-                        } else {
-                            Timber.w("Failed to read characteristic: $status")
-                        }
-                        gatt?.let { readNextCharacteristic(it) }
-                    }
-
-                    private fun readNextCharacteristic(gatt: BluetoothGatt) {
-                        when {
-                            deviceName == null -> {
-                                val char = gatt.getService(GATT_GENERIC_ACCESS_SERVICE)?.getCharacteristic(GATT_DEVICE_NAME_CHARACTERISTIC)
-                                if (char != null) {
-                                    gatt.readCharacteristic(char)
-                                } else {
-                                    deviceName = "Unknown"
-                                    readNextCharacteristic(gatt)
-                                }
-                            }
-                            appearance == null -> {
-                                val char = gatt.getService(GATT_GENERIC_ACCESS_SERVICE)?.getCharacteristic(GATT_APPEARANCE_CHARACTERISTIC)
-                                if (char != null) {
-                                    gatt.readCharacteristic(char)
-                                } else {
-                                    appearance = -1
-                                    readNextCharacteristic(gatt)
-                                }
-                            }
-                            manufacturerName == null -> {
-                                val char = gatt.getService(GATT_DEVICE_INFORMATION_SERVICE)?.getCharacteristic(GATT_MANUFACTURER_NAME_CHARACTERISTIC)
-                                if (char != null) {
-                                    gatt.readCharacteristic(char)
-                                } else {
-                                    manufacturerName = "Unknown"
-                                    readNextCharacteristic(gatt)
-                                }
-                            }
-                            else -> {
-                                if (continuation.isActive) {
-                                    continuation.resume(Triple(deviceName, appearance, manufacturerName))
-                                }
-                                gatt.disconnect()
-                            }
-                        }
-                    }
-                }
-
-                bluetoothDevice.connectGatt(context, false, gattCallback)
-            }
-
         suspend fun getSubType(wrappedScanResult: ScanResultWrapper): SamsungTrackerType {
-            val (deviceName, appearance, manufacturerName) = connectAndRetrieveCharacteristics(
-                ATTrackingDetectionApplication.getAppContext(),
-                wrappedScanResult.deviceAddress
+            val characteristicsToRead = listOf(
+                Triple(GATT_GENERIC_ACCESS_SERVICE, GATT_DEVICE_NAME_CHARACTERISTIC, "string"),
+                Triple(GATT_GENERIC_ACCESS_SERVICE, GATT_APPEARANCE_CHARACTERISTIC, "int"),
+                Triple(GATT_DEVICE_INFORMATION_SERVICE, GATT_MANUFACTURER_NAME_CHARACTERISTIC, "string")
             )
+
+            val resultMap = Utility.connectAndRetrieveCharacteristics(
+                ATTrackingDetectionApplication.getAppContext(),
+                wrappedScanResult.deviceAddress,
+                characteristicsToRead
+            )
+
+            val deviceName = resultMap[GATT_DEVICE_NAME_CHARACTERISTIC] as? String
+            val appearance = resultMap[GATT_APPEARANCE_CHARACTERISTIC] as? Int
+            val manufacturerName = resultMap[GATT_MANUFACTURER_NAME_CHARACTERISTIC] as? String
 
             val advertisedName = wrappedScanResult.advertisedName
             val hasUWB = wrappedScanResult.uwbCapable

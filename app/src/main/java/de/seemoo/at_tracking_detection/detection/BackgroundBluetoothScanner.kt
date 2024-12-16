@@ -18,6 +18,8 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
@@ -94,6 +96,11 @@ object BackgroundBluetoothScanner {
     )
 
     suspend fun scanInBackground(startedFrom: String): BackgroundScanResults {
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            Timber.d("Background scanning is deactivated")
+            return BackgroundScanResults(0, 0, 0, true)
+        }
+
         if (isScanning) {
             Timber.w("BackgroundBluetoothScanner scan already running")
             return BackgroundScanResults(0, 0, 0, true)
@@ -560,6 +567,13 @@ object BackgroundBluetoothScanner {
                 } else {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
+                    deviceRepository.update(device)
+                }
+
+                if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+                    Timber.d("Google Find My Network Device found! Detecting Subtype...")
+                    val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
+                    device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
                 }
 
