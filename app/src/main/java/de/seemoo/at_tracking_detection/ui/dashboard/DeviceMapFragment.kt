@@ -58,6 +58,8 @@ class DeviceMapFragment : Fragment() {
         ViewCompat.setTranslationZ(view, 100f)
         val map: MapView = view.findViewById(R.id.map)
 
+        Utility.basicMapSetup(map)
+
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
         Utility.enableMyLocationOverlay(map)
@@ -83,6 +85,14 @@ class DeviceMapFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setTitle()
+        val map: MapView = view?.findViewById(R.id.map) ?: return
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val map: MapView = view?.findViewById(R.id.map) ?: return
+        map.onPause()
     }
 
     fun setTitle() {
