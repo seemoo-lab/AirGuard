@@ -111,6 +111,8 @@ class TrackingFragment : Fragment() {
             )
         }
         isReceiverRegistered = true
+
+        mapView.onResume()
     }
 
     override fun onPause() {
@@ -119,6 +121,7 @@ class TrackingFragment : Fragment() {
             context?.unregisterReceiver(gattUpdateReceiver)
             isReceiverRegistered = false
         }
+        mapView.onPause()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,6 +136,8 @@ class TrackingFragment : Fragment() {
     }
 
     private fun initializeMap() {
+        Utility.basicMapSetup(mapView)
+
         mapView.addMapListener(object : MapListener {
             override fun onZoom(event: ZoomEvent?): Boolean {
                 if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {

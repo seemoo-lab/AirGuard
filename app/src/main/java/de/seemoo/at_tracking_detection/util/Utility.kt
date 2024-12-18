@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -56,7 +57,7 @@ import kotlin.coroutines.resumeWithException
 
 object Utility {
 
-    private const val MAX_ZOOM_LEVEL = 19.5
+    private const val MAX_ZOOM_LEVEL = 18.0
     private const val ZOOMED_OUT_LEVEL = 15.0
 
     fun checkAndRequestPermission(permission: String): Boolean {
@@ -111,17 +112,27 @@ object Utility {
         map: MapView
     ) {
         val locationOverlay = MyLocationNewOverlay(map)
-//        val context = ATTrackingDetectionApplication.getAppContext()
-//        val options = BitmapFactory.Options()
-//        val bitmapPerson =
-//            BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-//        locationOverlay.setPersonIcon(bitmapPerson)
-//        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
-//        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
-//        locationOverlay.enableMyLocation()
-//        locationOverlay.enableFollowLocation()
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val options = BitmapFactory.Options()
+        val bitmapPerson = BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
+        locationOverlay.setPersonIcon(bitmapPerson)
+        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
+        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
+        locationOverlay.enableMyLocation()
+        locationOverlay.enableFollowLocation()
         map.overlays.add(locationOverlay)
         map.controller.setZoom(ZOOMED_OUT_LEVEL)
+    }
+
+    fun basicMapSetup(map: MapView) {
+        val context = ATTrackingDetectionApplication.getAppContext()
+        val copyrightOverlay = CopyrightOverlay(context)
+
+        map.setTileSource(TileSourceFactory.MAPNIK)
+        map.setUseDataConnection(true)
+        map.setMultiTouchControls(true)
+
+        map.overlays.add(copyrightOverlay)
     }
 
     suspend fun setGeoPointsFromListOfLocations(
@@ -129,16 +140,9 @@ object Utility {
         map: MapView,
     ): Boolean {
         val context = ATTrackingDetectionApplication.getAppContext()
-        val copyrightOverlay = CopyrightOverlay(context)
 
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
-
-        map.setTileSource(TileSourceFactory.MAPNIK)
-        map.setUseDataConnection(true)
-        map.setMultiTouchControls(true)
-
-        map.overlays.add(copyrightOverlay)
 
         val iconDrawable = R.drawable.ic_baseline_location_on_45_black
 
