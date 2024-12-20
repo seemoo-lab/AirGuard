@@ -100,7 +100,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onResume() {
         super.onResume()
         Timber.d("MainActivity onResume called")
-        BLEScanner.startBluetoothScan(this.applicationContext)
+
+        try {
+            val success = BLEScanner.startBluetoothScan(this.applicationContext)
+            if (!success) {
+                Timber.e("Failed to start Bluetooth scan.")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error starting Bluetooth scan")
+        }
 
         Timber.d("Scheduling an immediate background scan onResume of MainActivity")
         backgroundWorkScheduler.scheduleImmediateBackgroundScan()
@@ -110,7 +118,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onPause() {
         super.onPause()
         Timber.d("MainActivity onPause called")
-        BLEScanner.stopBluetoothScan()
+        try {
+            BLEScanner.stopBluetoothScan()
+        } catch (e: Exception) {
+            Timber.e(e, "Error stopping Bluetooth scan")
+        }
     }
 
 

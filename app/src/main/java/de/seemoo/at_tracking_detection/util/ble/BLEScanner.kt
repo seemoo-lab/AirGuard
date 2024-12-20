@@ -30,14 +30,14 @@ object BLEScanner {
     private var scanResults = ArrayList<ScanResult>()
 
     fun startBluetoothScan(appContext: Context): Boolean {
-        // Check if already scanning
-        if(this.bluetoothManager != null && isScanning) { return true }
-
-        this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         val bluetoothAdapter = this.bluetoothManager?.adapter
 
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-            Timber.d("Bluetooth is not enabled.")
+        if (bluetoothAdapter == null) {
+            Timber.d("Bluetooth adapter is null.")
+            return false
+        } else if (!bluetoothAdapter.isEnabled) {
+            Timber.d("Bluetooth is not enabled")
             return false
         }
 
@@ -46,33 +46,29 @@ object BLEScanner {
 
         scanResults.clear()
 
-        this.bluetoothManager?.let {
-            val isBluetoothEnabled = it.adapter.state == BluetoothAdapter.STATE_ON
-            val hasScanPermission = Utility.checkBluetoothPermission()
-
-            if (isBluetoothEnabled && hasScanPermission) {
-                val leScanner = it.adapter.bluetoothLeScanner
-                val scanFilter = DeviceManager.scanFilter
-                leScanner.startScan(scanFilter, scanSettings, ownScanCallback)
-                isScanning = true
-                fetchCurrentLocation()
-                Timber.d("Bluetooth foreground scan started")
-                return true
-            }
-
-            return false
+        if (bluetoothAdapter.state == BluetoothAdapter.STATE_ON && Utility.checkBluetoothPermission()) {
+            val leScanner = bluetoothAdapter.bluetoothLeScanner
+            val scanFilter = DeviceManager.scanFilter
+            leScanner.startScan(scanFilter, scanSettings, ownScanCallback)
+            isScanning = true
+            fetchCurrentLocation()
+            Timber.d("Bluetooth foreground scan started")
+            return true
         }
+
         return false
     }
 
 
     fun stopBluetoothScan() {
         callbacks.clear()
-        bluetoothManager?.let {
-            if (it.adapter.state == BluetoothAdapter.STATE_ON) {
-                if (!Utility.checkBluetoothPermission()) {return}
-
-                it.adapter.bluetoothLeScanner.stopScan(ownScanCallback)
+        bluetoothManager?.let { manager ->
+            val adapter = manager.adapter
+            if (adapter != null && adapter.state == BluetoothAdapter.STATE_ON) {
+                if (!Utility.checkBluetoothPermission()) {
+                    return
+                }
+                adapter.bluetoothLeScanner.stopScan(ownScanCallback)
             }
         }
         isScanning = false
