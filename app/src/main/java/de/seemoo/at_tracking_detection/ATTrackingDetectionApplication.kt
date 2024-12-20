@@ -29,7 +29,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
-import fr.bipi.tressence.file.FileLoggerTree
+import fr.bipi.treessence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime

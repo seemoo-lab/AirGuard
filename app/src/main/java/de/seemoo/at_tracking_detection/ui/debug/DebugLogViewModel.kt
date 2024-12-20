@@ -4,7 +4,7 @@ import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.bipi.tressence.file.FileLoggerTree
+import fr.bipi.treessence.file.FileLoggerTree
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject

@@ -83,7 +83,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'com.github.bastienpaulfr:Treessence:1.0.0'
+    implementation 'com.github.bastienpaulfr:Treessence:1.1.2'
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
@@ -99,8 +99,8 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -112,7 +112,7 @@ dependencies {
     implementation "androidx.hilt:hilt-work:$hilt_version"
     implementation "androidx.hilt:hilt-navigation-fragment:$hilt_version"
 
-    implementation 'com.github.AppIntro:AppIntro:6.1.0'
+    implementation 'com.github.AppIntro:AppIntro:6.3.1'
 
     implementation 'org.osmdroid:osmdroid-android:6.1.20'
     implementation 'com.github.MKergall:osmbonuspack:6.9.0'
@@ -145,7 +145,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.3'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 
     //Finds memory leaks while running the app in Debug mode
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
