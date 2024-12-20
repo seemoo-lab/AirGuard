@@ -109,6 +109,7 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:allowTaskReparenting="true"
             android:exported="true">
             <intent-filter>
