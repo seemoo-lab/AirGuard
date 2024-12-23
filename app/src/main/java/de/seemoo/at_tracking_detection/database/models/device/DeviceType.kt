@@ -93,12 +93,13 @@ enum class DeviceType {
 
     }
 
-    fun canBeIgnored(): Boolean {
+    fun canBeIgnored(cs: ConnectionState? = null): Boolean {
         // Only Devices with a constant identifier can be ignored
         return when (this) {
             TILE -> true
             CHIPOLO -> true
             PEBBLEBEE -> true
+            GOOGLE_FIND_MY_NETWORK -> cs == ConnectionState.OVERMATURE_OFFLINE
             else -> false
         }
     }
