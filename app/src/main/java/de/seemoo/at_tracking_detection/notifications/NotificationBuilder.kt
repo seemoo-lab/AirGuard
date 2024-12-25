@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
@@ -161,7 +162,7 @@ class NotificationBuilder @Inject constructor(
                 )
             )
 
-        if (baseDevice.deviceType != null && baseDevice.deviceType.canBeIgnored()) {
+        if (baseDevice.deviceType != null && baseDevice.deviceType.canBeIgnored(ConnectionState.OVERMATURE_OFFLINE)) {
             notification = notification.addAction(
                 R.drawable.ic_warning,
                 context.getString(R.string.notification_ignore_device),

@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
@@ -73,7 +74,7 @@ class TrackingViewModel @Inject constructor(
                 deviceIgnored.postValue(device.ignore)
                 noLocationsYet.postValue(false)
                 connectable.postValue(device.device is Connectable)
-                canBeIgnored.postValue(deviceType.value!!.canBeIgnored())
+                canBeIgnored.postValue(deviceType.value!!.canBeIgnored(ConnectionState.OVERMATURE_OFFLINE))
                 val notification = notificationRepository.notificationForDevice(device).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
             } else {
