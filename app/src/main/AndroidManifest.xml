@@ -55,9 +55,9 @@
         android:theme="@style/Theme.ATTrackingDetection"
         android:localeConfig="@xml/locales_config"
         android:largeHeap="true"
-        tools:targetApi="tiramisu"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="false">
+        android:fullBackupContent="false"
+        tools:targetApi="tiramisu">
 
         <activity
             android:name=".ui.TrackingNotificationActivity"
@@ -65,7 +65,9 @@
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:parentActivityName=".ui.MainActivity"
-            android:exported="false">
+            android:enableOnBackInvokedCallback="true"
+            android:exported="false"
+            tools:targetApi="tiramisu">
             <intent-filter>
                 <action android:name="de.seemoo.at_tracking_detection.TRACKING_NOTIFICATION" />
                 <category android:name="android.intent.category.DEFAULT" />
