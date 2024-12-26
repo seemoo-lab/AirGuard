@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -35,19 +36,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        enableEdgeToEdge()
+
+        // WindowCompat.setDecorFitsSystemWindows(window, false)
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
         val configuration = Configuration.getInstance()
         configuration.load(this, PreferenceManager.getDefaultSharedPreferences(this))
-        setContentView(R.layout.activity_main)
+
         val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
 
         configuration.userAgentValue = BuildConfig.APPLICATION_ID
-        // Crete osmdroid folder
+        // Create osmdroid folder
         val osmDroidDir = File(filesDir, "osmDroid")
         osmDroidDir.mkdir()
         val tilesDir = File(osmDroidDir, "tiles")
@@ -114,7 +118,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         backgroundWorkScheduler.scheduleImmediateBackgroundScan()
     }
 
-
     override fun onPause() {
         super.onPause()
         Timber.d("MainActivity onPause called")
@@ -124,7 +127,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Timber.e(e, "Error stopping Bluetooth scan")
         }
     }
-
 
     override fun onDestroy() {
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
