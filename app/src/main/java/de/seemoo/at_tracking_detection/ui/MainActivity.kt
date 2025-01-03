@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.d("MainActivity onCreate called")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         enableEdgeToEdge()
@@ -126,6 +127,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         } catch (e: Exception) {
             Timber.e(e, "Error stopping Bluetooth scan")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.d("MainActivity onStart called")
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        Timber.d("MainActivity onWindowFocusChanged: $hasFocus")
     }
 
     override fun onDestroy() {

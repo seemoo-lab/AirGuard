@@ -144,6 +144,12 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 //            // Printing time zone and user agent
 //            Timber.d("Timezone: ${Api.TIME_ZONE} useragent ${Api.USER_AGENT}")
         }
+
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            Timber.e(throwable, "Uncaught exception on thread ${thread.name}")
+        }
+
+        Timber.d("Application onCreate completed")
     }
 
 

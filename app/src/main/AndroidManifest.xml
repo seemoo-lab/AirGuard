@@ -57,6 +57,7 @@
         android:largeHeap="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
+        android:hardwareAccelerated="true"
         tools:targetApi="tiramisu">
 
         <activity
