@@ -2,7 +2,9 @@ package de.seemoo.at_tracking_detection.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -39,6 +41,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("MainActivity onCreate called")
+
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+                .detectUnsafeIntentLaunch()
+                .penaltyLog()
+                .build())
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         enableEdgeToEdge()
