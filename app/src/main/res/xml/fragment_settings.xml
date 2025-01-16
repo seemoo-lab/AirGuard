@@ -13,7 +13,7 @@
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="deactivate_background_scanning"
-        android:summary="@string/settings_advanced_mode_summary"
+        android:summary="@string/settings_deactivate_scanning_summary"
         app:title="@string/settings_deactivate_scanning_title" />
 
     <SwitchPreferenceCompat

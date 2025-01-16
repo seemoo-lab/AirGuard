@@ -28,8 +28,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 35
-        versionCode 48
-        versionName "2.3.3"
+        versionCode 50
+        versionName "2.4.0"
         
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
@@ -97,7 +97,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation "androidx.profileinstaller:profileinstaller:1.4.1"
 
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
@@ -152,7 +152,7 @@ dependencies {
 
     //Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.activity:activity-compose:1.10.0'
     // Compose Material3 Design
     implementation 'androidx.compose.material3:material3:1.3.1'
     implementation 'androidx.compose.material3:material3-window-size-class:1.3.1'
