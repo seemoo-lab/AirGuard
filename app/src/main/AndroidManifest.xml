@@ -122,7 +122,12 @@
         </activity>
 
         <activity
-            android:name=".ui.OnboardingActivity">
+            android:name=".ui.OnboardingActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.seemoo.at_tracking_detection.START_ONBOARDING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <service

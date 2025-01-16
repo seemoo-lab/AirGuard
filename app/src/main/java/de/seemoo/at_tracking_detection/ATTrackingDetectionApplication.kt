@@ -105,11 +105,12 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         Utility.setSelectedTheme(sharedPreferences)
 
-        if (showOnboarding() or !hasPermissions()) {
-            startOnboarding()
-        }else {
-            backgroundWorkScheduler.launch()
-        }
+        // This does not work starting from Android 15 anymore
+//        if (showOnboarding() or !hasPermissions()) {
+//            startOnboarding()
+//        }else {
+//            backgroundWorkScheduler.launch()
+//        }
 
         if (SharedPrefs.shareData) {
             backgroundWorkScheduler.scheduleShareData()
@@ -152,10 +153,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         Timber.d("Application onCreate completed")
     }
 
+    fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
 
-    private fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
-
-    private fun hasPermissions(): Boolean {
+    fun hasPermissions(): Boolean {
         val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
@@ -177,10 +177,13 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         return true
     }
 
-    private fun startOnboarding() =
-        startActivity(Intent(applicationContext, OnboardingActivity::class.java).apply {
+    fun startOnboarding() =
+        startActivity(Intent(applicationContext, OnboardingActivity::class.java)
+                    .apply {
+            action = "de.seemoo.at_tracking_detection.START_ONBOARDING"
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        })
+            }
+        )
 
     private fun registerBroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= 31) {

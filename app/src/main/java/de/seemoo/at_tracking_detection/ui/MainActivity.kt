@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.elevation.SurfaceColors
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -132,6 +134,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onStart() {
         super.onStart()
         Timber.d("MainActivity onStart called")
+
+        if (ATTrackingDetectionApplication.getCurrentApp().showOnboarding() or !ATTrackingDetectionApplication.getCurrentApp().hasPermissions()) {
+            ATTrackingDetectionApplication.getCurrentApp().startOnboarding()
+        } else {
+            backgroundWorkScheduler.launch()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
