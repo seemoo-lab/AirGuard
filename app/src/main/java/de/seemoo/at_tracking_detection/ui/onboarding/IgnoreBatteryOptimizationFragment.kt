@@ -48,16 +48,19 @@ class IgnoreBatteryOptimizationFragment : Fragment() {
     // https://developer.android.com/training/monitoring-device-state/doze-standby.html#exemption-cases
     @SuppressLint("BatteryLife")
     private fun requestIgnoreBatteryOptimization() {
-        val intent = Intent()
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val packageName = requireContext().packageName
-        val pm: PowerManager =
-            requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (pm.isIgnoringBatteryOptimizations(packageName))
-            intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-        else {
-            intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            intent.data = Uri.parse("package:$packageName")
+        val pm = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        val intent = Intent().apply {
+            action = if (pm.isIgnoringBatteryOptimizations(packageName)) {
+                Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+            } else {
+                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            }
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (action == Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
+                data = Uri.parse("package:$packageName")
+            }
         }
         requireContext().startActivity(intent)
     }

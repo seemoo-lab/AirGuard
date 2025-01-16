@@ -74,6 +74,7 @@ class OnboardingActivity : AppIntro() {
             backgroundWorkScheduler.launch()
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java).apply {
+                action = "de.seemoo.at_tracking_detection.OPEN_MAIN_ACTIVITY"
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         } else {
