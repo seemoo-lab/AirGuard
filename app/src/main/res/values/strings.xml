@@ -421,6 +421,7 @@
     <string name="retrieve_owner_information_explanation_unknown">To get information about the owner you have to physically have found the Tracker. Once you have found it you have to get it in a special mode. This can be something like pressing the button three times or holding the button for 30 seconds. If successful this will be confirmed by a sound. Afterwards press \"next\".</string>
     <string name="retrieve_owner_information_explanation_pebblebee">To get information about the owner you have to physically have found the Tracker. Once you have found it press the button on the tracker three times. This will be confirmed by a sound. Afterwards press \"next\".</string>
     <string name="retrieve_owner_information_explanation_chipolo">To get information about the owner you have to physically have found the Tracker. Once you have found it press the button on the tracker for 30 seconds and release the button exactly after the second beep. This will be confirmed by a sound indicating success. Afterwards press \"next\".</string>
+    <string name="retrieve_owner_information_explanation_motorola">To get information about the owner you have to physically have found the Tracker. Once you have found it press and hold the button for 10 seconds until you hear a beep. Afterward, release the button and press &amp; release again immediately. Afterwards press \"next\".</string>
     <string name="retrieve_owner_information_alert_next">Next</string>
     <string name="retrieve_owner_information_alert_close">Close</string>
 

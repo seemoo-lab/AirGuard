@@ -205,9 +205,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         fun getSubType(wrappedScanResult: ScanResultWrapper): GoogleFindMyNetworkType {
             return when (wrappedScanResult.advertisementFlags) {
-                0x02 -> GoogleFindMyNetworkType.SMARTPHONE
-                0x06 -> GoogleFindMyNetworkType.TAG
-                else -> GoogleFindMyNetworkType.UNKNOWN
+                0x02 -> SMARTPHONE
+                0x06 -> TAG
+                else -> UNKNOWN
             }
         }
 
@@ -234,9 +234,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 // If receivedValue is not empty, return the device name, else fallback to error case
                 receivedValue?.let {
                     val nameBytes = it.drop(2).toByteArray() // Drop the first two bytes
-                    val finalResult = String(nameBytes, Charsets.UTF_8)
-                    ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = finalResult
-                    finalResult
+                    val decodedBytes = String(nameBytes, Charsets.UTF_8)
+                    ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = decodedBytes
+                    nameReplacementLayer(decodedBytes)
                 } ?: errorCaseName
             } catch (e: Exception) {
                 Timber.e("Error during connectAndWrite: ${e.message}")
@@ -401,13 +401,21 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return ConnectionState.UNKNOWN
         }
 
+        fun nameReplacementLayer(name: String): String {
+            return when {
+                name.contains("motorola", ignoreCase = true) -> "Motorola Moto Tag"
+                else -> name
+            }
+        }
+
         fun getGoogleManufacturerFromNameString(name: String): GoogleFindMyNetworkManufacturer {
             Timber.d("Name: $name")
             return when {
                 name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
                 name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
-                name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
                 name.contains("motorola", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("moto", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
                 name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
                 name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
                 else -> GoogleFindMyNetworkManufacturer.UNKNOWN
@@ -427,6 +435,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return when (manufacturer) {
                 GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
                 GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
+                GoogleFindMyNetworkManufacturer.MOTOROLA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_motorola)
                 else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
             }
         }
