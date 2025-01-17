@@ -13,6 +13,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.startActivitySafe
 import timber.log.Timber
 
 
@@ -153,6 +154,6 @@ object BLEScanner {
     fun openBluetoothSettings(context: Context) {
         val intentOpenBluetoothSettings = Intent()
         intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
-        context.startActivity(intentOpenBluetoothSettings)
+        context.startActivitySafe(intentOpenBluetoothSettings)
     }
 }

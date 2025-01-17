@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentIgnoreBatteryOptimizationBinding
+import de.seemoo.at_tracking_detection.util.startActivitySafe
 
 @AndroidEntryPoint
 class IgnoreBatteryOptimizationFragment : Fragment() {
@@ -62,7 +63,7 @@ class IgnoreBatteryOptimizationFragment : Fragment() {
                 data = Uri.parse("package:$packageName")
             }
         }
-        requireContext().startActivity(intent)
+        startActivitySafe(intent)
     }
 
     companion object {

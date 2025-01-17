@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.startActivitySafe
 
 class InformationFragment : Fragment() {
 
@@ -83,7 +84,7 @@ class InformationFragment : Fragment() {
                 Intent.ACTION_VIEW,
                 Uri.parse("https://twitter.com/AirGuardAndroid")
             )
-            startActivity(intent)
+            startActivitySafe(intent)
         }
     }
 
@@ -101,7 +102,7 @@ class InformationFragment : Fragment() {
 
     private fun openAttributionLink(link: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-        startActivity(intent)
+        startActivitySafe(intent)
     }
 
     private fun getAttributions(): List<AttributionItem> {
@@ -118,8 +119,7 @@ class InformationFragment : Fragment() {
             putExtra(Intent.EXTRA_SUBJECT, "Subject of the email")
             putExtra(Intent.EXTRA_TEXT, "Body of the email")
         }
-
-        startActivity(emailIntent)
+        startActivitySafe(emailIntent)
     }
 
 }
