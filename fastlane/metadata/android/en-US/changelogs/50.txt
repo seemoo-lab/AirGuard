@@ -1,0 +1,6 @@
+- Samsung Trackers (e.g. SmartTags) can now be detected earlier
+- The exact Model of a Google Find My Network Tracker can now be determined
+- Information about the owner of a Google Find My Network Tracker can be determined
+- Background scan can be deactivated if desired by the user (Expert mode only, we do not recommend this)
+- Fixes for Android 15
+- Bugfixes and Performance Improvements
