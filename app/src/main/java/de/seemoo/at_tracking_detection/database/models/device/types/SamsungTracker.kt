@@ -113,10 +113,34 @@ class SamsungTracker(val id: Int) : Device() {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
             if (serviceData != null && serviceData.size >= 12) {
+                Timber.d("Internal Aging Counter: %02X %02X %02X".format(serviceData[3], serviceData[2], serviceData[1]))
                 return byteArrayOf(serviceData[3], serviceData[2], serviceData[1])
             }
 
             return null
+        }
+
+        fun convertAgingCounterToInt(agingCounter: ByteArray): Int {
+            require(agingCounter.size == 3) { "agingCounter must have exactly 3 bytes" }
+            return (agingCounter[0].toInt() and 0xFF shl 16) or
+                    (agingCounter[1].toInt() and 0xFF shl 8) or
+                    (agingCounter[2].toInt() and 0xFF)
+        }
+
+        fun decrementAgingCounter(agingCounter: ByteArray): ByteArray {
+            Timber.d("Decrementing aging counter")
+            Timber.d("Aging Counter: %02X %02X %02X".format(agingCounter[0], agingCounter[1], agingCounter[2]))
+            Timber.d("Aging Counter: %06X".format(convertAgingCounterToInt(agingCounter)))
+            require(agingCounter.size == 3) { "agingCounter must have exactly 3 bytes" }
+            var value = convertAgingCounterToInt(agingCounter)
+            value -= 1
+            value = value.coerceAtLeast(0)
+            Timber.d("New Aging Counter: %06X".format(value))
+            return ByteArray(3).apply {
+                this[0] = ((value shr 16) and 0xFF).toByte()
+                this[1] = ((value shr 8) and 0xFF).toByte()
+                this[2] = (value and 0xFF).toByte()
+            }
         }
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {

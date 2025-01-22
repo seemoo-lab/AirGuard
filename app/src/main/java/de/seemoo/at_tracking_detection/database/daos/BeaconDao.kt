@@ -53,19 +53,6 @@ interface BeaconDao {
     @Query("SELECT COUNT(*) FROM beacon WHERE deviceAddress LIKE :deviceAddress AND locationId == :locationId AND receivedAt >= :since ORDER BY receivedAt DESC")
     fun getNumberOfBeaconsAddressAndLocation(deviceAddress: String, locationId: Int, since: LocalDateTime): Int
 
-    @Query("""
-    SELECT beacon.* FROM beacon
-    JOIN device ON beacon.deviceAddress = device.address
-    WHERE device.deviceType = :deviceType
-    AND device.payloadData = :payload
-    AND beacon.connectionState = :connectionState
-    AND device.lastSeen BETWEEN :since AND :until
-    AND beacon.receivedAt BETWEEN :since AND :until
-    LIMIT 1 
-    """)
-    fun getRecentBeaconForDevice(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime): Beacon?
-
-
     /*
     @Query("SELECT COUNT(*) FROM beacon WHERE latitude IS NOT NULL AND longitude IS NOT NULL")
     fun getTotalLocationCount(): Flow<Int> // old version
