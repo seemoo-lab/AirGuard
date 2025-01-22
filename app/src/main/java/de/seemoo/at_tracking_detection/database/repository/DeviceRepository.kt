@@ -60,6 +60,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDeviceWithRecentBeacon(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice? = deviceDao.getDeviceWithRecentBeacon(deviceType.name, connectionState.ordinal, payload, since, until)
 
+    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice? = deviceDao.getDeviceWithRecentBeaconAndAgingCounter(deviceType.name, connectionState.ordinal, payload, since, until, agingCounter)
+
+
 //    @WorkerThread
 //    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
 //        return if (dateTime != null) {

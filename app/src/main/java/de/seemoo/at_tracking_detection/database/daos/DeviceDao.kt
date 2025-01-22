@@ -92,6 +92,23 @@ interface DeviceDao {
     """)
     fun getDeviceWithRecentBeacon(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice?
 
+    @Query("""
+    SELECT device.* FROM device
+    JOIN beacon ON beacon.deviceAddress = device.address
+    WHERE device.deviceType = :deviceType
+    AND device.payloadData = :payload
+    AND beacon.connectionState = :connectionState
+    AND device.lastSeen BETWEEN :since AND :until
+    AND beacon.receivedAt BETWEEN :since AND :until
+    AND (
+        length(hex(beacon.mfg)) >= 30
+        AND substr(hex(beacon.mfg), 25, 6) = :agingCounter
+    )
+    LIMIT 1
+    """)
+    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
+
+
     @Transaction
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM device WHERE lastSeen >= :dateTime")
