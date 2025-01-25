@@ -519,7 +519,7 @@ object BackgroundBluetoothScanner {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
                             // Additional Check: Aging Counter for Samsung Tracker (e.g. SmartTags) has to be exactly 1 smaller in the previous Beacon
                             val currentAgingCounter = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
-                            Timber.d("Current Aging Counter: ${currentAgingCounter?.toHexString(format = HexFormat.Default)}")
+                            Timber.d("Current Aging Counter: ${currentAgingCounter?.toHexString(format = HexFormat.UpperCase)}")
 
                             if (currentAgingCounter == null) {
                                 Timber.d("Aging Counter is null... Skipping!")
@@ -527,7 +527,7 @@ object BackgroundBluetoothScanner {
                             }
 
                             val previousAgingCounter: ByteArray = SamsungTracker.decrementAgingCounter(currentAgingCounter)
-                            val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "").uppercase()
+                            val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "")
                             Timber.d("Previous Aging Counter: $previousAgingCounterString")
 
                             val deviceBefore: BaseDevice? = deviceRepository.getDeviceWithRecentBeaconAndAgingCounter(

@@ -98,12 +98,9 @@ interface DeviceDao {
     WHERE device.deviceType = :deviceType
     AND device.payloadData = :payload
     AND beacon.connectionState = :connectionState
+    AND hex(beacon.mfg) = :agingCounter
     AND device.lastSeen BETWEEN :since AND :until
     AND beacon.receivedAt BETWEEN :since AND :until
-    AND (
-        length(hex(beacon.mfg)) >= 30
-        AND substr(hex(beacon.mfg), 25, 6) = :agingCounter
-    )
     LIMIT 1
     """)
     fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
