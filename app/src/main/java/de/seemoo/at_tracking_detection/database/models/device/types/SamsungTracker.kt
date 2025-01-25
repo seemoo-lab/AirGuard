@@ -128,14 +128,10 @@ class SamsungTracker(val id: Int) : Device() {
         }
 
         fun decrementAgingCounter(agingCounter: ByteArray): ByteArray {
-            Timber.d("Decrementing aging counter")
-            Timber.d("Aging Counter: %02X %02X %02X".format(agingCounter[0], agingCounter[1], agingCounter[2]))
-            Timber.d("Aging Counter: %06X".format(convertAgingCounterToInt(agingCounter)))
             require(agingCounter.size == 3) { "agingCounter must have exactly 3 bytes" }
             var value = convertAgingCounterToInt(agingCounter)
             value -= 1
             value = value.coerceAtLeast(0)
-            Timber.d("New Aging Counter: %06X".format(value))
             return ByteArray(3).apply {
                 this[0] = ((value shr 16) and 0xFF).toByte()
                 this[1] = ((value shr 8) and 0xFF).toByte()
