@@ -13,6 +13,8 @@ class ScanRepository @Inject constructor(
 
     var lastScan = scanDao.lastScan()
 
+    var lastCompletedScan = scanDao.lastCompletedScan()
+
     var relevantScans =
         scanDao.getScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 

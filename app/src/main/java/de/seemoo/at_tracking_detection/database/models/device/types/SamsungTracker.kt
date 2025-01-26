@@ -127,10 +127,10 @@ class SamsungTracker(val id: Int) : Device() {
                     (agingCounter[2].toInt() and 0xFF)
         }
 
-        fun decrementAgingCounter(agingCounter: ByteArray): ByteArray {
+        fun decrementAgingCounter(agingCounter: ByteArray, amount: Int = 1): ByteArray {
             require(agingCounter.size == 3) { "agingCounter must have exactly 3 bytes" }
             var value = convertAgingCounterToInt(agingCounter)
-            value -= 1
+            value -= amount
             value = value.coerceAtLeast(0)
             return ByteArray(3).apply {
                 this[0] = ((value shr 16) and 0xFF).toByte()

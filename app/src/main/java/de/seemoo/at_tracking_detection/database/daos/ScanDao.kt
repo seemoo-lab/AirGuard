@@ -40,7 +40,10 @@ interface ScanDao {
     fun getNumberOfScans(): Int
 
     @Query("SELECT * FROM scan ORDER by endDate DESC LIMIT 1")
-    fun lastScan(): Scan
+    fun lastScan(): Scan?
+
+    @Query("SELECT * FROM scan WHERE endDate IS NOT NULL ORDER by endDate DESC LIMIT 1")
+    fun lastCompletedScan(): Scan?
 
     @Query("SELECT * FROM scan WHERE scanId == :scanId")
     fun scanWithId(scanId: Int): Scan?
