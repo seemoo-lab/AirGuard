@@ -550,8 +550,8 @@ object BackgroundBluetoothScanner {
                                 deviceType = deviceType,
                                 connectionState = connectionState,
                                 payload = trackerProperties,
-                                since = LocalDateTime.now().minusMinutes(15+15*agingCounterDecrease+timeTolerance),
-                                until = LocalDateTime.now().minusMinutes(15*agingCounterDecrease-timeTolerance),
+                                since = discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance),
+                                until = discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance),
                                 agingCounter = previousAgingCounterString
                             )
                             Timber.d("Device Before: $deviceBefore")
@@ -568,8 +568,8 @@ object BackgroundBluetoothScanner {
                                 deviceType = deviceType,
                                 connectionState = connectionState,
                                 payload = trackerProperties,
-                                since = LocalDateTime.now().minusMinutes(15+15*agingCounterDecrease+timeTolerance),
-                                until = LocalDateTime.now().minusMinutes(15*agingCounterDecrease-timeTolerance)
+                                since = discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance),
+                                until = discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)
                             )
                         }
 
