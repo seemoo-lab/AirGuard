@@ -90,7 +90,7 @@ interface DeviceDao {
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1 
     """)
-    fun getDeviceWithRecentBeacon(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice?
+    fun getDeviceWithRecentBeacon(deviceType: String, connectionState: String, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice?
 
     @Query("""
     SELECT device.* FROM device
@@ -103,7 +103,7 @@ interface DeviceDao {
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1
     """)
-    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: Int, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
+    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: String, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
 
 
     @Transaction
