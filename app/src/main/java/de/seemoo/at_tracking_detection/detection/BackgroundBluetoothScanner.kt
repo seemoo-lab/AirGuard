@@ -35,8 +35,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.math.ceil
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -291,7 +293,7 @@ object BackgroundBluetoothScanner {
         }
     }
 
-    private fun getScanMode(): Int {
+    fun getScanMode(): Int {
         val useLowPower = SharedPrefs.useLowPowerBLEScan
         return if (useLowPower) {
             ScanSettings.SCAN_MODE_LOW_POWER
@@ -515,6 +517,20 @@ object BackgroundBluetoothScanner {
                             return@withLock null
                         }
 
+                        val lastScan: Scan? = scanRepository.lastCompletedScan
+                        val lastScanStartDate: LocalDateTime? = lastScan?.startDate
+                        var lastScanEndDate: LocalDateTime? = lastScan?.endDate
+
+                        if (lastScan == null || lastScanStartDate == null) {
+                            Timber.d("There have been no previous scans... Skipping!")
+                            return@withLock null
+                        } else if (lastScanEndDate == null) {
+                            lastScanEndDate = lastScanStartDate
+                        }
+
+                        val timeDiffSinceLastScan: Long = ChronoUnit.MINUTES.between(lastScanEndDate, discoveryDate)
+                        val agingCounterDecrease: Int = ceil(timeDiffSinceLastScan.toDouble() / 15).toInt()
+
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
                             // Additional Check: Aging Counter for Samsung Tracker (e.g. SmartTags) has to be exactly 1 smaller in the previous Beacon
@@ -526,7 +542,7 @@ object BackgroundBluetoothScanner {
                                 return@withLock null
                             }
 
-                            val previousAgingCounter: ByteArray = SamsungTracker.decrementAgingCounter(currentAgingCounter)
+                            val previousAgingCounter: ByteArray = SamsungTracker.decrementAgingCounter(currentAgingCounter, agingCounterDecrease)
                             val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "")
                             Timber.d("Previous Aging Counter: $previousAgingCounterString")
 
@@ -534,8 +550,8 @@ object BackgroundBluetoothScanner {
                                 deviceType = deviceType,
                                 connectionState = connectionState,
                                 payload = trackerProperties,
-                                since = LocalDateTime.now().minusMinutes(30+timeTolerance),
-                                until = LocalDateTime.now().minusMinutes(15-timeTolerance),
+                                since = LocalDateTime.now().minusMinutes(15+15*agingCounterDecrease+timeTolerance),
+                                until = LocalDateTime.now().minusMinutes(15*agingCounterDecrease-timeTolerance),
                                 agingCounter = previousAgingCounterString
                             )
                             Timber.d("Device Before: $deviceBefore")
@@ -552,8 +568,8 @@ object BackgroundBluetoothScanner {
                                 deviceType = deviceType,
                                 connectionState = connectionState,
                                 payload = trackerProperties,
-                                since = LocalDateTime.now().minusMinutes(30+timeTolerance),
-                                until = LocalDateTime.now().minusMinutes(15-timeTolerance)
+                                since = LocalDateTime.now().minusMinutes(15+15*agingCounterDecrease+timeTolerance),
+                                until = LocalDateTime.now().minusMinutes(15*agingCounterDecrease-timeTolerance)
                             )
                         }
 

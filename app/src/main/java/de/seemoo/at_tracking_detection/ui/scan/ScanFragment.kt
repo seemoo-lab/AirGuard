@@ -14,22 +14,33 @@ import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
+import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.getScanMode
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
     private val scanViewModel: ScanViewModel by viewModels()
-
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
+    private val scanRepository: ScanRepository
+        get() = ATTrackingDetectionApplication.getCurrentApp().scanRepository
+    private var scanId: Long = 0
+    private var hasActiveScan = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,23 +50,25 @@ class ScanFragment : Fragment() {
         val binding: FragmentScanBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
 
-        binding.adapterHighRisk = bluetoothDeviceAdapterHighRisk
-        binding.adapterLowRisk = bluetoothDeviceAdapterLowRisk
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = scanViewModel
-
-        scanViewModel.bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) {newList ->
-            bluetoothDeviceAdapterHighRisk.submitList(newList)
-        }
-        scanViewModel.bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) {newList ->
-            bluetoothDeviceAdapterLowRisk.submitList(newList)
+        binding.apply {
+            adapterHighRisk = bluetoothDeviceAdapterHighRisk
+            adapterLowRisk = bluetoothDeviceAdapterLowRisk
+            lifecycleOwner = viewLifecycleOwner
+            vm = scanViewModel
         }
 
-        scanViewModel.scanFinished.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-            } else {
-                binding.buttonStartStopScan.setImageResource(R.drawable.ic_baseline_stop_24)
+        scanViewModel.apply {
+            bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) { newList ->
+                bluetoothDeviceAdapterHighRisk.submitList(newList)
+            }
+            bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) { newList ->
+                bluetoothDeviceAdapterLowRisk.submitList(newList)
+            }
+            scanFinished.observe(viewLifecycleOwner) { isFinished ->
+                binding.buttonStartStopScan.setImageResource(
+                    if (isFinished) R.drawable.ic_baseline_play_arrow_24
+                    else R.drawable.ic_baseline_stop_24
+                )
             }
         }
 
@@ -64,32 +77,20 @@ class ScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startBluetoothScan()
 
-        val bluetoothButton = view.findViewById<Button>(R.id.open_ble_settings_button)
-        bluetoothButton.setOnClickListener {
+        view.findViewById<Button>(R.id.open_ble_settings_button).setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
         }
 
-        scanViewModel.scanFinished.observe(viewLifecycleOwner) {scanFinished ->
-            if (scanFinished) {
-                stopBluetoothScan()
-            } else {
-                startBluetoothScan()
-            }
-        }
-
-        val startStopButton = view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan)
-        startStopButton.setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan).setOnClickListener {
             if (scanViewModel.scanFinished.value == true) {
-                scanViewModel.scanFinished.postValue(false)
+                startBluetoothScanIfNeeded()
             } else {
-                scanViewModel.scanFinished.postValue(true)
+                stopBluetoothScan()
             }
         }
 
-        val infoButton = view.findViewById<ImageButton>(R.id.info_button)
-        infoButton.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.info_button).setOnClickListener {
             toggleInfoLayoutVisibility(view)
         }
     }
@@ -100,16 +101,15 @@ class ScanFragment : Fragment() {
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
-        val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
-        infoLayout.visibility = if (infoLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        view.findViewById<LinearLayout>(R.id.info_layout).apply {
+            visibility = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
     }
 
-    private val scanCallback: ScanCallback = object : ScanCallback() {
+    private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            result?.let {
-                scanViewModel.addScanResult(it)
-            }
+            result?.let { scanViewModel.addScanResult(it) }
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -117,42 +117,66 @@ class ScanFragment : Fragment() {
             Timber.e("BLE Scan failed. $errorCode")
             stopBluetoothScan()
             view?.let {
-                Snackbar.make(
-                    it,
-                    R.string.ble_service_connection_error,
-                    Snackbar.LENGTH_LONG
-                ).show()
+                Snackbar.make(it, R.string.ble_service_connection_error, Snackbar.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun startBluetoothScan() {
-        // Start a scan if the BLEScanner is not already running
-        if (!BLEScanner.isScanning) {
-            BLEScanner.startBluetoothScan(this.requireContext())
+    private fun startBluetoothScanIfNeeded() {
+        if (!hasActiveScan) {
+            createNewScanRecord()
+            hasActiveScan = true
         }
 
-        // Register the current fragment as a callback
-        if (this.scanCallback !in BLEScanner.callbacks) {
-            BLEScanner.registerCallback(this.scanCallback)
+        if (!BLEScanner.isScanning) {
+            BLEScanner.startBluetoothScan(requireContext())
         }
+
+        if (scanCallback !in BLEScanner.callbacks) {
+            BLEScanner.registerCallback(scanCallback)
+        }
+
         scanViewModel.scanFinished.postValue(false)
 
-        // Show to the user that no devices have been found
         Handler(Looper.getMainLooper()).postDelayed({
-            // Stop scanning if no device was detected
             if (scanViewModel.isListEmpty.value == true) {
-                scanViewModel.scanFinished.postValue(true)
                 stopBluetoothScan()
             }
         }, SCAN_DURATION)
     }
 
+    private fun createNewScanRecord() {
+        lifecycleScope.launch {
+            val scanMode = getScanMode()
+            scanId = scanRepository.insert(
+                Scan(
+                    startDate = LocalDateTime.now(),
+                    isManual = true,
+                    scanMode = scanMode
+                )
+            )
+        }
+    }
+
     private fun stopBluetoothScan() {
-        // We just unregister the callback, but keep the scanner running
-        // until the app is closed / moved to background
-        BLEScanner.unregisterCallback(this.scanCallback)
+        BLEScanner.unregisterCallback(scanCallback)
+
+        lifecycleScope.launch {
+            val scan = scanRepository.scanWithId(scanId.toInt())
+            if (scan != null) {
+                val now = LocalDateTime.now()
+                scan.apply {
+                    endDate = now
+                    duration = ChronoUnit.SECONDS.between(startDate, now).toInt()
+                    noDevicesFound = (scanViewModel.bluetoothDeviceListHighRisk.value?.size ?: 0) +
+                            (scanViewModel.bluetoothDeviceListLowRisk.value?.size ?: 0)
+                }
+                scanRepository.update(scan)
+            }
+        }
+
         scanViewModel.scanFinished.postValue(true)
+        hasActiveScan = false
     }
 
     override fun onDestroyView() {
@@ -163,7 +187,7 @@ class ScanFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (scanViewModel.scanFinished.value == false) {
-            startBluetoothScan()
+            startBluetoothScanIfNeeded()
         }
     }
 
