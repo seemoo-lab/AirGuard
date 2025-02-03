@@ -59,7 +59,6 @@ class InformationFragment : Fragment() {
         val developer = view.findViewById<LinearLayout>(R.id.developer_mail)
         val maintainer = view.findViewById<LinearLayout>(R.id.maintainer_mail)
         val libraries = view.findViewById<LinearLayout>(R.id.libraries)
-        val twitter = view.findViewById<LinearLayout>(R.id.twitter)
 
         contact.setOnClickListener {
             val emailAddress = "airguard@seemoo.tu-darmstadt.de"
@@ -77,13 +76,6 @@ class InformationFragment : Fragment() {
             val directions: NavDirections =
                 InformationFragmentDirections.actionInformationToAboutLibs()
             findNavController().navigate(directions)
-        }
-        twitter.setOnClickListener{
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://twitter.com/AirGuardAndroid")
-            )
-            startActivity(intent)
         }
     }
 
