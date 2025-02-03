@@ -3,6 +3,7 @@
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.content.IntentFilter
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.models.device.types.*
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
@@ -23,7 +24,11 @@ object DeviceManager {
     // Note: it is necessary that the tracker implements an aging counter function for this to work (see: BackgroundBluetoothScanner.saveDevice)
     val strict15MinuteAlgorithm = listOf(DeviceType.SAMSUNG_TRACKER)
     // savedConnectionStatesWith15MinuteAlgorithm: Connection states that are considered by the 15 minute algorithm
-    val savedConnectionStatesWith15MinuteAlgorithm = listOf(ConnectionState.OFFLINE)
+    val savedConnectionStatesWith15MinuteAlgorithm = if (BuildConfig.DEBUG) {
+        listOf(ConnectionState.OFFLINE, ConnectionState.PREMATURE_OFFLINE) // This makes testing on samsung phones easier
+    } else {
+        listOf(ConnectionState.OFFLINE)
+    }
 
     private val deviceTypeCache = mutableMapOf<String, DeviceType>()
 
