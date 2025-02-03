@@ -58,9 +58,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
 
-    fun getDeviceWithRecentBeacon(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime): BaseDevice? = deviceDao.getDeviceWithRecentBeacon(deviceType.name, connectionState.toString(), payload, since, until)
+    fun getDeviceWithRecentBeacon(deviceType: DeviceType, connectionState: ConnectionState, payload: Int?, since: LocalDateTime, until: LocalDateTime): BaseDevice? = deviceDao.getDeviceWithRecentBeacon(deviceType.name, connectionState.toString(), payload, since, until)
 
-    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: DeviceType, connectionState: ConnectionState, payload: Byte?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice? = deviceDao.getDeviceWithRecentBeaconAndAgingCounter(deviceType.name, connectionState.toString(), payload, since, until, agingCounter)
+    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: DeviceType, connectionState: ConnectionState, payload: Int?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice? = deviceDao.getDeviceWithRecentBeaconAndAgingCounter(deviceType.name, connectionState.toString(), payload, since, until, agingCounter)
 
 
 //    @WorkerThread
