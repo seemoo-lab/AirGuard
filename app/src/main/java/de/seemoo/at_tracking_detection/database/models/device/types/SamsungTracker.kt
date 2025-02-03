@@ -102,7 +102,7 @@ class SamsungTracker(val id: Int) : Device() {
         fun getPropertiesByte(scanResult: ScanResult): Byte? {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
-            if (serviceData != null && serviceData.size >= 12) {
+            if (serviceData != null && serviceData.size > 12) {
                 return serviceData[12]
             }
 

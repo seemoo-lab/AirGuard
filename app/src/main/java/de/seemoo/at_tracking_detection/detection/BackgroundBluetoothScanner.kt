@@ -511,6 +511,7 @@ object BackgroundBluetoothScanner {
                             DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getPropertiesByte(wrappedScanResult.scanResult)
                             else -> null
                         }
+                        val payloadAsInt = trackerProperties?.toInt()?.and(0xFF)
 
                         if (trackerProperties == null) {
                             Timber.d("Device cannot be matched to a previous beacon... Skipping!")
@@ -546,12 +547,14 @@ object BackgroundBluetoothScanner {
                             val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "")
                             Timber.d("Previous Aging Counter: $previousAgingCounterString")
 
+                            Timber.d("Check if previous Device with the aging Counter exists...")
+                            Timber.d("Device Type: $deviceType, Connection State: $connectionState, Payload: $trackerProperties, Since: ${discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance)}, Until: ${discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)}, Aging Counter: $previousAgingCounterString")
                             val deviceBefore: BaseDevice? = deviceRepository.getDeviceWithRecentBeaconAndAgingCounter(
                                 deviceType = deviceType,
                                 connectionState = connectionState,
-                                payload = trackerProperties,
-                                since = discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance),
-                                until = discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance),
+                                payload = payloadAsInt,
+                                since = discoveryDate.minusMinutes(15 * (agingCounterDecrease + 1) + timeTolerance),
+                                until = discoveryDate.minusMinutes(15 * agingCounterDecrease - timeTolerance),
                                 agingCounter = previousAgingCounterString
                             )
                             Timber.d("Device Before: $deviceBefore")
@@ -564,12 +567,14 @@ object BackgroundBluetoothScanner {
                                 deviceBefore
                             }
                         } else {
+                            Timber.d("Device is not in strict 15 Minute Algorithm! Checking for any Device in the last 15 Minutes")
+                            Timber.d("Device Type: $deviceType, Connection State: $connectionState, Payload: $trackerProperties, Since: ${discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance)}, Until: ${discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)}")
                             deviceRepository.getDeviceWithRecentBeacon(
                                 deviceType = deviceType,
                                 connectionState = connectionState,
-                                payload = trackerProperties,
-                                since = discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance),
-                                until = discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)
+                                payload = payloadAsInt,
+                                since = discoveryDate.minusMinutes(15 * (agingCounterDecrease + 1) + timeTolerance),
+                                until = discoveryDate.minusMinutes(15 * agingCounterDecrease - timeTolerance)
                             )
                         }
 
