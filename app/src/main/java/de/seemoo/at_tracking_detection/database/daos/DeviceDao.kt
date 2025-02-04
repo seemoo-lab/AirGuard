@@ -84,9 +84,8 @@ interface DeviceDao {
     SELECT device.* FROM device
     JOIN beacon ON beacon.deviceAddress = device.address
     WHERE device.deviceType = :deviceType
-    AND CAST(substr(device.payloadData, 1, 1) AS INTEGER) = :payload
+    AND CAST(device.payloadData AS INTEGER) = :payload
     AND beacon.connectionState = :connectionState
-    AND device.lastSeen BETWEEN :since AND :until
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1 
     """)
@@ -96,10 +95,9 @@ interface DeviceDao {
     SELECT device.* FROM device
     JOIN beacon ON beacon.deviceAddress = device.address
     WHERE device.deviceType = :deviceType
-    AND CAST(substr(device.payloadData, 1, 1) AS INTEGER) = :payload
+    AND CAST(device.payloadData AS INTEGER) = :payload
     AND beacon.connectionState = :connectionState
-    AND hex(beacon.mfg) = :agingCounter
-    AND device.lastSeen BETWEEN :since AND :until
+    AND HEX(beacon.mfg) = :agingCounter
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1
     """)
