@@ -84,24 +84,24 @@ interface DeviceDao {
     SELECT device.* FROM device
     JOIN beacon ON beacon.deviceAddress = device.address
     WHERE device.deviceType = :deviceType
-    AND CAST(device.payloadData AS INTEGER) = :payload
+    AND CAST(device.payloadData AS BYTE) = :payload
     AND beacon.connectionState = :connectionState
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1 
     """)
-    fun getDeviceWithRecentBeacon(deviceType: String, connectionState: String, payload: Int?, since: LocalDateTime, until: LocalDateTime): BaseDevice?
+    fun getDeviceWithRecentBeacon(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime): BaseDevice?
 
     @Query("""
     SELECT device.* FROM device
     JOIN beacon ON beacon.deviceAddress = device.address
     WHERE device.deviceType = :deviceType
-    AND CAST(device.payloadData AS INTEGER) = :payload
+    AND CAST(device.payloadData AS BYTE) = :payload
     AND beacon.connectionState = :connectionState
     AND HEX(beacon.mfg) = :agingCounter
     AND beacon.receivedAt BETWEEN :since AND :until
     LIMIT 1
     """)
-    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: String, payload: Int?, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
+    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
 
 
     @Transaction

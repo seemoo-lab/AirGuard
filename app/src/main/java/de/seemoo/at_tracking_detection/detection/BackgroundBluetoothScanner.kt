@@ -35,13 +35,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlin.math.ceil
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.floor
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -481,9 +481,7 @@ object BackgroundBluetoothScanner {
     ): BaseDevice? {
         return withContext(Dispatchers.IO) {
             deviceMutex.withLock {
-                val deviceRepository =
-                    ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
                 val deviceAddress = wrappedScanResult.uniqueIdentifier
 
                 // Checks if Device already exists in device database
@@ -503,7 +501,7 @@ object BackgroundBluetoothScanner {
                         deviceRepository.insert(device)
                     } else if (wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
                         Timber.d("Called 15 minute algorithm for device ${wrappedScanResult.uniqueIdentifier} ${wrappedScanResult.deviceType} ${wrappedScanResult.connectionState}")
-                        val timeTolerance: Long = 5 // in minutes
+                        var timeTolerance: Long = 5 // in minutes
                         val deviceType = wrappedScanResult.deviceType
                         val connectionState = wrappedScanResult.connectionState
                         val trackerProperties: Byte? = when (deviceType) {
@@ -511,16 +509,16 @@ object BackgroundBluetoothScanner {
                             DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getPropertiesByte(wrappedScanResult.scanResult)
                             else -> null
                         }
-                        val payloadAsInt = trackerProperties?.toInt()?.and(0xFF)
 
                         if (trackerProperties == null) {
-                            Timber.d("Device cannot be matched to a previous beacon... Skipping!")
+                            Timber.d("Device does not have Hardware Properties Byte in Advertisement... Skipping!")
                             return@withLock null
                         }
 
                         val lastScan: Scan? = scanRepository.lastCompletedScan
                         val lastScanStartDate: LocalDateTime? = lastScan?.startDate
                         var lastScanEndDate: LocalDateTime? = lastScan?.endDate
+
 
                         if (lastScan == null || lastScanStartDate == null) {
                             Timber.d("There have been no previous scans... Skipping!")
@@ -530,20 +528,37 @@ object BackgroundBluetoothScanner {
                         }
 
                         val timeDiffSinceLastScan: Long = ChronoUnit.MINUTES.between(lastScanEndDate, discoveryDate)
-                        val agingCounterDecrease: Int = ceil(timeDiffSinceLastScan.toDouble() / 15).toInt()
+                        if (timeDiffSinceLastScan < 15 - timeTolerance) {
+                            Timber.d("Under minimum interval threshold")
+                            return@withLock null
+                        }
+
+                        val agingCounterDecrease: Int = floor(timeDiffSinceLastScan.toDouble() / 15).toInt()
+
+                        val baseInterval = 15 * agingCounterDecrease
+
 
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
                             // Additional Check: Aging Counter for Samsung Tracker (e.g. SmartTags) has to be exactly 1 smaller in the previous Beacon
-                            val currentAgingCounter = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
+                            val currentAgingCounter: ByteArray? = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
                             Timber.d("Current Aging Counter: ${currentAgingCounter?.toHexString(format = HexFormat.UpperCase)}")
-
                             if (currentAgingCounter == null) {
-                                Timber.d("Aging Counter is null... Skipping!")
+                                Timber.d("Current Aging Counter is null... Skipping!")
                                 return@withLock null
                             }
 
-                            val previousAgingCounter: ByteArray = SamsungTracker.decrementAgingCounter(currentAgingCounter, agingCounterDecrease)
+                            timeTolerance = timeTolerance + 15
+
+                            val since = discoveryDate.minusMinutes(baseInterval + 15 + timeTolerance)
+                            val until = discoveryDate.minusMinutes(baseInterval - timeTolerance)
+
+                            val decrementAmount = agingCounterDecrease.coerceAtLeast(1)
+                            val previousAgingCounter = SamsungTracker.decrementAgingCounter(
+                                currentAgingCounter,
+                                decrementAmount
+                            )
+
                             val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "")
                             Timber.d("Previous Aging Counter: $previousAgingCounterString")
 
@@ -552,9 +567,9 @@ object BackgroundBluetoothScanner {
                             val deviceBefore: BaseDevice? = deviceRepository.getDeviceWithRecentBeaconAndAgingCounter(
                                 deviceType = deviceType,
                                 connectionState = connectionState,
-                                payload = payloadAsInt,
-                                since = discoveryDate.minusMinutes(15 * (agingCounterDecrease + 1) + timeTolerance),
-                                until = discoveryDate.minusMinutes(15 * agingCounterDecrease - timeTolerance),
+                                payload = trackerProperties,
+                                since = since,
+                                until = until,
                                 agingCounter = previousAgingCounterString
                             )
                             Timber.d("Device Before: $deviceBefore")
@@ -569,12 +584,14 @@ object BackgroundBluetoothScanner {
                         } else {
                             Timber.d("Device is not in strict 15 Minute Algorithm! Checking for any Device in the last 15 Minutes")
                             Timber.d("Device Type: $deviceType, Connection State: $connectionState, Payload: $trackerProperties, Since: ${discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance)}, Until: ${discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)}")
+                            val since = discoveryDate.minusMinutes(baseInterval + 15 + timeTolerance)
+                            val until = discoveryDate.minusMinutes(baseInterval - timeTolerance)
                             deviceRepository.getDeviceWithRecentBeacon(
                                 deviceType = deviceType,
                                 connectionState = connectionState,
-                                payload = payloadAsInt,
-                                since = discoveryDate.minusMinutes(15 * (agingCounterDecrease + 1) + timeTolerance),
-                                until = discoveryDate.minusMinutes(15 * agingCounterDecrease - timeTolerance)
+                                payload = trackerProperties,
+                                since = since,
+                                until = until
                             )
                         }
 
