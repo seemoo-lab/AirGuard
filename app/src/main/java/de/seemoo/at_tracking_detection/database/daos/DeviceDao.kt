@@ -86,7 +86,7 @@ interface DeviceDao {
     WHERE device.deviceType = :deviceType
     AND CAST(device.payloadData AS BYTE) = :payload
     AND beacon.connectionState = :connectionState
-    AND beacon.receivedAt BETWEEN :since AND :until
+    AND device.lastSeen BETWEEN :since AND :until
     LIMIT 1 
     """)
     fun getDeviceWithRecentBeacon(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime): BaseDevice?
@@ -98,7 +98,7 @@ interface DeviceDao {
     AND CAST(device.payloadData AS BYTE) = :payload
     AND beacon.connectionState = :connectionState
     AND HEX(beacon.mfg) = :agingCounter
-    AND beacon.receivedAt BETWEEN :since AND :until
+    AND device.lastSeen BETWEEN :since AND :until
     LIMIT 1
     """)
     fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
