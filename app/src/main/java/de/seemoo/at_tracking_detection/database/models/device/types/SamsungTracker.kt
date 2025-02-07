@@ -143,7 +143,7 @@ class SamsungTracker(val id: Int) : Device() {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
             if (serviceData != null && serviceData.isNotEmpty()) {
-                // Little Endian (5,6,7) --> (2,1,0)
+                // Attention: Bit order within in the Byte is swapped (5,6,7) --> (2,1,0)
                 val bit5 = getBitsFromByte(serviceData[0], 2)
                 val bit6 = getBitsFromByte(serviceData[0],1)
                 val bit7 = getBitsFromByte(serviceData[0],0)

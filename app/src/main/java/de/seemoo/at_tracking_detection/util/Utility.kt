@@ -104,7 +104,6 @@ object Utility {
     }
 
     fun getBitsFromByte(value: Byte, position: Int): Boolean {
-        // This uses Little Endian
         return ((value.toInt() shr position) and 1) == 1
     }
 
