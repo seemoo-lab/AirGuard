@@ -60,6 +60,7 @@ data class BaseDevice(
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
     @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
+    @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices
 ) {
 
     constructor(
@@ -88,6 +89,7 @@ data class BaseDevice(
         lastSeen,
         null,
         null,
+        additionalData=null,
     )
 
     constructor(scanResult: ScanResult) : this(
@@ -110,6 +112,7 @@ data class BaseDevice(
         LocalDateTime.now(),
         null,
         null,
+        additionalData=null,
     )
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId

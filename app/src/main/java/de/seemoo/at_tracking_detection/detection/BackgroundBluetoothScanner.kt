@@ -559,18 +559,17 @@ object BackgroundBluetoothScanner {
                                 decrementAmount
                             )
 
-                            val previousAgingCounterString = previousAgingCounter.toHexString(format = HexFormat.UpperCase).replace(" ", "")
-                            Timber.d("Previous Aging Counter: $previousAgingCounterString")
-
-                            Timber.d("Check if previous Device with the aging Counter exists...")
-                            Timber.d("Device Type: $deviceType, Connection State: $connectionState, Payload: $trackerProperties, Since: ${discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance)}, Until: ${discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)}, Aging Counter: $previousAgingCounterString")
-                            val deviceBefore: BaseDevice? = deviceRepository.getDeviceWithRecentBeaconAndAgingCounter(
-                                deviceType = deviceType,
+                            val additionalDataString = SamsungTracker.calculateAdditionalDataString(
                                 connectionState = connectionState,
-                                payload = trackerProperties,
+                                agingCounter = previousAgingCounter,
+                                flags = trackerProperties
+                            )
+
+                            val deviceBefore: BaseDevice? = deviceRepository.getDeviceWithRecentBeacon(
+                                deviceType = deviceType,
+                                additionalData = additionalDataString,
                                 since = since,
                                 until = until,
-                                agingCounter = previousAgingCounterString
                             )
                             Timber.d("Device Before: $deviceBefore")
 
@@ -583,26 +582,43 @@ object BackgroundBluetoothScanner {
                             }
                         } else {
                             Timber.d("Device is not in strict 15 Minute Algorithm! Checking for any Device in the last 15 Minutes")
-                            Timber.d("Device Type: $deviceType, Connection State: $connectionState, Payload: $trackerProperties, Since: ${discoveryDate.minusMinutes(15+15*agingCounterDecrease+timeTolerance)}, Until: ${discoveryDate.minusMinutes(15*agingCounterDecrease-timeTolerance)}")
                             val since = discoveryDate.minusMinutes(baseInterval + 15 + timeTolerance)
                             val until = discoveryDate.minusMinutes(baseInterval - timeTolerance)
+
+                            val additionalDataString = SamsungTracker.calculateAdditionalDataString(
+                                connectionState = connectionState,
+                                agingCounter = byteArrayOf(0x00, 0x00, 0x00),
+                                flags = trackerProperties
+                            )
+
                             deviceRepository.getDeviceWithRecentBeacon(
                                 deviceType = deviceType,
-                                connectionState = connectionState,
-                                payload = trackerProperties,
+                                additionalData = additionalDataString,
                                 since = since,
                                 until = until
                             )
                         }
 
+                        // Calculate new additionalDataString
+                        val additionalDataString = SamsungTracker.calculateAdditionalDataString(
+                            connectionState = connectionState,
+                            agingCounter = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
+                                SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)!!
+                            } else {
+                                byteArrayOf(0x00, 0x00, 0x00)
+                            },
+                            flags = trackerProperties
+                        )
+
                         if (correspondingDevice == null) {
                             Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
-                            device.payloadData = trackerProperties
+                            device.additionalData = additionalDataString
                             deviceRepository.insert(device)
                         } else {
                             Timber.d("Update Device to the database using the 15 Minute Algorithm!")
                             device = correspondingDevice
                             device.lastSeen = discoveryDate
+                            device.additionalData = additionalDataString
                             deviceRepository.update(device)
                         }
                     } else {

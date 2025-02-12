@@ -81,28 +81,13 @@ interface DeviceDao {
     fun updateRiskLevelCache(deviceAddress: String, riskLevel: Int, lastCalculatedRiskDate: LocalDateTime)
 
     @Query("""
-    SELECT device.* FROM device
-    JOIN beacon ON beacon.deviceAddress = device.address
+    SELECT * FROM device
     WHERE device.deviceType = :deviceType
-    AND CAST(device.payloadData AS BYTE) = :payload
-    AND beacon.connectionState = :connectionState
+    AND additionalData = :additionalData
     AND device.lastSeen BETWEEN :since AND :until
     LIMIT 1 
     """)
-    fun getDeviceWithRecentBeacon(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime): BaseDevice?
-
-    @Query("""
-    SELECT device.* FROM device
-    JOIN beacon ON beacon.deviceAddress = device.address
-    WHERE device.deviceType = :deviceType
-    AND CAST(device.payloadData AS BYTE) = :payload
-    AND beacon.connectionState = :connectionState
-    AND HEX(beacon.mfg) = :agingCounter
-    AND device.lastSeen BETWEEN :since AND :until
-    LIMIT 1
-    """)
-    fun getDeviceWithRecentBeaconAndAgingCounter(deviceType: String, connectionState: String, payload: Byte, since: LocalDateTime, until: LocalDateTime, agingCounter: String): BaseDevice?
-
+    fun getDeviceWithRecentBeacon(deviceType: String, additionalData: String, since: LocalDateTime, until: LocalDateTime): BaseDevice?
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
