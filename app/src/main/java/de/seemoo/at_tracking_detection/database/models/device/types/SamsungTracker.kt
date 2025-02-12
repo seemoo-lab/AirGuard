@@ -109,6 +109,37 @@ class SamsungTracker(val id: Int) : Device() {
             return null
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
+        fun calculateAdditionalDataString(connectionState: ConnectionState, agingCounter: ByteArray, flags: Byte): String {
+            require(agingCounter.size == 3) { "agingCounter must have exactly 3 bytes" }
+
+            // Format of additionalData for Samsung Trackers:
+            // 3 Bits: ConnectionState
+            // 3 Bytes: Aging Counter
+            // 1 Byte: Flags (Region, Encryption, UWB, BatteryLevel)
+
+            var additionalDataString = ""
+
+            // ConnectionState: Same scheme as physically on Device
+            additionalDataString += when (connectionState) {
+                ConnectionState.OVERMATURE_OFFLINE -> "O11"
+                ConnectionState.OFFLINE -> "O10"
+                ConnectionState.PREMATURE_OFFLINE -> "001"
+                ConnectionState.CONNECTED -> "101"
+                ConnectionState.UNKNOWN -> "111"
+            }
+
+            // Aging Counter
+            additionalDataString += agingCounter[0].toHexString(HexFormat.UpperCase)
+            additionalDataString += agingCounter[1].toHexString(HexFormat.UpperCase)
+            additionalDataString += agingCounter[2].toHexString(HexFormat.UpperCase)
+
+            // Flags
+            additionalDataString += flags.toUByte().toHexString(HexFormat.UpperCase)
+
+            return additionalDataString
+        }
+
         fun getInternalAgingCounter(scanResult: ScanResult): ByteArray? {
             val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
