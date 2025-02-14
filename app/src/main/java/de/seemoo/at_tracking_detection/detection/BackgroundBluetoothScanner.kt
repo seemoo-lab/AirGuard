@@ -37,11 +37,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.floor
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -515,28 +513,7 @@ object BackgroundBluetoothScanner {
                             return@withLock null
                         }
 
-                        val lastScan: Scan? = scanRepository.lastCompletedScan
-                        val lastScanStartDate: LocalDateTime? = lastScan?.startDate
-                        var lastScanEndDate: LocalDateTime? = lastScan?.endDate
-
-
-                        if (lastScan == null || lastScanStartDate == null) {
-                            Timber.d("There have been no previous scans... Skipping!")
-                            return@withLock null
-                        } else if (lastScanEndDate == null) {
-                            lastScanEndDate = lastScanStartDate
-                        }
-
-                        val timeDiffSinceLastScan: Long = ChronoUnit.MINUTES.between(lastScanEndDate, discoveryDate)
-                        if (timeDiffSinceLastScan < 15 - timeTolerance) {
-                            Timber.d("Under minimum interval threshold")
-                            return@withLock null
-                        }
-
-                        val agingCounterDecrease: Int = floor(timeDiffSinceLastScan.toDouble() / 15).toInt()
-
-                        val baseInterval = 15 * agingCounterDecrease
-
+                        val baseInterval = 15
 
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
@@ -553,10 +530,9 @@ object BackgroundBluetoothScanner {
                             val since = discoveryDate.minusMinutes(baseInterval + 15 + timeTolerance)
                             val until = discoveryDate.minusMinutes(baseInterval - timeTolerance)
 
-                            val decrementAmount = agingCounterDecrease.coerceAtLeast(1)
                             val previousAgingCounter = SamsungTracker.decrementAgingCounter(
                                 currentAgingCounter,
-                                decrementAmount
+                                1 // decrementAmount
                             )
 
                             val additionalDataString = SamsungTracker.calculateAdditionalDataString(
