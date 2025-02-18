@@ -90,8 +90,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.6'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.8.6'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.7'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.8.7'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -157,13 +157,13 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.3.1'
     implementation 'androidx.compose.material3:material3-window-size-class:1.3.1'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.7.7'
+    implementation 'androidx.compose.animation:animation:1.7.8'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.7.7'
+    implementation 'androidx.compose.ui:ui-tooling:1.7.8'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.7.7'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.7.8'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 }
