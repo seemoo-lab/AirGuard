@@ -489,10 +489,15 @@ object BackgroundBluetoothScanner {
 
                     // Check if ConnectionState qualifies Device to be saved
                     // Only Save when Device is in Overmature Offline Mode or qualifies for the 15 Minute Algorithm
-                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates) {
-                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
-                            Timber.d("Device is safe and will be hidden to the user!")
+                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates || Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) in DeviceManager.additionalSavedConnectionStates) {
+                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) !in DeviceManager.additionalSavedConnectionStates) {
+                            // Timber.d("Device is safe and will be hidden to the user!")
                             device.safeTracker = true
+                        }
+
+                        if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+                            val connectionState = wrappedScanResult.connectionState
+                            device.additionalData = Utility.connectionStateToString(connectionState)
                         }
 
                         Timber.d("Add new Device to the database!")

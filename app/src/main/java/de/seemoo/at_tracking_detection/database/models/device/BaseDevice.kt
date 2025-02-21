@@ -60,7 +60,7 @@ data class BaseDevice(
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
     @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
-    @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices
+    @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices and saving ConnectionState for Google Devices
 ) {
 
     constructor(
