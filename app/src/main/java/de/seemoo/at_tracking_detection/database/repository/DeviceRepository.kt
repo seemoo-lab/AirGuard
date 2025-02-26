@@ -63,6 +63,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDevicesWithDeviceTypeAndConnectionStateOlderThan(deviceType: DeviceType, connectionState: ConnectionState, olderThan: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesWithDeviceTypeAndConnectionState(deviceType.name, Utility.connectionStateToString(connectionState), olderThan)
 
+    fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice? = deviceDao.getDeviceWithAlternativeIdentifier(alternativeIdentifier)
+
 //    @WorkerThread
 //    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {
 //        return if (dateTime != null) {

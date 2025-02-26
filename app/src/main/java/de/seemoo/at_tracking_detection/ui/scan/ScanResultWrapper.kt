@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
 import androidx.databinding.ObservableField
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getAlternativeIdentifier
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
@@ -17,7 +18,8 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     var txPower: Int = scanResult.txPower
     var isConnectable: Boolean = scanResult.isConnectable
     val deviceType = getDeviceType(scanResult)
-    val uniqueIdentifier = getPublicKey(scanResult, deviceType)  // either public key or MAC-Address
+    val uniqueIdentifier: String = getUniqueIdentifier(scanResult, deviceType)  // either public key or MAC-Address
+    val alternativeIdentifier: String? = getAlternativeIdentifier(scanResult, deviceType) // null if not applicable for this tracker type
     var connectionState = getConnectionState(scanResult, deviceType)
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes

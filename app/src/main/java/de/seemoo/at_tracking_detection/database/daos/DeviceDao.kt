@@ -123,4 +123,7 @@ interface DeviceDao {
         connectionState: String,
         olderThan: LocalDateTime
     ): List<BaseDevice>
+
+    @Query("SELECT * FROM device WHERE alternativeIdentifier = :alternativeIdentifier LIMIT 1")
+    fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice?
 }

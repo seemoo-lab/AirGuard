@@ -40,7 +40,7 @@ interface DeviceContext {
         return BatteryState.UNKNOWN
     }
 
-    fun getPublicKey(scanResult: ScanResult): String{
+    fun getUniqueIdentifier(scanResult: ScanResult): String{
         return scanResult.device.address
     }
 }

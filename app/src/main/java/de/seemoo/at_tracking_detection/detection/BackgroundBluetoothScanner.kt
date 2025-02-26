@@ -496,8 +496,16 @@ object BackgroundBluetoothScanner {
                         }
 
                         if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-                            val connectionState = wrappedScanResult.connectionState
-                            device.additionalData = Utility.connectionStateToString(connectionState)
+                            val alternativeIdentifier = GoogleFindMyNetwork.getAlternativeIdentifier(wrappedScanResult.scanResult)
+                            if (alternativeIdentifier != null) {
+                                deviceRepository.getDeviceWithAlternativeIdentifier(alternativeIdentifier)?.let {
+                                    Timber.d("Google Device already in the database with alternative identifier... Updating the last seen date!")
+                                    device = it
+                                    device.lastSeen = discoveryDate
+                                    deviceRepository.update(device)
+                                    return@withLock device
+                                }
+                            }
                         }
 
                         Timber.d("Add new Device to the database!")
