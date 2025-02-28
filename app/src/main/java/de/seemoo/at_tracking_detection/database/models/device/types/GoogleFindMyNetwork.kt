@@ -448,7 +448,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
                 return serviceData?.let { serviceData ->
-                    val startIndex = 1
+                    val startIndex = 1 // Skip first Byte
                     val endIndex = when {
                         serviceData.size >= 34 -> startIndex + 32
                         serviceData.size >= 22 -> startIndex + 20
@@ -458,7 +458,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     serviceData.slice(startIndex until endIndex).toByteArray().toHexString()
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error getting unique identifier of Samsung Tracker")
+                Timber.e(e, "Error getting unique identifier of Google Tracker")
             }
 
             return null
