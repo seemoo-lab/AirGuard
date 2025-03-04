@@ -389,6 +389,9 @@
     <string name="confirm_deactivating_background_scan_yes">Ja, deaktivieren</string>
     <string name="confirm_deactivating_background_scan_no">Nein, geschützt bleiben</string>
 
+    <string name="last_seen_times_title">Tracker zuletzt gesehen am:</string>
+    <string name="no_last_seen_times">Keine Zeiten verfügbar</string>
+
     <string name="tracker_or_phone">Ermitteln ob Tracker oder Smartphone</string>
 
     <string name="left">Links</string>

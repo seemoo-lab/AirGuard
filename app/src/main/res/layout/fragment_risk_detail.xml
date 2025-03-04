@@ -50,6 +50,7 @@
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/dates_detected"
                 style="?attr/materialCardViewElevatedStyle"
