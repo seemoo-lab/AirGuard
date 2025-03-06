@@ -12,9 +12,12 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 class TrackingViewModel @Inject constructor(
@@ -59,6 +62,13 @@ class TrackingViewModel @Inject constructor(
         it.size.toString()
     }
 
+    val lastSeenTimes: MutableLiveData<List<String>> = MutableLiveData(emptyList())
+    val lastSeenTimesString: LiveData<String> = lastSeenTimes.map {
+        it.joinToString(separator = "\n")
+    }
+
+    val expertMode = MutableLiveData(false)
+
     fun loadDevice(address: String, deviceTypeOverride: DeviceType) =
         deviceRepository.getDevice(address).also { device ->
             this.device.postValue(device)
@@ -77,6 +87,12 @@ class TrackingViewModel @Inject constructor(
                 canBeIgnored.postValue(deviceType.value!!.canBeIgnored(ConnectionState.OVERMATURE_OFFLINE))
                 val notification = notificationRepository.notificationForDevice(device).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
+
+                // Load last seen times
+                viewModelScope.launch {
+                    loadLastSeenTimes(device)
+                    expertMode.postValue(SharedPrefs.advancedMode)
+                }
             } else {
                 noLocationsYet.postValue(true)
             }
@@ -88,6 +104,14 @@ class TrackingViewModel @Inject constructor(
                 manufacturerWebsiteUrl.postValue("")
             }
         }
+
+    private fun loadLastSeenTimes(baseDevice: BaseDevice) {
+        val beacons = beaconRepository.getDeviceBeacons(baseDevice.address)
+        val lastSeenList = beacons.sortedByDescending { it.receivedAt }.take(5).map { beacon ->
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(beacon.receivedAt)
+        }
+        lastSeenTimes.postValue(lastSeenList)
+    }
 
     fun toggleIgnoreDevice() {
         if (deviceAddress.value != null) {
