@@ -44,6 +44,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".release"
             resValue "bool", "debug", "false"
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         debug {
             minifyEnabled false
