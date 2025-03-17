@@ -1,0 +1,2 @@
+- Optimized Samsung SmartTag detection
+- Now detecting trackers that try to evade some tracking detection strategies
