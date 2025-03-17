@@ -1,0 +1,2 @@
+- Optimiert Erkennung von Samsung SmartTags
+- Die App kann nun auch manche Tracker erkennen, die versuchen einer Tracking Erkennung zu umgehen.

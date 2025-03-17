@@ -1,31 +1,30 @@
-Mit AirGuard bekommst du den Anti-stalking Schutz, den du verdienst! 
-Die App scannt deine Umgebung im Hintergrund, um tracker, wie AirTags oder andere Find My Tracker zu finden. Findet die App heraus, dass ein Tracker dir folgt, dann bekommst du eine Benachrichtigung. 
+With AirGuard, you get the anti-stalking protection you deserve!
+The app scans your surroundings in the background to detect trackers like AirTags, Samsung SmartTags, or Google Find My Device trackers. If a tracker is following you, you will receive an instant notification.
 
-Diese Tracker sind nur so groß wie eine Münze und ideal, um Android Nutzer zu verfolgen. Auf iOS hat Apple dafür eine automatische Warnung integriert, doch unter Android bekommst du diese nur mit AirGuard. 
+These trackers are often no larger than a coin and are unfortunately misused to secretly track people. Since each tracker works differently, you would typically need multiple apps to detect unwanted tracking.
+AirGuard combines the detection of various trackers into a single app – keeping you protected with ease.
 
-Nachdem ein AirTag gefunden wurde, kannst du diesen klingeln lassen oder mit einem manuellen Scan auf die Suche gehen. Findest du ein Gerät, dann raten wir dir es zu deaktivieren, damit es nicht mehr deinen Standort verfolgt. 
+Once a tracker is detected, you can make it play a sound (for supported models) or perform a manual scan to locate it. If you find a tracker, we recommend disabling it to prevent further tracking of your location.
 
-Die App speichert deinen Standort nur lokal, um dir später zu zeigen an welchen Orten ein Tracker die gefolgt ist. Persönliche Daten teilt diese App niemals. 
+The app stores location data exclusively on your device, allowing you to review where a tracker has followed you. Your personal data is never shared.
 
-Wenn niemand dich versucht zu starken über einen AirTag, dann wird die App dich auch nicht stören. 
+If no trackers are found, the app runs silently in the background and won’t bother you.
 
-<h2><b>Wie funktioniert die App?</h2></b>
+<h2><b>How does the app work?</b></h2>
+AirGuard uses Bluetooth to detect AirTags, Samsung SmartTags, and other trackers. All data is processed and stored locally on your device.
+If a tracker is detected in at least three different locations, you will receive a warning. You can adjust the security level in the settings to receive even faster alerts.
 
-AirGuard verwendet Bluetooth um AirTags und andere Find My tracker zu finden. Alles was gefunden wird, wird lokal auf deinem Gerät gespeichert und ausgewertet. 
+<h2><b>Who are we?</b></h2>
+We are part of the Technical University of Darmstadt. This project is part of the scientific research conducted by the Secure Mobile Networking Lab.
+Our goal is to protect people’s privacy and investigate how widespread the issue of tracker-based stalking is.
 
-Immer, wenn ein tracker mehrfach an verschiedenen Orten gefunden wurde, dann wird AirGuard das bemerken. Wurde der Tracker mindestens drei mal gefunden, bekommst du eine Warnung und kannst einen Ton auf dem Tracker abspielen. 
+You can voluntarily participate in an anonymous study to help us gain more insights into the usage and spread of these trackers.
 
-<h2><b>Wer sind wir?</h2></b>
-Wir sind Teil der Technischen Universität Darmstadt. Dieses Projekt ist Teil der wissenschaftlichen Forschung des Lehrstuhls für Sichere Mobile Netze. 
-Unser Ziele sind die Privatsphäre von Menschen zu schützen und herauszufinden, wie verbreitet das stalking Problem über AirTags ist. 
+This app will never be monetized – there are no ads and no paid features. You will never be charged for using it.
 
-Mit dieser App kannst du an einer freiwilligen Studie teilnehmen. Diese erhebt nur anonymisierten Daten. 
-
-Diese App wird niemals monetisiert werden und Werbung anzeigen oder Geld für bestimmte Funktionen verlangen. 
-
-Unsere Datenschutzerklärung befindet sich hier: 
+Our privacy policy can be found here:
 https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
 
-Rechtliches
-AirTag, FindMy und iOS are eingetragene Marken von Apple Inc. 
-Dieses Projekt ist keine Zusammenarbeit mit Apple Inc.
+<h2><b>Legal Notice</b></h2>
+AirTag, Find My, and iOS are registered trademarks of Apple Inc.
+This project is not affiliated with Apple Inc.
