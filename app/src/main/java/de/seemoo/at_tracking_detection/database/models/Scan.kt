@@ -21,7 +21,13 @@ data class Scan(
     @ColumnInfo(name = "isManual") val isManual: Boolean,
     /*Android Scan mode used*/
     @ColumnInfo(name = "scanMode") val scanMode: Int,
-    @ColumnInfo(name = "startDate") val startDate: LocalDateTime?
+
+    @ColumnInfo(name = "startDate") val startDate: LocalDateTime?,
+
+    @ColumnInfo(name = "location_deg") var locationDeg: String?,
+
+    @ColumnInfo(name = "location") var locationId: Int?
+
 ) {
     constructor(
         endDate: LocalDateTime,
@@ -29,7 +35,9 @@ data class Scan(
         duration: Int,
         isManual: Boolean,
         scanMode: Int,
-        startDate: LocalDateTime
+        startDate: LocalDateTime,
+        locationDeg: String?,
+        locationId: Int?
     ): this(
         scanId = 0,
         endDate,
@@ -37,7 +45,9 @@ data class Scan(
         duration,
         isManual,
         scanMode,
-        startDate
+        startDate,
+        locationDeg,
+        locationId
     )
 
     constructor(
@@ -52,6 +62,8 @@ data class Scan(
         isManual = isManual,
         scanMode = scanMode,
         startDate = startDate,
-            )
+        locationDeg = null,
+        locationId = null
+        )
 
 }

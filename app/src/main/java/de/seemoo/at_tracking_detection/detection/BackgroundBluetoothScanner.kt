@@ -36,6 +36,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
@@ -243,6 +244,11 @@ object BackgroundBluetoothScanner {
             scan.duration = scanDuration.toInt() / 1000
             scan.noDevicesFound = scanResultDictionary.size
             scanRepository.update(scan)
+            if (BuildConfig.DEBUG) {
+                var dbLocation = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
+                scan.locationId = dbLocation?.locationId
+                scan.locationDeg = "${location?.longitude},${location?.latitude}"
+            }
         }
 
         Timber.d("Scheduling tracking detector worker")
