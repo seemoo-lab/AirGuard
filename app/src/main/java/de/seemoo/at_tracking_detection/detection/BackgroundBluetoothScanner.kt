@@ -245,7 +245,7 @@ object BackgroundBluetoothScanner {
             scan.noDevicesFound = scanResultDictionary.size
             scanRepository.update(scan)
             if (BuildConfig.DEBUG) {
-                var dbLocation = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
+                val dbLocation = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
                 scan.locationId = dbLocation?.locationId
                 scan.locationDeg = "${location?.longitude},${location?.latitude}"
             }
