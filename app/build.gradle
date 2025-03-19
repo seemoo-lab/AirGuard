@@ -28,8 +28,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 35
-        versionCode 50
-        versionName "2.4.0"
+        versionCode 51
+        versionName "2.4.1"
         
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
@@ -44,6 +44,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".release"
             resValue "bool", "debug", "false"
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         debug {
             minifyEnabled false

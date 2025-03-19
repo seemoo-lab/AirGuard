@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "93b1b95f4709243d98cd95ae303d4153",
+    "identityHash": "c160fc1075953b40c0c47d1a7a8d52b3",
     "entities": [
       {
         "tableName": "device",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER DEFAULT 0, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT, `subDeviceType` TEXT NOT NULL DEFAULT 'UNKNOWN', `riskLevel` INTEGER NOT NULL DEFAULT 0, `lastCalculatedRiskDate` TEXT, `nextObservationNotification` TEXT, `currentObservationDuration` INTEGER, `safeTracker` INTEGER NOT NULL DEFAULT false, `additionalData` TEXT, `alternativeIdentifier` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER DEFAULT 0, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT, `subDeviceType` TEXT NOT NULL DEFAULT 'UNKNOWN', `riskLevel` INTEGER NOT NULL DEFAULT 0, `lastCalculatedRiskDate` TEXT, `nextObservationNotification` TEXT, `currentObservationDuration` INTEGER, `safeTracker` INTEGER NOT NULL DEFAULT false, `additionalData` TEXT)",
         "fields": [
           {
             "fieldPath": "deviceId",
@@ -123,12 +123,6 @@
           {
             "fieldPath": "additionalData",
             "columnName": "additionalData",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "alternativeIdentifier",
-            "columnName": "alternativeIdentifier",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -383,7 +377,7 @@
       },
       {
         "tableName": "scan",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`scanId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `endDate` TEXT, `noDevicesFound` INTEGER, `duration` INTEGER, `isManual` INTEGER NOT NULL, `scanMode` INTEGER NOT NULL, `startDate` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`scanId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `endDate` TEXT, `noDevicesFound` INTEGER, `duration` INTEGER, `isManual` INTEGER NOT NULL, `scanMode` INTEGER NOT NULL, `startDate` TEXT, `location_deg` TEXT, `location` INTEGER)",
         "fields": [
           {
             "fieldPath": "scanId",
@@ -425,6 +419,18 @@
             "fieldPath": "startDate",
             "columnName": "startDate",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "locationDeg",
+            "columnName": "location_deg",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "locationId",
+            "columnName": "location",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -514,7 +520,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93b1b95f4709243d98cd95ae303d4153')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c160fc1075953b40c0c47d1a7a8d52b3')"
     ]
   }
 }

@@ -94,7 +94,8 @@ class DebugScansFragment: Fragment() {
                     Row (Modifier.padding(horizontal = Dp(8.0F))) {
                         Column {
                             DateText(scan = scan)
-                            Text(text = "| ${scan.duration} | Found: ${scan.noDevicesFound} | Mode: ${scan.scanMode} | ${scan.isManual}")
+                            Text(text = "| ${scan.duration}s | Found: ${scan.noDevicesFound} | Mode: ${scan.scanMode} | Manual: ${scan.isManual} ")
+                            Text(text = "Location: ${scan.locationDeg} | LocationId: ${scan.locationId}")
                             Divider()
                         }
                     }
