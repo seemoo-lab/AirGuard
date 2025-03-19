@@ -126,4 +126,7 @@ interface DeviceDao {
 
     @Query("SELECT * FROM device WHERE alternativeIdentifier = :alternativeIdentifier LIMIT 1")
     fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice?
+
+    @Query("SELECT * FROM device WHERE deviceType = :deviceType AND lastSeen >= :since AND connectable = :connectableState LIMIT 1")
+    fun getDeviceWithConnectableStateSince(deviceType: String, since: LocalDateTime, connectableState: Boolean): BaseDevice?
 }

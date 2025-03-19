@@ -90,6 +90,7 @@ class RiskLevelEvaluator(
         const val RELEVANT_HOURS_TRACKING: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
         private const val DELETE_SAFE_DEVICES_OLDER_THAN_DAYS: Long = 30 // Delete devices that have been seen more than x days ago
         private const val DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS: Long = 12 // Delete Google devices in Premature Offline Mode that have been seen more than x hours ago
+        private const val MATCH_NOT_CONNECTABLE_GOOGLE_DEVICES_OLDER_THAN_HOURS: Long = 24 // Match Google devices that are not connectable for this amount of time
         const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
         private const val MINUTES_UNTIL_CACHE_IS_UPDATED: Long = 15
         private const val NUMBER_OF_NOTIFICATIONS_FOR_HIGH_RISK: Long = 2 // After x MEDIUM risk notifications (for a single device) change risk level to HIGH
@@ -100,7 +101,8 @@ class RiskLevelEvaluator(
         val relevantTrackingDateForRiskCalculation: LocalDateTime = LocalDateTime.now().minusDays(
             RELEVANT_DAYS_RISK_LEVEL) // Fallback Option, if possible use getRelevantTrackingDate() Function
         val deleteBeforeDate: LocalDateTime = LocalDateTime.now().minusDays(DELETE_SAFE_DEVICES_OLDER_THAN_DAYS)
-        val deleteSafeGoogleTrackersBeforeDate: LocalDateTime = LocalDateTime.now().minusDays(DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
+        val deleteSafeGoogleTrackersBeforeDate: LocalDateTime = LocalDateTime.now().minusHours(DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
+        val matchNotConnectableGoogleTrackersBeforeDate: LocalDateTime = LocalDateTime.now().minusHours(MATCH_NOT_CONNECTABLE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Default Values: A single tracker gets tracked at least for x minutes until notification is created

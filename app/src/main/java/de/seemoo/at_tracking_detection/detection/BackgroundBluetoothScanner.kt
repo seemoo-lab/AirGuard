@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,7 +37,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
@@ -508,6 +508,26 @@ object BackgroundBluetoothScanner {
                                     Timber.d("Google Device already in the database with alternative identifier... Updating the last seen date!")
                                     device = it
                                     device.lastSeen = discoveryDate
+                                    deviceRepository.update(device)
+                                    return@withLock device
+                                }
+                            }
+
+                            if (wrappedScanResult.isConnectable == false) {
+                                // Note:
+                                // Google Find My Network Devices which can be bought are connectable
+                                // If a Device is not connectable, it means that is has been designed by someone else
+                                // This means there is a likelihood that it is targeting the user
+                                // Therefore this serves as yet another identifier (additionally to the normal and alternative identifier)
+                                Timber.d("Google Find My Network Device is not connectable... Device is most likely that it is a custom tracker!")
+                                deviceRepository.getDeviceWithConnectableStateSince(
+                                    deviceType = DeviceType.GOOGLE_FIND_MY_NETWORK,
+                                    since = RiskLevelEvaluator.matchNotConnectableGoogleTrackersBeforeDate,
+                                    connectableState = false
+                                )?.let {
+                                    Timber.d("Found a Google Find My Network Device which is not connectable... Updating the last seen date!")
+                                    device = it
+                                    device.lastSeen
                                     deviceRepository.update(device)
                                     return@withLock device
                                 }
