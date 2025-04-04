@@ -4,8 +4,11 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -50,12 +53,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         enableEdgeToEdge()
+        configureSystemBars()
 
-        // WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-
-        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
         val configuration = Configuration.getInstance()
         configuration.load(this, PreferenceManager.getDefaultSharedPreferences(this))
 
@@ -109,6 +108,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, args=null, navOptions = navOptions)
             }
             return@setOnItemSelectedListener true
+        }
+    }
+
+    private fun configureSystemBars() {
+        // val isDarkTheme = Utility.getSelectedTheme() == false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.apply {
+                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                setSystemBarsAppearance(
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            }
+            val lp = window.attributes
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+            window.attributes = lp
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.statusBarColor = SurfaceColors.SURFACE_2.getColor(this)
+            window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
+            val lp = window.attributes
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            window.attributes = lp
         }
     }
 

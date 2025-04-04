@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
+import androidx.core.content.edit
 
 object SharedPrefs {
 
@@ -35,8 +36,8 @@ object SharedPrefs {
 
             val allOptions = getAllDevicesFilterOptions()
             val newUnselectedOptions = allOptions - oldSelectedOptions
-            sharedPreferences.edit().putStringSet(newDevicesFilterKey, newUnselectedOptions).apply()
-            sharedPreferences.edit().remove(oldDevicesFilterKey).apply()
+            sharedPreferences.edit { putStringSet(newDevicesFilterKey, newUnselectedOptions) }
+            sharedPreferences.edit { remove(oldDevicesFilterKey) }
         }
     }
 
@@ -45,7 +46,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("isScanningInBackground", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("isScanningInBackground", value).apply()
+            sharedPreferences.edit { putBoolean("isScanningInBackground", value) }
         }
 
     var deactivateBackgroundScanning: Boolean
@@ -53,7 +54,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("deactivate_background_scanning", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("deactivate_background_scanning", value).apply()
+            sharedPreferences.edit { putBoolean("deactivate_background_scanning", value) }
         }
 
     var useLocationInTrackingDetection: Boolean
@@ -61,7 +62,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("use_location", true)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("use_location", value).apply()
+            sharedPreferences.edit { putBoolean("use_location", value) }
         }
 
     var lastScanDate: LocalDateTime?
@@ -70,14 +71,14 @@ object SharedPrefs {
             if (dateString != null) {
                 return try {
                     LocalDateTime.parse(dateString)
-                }catch(e: DateTimeParseException) {
+                }catch(_: DateTimeParseException) {
                     null
                 }
             }
             return null
         }
         set(value) {
-            sharedPreferences.edit().putString("last_scan", value.toString()).apply()
+            sharedPreferences.edit { putString("last_scan", value.toString()) }
         }
 
     var nextScanDate: LocalDateTime?
@@ -86,14 +87,14 @@ object SharedPrefs {
             if (dateString != null) {
                 return try {
                     LocalDateTime.parse(dateString)
-                }catch(e: DateTimeParseException) {
+                }catch(_: DateTimeParseException) {
                     null
                 }
             }
             return null
         }
         set(value) {
-            sharedPreferences.edit().putString("next_scan", value.toString()).apply()
+            sharedPreferences.edit { putString("next_scan", value.toString()) }
         }
 
     var shareData: Boolean
@@ -101,7 +102,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("share_data", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("share_data", value).apply()
+            sharedPreferences.edit { putBoolean("share_data", value) }
         }
 
     var advancedMode: Boolean
@@ -109,7 +110,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("advanced_mode", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("advanced_mode", value).apply()
+            sharedPreferences.edit { putBoolean("advanced_mode", value) }
         }
 
     var token: String?
@@ -117,7 +118,7 @@ object SharedPrefs {
             return sharedPreferences.getString("token", null)
         }
         set(value) {
-            sharedPreferences.edit().putString("token", value).apply()
+            sharedPreferences.edit { putString("token", value) }
         }
 
     var lastDataDonation: LocalDateTime?
@@ -126,14 +127,19 @@ object SharedPrefs {
             if (dateString != null) {
                 return try {
                     LocalDateTime.parse(dateString)
-                }catch(e: DateTimeParseException) {
+                }catch(_: DateTimeParseException) {
                     null
                 }
             }
             return null
         }
         set(value) {
-            sharedPreferences.edit().putString("lastDataDonation", value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).apply()
+            sharedPreferences.edit {
+                putString(
+                    "lastDataDonation",
+                    value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                )
+            }
         }
 
     var onBoardingCompleted: Boolean
@@ -141,7 +147,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("onboarding_completed", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("onboarding_completed", value).apply()
+            sharedPreferences.edit { putBoolean("onboarding_completed", value) }
         }
 
     var showOnboarding: Boolean
@@ -149,7 +155,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("show_onboarding", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("show_onboarding", value).apply()
+            sharedPreferences.edit { putBoolean("show_onboarding", value) }
         }
 
     var useLowPowerBLEScan: Boolean
@@ -157,7 +163,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("use_low_power_ble", false)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("use_low_power_ble", value).apply()
+            sharedPreferences.edit { putBoolean("use_low_power_ble", value) }
         }
 
     var lastTimeOpened: LocalDateTime?
@@ -166,14 +172,14 @@ object SharedPrefs {
             if (dateString != null) {
                 return try {
                     LocalDateTime.parse(dateString)
-                }catch(e: DateTimeParseException) {
+                }catch(_: DateTimeParseException) {
                     null
                 }
             }
             return null
         }
         set(value) {
-            sharedPreferences.edit().putString("last_time_opened", value.toString()).apply()
+            sharedPreferences.edit { putString("last_time_opened", value.toString()) }
         }
 
     var useMetricSystem: Boolean
@@ -185,14 +191,14 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("use_metric", metricSystem)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("use_metric", value).apply()
+            sharedPreferences.edit { putBoolean("use_metric", value) }
         }
 
     var dismissSurveyInformation: Boolean
         get() {
             return sharedPreferences.getBoolean("dismiss_survey_information", false)
         }set(value) {
-            sharedPreferences.edit().putBoolean("dismiss_survey_information", value).apply()
+            sharedPreferences.edit { putBoolean("dismiss_survey_information", value) }
         }
 
     var surveyNotificationDate: LocalDateTime?
@@ -201,21 +207,26 @@ object SharedPrefs {
             if (dateString != null) {
                 return try {
                     LocalDateTime.parse(dateString)
-                }catch(e: DateTimeParseException) {
+                }catch(_: DateTimeParseException) {
                     null
                 }
             }
             return null
         }
         set(value) {
-            sharedPreferences.edit().putString("survey_notification_date", value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).apply()
+            sharedPreferences.edit {
+                putString(
+                    "survey_notification_date",
+                    value?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                )
+            }
         }
 
     var surveyNotificationSent: Boolean
         get() {
             return sharedPreferences.getBoolean("survey_notification_sent", false)
         }set(value) {
-        sharedPreferences.edit().putBoolean("survey_notification_sent", value).apply()
+        sharedPreferences.edit { putBoolean("survey_notification_sent", value) }
     }
 
     var riskSensitivity: String
@@ -226,7 +237,7 @@ object SharedPrefs {
             return sharedPreferences.getString("risk_sensitivity", "medium")?:"medium"
         }
         set(value) {
-            sharedPreferences.edit().putString("risk_sensitivity", value).apply()
+            sharedPreferences.edit { putString("risk_sensitivity", value) }
         }
 
     var devicesFilter: Set<String>
@@ -238,7 +249,12 @@ object SharedPrefs {
         set(value) {
             val allOptions = getAllDevicesFilterOptions()
             val unselectedOptions = allOptions - value
-            sharedPreferences.edit().putStringSet("devices_filter_unselected", unselectedOptions).apply()
+            sharedPreferences.edit {
+                putStringSet(
+                    "devices_filter_unselected",
+                    unselectedOptions
+                )
+            }
         }
 
     var notificationPriorityHigh: Boolean
@@ -246,7 +262,7 @@ object SharedPrefs {
             return sharedPreferences.getBoolean("notification_priority_high", true)
         }
         set(value) {
-            sharedPreferences.edit().putBoolean("notification_priority_high", value).apply()
+            sharedPreferences.edit { putBoolean("notification_priority_high", value) }
         }
 
     private fun getAllDevicesFilterOptions(): Set<String> {
