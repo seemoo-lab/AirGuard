@@ -243,12 +243,15 @@ object BackgroundBluetoothScanner {
             scan.endDate = LocalDateTime.now()
             scan.duration = scanDuration.toInt() / 1000
             scan.noDevicesFound = scanResultDictionary.size
-            scanRepository.update(scan)
+
             if (BuildConfig.DEBUG) {
                 val dbLocation = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
                 scan.locationId = dbLocation?.locationId
                 scan.locationDeg = "${location?.longitude},${location?.latitude}"
+                scan.devicesAddressesFound = scanResultDictionary.keys.joinToString(separator = ",")
+                scan.devicesTypesFound = scanResultDictionary.values.map{it.wrappedScanResult.deviceType}.toSet().joinToString(separator = ",")
             }
+            scanRepository.update(scan)
         }
 
         Timber.d("Scheduling tracking detector worker")
@@ -419,13 +422,15 @@ object BackgroundBluetoothScanner {
                 val connectionState: ConnectionState = wrappedScanResult.connectionState
                 val connectionStateString = Utility.connectionStateToString(connectionState)
 
+                // We get the beacons of the last 15 min.
+                // The DB gets too slow if we add too many beacons, so we should only add one every 15min.
                 var beacon: Beacon? = null
                 val beacons = beaconRepository.getDeviceBeaconsSince(
                     deviceAddress = uniqueIdentifier,
                     since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
                 ) // sorted by newest first
 
-                if (beacons.isEmpty()) {
+                if (beacons.isEmpty() || beacons[0].locationId != locId) {
                     Timber.d("Add new Beacon to the database!")
 
                     beacon = if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
@@ -470,6 +475,9 @@ object BackgroundBluetoothScanner {
                         beacon.connectionState = connectionStateString
                     }
                     beaconRepository.update(beacon)
+                }else {
+                    Timber.d("Beacon already added to DB in last 15 min")
+                    beacon = beacons.firstOrNull()
                 }
 
                 Timber.d("Beacon: $beacon")
@@ -479,7 +487,7 @@ object BackgroundBluetoothScanner {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private suspend fun saveDevice(
+    public suspend fun saveDevice(
         wrappedScanResult: ScanResultWrapper,
         discoveryDate: LocalDateTime
     ): BaseDevice? {

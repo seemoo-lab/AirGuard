@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -33,6 +34,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
+import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -440,20 +442,54 @@ object Utility {
         private const val LOG_FILE_NAME = "location_log.log"
         val loggingTurnedOn: Boolean = BuildConfig.DEBUG
 
+        var logger: FileLoggerTree = FileLoggerTree.Builder()
+            .withSizeLimit(3_500_000)
+            .withDir(ATTrackingDetectionApplication.getAppContext().filesDir)
+            .withFileName("location.log")
+            .withMinPriority(Log.VERBOSE)
+            .appendToFile(true)
+            .build()
+
         fun log(message: String) {
             if (!loggingTurnedOn) return
 
-            // Timber.d(message)
+            Timber.d(message)
+            logger.d(message)
+        }
+    }
 
-            val context = ATTrackingDetectionApplication.getAppContext()
-            val logFile = File(context.filesDir, LOG_FILE_NAME)
-            try {
-                FileWriter(logFile, true).use { writer ->
-                    writer.appendLine("${LocalDateTime.now()}: $message")
-                }
-            } catch (e: Exception) {
-                Timber.e("Failed to write to log file: ${e.message}")
-            }
+    object BLELogger {
+        var logger: FileLoggerTree = FileLoggerTree.Builder()
+            .withSizeLimit(3_500_000)
+            .withDir(ATTrackingDetectionApplication.getAppContext().filesDir)
+            .withFileName("BLE_scan.log")
+            .withMinPriority(Log.VERBOSE)
+            .appendToFile(true)
+            .build()
+
+        fun d(message: String) {
+            Timber.d(message)
+            logger.d(message)
+        }
+
+        fun e(message: String) {
+            Timber.e(message)
+            logger.e(message)
+        }
+
+        fun wtf(message: String) {
+            Timber.wtf(message)
+            logger.wtf(message)
+        }
+
+        fun i(message: String) {
+            Timber.i(message)
+            logger.i(message)
+        }
+
+        fun v(message: String) {
+            Timber.v(message)
+            logger.v(message)
         }
     }
 }

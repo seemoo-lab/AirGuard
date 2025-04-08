@@ -6,15 +6,21 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
+import androidx.core.location.LocationRequestCompat
+import com.bumptech.glide.util.Executors
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.util.Date
+import java.util.concurrent.Executor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -109,18 +115,20 @@ open class LocationProvider @Inject constructor(
         // If both locations are available, return the one that is more current and meets the minimum requirements
         if (networkLocation != null && gpsLocation != null) {
             val bestLocation = if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation
-            if (locationMatchesMinimumRequirements(bestLocation)) {
+            if (!checkRequirements || locationMatchesMinimumRequirements(bestLocation)) {
                 Utility.LocationLogger.log("LocationProvider: Both network and gps location available, return best location: ${bestLocation.latitude}, Longitude: ${bestLocation.longitude}, Altitude: ${bestLocation.altitude}, Accuracy: ${bestLocation.accuracy}")
                 return bestLocation
+            }else {
+                return null
             }
         }
 
         // If only one location is available, return it if it meets the minimum requirements
-        if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
+        if (networkLocation != null && !checkRequirements && locationMatchesMinimumRequirements(networkLocation)) {
             Utility.LocationLogger.log("LocationProvider: only network location meets requirements: ${networkLocation.latitude}, Longitude: ${networkLocation.longitude}, Altitude: ${networkLocation.altitude}, Accuracy: ${networkLocation.accuracy}")
             return networkLocation
         }
-        if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
+        if (gpsLocation != null && !checkRequirements && locationMatchesMinimumRequirements(gpsLocation)) {
             Utility.LocationLogger.log("LocationProvider: only gps location meets requirements: ${gpsLocation.latitude}, Longitude: ${gpsLocation.longitude}, Altitude: ${gpsLocation.altitude}, Accuracy: ${gpsLocation.accuracy}")
             return gpsLocation
         }
@@ -155,6 +163,46 @@ open class LocationProvider @Inject constructor(
             Timber.d("Location accuracy is not good enough")
         }
         return false
+    }
+
+    // Initiate background location updates from fused provider
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun requestFusedBackgroundLocationUpdates(executor: Executor, listener: LocationListener) {
+
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("Not requesting location, permission not granted")
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("Not requesting location, permission not granted")
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
+            return
+        }
+
+        // Check if FUSED provider is available
+        if(!locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+            Timber.w("Fused provider is not available")
+            return
+        }
+
+        val builder = LocationRequest.Builder(120_000)
+        builder.setMinUpdateDistanceMeters(150.0F)
+        builder.setMaxUpdateDelayMillis(300_000)
+        val request = builder.build()
+
+        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request.minUpdateIntervalMillis, request.minUpdateDistanceMeters, listener, handler.looper)
+//        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request, executor, listener)
     }
 
 
@@ -292,6 +340,11 @@ open class LocationProvider @Inject constructor(
 
     override fun onLocationChanged(location: Location) {
         Timber.d("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermanentBluetoothScanner.onLocationChanged(location)
+        }
+
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location

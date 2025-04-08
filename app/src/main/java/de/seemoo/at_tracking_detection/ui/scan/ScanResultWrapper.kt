@@ -39,4 +39,18 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     override fun equals(other: Any?): Boolean {
         return super.equals(other)
     }
+
+    /**
+     * Checks if the device is performing tracking.
+     * For example AirTags only send out longer advertisements when they are tracking.
+     * Other trackers are usually always trackable.
+     */
+    fun deviceIsTracking(): Boolean {
+        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x4c00)
+        if (manufacturerData != null) {
+            // A Find My tracker
+            return manufacturerData.size > 5
+        }
+        return true
+    }
 }
