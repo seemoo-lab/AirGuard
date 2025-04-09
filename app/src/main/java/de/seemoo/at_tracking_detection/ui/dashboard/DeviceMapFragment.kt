@@ -62,7 +62,7 @@ class DeviceMapFragment : Fragment() {
 
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
-        Utility.enableMyLocationOverlay(map)
+        // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
         setTitle()
 
         lifecycleScope.launch {

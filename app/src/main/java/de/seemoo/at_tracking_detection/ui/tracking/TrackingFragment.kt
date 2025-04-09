@@ -194,7 +194,7 @@ class TrackingFragment : Fragment() {
             handlePlaySound()
         }
 
-        Utility.enableMyLocationOverlay(mapView)
+        // Utility.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
             lifecycleScope.launch {
