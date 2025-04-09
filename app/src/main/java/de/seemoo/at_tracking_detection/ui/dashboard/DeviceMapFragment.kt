@@ -69,7 +69,8 @@ class DeviceMapFragment : Fragment() {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
             val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
             val locationList: List<Location> = if (!deviceAddress.isNullOrEmpty()) {
-                locationRepository.getLocationsForBeaconSince(deviceAddress!!, relevantTrackingDate)
+                locationRepository.getLocationsForBeacon(deviceAddress!!)
+                // Old Code: locationRepository.getLocationsForBeaconSince(deviceAddress!!, relevantTrackingDate)
             } else {
                 locationRepository.locationsSince(relevantTrackingDate)
             }
