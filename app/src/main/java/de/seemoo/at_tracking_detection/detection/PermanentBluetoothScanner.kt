@@ -203,7 +203,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         deviceMutex.withLock {
             // Check when the device was last seen
             val lastSeen =
-                recentlySeenDevices.firstOrNull { it.wrappedScanResult.deviceAddress == device.wrappedScanResult.deviceAddress }?.discoveryDate
+                recentlySeenDevices.firstOrNull { it.wrappedScanResult.uniqueIdentifier == device.wrappedScanResult.uniqueIdentifier }?.discoveryDate
             if (lastSeen != null && lastSeen.until(
                     LocalDateTime.now(),
                     ChronoUnit.MILLIS
@@ -219,6 +219,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             pendingFoundDevices =
                 ArrayList(pendingFoundDevices.filter { it.wrappedScanResult.uniqueIdentifier != device.wrappedScanResult.uniqueIdentifier })
             pendingFoundDevices.add(device)
+            BLELogger.d("${pendingFoundDevices.size} pending devices")
         }
 
         if (!isWaitingForLocationUpdate || (Date().time - (LocationHistoryController.lastLocationUpdate?.time

@@ -5,8 +5,11 @@ import android.bluetooth.le.ScanResult
 import androidx.databinding.ObservableField
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.TrackingNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 
 @SuppressLint("MissingPermission")
@@ -46,10 +49,10 @@ data class ScanResultWrapper(val scanResult: ScanResult){
      * Other trackers are usually always trackable.
      */
     fun deviceIsTracking(): Boolean {
-        val manufacturerData = scanResult.scanRecord?.getManufacturerSpecificData(0x4c00)
-        if (manufacturerData != null) {
-            // A Find My tracker
-            return manufacturerData.size > 5
+        if (deviceType.getTrackingNetwork() == TrackingNetwork.APPLE_FIND_MY) {
+            if (connectionState == ConnectionState.CONNECTED) {
+                return false
+            }
         }
         return true
     }
