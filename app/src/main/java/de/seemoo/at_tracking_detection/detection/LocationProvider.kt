@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -166,9 +167,41 @@ open class LocationProvider @Inject constructor(
     }
 
     // Initiate background location updates from fused provider
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.S)
     fun requestFusedBackgroundLocationUpdates(executor: Executor, listener: LocationListener) {
 
+        if (checkPermissionsForProvider(LocationManager.FUSED_PROVIDER, true)) {
+            val builder = LocationRequest.Builder(120_000)
+            builder.setMinUpdateDistanceMeters(150.0F)
+            builder.setMaxUpdateDelayMillis(300_000)
+            val request = builder.build()
+//            locationManager.requestLocationUpdates(
+//                LocationManager.FUSED_PROVIDER,
+//                request.minUpdateIntervalMillis,
+//                request.minUpdateDistanceMeters,
+//                listener,
+//                handler.looper)
+            locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request, executor, listener)
+        }
+
+    }
+
+
+    @SuppressLint("MissingPermission")
+    fun requestPassiveLocationProviderUpdates(listener: LocationListener) {
+        if (checkPermissionsForProvider(LocationManager.PASSIVE_PROVIDER, true)) {
+
+            locationManager.requestLocationUpdates(
+                LocationManager.PASSIVE_PROVIDER,
+                120_000,
+                150.0F,
+                listener,
+                handler.looper)
+        }
+    }
+
+    fun checkPermissionsForProvider(provider:String, checkBackgroundPermission: Boolean = false): Boolean {
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
                 ATTrackingDetectionApplication.getAppContext(),
@@ -177,32 +210,27 @@ open class LocationProvider @Inject constructor(
         ) {
             Timber.w("Not requesting location, permission not granted")
             Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
-            return
+            return false
         }
 
-        if (ContextCompat.checkSelfPermission(
+        if (checkBackgroundPermission &&
+            ContextCompat.checkSelfPermission(
                 ATTrackingDetectionApplication.getAppContext(),
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             Timber.w("Not requesting location, permission not granted")
             Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
-            return
+            return false
         }
 
-        // Check if FUSED provider is available
-        if(!locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+        // Check if provider is available
+        if(!locationManager.isProviderEnabled(provider)) {
             Timber.w("Fused provider is not available")
-            return
+            return false
         }
 
-        val builder = LocationRequest.Builder(120_000)
-        builder.setMinUpdateDistanceMeters(150.0F)
-        builder.setMaxUpdateDelayMillis(300_000)
-        val request = builder.build()
-
-        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request.minUpdateIntervalMillis, request.minUpdateDistanceMeters, listener, handler.looper)
-//        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request, executor, listener)
+        return true
     }
 
 
@@ -335,15 +363,13 @@ open class LocationProvider @Inject constructor(
 
     private fun stopLocationUpdates() {
         locationManager.removeUpdates(this)
-        Timber.i("Stopping location updates")
+        Utility.LocationLogger.log("Stopping location updates")
     }
 
     override fun onLocationChanged(location: Location) {
-        Timber.d("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
+        Utility.LocationLogger.log("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PermanentBluetoothScanner.onLocationChanged(location)
-        }
+        LocationHistoryController.onLocationChanged(location)
 
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {

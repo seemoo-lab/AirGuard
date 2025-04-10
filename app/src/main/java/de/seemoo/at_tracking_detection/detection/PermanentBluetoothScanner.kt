@@ -54,15 +54,17 @@ import de.seemoo.at_tracking_detection.util.Utility.BLELogger
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.S)
-object PermanentBluetoothScanner: LocationListener {
+object PermanentBluetoothScanner: LocationHistoryListener {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    private var pendingFoundDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> = ArrayList()
+    private var pendingFoundDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> =
+        ArrayList()
 
     /**
      * Devices that have been recently seen. So we don't need to add them to the database again
      */
-    private var recentlySeenDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> = ArrayList()
+    private var recentlySeenDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> =
+        ArrayList()
 
     /**
      * The duration how long a device remains in the recently seen. 7 min.
@@ -96,12 +98,6 @@ object PermanentBluetoothScanner: LocationListener {
 
     private var isWaitingForLocationUpdate = false
 
-    private val lastLocationUpdate: Date?
-        get() {
-            return locationHistory.lastOrNull()?.time?.let { Date(it) }
-        }
-
-    private var locationHistory: ArrayList<android.location.Location> = ArrayList()
 
     val backgroundWorkScheduler: BackgroundWorkScheduler
         get() {
@@ -128,6 +124,7 @@ object PermanentBluetoothScanner: LocationListener {
 
 
     private var executor = Executors.newFixedThreadPool(2)
+    private var locationExecutor = Executors.newSingleThreadExecutor()
 
     fun scan() {
 
@@ -189,17 +186,24 @@ object PermanentBluetoothScanner: LocationListener {
 
 
 
-            bluetoothAdapter?.bluetoothLeScanner?.startScan(DeviceManager.scanFilter,
+            bluetoothAdapter?.bluetoothLeScanner?.startScan(
+                DeviceManager.scanFilter,
                 scanSettings,
-                leScanCallback)
+                leScanCallback
+            )
                 ?: run {
-                BLELogger.e("Bluetooth LE Scanner is null, cannot perform scan.")
-                isScanning = false
-            }
+                    BLELogger.e("Bluetooth LE Scanner is null, cannot perform scan.")
+                    isScanning = false
+                }
 
+            LocationHistoryController.listenToLocationChanges(this)
             BLELogger.d("Requesting fused location updates")
-            locationProvider.requestFusedBackgroundLocationUpdates(executor,  this)
-
+            locationProvider.requestFusedBackgroundLocationUpdates(
+                locationExecutor,
+                LocationHistoryController
+            )
+            BLELogger.d("Requesting passive location updates")
+            locationProvider.requestPassiveLocationProviderUpdates(LocationHistoryController)
 
 //            while (true) {
 //                BLELogger.i( "Keeping permanent scanner active.")
@@ -217,8 +221,13 @@ object PermanentBluetoothScanner: LocationListener {
 
         deviceMutex.withLock {
             // Check when the device was last seen
-            val lastSeen = recentlySeenDevices.firstOrNull { it.wrappedScanResult.deviceAddress == device.wrappedScanResult.deviceAddress }?.discoveryDate
-            if (lastSeen != null && lastSeen.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS) {
+            val lastSeen =
+                recentlySeenDevices.firstOrNull { it.wrappedScanResult.deviceAddress == device.wrappedScanResult.deviceAddress }?.discoveryDate
+            if (lastSeen != null && lastSeen.until(
+                    LocalDateTime.now(),
+                    ChronoUnit.MILLIS
+                ) < COOL_DOWN_TIME_MS
+            ) {
                 // Device already seen. Ignore
                 return
             }
@@ -226,11 +235,14 @@ object PermanentBluetoothScanner: LocationListener {
             BLELogger.d("Permanent scanner found ${device.wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")
 
             // Remove all duplicates
-            pendingFoundDevices = ArrayList(pendingFoundDevices.filter { it.wrappedScanResult.uniqueIdentifier != device.wrappedScanResult.uniqueIdentifier })
+            pendingFoundDevices =
+                ArrayList(pendingFoundDevices.filter { it.wrappedScanResult.uniqueIdentifier != device.wrappedScanResult.uniqueIdentifier })
             pendingFoundDevices.add(device)
         }
 
-        if (!isWaitingForLocationUpdate || (Date().time - (lastLocationUpdate?.time?:0)) < MAX_LOCATION_AGE_S*1000 ) {
+        if (!isWaitingForLocationUpdate || (Date().time - (LocationHistoryController.lastLocationUpdate?.time
+                ?: 0)) < MAX_LOCATION_AGE_S * 1000
+        ) {
             insertPendingDevices()
         }
     }
@@ -249,10 +261,11 @@ object PermanentBluetoothScanner: LocationListener {
 
             pendingFoundDevices.forEach { device ->
                 // Find the closest location
-                val deviceTimestamp = device.discoveryDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                val deviceTimestamp =
+                    device.discoveryDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 //                    device.discoveryDate.toInstant(ZoneOffset.UTC)
 //                        .toEpochMilli()
-                var location = locationHistory.minByOrNull { abs(it.time - deviceTimestamp) }
+                var location = LocationHistoryController.history.minByOrNull { abs(it.time - deviceTimestamp) }
                 if (location == null) {
                     BLELogger.d("No location history. Using last known")
                     location = locationProvider.getLastLocation(false)
@@ -311,7 +324,7 @@ object PermanentBluetoothScanner: LocationListener {
             if (savedDevices.size == 0 && pendingFoundDevices.size > 0) {
                 // No new devices were added.
                 isWaitingForLocationUpdate = true
-            }else {
+            } else {
                 // Remove old devices
                 val savedMacAddresses = savedDevices.map { it.wrappedScanResult.deviceAddress }
                 pendingFoundDevices =
@@ -321,19 +334,16 @@ object PermanentBluetoothScanner: LocationListener {
             }
 
 
-            // Remove old locations
-            locationHistory =
-                ArrayList(locationHistory.filter {
-                    (Date().time - it.time) < 60 * 60 * 1000
-                })
-
             // Remove old recent devices
-            recentlySeenDevices = ArrayList(recentlySeenDevices.filter{
-                it.discoveryDate.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS }
+            recentlySeenDevices = ArrayList(recentlySeenDevices.filter {
+                it.discoveryDate.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS
+            }
             )
+
+            //Clean up old locations
+            LocationHistoryController.cleanUpHistory()
         }
     }
-
 
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {
@@ -362,12 +372,19 @@ object PermanentBluetoothScanner: LocationListener {
         }
     }
 
-    override fun onLocationChanged(location: android.location.Location) {
+    override fun receivedNewLocation(location: android.location.Location) {
         isWaitingForLocationUpdate = false
-        locationHistory.add(location)
-        BLELogger.d("Permanent scanner got a location update ${location.latitude.roundToInt()}")
+        BLELogger.d("Permanent scanner got a location update (${location.latitude.roundToInt()}, ${location.longitude.roundToInt()}) from ${location.provider}")
         CoroutineScope(Dispatchers.IO).launch {
             insertPendingDevices()
         }
     }
+
+    override fun locationHistoryChanged(
+        historyController: LocationHistoryController,
+        history: ArrayList<android.location.Location>
+    ) {
+
+    }
+
 }
