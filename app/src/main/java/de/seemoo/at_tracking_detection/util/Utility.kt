@@ -48,14 +48,12 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
-import java.io.File
-import java.io.FileWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.math.round
 
 object Utility {
 
@@ -439,7 +437,6 @@ object Utility {
     }
 
     object LocationLogger {
-        private const val LOG_FILE_NAME = "location_log.log"
         val loggingTurnedOn: Boolean = BuildConfig.DEBUG
 
         var logger: FileLoggerTree = FileLoggerTree.Builder()
@@ -492,4 +489,17 @@ object Utility {
             logger.v(message)
         }
     }
+}
+
+fun Double.round(decimals: Int): Double {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
+}
+
+fun android.location.Location.privacyPrint(): String {
+    if (BuildConfig.DEBUG) {
+        return "(${latitude.round(3)}, ${longitude.round(3)})"
+    }
+    return "(${latitude.round(0)}, ${longitude.round(0)})"
 }

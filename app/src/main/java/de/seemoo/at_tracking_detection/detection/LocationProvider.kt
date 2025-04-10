@@ -14,11 +14,9 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.location.LocationManagerCompat
-import androidx.core.location.LocationRequestCompat
-import com.bumptech.glide.util.Executors
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import timber.log.Timber
 import java.util.Date
 import java.util.concurrent.Executor
@@ -367,7 +365,7 @@ open class LocationProvider @Inject constructor(
     }
 
     override fun onLocationChanged(location: Location) {
-        Utility.LocationLogger.log("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
+        Utility.LocationLogger.log("Location updated: ${location.privacyPrint()}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
 
         LocationHistoryController.onLocationChanged(location)
 

@@ -2,28 +2,26 @@ package de.seemoo.at_tracking_detection.detection
 
 import android.location.Location
 import android.location.LocationListener
-import android.os.Bundle
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import java.util.Date
-import java.util.HashSet
-import kotlin.math.roundToInt
 
 object LocationHistoryController: LocationListener {
 
     private var locationHistory: ArrayList<Location> = ArrayList()
     private var listeners: HashSet<LocationHistoryListener> = HashSet()
 
-    public val lastLocation: Location?
+    val lastLocation: Location?
         get() = locationHistory.lastOrNull()
 
-    public val lastLocationUpdate: Date?
+    val lastLocationUpdate: Date?
         get() = locationHistory.lastOrNull()?.time?.let { Date(it) }
 
-    public val history: List<Location>
+    val history: List<Location>
         get() = locationHistory
 
     override fun onLocationChanged(location: Location) {
-        Utility.LocationLogger.log("Location changed to (${(location.latitude * 10).roundToInt()/10}, ${(location.longitude * 10).roundToInt()/10}) from ${location.provider}")
+        Utility.LocationLogger.log("Location changed to ${location.privacyPrint()} from ${location.provider}")
         locationHistory.add(location)
         listeners.forEach { it.receivedNewLocation(location) }
     }

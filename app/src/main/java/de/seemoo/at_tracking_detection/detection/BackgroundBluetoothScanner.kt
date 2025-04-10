@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,7 +37,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
@@ -211,10 +211,10 @@ object BackgroundBluetoothScanner {
             if (location == null) {
                 LocationLogger.log("BackgroundBluetoothScanner: Failed to retrieve location again, location is null")
             } else {
-                LocationLogger.log("BackgroundBluetoothScanner: Got Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+                LocationLogger.log("BackgroundBluetoothScanner: Got Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
             }
         } else {
-            LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: Latitude: ${location!!.latitude}, Longitude: ${location!!.longitude}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+            LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
         }
 
         val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()

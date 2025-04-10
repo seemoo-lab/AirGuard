@@ -6,52 +6,33 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.RequiresApi
-import androidx.core.location.LocationRequestCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
-import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.Scan
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
-import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
+import de.seemoo.at_tracking_detection.util.Utility.BLELogger
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.concurrent.Executors
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.math.abs
-import de.seemoo.at_tracking_detection.util.Utility.BLELogger
-import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.S)
 object PermanentBluetoothScanner: LocationHistoryListener {
@@ -135,11 +116,11 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
         // Scan permanently on a background thread
         if (isScanning) {
-            BLELogger.d("App is already scanning in background. Stopping ongoing scans and restarting.")
+            Timber.d("App is already scanning in background. Stopping ongoing scans and restarting.")
             bluetoothAdapter?.bluetoothLeScanner?.stopScan(leScanCallback)
             executor.shutdownNow()
             executor = Executors.newFixedThreadPool(2)
-            BLELogger.d("Ongoing scans have been stopped.")
+            Timber.d("Ongoing scans have been stopped.")
         }
 
         if (SharedPrefs.deactivateBackgroundScanning) {
@@ -267,7 +248,6 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 //                        .toEpochMilli()
                 var location = LocationHistoryController.history.minByOrNull { abs(it.time - deviceTimestamp) }
                 if (location == null) {
-                    BLELogger.d("No location history. Using last known")
                     location = locationProvider.getLastLocation(false)
                 }
                 if (location == null) {
@@ -276,7 +256,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                 }
                 val timeDiff = (location.time - deviceTimestamp) / 1000
 
-                BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference (${location.latitude}, ${location.longitude})")
+
                 if (abs(timeDiff) > 300) {
                     BLELogger.d("Time difference too large. Location: ${Date(location.time)}, Tracker found: ${device.discoveryDate}")
                     if (location.time < deviceTimestamp) {
@@ -287,7 +267,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     location = null
                 }
 
-                BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType}")
+//                BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
+                BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
                 val pair = BackgroundBluetoothScanner.insertScanResult(
                     device.wrappedScanResult,
                     latitude = location?.latitude,
@@ -298,9 +279,9 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                 )
                 savedDevices.add(device)
                 recentlySeenDevices.add(device)
-                BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
 
                 if (pair.first != null && pair.second != null) {
+                    BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
                     // Logging this as a scan
                     scanRepository.insert(
                         Scan(
@@ -318,6 +299,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     )
 
                     SharedPrefs.lastScanDate = device.discoveryDate
+                }else {
+                    BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB")
                 }
             }
 
@@ -374,7 +357,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     override fun receivedNewLocation(location: android.location.Location) {
         isWaitingForLocationUpdate = false
-        BLELogger.d("Permanent scanner got a location update (${location.latitude.roundToInt()}, ${location.longitude.roundToInt()}) from ${location.provider}")
+        BLELogger.d("Permanent scanner got a location update ${location.privacyPrint()} from ${location.provider}")
         CoroutineScope(Dispatchers.IO).launch {
             insertPendingDevices()
         }
