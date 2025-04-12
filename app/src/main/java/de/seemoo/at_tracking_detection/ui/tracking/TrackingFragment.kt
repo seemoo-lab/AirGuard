@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -126,11 +127,26 @@ class TrackingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this) {
+
+        // Register OnBackPressedCallback
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (safeArgs.notificationId != -1) {
-                activity?.finish()
+                requireActivity().finish()
             } else {
                 findNavController().navigateUp()
+            }
+        }
+
+        // For Android 13+ (API level 33), register OnBackInvokedCallback for predictive gestures
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT
+            ) {
+                if (safeArgs.notificationId != -1) {
+                    requireActivity().finish()
+                } else {
+                    findNavController().navigateUp()
+                }
             }
         }
     }
