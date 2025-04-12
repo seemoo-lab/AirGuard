@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         enableEdgeToEdge()
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         configureSystemBars()
 
         val configuration = Configuration.getInstance()
