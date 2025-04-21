@@ -120,6 +120,9 @@
     <string name="settings_information_contact_title">Information &amp; Contact</string>
     <string name="settings_information_contact_summary">Get information about us</string>
 
+    <string name="settings_export_found_trackers_title">Export Found Trackers</string>
+    <string name="settings_export_found_trackers_summary">Create a document with all identified trackers</string>
+
     <string name="settings_delete_study_data_title">Delete study data</string>
     <string name="settings_delete_study_data_summary">Request deletion of study data</string>
 
@@ -437,5 +440,7 @@
 
     <string name="left">Left</string>
     <string name="right">Right</string>
+
+    <string name="export_trackers_label">Export Trackers</string>
 
 </resources>

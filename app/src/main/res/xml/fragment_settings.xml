@@ -10,6 +10,12 @@
         android:summary="@string/settings_advanced_mode_summary"
         app:title="@string/settings_advanced_mode_title" />
 
+    <Preference
+        android:icon="@drawable/ic_baseline_attach_file_24"
+        android:key="export_found_trackers"
+        android:summary="@string/settings_export_found_trackers_summary"
+        android:title="@string/settings_export_found_trackers_title" />
+
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="deactivate_background_scanning"

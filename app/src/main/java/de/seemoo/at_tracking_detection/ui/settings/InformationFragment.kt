@@ -14,8 +14,10 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 
+@AndroidEntryPoint
 class InformationFragment : Fragment() {
 
     private lateinit var attributionList: RecyclerView

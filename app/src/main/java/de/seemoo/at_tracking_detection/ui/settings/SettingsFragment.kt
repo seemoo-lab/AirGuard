@@ -77,6 +77,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setAdvancedModeButtonVisibility()
 
+        // TODO
+//        if (ATTrackingDetectionApplication.getCurrentApp().beaconRepository.totalCount > 0) {
+//            findPreference<SwitchPreferenceCompat>("export_found_trackers")?.isVisible = true
+//        } else {
+//            findPreference<SwitchPreferenceCompat>("export_found_trackers")?.isVisible = false
+//        }
+
         val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
         deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
@@ -111,6 +118,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view?.findNavController()?.navigate(R.id.action_settings_to_information)
+                true
+            }
+
+        findPreference<Preference>("export_found_trackers")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_export_found_trackers)
                 true
             }
 
