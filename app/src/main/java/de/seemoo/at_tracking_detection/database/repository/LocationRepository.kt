@@ -28,7 +28,6 @@ class LocationRepository @Inject constructor(
 
     fun getLocationsForBeaconSince(deviceAddress: String, since: LocalDateTime): List<LocationModel> = locationDao.getLocationsForDeviceSince(deviceAddress, since)
 
-
     fun getLocationsWithNoBeacons(): List<LocationModel> = locationDao.getLocationsWithNoBeacons()
 
     @WorkerThread

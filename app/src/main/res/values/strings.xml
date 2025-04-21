@@ -442,5 +442,7 @@
     <string name="right">Right</string>
 
     <string name="export_trackers_label">Export Trackers</string>
+    <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
+    <string name="export_trackers_create_document">Create document</string>
 
 </resources>

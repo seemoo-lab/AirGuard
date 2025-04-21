@@ -17,6 +17,9 @@ interface NotificationDao {
     @Query("SELECT * FROM notification")
     fun getAll(): Flow<List<Notification>>
 
+    @Query("SELECT * FROM notification")
+    fun getAllNotifications(): List<Notification>
+
     @Query("UPDATE notification SET falseAlarm = :state WHERE :id Like notificationId")
     suspend fun setFalseAlarm(id: Int, state: Boolean)
 

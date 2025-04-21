@@ -400,4 +400,6 @@
     <string name="right">Rechts</string>
 
     <string name="export_trackers_label">Tracker exportieren</string>
+    <string name="export_trackers_explanation">Der Button unten ermöglicht es ein PDF Dokument zu erstellen, welche alle Geräte enthält, die als Tracker identifiziert wurden.</string>
+    <string name="export_trackers_create_document">Dokument erstellen</string>
 </resources>
