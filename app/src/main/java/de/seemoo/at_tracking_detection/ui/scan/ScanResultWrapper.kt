@@ -3,12 +3,10 @@ package de.seemoo.at_tracking_detection.ui.scan
 import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
 import androidx.databinding.ObservableField
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
-import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.Device
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getAlternativeIdentifier
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.TrackingNetwork
