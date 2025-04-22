@@ -58,6 +58,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:hardwareAccelerated="true"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="tiramisu">
 
         <activity
@@ -66,7 +67,6 @@
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:parentActivityName=".ui.MainActivity"
-            android:enableOnBackInvokedCallback="true"
             android:exported="false"
             tools:targetApi="tiramisu">
             <intent-filter>

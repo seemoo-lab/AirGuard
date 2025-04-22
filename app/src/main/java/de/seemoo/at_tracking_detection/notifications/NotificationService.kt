@@ -32,7 +32,7 @@ class NotificationService @Inject constructor(
         val notificationId = generateUniqueNotificationId()
         notificationViewModel.insert(deviceAddress = baseDevice.address)
         with(notificationManagerCompat) {
-            if (this.areNotificationsEnabled()) {
+            if (this.areNotificationsEnabled() && !SharedPrefs.deactivateBackgroundScanning) {
                 notify(
                     TRACKING_NOTIFICATION_TAG,
                     notificationId,
@@ -46,7 +46,7 @@ class NotificationService @Inject constructor(
     fun sendObserveTrackerNotification(deviceAddress: String, deviceTypeString: String, observationDuration: Long, observationPositive: Boolean) {
         val notificationId = generateUniqueNotificationId()
         with(notificationManagerCompat) {
-            if (this.areNotificationsEnabled()) {
+            if (this.areNotificationsEnabled() && !SharedPrefs.deactivateBackgroundScanning) {
                 notify(
                     OBSERVE_TRACKER_NOTIFICATION_TAG,
                     notificationId,

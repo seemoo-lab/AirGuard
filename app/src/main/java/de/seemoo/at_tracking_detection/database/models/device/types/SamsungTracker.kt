@@ -218,7 +218,7 @@ class SamsungTracker(val id: Int) : Device() {
             return BatteryState.UNKNOWN
         }
 
-        override fun getPublicKey(scanResult: ScanResult): String {
+        override fun getUniqueIdentifier(scanResult: ScanResult): String {
             try {
                 val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
@@ -228,7 +228,7 @@ class SamsungTracker(val id: Int) : Device() {
                     return byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error getting public key")
+                Timber.e(e, "Error getting unique identifier of Samsung Tracker")
             }
             return scanResult.device.address
         }

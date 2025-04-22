@@ -116,4 +116,17 @@ interface DeviceDao {
 
     @Query("SELECT * FROM device WHERE lastSeen < :since AND notificationSent == 0")
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice>
+
+    @Query("SELECT * FROM device WHERE deviceType = :deviceType AND additionalData = :connectionState AND lastSeen < :olderThan AND riskLevel = 0 AND notificationSent = 0")
+    fun getDevicesWithDeviceTypeAndConnectionState(
+        deviceType: String,
+        connectionState: String,
+        olderThan: LocalDateTime
+    ): List<BaseDevice>
+
+    @Query("SELECT * FROM device WHERE alternativeIdentifier = :alternativeIdentifier LIMIT 1")
+    fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice?
+
+    @Query("SELECT * FROM device WHERE deviceType = :deviceType AND lastSeen >= :since AND connectable = :connectableState LIMIT 1")
+    fun getDeviceWithConnectableStateSince(deviceType: String, since: LocalDateTime, connectableState: Boolean): BaseDevice?
 }

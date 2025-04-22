@@ -30,6 +30,7 @@ import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
 import de.seemoo.at_tracking_detection.util.privacyPrint
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -503,10 +504,43 @@ object BackgroundBluetoothScanner {
 
                     // Check if ConnectionState qualifies Device to be saved
                     // Only Save when Device is in Overmature Offline Mode or qualifies for the 15 Minute Algorithm
-                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates) {
-                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
-                            Timber.d("Device is safe and will be hidden to the user!")
+                    if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates || Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) in DeviceManager.additionalSavedConnectionStates) {
+                        if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) !in DeviceManager.additionalSavedConnectionStates) {
+                            // Timber.d("Device is safe and will be hidden to the user!")
                             device.safeTracker = true
+                        }
+
+                        if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+                            val alternativeIdentifier = GoogleFindMyNetwork.getAlternativeIdentifier(wrappedScanResult.scanResult)
+                            if (alternativeIdentifier != null) {
+                                deviceRepository.getDeviceWithAlternativeIdentifier(alternativeIdentifier)?.let {
+                                    Timber.d("Google Device already in the database with alternative identifier... Updating the last seen date!")
+                                    device = it
+                                    device.lastSeen = discoveryDate
+                                    deviceRepository.update(device)
+                                    return@withLock device
+                                }
+                            }
+
+                            if (wrappedScanResult.isConnectable == false) {
+                                // Note:
+                                // Google Find My Network Devices which can be bought are connectable
+                                // If a Device is not connectable, it means that is has been designed by someone else
+                                // This means there is a likelihood that it is targeting the user
+                                // Therefore this serves as yet another identifier (additionally to the normal and alternative identifier)
+                                Timber.d("Google Find My Network Device is not connectable... Device is most likely that it is a custom tracker!")
+                                deviceRepository.getDeviceWithConnectableStateSince(
+                                    deviceType = DeviceType.GOOGLE_FIND_MY_NETWORK,
+                                    since = RiskLevelEvaluator.matchNotConnectableGoogleTrackersBeforeDate,
+                                    connectableState = false
+                                )?.let {
+                                    Timber.d("Found a Google Find My Network Device which is not connectable... Updating the last seen date!")
+                                    device = it
+                                    device.lastSeen
+                                    deviceRepository.update(device)
+                                    return@withLock device
+                                }
+                            }
                         }
 
                         Timber.d("Add new Device to the database!")
