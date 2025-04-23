@@ -206,6 +206,12 @@ class TrackingFragment : Fragment() {
             }
         }
 
+        view.findViewById<CardView>(R.id.export_device).setOnClickListener {
+            trackingViewModel.deviceAddress.value?.let { deviceAddress ->
+                navigateToExportDevice(deviceAddress)
+            }
+        }
+
         view.findViewById<CardView>(R.id.tracking_play_sound).setOnClickListener {
             handlePlaySound()
         }
@@ -292,6 +298,12 @@ class TrackingFragment : Fragment() {
     private fun navigateToObserveTracker(deviceAddress: String) {
         val directions: NavDirections =
             TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
+        findNavController().navigate(directions)
+    }
+
+    private fun navigateToExportDevice(deviceAddress: String) {
+        val directions: NavDirections =
+            TrackingFragmentDirections.actionTrackingToExportDevice(deviceAddress)
         findNavController().navigate(directions)
     }
 

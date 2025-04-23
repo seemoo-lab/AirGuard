@@ -292,6 +292,14 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_exit_anim"
             />
+        <action
+            android:id="@+id/actionTrackingToExportDevice"
+            app:destination="@id/exportDeviceFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            />
 
     </fragment>
 
@@ -315,6 +323,17 @@
         android:id="@+id/observationFragment"
         android:name="de.seemoo.at_tracking_detection.ui.tracking.ObserveTrackerFragment"
         android:label="@string/title_observe_tracker">
+        <argument
+            android:name="deviceAddress"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exportDeviceFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.tracking.ExportDeviceFragment"
+        android:label="@string/title_export_device">
         <argument
             android:name="deviceAddress"
             android:defaultValue="null"

@@ -176,6 +176,22 @@
                     bind:vm="@{vm}" />
 
                 <include
+                    android:id="@+id/export_device"
+                    layout="@layout/include_tracking_tile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_margin"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/tracking_tile_height"
+                    android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
+                    bind:clickable="@{true}"
+                    bind:drawable="@{@drawable/ic_baseline_attach_file_24}"
+                    bind:imageDescription="@{@string/export_device_title}"
+                    bind:subtitle="@{@string/export_device_subtitle}"
+                    bind:title="@{@string/export_device_title}"
+                    bind:vm="@{vm}" />
+
+                <include
                     android:id="@+id/tracking_observation"
                     layout="@layout/include_tracking_tile"
                     android:layout_width="match_parent"

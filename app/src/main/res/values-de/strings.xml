@@ -312,6 +312,9 @@
     <string name="apple_find_my_default_name">Apple \"FindMy\"</string>
     <string name="apple_device_default_name">Apple Gerät</string>
 
+    <string name="export_device_title">Exportiere Geräte-Infos als PDF</string>
+    <string name="export_device_subtitle">Erstelle eine Zusammenfassung über dieses Gerät als PDF</string>
+
     <string name="observe_tracker_title">Tracker beobachten</string>
     <string name="observe_tracker_stop_observation">Beobachtung stoppen</string>
     <string name="observe_tracker_stop_observation_explanation">Dieser Tracker wird zur Zeit beobachtet.</string>

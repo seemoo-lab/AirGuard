@@ -11,6 +11,7 @@
     <string name="title_scan">Scan</string>
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
+    <string name="title_export_device">Export device data: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
     <string name="title_devices_map_device">Map: %1$s</string>
     <string name="title_devices">Devices</string>
@@ -363,6 +364,9 @@
 
     <string name="article_image_description">Preview Image for this article</string>
     <string name="info_button_description">Show explanation text</string>
+
+    <string name="export_device_title">Export Device to PDF</string>
+    <string name="export_device_subtitle">Create a PDF file summary about this tracker</string>
 
     <string name="observe_tracker_title">Observe Tracker</string>
     <string name="observe_tracker_clock_description">Image of a clock</string>
