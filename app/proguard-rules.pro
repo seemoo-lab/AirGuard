@@ -35,6 +35,14 @@
     @retrofit2.http.* <methods>;
 }
 
+-keepclassmembers class * {
+      @com.google.gson.annotations.SerializedName <fields>;
+      @de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification <fields>;
+}
+
+-keepclassmembers class de.seemoo.at_tracking_detection.database.** { <fields>; }
+
+
 # Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 

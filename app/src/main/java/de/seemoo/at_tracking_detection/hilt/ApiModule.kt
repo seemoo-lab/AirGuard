@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.statistics.api.Api
 import de.seemoo.at_tracking_detection.util.converter.LocalDateTimeConverter
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
@@ -23,12 +24,21 @@ object ApiModule {
     private const val HTTP_TIMEOUT: Long = 60
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .callTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-        .connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-        .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-        .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-        .build()
+    fun provideOkHttpClient(): OkHttpClient {
+        val builder  = OkHttpClient.Builder()
+            .callTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+
+        if (BuildConfig.DEBUG) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            builder.addInterceptor(interceptor)
+        }
+
+        return builder.build()
+    }
 
     @Provides
     @Singleton
