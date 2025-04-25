@@ -65,7 +65,6 @@ class FoundTrackersExport : Fragment() {
         exportDocumentButton = view.findViewById(R.id.create_document_button)
         progressBar = view.findViewById(R.id.progress_bar)
 
-        val exportDocumentButton = view.findViewById<Button>(R.id.create_document_button)
         exportDocumentButton.setOnClickListener {
             checkPermissionsAndGeneratePdf()
         }

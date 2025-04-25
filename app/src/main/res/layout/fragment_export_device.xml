@@ -14,25 +14,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Start observation button -->
             <Button
-                android:id="@+id/start_export_button"
+                android:id="@+id/create_document_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/export_trackers_create_document"
-                android:textSize="18sp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginEnd="16dp"
+                android:padding="16dp"
+                android:text="@string/export_trackers_create_document" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+        </FrameLayout>
     </ScrollView>
 
 </layout>
