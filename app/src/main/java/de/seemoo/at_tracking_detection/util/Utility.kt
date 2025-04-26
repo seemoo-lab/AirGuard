@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -230,10 +231,14 @@ object Utility {
         }
     }
 
-    fun getSelectedTheme(): Boolean {
+    fun isActualThemeDark(context: Context): Boolean {
         return when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> false // Dark mode
-            else -> true // Light mode or system default
+            AppCompatDelegate.MODE_NIGHT_YES -> true // App theme explicitly set to Dark
+            AppCompatDelegate.MODE_NIGHT_NO -> false // App theme explicitly set to Light
+            else -> { // App theme set to Follow System or other modes (e.g., Battery Saver)
+                val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                currentNightMode == Configuration.UI_MODE_NIGHT_YES // Return true if the system configuration is currently dark
+            }
         }
     }
 
