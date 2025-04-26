@@ -156,14 +156,13 @@ class TrackingFragment : Fragment() {
 
         mapView.addMapListener(object : MapListener {
             override fun onZoom(event: ZoomEvent?): Boolean {
-                if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {
-                    zoomToMarkers()
-                }
-                return true
+                Timber.d("MapListener: Zoom event received (zoom level: ${event?.zoomLevel})")
+                return false
             }
 
             override fun onScroll(event: ScrollEvent?): Boolean {
-                return true
+                Timber.d("MapListener: Scroll event received")
+                return false
             }
         })
 

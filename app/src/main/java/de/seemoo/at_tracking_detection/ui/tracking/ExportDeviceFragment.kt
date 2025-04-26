@@ -6,10 +6,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,9 +21,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,6 +30,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -36,15 +40,14 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentExportDeviceBinding
-import de.seemoo.at_tracking_detection.ui.settings.FoundTrackersExport
-import de.seemoo.at_tracking_detection.ui.settings.FoundTrackersExport.PageContext
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.checkRiskLevelForDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -69,7 +72,21 @@ class ExportDeviceFragment: Fragment() {
     private lateinit var exportDocumentButton: Button
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var mapView: MapView
+    private var isMapReady = false
+
     private lateinit var binding: FragmentExportDeviceBinding
+
+    private val PAGE_WIDTH = 1200
+    private val PAGE_HEIGHT = 2000
+    private val MARGIN = 50f
+    private val FOOTER_HEIGHT = 50f // Space reserved for footer
+    private val TEXT_SIZE_NORMAL = 24f
+    private val TEXT_SIZE_HEADER = 36f
+    private val LINE_SPACING = 10f // Extra space between lines
+    private val NORMAL_LINE_HEIGHT = TEXT_SIZE_NORMAL + LINE_SPACING
+    private val MAP_BOTTOM_MARGIN = 20f
+    private val SECTION_SPACING = 40f // Space between logical sections
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,14 +107,74 @@ class ExportDeviceFragment: Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mapView = view.findViewById(R.id.map_preview)
+        Utility.basicMapSetup(mapView)
+
+        mapView.setMultiTouchControls(false)
+        mapView.setBuiltInZoomControls(false)
+        mapView.setOnTouchListener { _, _ -> true }
+
+        view.post {
+            setupMapContent()
+        }
 
         exportDocumentButton = view.findViewById<Button>(R.id.create_document_button)
         progressBar = view.findViewById(R.id.progress_bar)
 
         exportDocumentButton.setOnClickListener {
-            checkPermissionsAndGeneratePdf()
+            if (isMapReady) {
+                checkPermissionsAndGeneratePdf()
+            } else {
+                Toast.makeText(context, getString(R.string.export_trackers_map_still_loading), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+        if (!isMapReady) setupMapContent()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    private fun setupMapContent() {
+        lifecycleScope.launch {
+            val locations = locationRepository.getLocationsForBeacon(deviceAddress!!)
+            val geoPoints = locations.map { GeoPoint(it.latitude, it.longitude) }
+
+            // Add markers
+            val iconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_location_on_45_black)
+            iconDrawable?.setTint(Color.BLACK)
+            geoPoints.forEach { point ->
+                Marker(mapView).apply {
+                    position = point
+                    icon = iconDrawable
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    setInfoWindow(null)
+                    mapView.overlays.add(this)
+                }
+            }
+
+            // Set zoom and center
+            if (geoPoints.isNotEmpty()) {
+                val boundingBox = BoundingBox.fromGeoPointsSafe(geoPoints)
+                mapView.post {
+                    mapView.zoomToBoundingBox(boundingBox, false, 100)
+                    mapView.invalidate()
+                    isMapReady = true
+                }
+            } else {
+                mapView.controller.setZoom(2.0)
+                isMapReady = true
+            }
         }
     }
 
@@ -222,107 +299,149 @@ class ExportDeviceFragment: Fragment() {
 
     private suspend fun generatePdfContent(): ByteArray = withContext(Dispatchers.IO) {
         Timber.d("Generating PDF content")
+        val device = deviceRepository.getDevice(deviceAddress!!) ?: run {
+            Timber.e("Device not found in database: $deviceAddress")
+            throw IllegalStateException("Device $deviceAddress not found for PDF export.")
+        }
+        val beacons = beaconRepository.getDeviceBeacons(device.address)
+        val locations = locationRepository.getLocationsForBeacon(device.address)
+
         val outputStream = ByteArrayOutputStream()
         val pdfDocument = PdfDocument()
-        val device = deviceRepository.getDevice(deviceAddress!!) ?: throw IllegalStateException("Device not found")
+
         try {
-            // val initialPage = createNewPage(pdfDocument)
-            val pageInfo = PdfDocument.PageInfo.Builder(1200, 2000, 1).create()
-            val page = pdfDocument.startPage(pageInfo)
-            val canvas = page.canvas
-            var pageContext = PageContext(page, canvas, 50f)
-            var yPos = 50f
-
-            // Determine if the tracker is following
-            val useLocation = SharedPrefs.useLocationInTrackingDetection
-            val deviceRiskLevel = checkRiskLevelForDevice(device!!, useLocation) //TODO: Handle null cases
-            val trackerFollowing = deviceRiskLevel != RiskLevel.LOW
-
-            val headerPaint = Paint().apply {
-                color = if (trackerFollowing) Color.RED else Color.BLUE
-                textSize = 36f
+            Timber.d("Starting PDF layout calculation (Pass 1)...")
+            val totalPages = calculateTotalPages(device, beacons, locations)
+            Timber.d("Calculated total pages: $totalPages")
+            if (totalPages <= 0) {
+                Timber.w("Calculation resulted in zero or negative pages. Aborting.")
+                return@withContext ByteArray(0) // Return empty if no content leads to pages
             }
-            canvas.drawText(
-                if (trackerFollowing) getString(R.string.export_trackers_following) else getString(R.string.export_trackers_not_following),
-                50f, 60f, headerPaint
-            )
-            yPos += 80f
+
+            Timber.d("Starting PDF rendering (Pass 2)...")
+            var currentPageNumber = 1
+            var pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
+            var currentPage = pdfDocument.startPage(pageInfo)
+            var canvas = currentPage.canvas
+            var yPos = MARGIN
+
+            // Common Paints
+            val textPaint = Paint().apply { color = Color.BLACK; textSize = TEXT_SIZE_NORMAL; isAntiAlias = true }
+            val boldTextPaint = Paint(textPaint).apply { typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
+            val linkPaint = Paint(textPaint).apply { color = Color.BLUE; isUnderlineText = true }
+            val headerPaint = Paint().apply { textSize = TEXT_SIZE_HEADER; isAntiAlias = true; typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
+
+            val drawablePageHeight = PAGE_HEIGHT - MARGIN - FOOTER_HEIGHT - LINE_SPACING // Usable height for content
+
+            val useLocation = SharedPrefs.useLocationInTrackingDetection
+            val deviceRiskLevel = checkRiskLevelForDevice(device, useLocation)
+            val trackerFollowing = deviceRiskLevel != RiskLevel.LOW
+            headerPaint.color = if (trackerFollowing) Color.RED else Color.BLUE
+            val headerText = if (trackerFollowing) getString(R.string.export_trackers_following) else getString(R.string.export_trackers_not_following)
+            canvas.drawText(headerText, MARGIN, yPos + TEXT_SIZE_HEADER, headerPaint)
+            yPos += TEXT_SIZE_HEADER + SECTION_SPACING
 
             // --- Basic Device Information ---
-            val trackerType = DeviceManager.deviceTypeToString(device.deviceType!!) // TODO: Handle potential null deviceType
+            val deviceTypeStr = DeviceManager.deviceTypeToString(device.deviceType ?: DeviceType.UNKNOWN)
             val lastSeenDate = device.lastSeen.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             val firstSeenDate = device.firstDiscovery.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
-            val detectionCount = beaconRepository.getDeviceBeaconsCount(device.address)
-            val locations = locationRepository.getLocationsForBeacon(device.address)
-            val uniqueLocations = locations.size
+            val detectionCount = beacons.size
+            val uniqueLocationCount = locations.size
 
-            val textPaint = Paint().apply {
-                color = Color.BLACK
-                textSize = 24f
-            }
+            canvas.drawText(getString(R.string.export_trackers_basic_info_title), MARGIN, yPos, boldTextPaint)
+            yPos += NORMAL_LINE_HEIGHT
 
-            // Basic Info
-            canvas.drawText(getString(R.string.export_trackers_tracker_type, trackerType), 50f, yPos, textPaint)
-            yPos += 40
+            canvas.drawText(getString(R.string.export_trackers_tracker_type, deviceTypeStr), MARGIN, yPos, textPaint)
+            yPos += NORMAL_LINE_HEIGHT
             if (device.deviceType != DeviceType.SAMSUNG_TRACKER && device.deviceType != DeviceType.SAMSUNG_FIND_MY_MOBILE) {
-                // Identification does not work via MAC address on Samsung devices, therefore hide it
-                canvas.drawText(getString(R.string.export_trackers_mac, device.address), 50f, yPos, textPaint)
-                yPos += 40
+                canvas.drawText(getString(R.string.export_trackers_mac, device.address), MARGIN, yPos, textPaint)
+                yPos += NORMAL_LINE_HEIGHT
             }
-            canvas.drawText(getString(R.string.export_trackers_last_seen, lastSeenDate), 50f, yPos, textPaint)
-            yPos += 40
-            canvas.drawText(getString(R.string.export_trackers_first_seen, firstSeenDate), 50f, yPos, textPaint)
-            yPos += 40
-            canvas.drawText(getString(R.string.export_trackers_detections, detectionCount), 50f, yPos, textPaint)
-            yPos += 40
-            canvas.drawText(getString(R.string.export_trackers_unique_locations, uniqueLocations), 50f, yPos, textPaint)
-            yPos += 60 // Add extra space before the next section
+            canvas.drawText(getString(R.string.export_trackers_first_seen, firstSeenDate), MARGIN, yPos, textPaint)
+            yPos += NORMAL_LINE_HEIGHT
+            canvas.drawText(getString(R.string.export_trackers_last_seen, lastSeenDate), MARGIN, yPos, textPaint)
+            yPos += NORMAL_LINE_HEIGHT
+            canvas.drawText(getString(R.string.export_trackers_detections, detectionCount), MARGIN, yPos, textPaint)
+            yPos += NORMAL_LINE_HEIGHT
+            canvas.drawText(getString(R.string.export_trackers_unique_locations, uniqueLocationCount), MARGIN, yPos, textPaint)
+            yPos += SECTION_SPACING
 
-            // --- Map Placeholder ---
-            // TODO: Map
-            canvas.drawText("[Map Placeholder]", 50f, yPos, textPaint) // Placeholder for the map
-            yPos += 60 // Add extra space before the next section
+            // --- Map Section ---
+            val mapBitmap = createMapBitmap()
+            val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width)
+            val mapRect = Rect(MARGIN.toInt(), yPos.toInt(), (PAGE_WIDTH - MARGIN).toInt(), (yPos + mapHeight).toInt())
+            if (yPos + mapHeight > drawablePageHeight) {
+                Timber.d("Map doesn't fit on page $currentPageNumber, creating new page.")
+                drawPageFooter(canvas, currentPageNumber, totalPages, textPaint) // Add footer to current page
+                pdfDocument.finishPage(currentPage) // Finish current page
+                currentPageNumber++
+                pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
+                currentPage = pdfDocument.startPage(pageInfo)
+                canvas = currentPage.canvas
+                yPos = MARGIN // Reset yPos for new page
+            }
 
-            // --- Beacons ---
-            val beacons = beaconRepository.getDeviceBeacons(device.address)
+            canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
+            yPos += NORMAL_LINE_HEIGHT
+            canvas.drawBitmap(mapBitmap, null, mapRect, null) // Draw map scaled into rect
+            yPos += mapHeight + SECTION_SPACING
+            mapBitmap.recycle()
+
+            // --- Beacon Details Section ---
+            canvas.drawText(getString(R.string.export_trackers_detections_title), MARGIN, yPos, boldTextPaint)
+            yPos += NORMAL_LINE_HEIGHT
 
             for (beacon in beacons) {
-                val beaconDate = beacon.receivedAt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
                 val beaconLocation = locations.find { it.locationId == beacon.locationId }
 
-                // 1. Time
-                canvas.drawText(getString(R.string.export_trackers_time, beaconDate), 50f, yPos, textPaint)
-                yPos += 30
+                val beaconEntryHeight = getBeaconEntryHeight(beaconLocation)
 
-                // 2. Location
+                // Check if the *entire* beacon entry fits on the current page
+                if (yPos + beaconEntryHeight > drawablePageHeight) {
+                    Timber.d("Beacon entry doesn't fit on page $currentPageNumber, creating new page.")
+                    drawPageFooter(canvas, currentPageNumber, totalPages, textPaint)
+                    pdfDocument.finishPage(currentPage)
+                    currentPageNumber++
+                    pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
+                    currentPage = pdfDocument.startPage(pageInfo)
+                    canvas = currentPage.canvas
+                    yPos = MARGIN // Reset yPos
+                    canvas.drawText(getString(R.string.export_trackers_detections_title_continued), MARGIN, yPos, boldTextPaint)
+                    yPos += NORMAL_LINE_HEIGHT
+                }
+
+                // Draw beacon details
+                val beaconDate = beacon.receivedAt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+                canvas.drawText(getString(R.string.export_trackers_time, beaconDate), MARGIN, yPos, textPaint)
+                yPos += NORMAL_LINE_HEIGHT
+
                 val locationText = if (beaconLocation != null) {
                     getString(R.string.export_trackers_location, beaconLocation.latitude.toString(), beaconLocation.longitude.toString())
                 } else {
                     getString(R.string.export_trackers_location_unknown)
                 }
-                canvas.drawText(locationText, 50f, yPos, textPaint)
-                yPos += 30
+                canvas.drawText(locationText, MARGIN, yPos, textPaint)
+                yPos += NORMAL_LINE_HEIGHT
 
-                // 3. Google Maps Link
-                if (beaconLocation != null && beaconLocation.locationId != 0) {
-                    // TODO: make Link clickable
+                if (beaconLocation != null) {
                     val googleMapsLink = "https://maps.google.com/?q=${beaconLocation.latitude},${beaconLocation.longitude}"
-                    canvas.drawText(getString(R.string.export_trackers_map, googleMapsLink), 50f, yPos, textPaint)
-                    yPos += 30
+                    // TODO: This is currently just blue, figure out a way to make this clickabel
+                    canvas.drawText(getString(R.string.export_trackers_map, googleMapsLink), MARGIN, yPos, linkPaint)
+                    yPos += NORMAL_LINE_HEIGHT
                 }
 
-                // 4. Signal Strength
-                val rssi = beacon.rssi
-                canvas.drawText(getString(R.string.export_trackers_signal_strength, rssi), 50f, yPos, textPaint)
-                yPos += 40
+                canvas.drawText(getString(R.string.export_trackers_signal_strength, beacon.rssi), MARGIN, yPos, textPaint)
+                yPos += NORMAL_LINE_HEIGHT + LINE_SPACING // Add extra spacing between beacon entries
             }
 
-            // --- Footer ---
-            // Draw footer at a fixed position near the bottom
-            canvas.drawText(getString(R.string.export_trackers_created_by), 50f, 1900f, textPaint)
+            // --- Final Footer ---
+            drawPageFooter(canvas, currentPageNumber, totalPages, textPaint) // Draw footer on the last page
 
-            pdfDocument.finishPage(pageContext.page)
+            pdfDocument.finishPage(currentPage) // Finish the last page
+
+            // --- Write to Output Stream ---
             pdfDocument.writeTo(outputStream)
+            Timber.d("PDF rendering finished successfully.")
             outputStream.toByteArray()
         } catch (e: Exception) {
             Timber.e(e, "Error generating PDF content")
@@ -330,42 +449,107 @@ class ExportDeviceFragment: Fragment() {
         } finally {
             pdfDocument.close()
             outputStream.close()
+            Timber.d("PDF Document closed.")
         }
     }
 
-//    private fun generatePdfToUri(device: BaseDevice, uri: Uri) {
-//        val context = context ?: return // Handle detached state
-//
-////        val mapView = MapView(context).apply {
-////            setTileSource(TileSourceFactory.MAPNIK)
-////            minZoomLevel = 4.0
-////            maxZoomLevel = 19.0
-////            controller.setZoom(12.0)
-////
-////            // TODO: replace with existing logic
-////
-////            // Add markers for each location
-////            locations.forEach { location ->
-////                val marker = Marker(this).apply {
-////                    position = GeoPoint(location.latitude, location.longitude)
-////                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-////                }
-////                overlays.add(marker)
-////            }
-////        }
-////
-////        // Measure and layout map view
-////        mapView.measure(
-////            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
-////            View.MeasureSpec.makeMeasureSpec(600, View.MeasureSpec.EXACTLY)
-////        )
-////        mapView.layout(0, 0, 1000, 600)
-////
-////        // Draw map to canvas
-////        mapView.draw(canvas.apply { translate(50f, yPos + 40f) })
-////        yPos += 640f
-//
-//    }
+    private suspend fun createMapBitmap(): Bitmap = withContext(Dispatchers.Main) {
+        // Ensure map view has valid dimensions
+        if (mapView.width <= 0 || mapView.height <= 0) {
+            Timber.w("MapView dimensions are invalid, returning placeholder bitmap")
+            // Return a small placeholder or throw an error
+            return@withContext createBitmap(100, 100, Bitmap.Config.ARGB_8888).apply { eraseColor(Color.LTGRAY) }
+        }
+
+        Timber.d("Creating map bitmap with dimensions: ${mapView.width}x${mapView.height}")
+        val bitmap = createBitmap(mapView.width, mapView.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        mapView.draw(canvas)
+        Timber.d("Map drawing onto bitmap canvas complete.")
+        bitmap
+    }
+
+    private fun drawPageFooter(canvas: Canvas, pageNumber: Int, totalPages: Int, paint: Paint) {
+        val footerText = getString(R.string.export_trackers_created_by)
+        val pageNumberText = getString(R.string.export_page_number, pageNumber, totalPages)
+
+        val footerY = PAGE_HEIGHT - MARGIN / 2 // Position slightly above the bottom margin
+        val pageNumberY = footerY
+
+        canvas.drawText(footerText, MARGIN, footerY, paint)
+
+        // Draw "Page X / Y" on the right
+        val pageNumWidth = paint.measureText(pageNumberText)
+        val pageNumberX = PAGE_WIDTH - MARGIN - pageNumWidth
+        canvas.drawText(pageNumberText, pageNumberX, pageNumberY, paint)
+        Timber.v("Drew footer for page $pageNumber / $totalPages")
+    }
+
+    private fun getBeaconEntryHeight(beaconLocation: de.seemoo.at_tracking_detection.database.models.Location?): Float {
+        var lines = 3 // Time, Location Text, Signal Strength
+        if (beaconLocation != null) {
+            lines += 1 // Add line for Google Maps link
+        }
+        return lines * NORMAL_LINE_HEIGHT
+    }
+
+    private suspend fun calculateTotalPages(
+        device: BaseDevice,
+        beacons: List<Beacon>,
+        locations: List<Location>
+    ): Int = withContext(Dispatchers.Default) { // Use Default dispatcher for calculations
+        var pageCount = 1
+        var yPos = MARGIN
+        val drawablePageHeight = PAGE_HEIGHT - MARGIN - FOOTER_HEIGHT - LINE_SPACING
+
+        // --- Simulate Header ---
+        yPos += TEXT_SIZE_HEADER + SECTION_SPACING
+
+        // --- Simulate Basic Info ---
+        // Approximate height: Title line + 5 lines of info + section spacing
+        var basicInfoHeight = NORMAL_LINE_HEIGHT // Title
+        basicInfoHeight += if (device.deviceType != DeviceType.SAMSUNG_TRACKER && device.deviceType != DeviceType.SAMSUNG_FIND_MY_MOBILE) 5 * NORMAL_LINE_HEIGHT else 4 * NORMAL_LINE_HEIGHT
+        basicInfoHeight += SECTION_SPACING
+        yPos += basicInfoHeight
+
+
+        // --- Simulate Map ---
+        val mapBitmap = createMapBitmap() // Need to create it to get dimensions
+        val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width).toFloat()
+        mapBitmap.recycle()
+
+        val mapSectionHeight = NORMAL_LINE_HEIGHT + mapHeight + SECTION_SPACING // Title + Map + Spacing
+
+        if (yPos + mapSectionHeight > drawablePageHeight) {
+            pageCount++
+            yPos = MARGIN // Reset for new page
+        }
+        yPos += mapSectionHeight
+
+
+        // --- Simulate Beacon Details ---
+        val beaconListHeaderHeight = NORMAL_LINE_HEIGHT + LINE_SPACING // "Detections:" title + spacing
+        if (yPos + beaconListHeaderHeight > drawablePageHeight) { // Check if header itself needs new page
+            pageCount++
+            yPos = MARGIN
+        }
+        yPos += beaconListHeaderHeight
+
+        for (beacon in beacons) {
+            val beaconLocation = locations.find { it.locationId == beacon.locationId }
+            val entryHeight = getBeaconEntryHeight(beaconLocation) + LINE_SPACING // Add spacing between entries
+
+            if (yPos + entryHeight > drawablePageHeight) {
+                pageCount++
+                yPos = MARGIN // Reset for new page
+                // Add height for potential "Detections (Continued)" header on new page
+                yPos += NORMAL_LINE_HEIGHT
+            }
+            yPos += entryHeight
+        }
+
+        pageCount
+    }
 
     companion object {
         private const val STORAGE_PERMISSION_CODE = 1001

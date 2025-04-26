@@ -130,6 +130,7 @@ object Utility {
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
+        map.maxZoomLevel = MAX_ZOOM_LEVEL
 
         map.overlays.add(copyrightOverlay)
     }
@@ -143,10 +144,14 @@ object Utility {
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
 
-        val iconDrawable = R.drawable.ic_baseline_location_on_45_black
+        val icon = R.drawable.ic_baseline_location_on_45_black
+        val iconDrawable = ContextCompat.getDrawable(
+            context, icon
+
+        )
 
         val clusterer = RadiusMarkerClusterer(context)
-        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, iconDrawable)
+        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
         clusterer.setIcon(clusterIcon)
         clusterer.setRadius(100)
         clusterer.mAnchorU = Marker.ANCHOR_CENTER
@@ -160,10 +165,7 @@ object Utility {
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint
-                    marker.icon = ContextCompat.getDrawable(
-                        context,
-                        iconDrawable
-                    )
+                    marker.icon = iconDrawable
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     geoPointList.add(geoPoint)
 
@@ -181,6 +183,7 @@ object Utility {
 
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)
+            map.post { map.invalidate() }
             return false
         }
 
