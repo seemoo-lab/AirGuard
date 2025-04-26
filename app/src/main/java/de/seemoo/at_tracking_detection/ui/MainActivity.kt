@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun configureSystemBars() {
-        val isDarkTheme = Utility.getSelectedTheme() == false
+        val isDarkTheme = Utility.isActualThemeDark(context = this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.apply {
