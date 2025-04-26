@@ -265,6 +265,17 @@ object Utility {
         }
     }
 
+    fun getConnectionStateFromString(connectionState: String): ConnectionState {
+        return when (connectionState) {
+            "CONNECTED" -> ConnectionState.CONNECTED
+            "OFFLINE" -> ConnectionState.OFFLINE
+            "OVERMATURE_OFFLINE" -> ConnectionState.OVERMATURE_OFFLINE
+            "PREMATURE_OFFLINE" -> ConnectionState.PREMATURE_OFFLINE
+            "UNKNOWN" -> ConnectionState.UNKNOWN
+            else -> ConnectionState.UNKNOWN
+        }
+    }
+
     fun getExplanationTextForDeviceType(deviceType: DeviceType?): String {
         Timber.d("get Explanation for DeviceType: $deviceType")
         return when (deviceType) {

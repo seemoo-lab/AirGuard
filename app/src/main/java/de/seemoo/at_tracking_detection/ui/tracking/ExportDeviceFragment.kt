@@ -33,6 +33,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
@@ -394,7 +395,10 @@ class ExportDeviceFragment: Fragment() {
             for (beacon in beacons) {
                 val beaconLocation = locations.find { it.locationId == beacon.locationId }
 
-                val beaconEntryHeight = getBeaconEntryHeight(beaconLocation)
+                val beaconConnectionState: ConnectionState = Utility.getConnectionStateFromString(beacon.connectionState)
+                val show15MinuteWarning = beaconConnectionState !in DeviceManager.unsafeConnectionState
+
+                val beaconEntryHeight = getBeaconEntryHeight(beaconLocation, show15MinuteWarning)
 
                 // Check if the *entire* beacon entry fits on the current page
                 if (yPos + beaconEntryHeight > drawablePageHeight) {
@@ -425,8 +429,12 @@ class ExportDeviceFragment: Fragment() {
 
                 if (beaconLocation != null) {
                     val googleMapsLink = "https://maps.google.com/?q=${beaconLocation.latitude},${beaconLocation.longitude}"
-                    // TODO: This is currently just blue, figure out a way to make this clickabel
                     canvas.drawText(getString(R.string.export_trackers_map, googleMapsLink), MARGIN, yPos, linkPaint)
+                    yPos += NORMAL_LINE_HEIGHT
+                }
+
+                if (show15MinuteWarning) {
+                    canvas.drawText(getString(R.string.export_trackers_15_minute_warning), MARGIN, yPos, textPaint)
                     yPos += NORMAL_LINE_HEIGHT
                 }
 
@@ -485,10 +493,13 @@ class ExportDeviceFragment: Fragment() {
         Timber.v("Drew footer for page $pageNumber / $totalPages")
     }
 
-    private fun getBeaconEntryHeight(beaconLocation: de.seemoo.at_tracking_detection.database.models.Location?): Float {
+    private fun getBeaconEntryHeight(beaconLocation: Location?, show15MinuteWarning: Boolean): Float {
         var lines = 3 // Time, Location Text, Signal Strength
         if (beaconLocation != null) {
             lines += 1 // Add line for Google Maps link
+        }
+        if (show15MinuteWarning) {
+            lines += 1 // Add line for 15-minute warning
         }
         return lines * NORMAL_LINE_HEIGHT
     }
@@ -537,7 +548,9 @@ class ExportDeviceFragment: Fragment() {
 
         for (beacon in beacons) {
             val beaconLocation = locations.find { it.locationId == beacon.locationId }
-            val entryHeight = getBeaconEntryHeight(beaconLocation) + LINE_SPACING // Add spacing between entries
+            val beaconConnectionState: ConnectionState = Utility.getConnectionStateFromString(beacon.connectionState)
+            val show15MinuteWarning = beaconConnectionState !in DeviceManager.unsafeConnectionState
+            val entryHeight = getBeaconEntryHeight(beaconLocation, show15MinuteWarning) + LINE_SPACING // Add spacing between entries
 
             if (yPos + entryHeight > drawablePageHeight) {
                 pageCount++

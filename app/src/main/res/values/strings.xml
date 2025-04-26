@@ -468,4 +468,5 @@
     <string name="export_trackers_detections_title">This tracker was found at:</string>
     <string name="export_trackers_detections_title_continued">This tracker was found at (continuation):</string>
     <string name="export_page_number">Page %d/%d</string>
+    <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
 </resources>
