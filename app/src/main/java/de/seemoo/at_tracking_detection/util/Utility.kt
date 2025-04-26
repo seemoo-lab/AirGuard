@@ -12,7 +12,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -22,6 +21,7 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.app.ActivityCompat.startActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
@@ -407,7 +407,7 @@ object Utility {
             url
         }
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+        val intent = Intent(Intent.ACTION_VIEW, finalUrl.toUri())
 
         // Check if there's an app to handle this intent
         try {

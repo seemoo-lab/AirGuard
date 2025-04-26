@@ -28,6 +28,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -41,10 +43,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentExportDeviceBinding
-import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.risk.RiskLevel
-import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.Companion.checkRiskLevelForDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +77,9 @@ class ExportDeviceFragment: Fragment() {
 
     private lateinit var binding: FragmentExportDeviceBinding
 
+    private lateinit var beaconPreviewAdapter: BeaconPreviewAdapter
+    private lateinit var beaconsRecyclerView: RecyclerView
+
     private val PAGE_WIDTH = 1200
     private val PAGE_HEIGHT = 2000
     private val MARGIN = 50f
@@ -105,12 +107,20 @@ class ExportDeviceFragment: Fragment() {
 
         deviceAddress = safeArgs.deviceAddress
 
+        beaconPreviewAdapter = BeaconPreviewAdapter()
+
         return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        beaconsRecyclerView = binding.beaconsRecyclerview // Use binding
+        setupRecyclerView()
+        observeViewModel()
+
+        viewModel.loadDevice(deviceAddress, requireContext())
 
         mapView = view.findViewById(R.id.map_preview)
         Utility.basicMapSetup(mapView)
@@ -144,6 +154,20 @@ class ExportDeviceFragment: Fragment() {
     override fun onPause() {
         super.onPause()
         mapView.onPause()
+    }
+
+    private fun setupRecyclerView() {
+        beaconsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = beaconPreviewAdapter
+            // setHasFixedSize(true)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.beaconPreviewList.observe(viewLifecycleOwner) { beaconList ->
+            beaconPreviewAdapter.submitList(beaconList)
+        }
     }
 
     private fun setupMapContent() {
@@ -334,9 +358,7 @@ class ExportDeviceFragment: Fragment() {
 
             val drawablePageHeight = PAGE_HEIGHT - MARGIN - FOOTER_HEIGHT - LINE_SPACING // Usable height for content
 
-            val useLocation = SharedPrefs.useLocationInTrackingDetection
-            val deviceRiskLevel = checkRiskLevelForDevice(device, useLocation)
-            val trackerFollowing = deviceRiskLevel != RiskLevel.LOW
+            val trackerFollowing = ExportDeviceViewModel.isTrackerFollowing(device)
             headerPaint.color = if (trackerFollowing) Color.RED else Color.BLUE
             val headerText = if (trackerFollowing) getString(R.string.export_trackers_following) else getString(R.string.export_trackers_not_following)
             canvas.drawText(headerText, MARGIN, yPos + TEXT_SIZE_HEADER, headerPaint)
