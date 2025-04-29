@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
@@ -72,6 +73,7 @@ class ExportDeviceFragment: Fragment() {
     private lateinit var exportDocumentButton: Button
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var noInternetTextView: TextView
     private lateinit var mapView: MapView
     private var isMapReady = false
 
@@ -122,16 +124,15 @@ class ExportDeviceFragment: Fragment() {
 
         viewModel.loadDevice(deviceAddress, requireContext())
 
-        mapView = view.findViewById(R.id.map_preview)
+        mapView = binding.mapPreview
+        noInternetTextView = binding.noInternetTextView
         Utility.basicMapSetup(mapView)
 
         mapView.setMultiTouchControls(false)
         mapView.setBuiltInZoomControls(false)
         mapView.setOnTouchListener { _, _ -> true }
 
-        view.post {
-            setupMapContent()
-        }
+        checkInternetAndLoadMap()
 
         exportDocumentButton = view.findViewById<Button>(R.id.create_document_button)
         progressBar = view.findViewById(R.id.progress_bar)
@@ -200,6 +201,22 @@ class ExportDeviceFragment: Fragment() {
                 mapView.controller.setZoom(2.0)
                 isMapReady = true
             }
+        }
+    }
+
+    private fun checkInternetAndLoadMap() {
+        Timber.d("Checking internet connection for map loading")
+        if (Utility.isInternetAvailable(requireContext())) {
+            mapView.visibility = View.VISIBLE
+            noInternetTextView.visibility = View.GONE
+            view?.post {
+                Timber.d("Internet available, setting up map content")
+                setupMapContent()
+            }
+        } else {
+            Timber.d("No internet connection, showing no internet message")
+            mapView.visibility = View.GONE
+            noInternetTextView.visibility = View.VISIBLE
         }
     }
 
@@ -331,6 +348,9 @@ class ExportDeviceFragment: Fragment() {
         val beacons = beaconRepository.getDeviceBeacons(device.address)
         val locations = locationRepository.getLocationsForBeacon(device.address)
 
+        val hasInternet = Utility.isInternetAvailable(requireContext())
+        Timber.d("Internet available for PDF generation: $hasInternet")
+
         val outputStream = ByteArrayOutputStream()
         val pdfDocument = PdfDocument()
 
@@ -355,6 +375,7 @@ class ExportDeviceFragment: Fragment() {
             val boldTextPaint = Paint(textPaint).apply { typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
             val linkPaint = Paint(textPaint).apply { color = Color.BLUE; isUnderlineText = true }
             val headerPaint = Paint().apply { textSize = TEXT_SIZE_HEADER; isAntiAlias = true; typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
+            val centerTextPaint = Paint(textPaint).apply { textAlign = Paint.Align.CENTER }
 
             val drawablePageHeight = PAGE_HEIGHT - MARGIN - FOOTER_HEIGHT - LINE_SPACING // Usable height for content
 
@@ -390,25 +411,37 @@ class ExportDeviceFragment: Fragment() {
             yPos += SECTION_SPACING
 
             // --- Map Section ---
-            val mapBitmap = createMapBitmap()
-            val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width)
-            val mapRect = Rect(MARGIN.toInt(), yPos.toInt(), (PAGE_WIDTH - MARGIN).toInt(), (yPos + mapHeight).toInt())
-            if (yPos + mapHeight > drawablePageHeight) {
-                Timber.d("Map doesn't fit on page $currentPageNumber, creating new page.")
-                drawPageFooter(canvas, currentPageNumber, totalPages, textPaint) // Add footer to current page
-                pdfDocument.finishPage(currentPage) // Finish current page
-                currentPageNumber++
-                pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
-                currentPage = pdfDocument.startPage(pageInfo)
-                canvas = currentPage.canvas
-                yPos = MARGIN // Reset yPos for new page
+            if (hasInternet) {
+                val mapBitmap = createMapBitmap()
+                val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width)
+                val mapRect = Rect(MARGIN.toInt(), yPos.toInt(), (PAGE_WIDTH - MARGIN).toInt(), (yPos + mapHeight).toInt())
+                if (yPos + mapHeight > drawablePageHeight) {
+                    Timber.d("Map doesn't fit on page $currentPageNumber, creating new page.")
+                    drawPageFooter(canvas, currentPageNumber, totalPages, textPaint) // Add footer to current page
+                    pdfDocument.finishPage(currentPage) // Finish current page
+                    currentPageNumber++
+                    pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
+                    currentPage = pdfDocument.startPage(pageInfo)
+                    canvas = currentPage.canvas
+                    yPos = MARGIN // Reset yPos for new page
+                }
+
+                canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
+                yPos += NORMAL_LINE_HEIGHT
+                canvas.drawBitmap(mapBitmap, null, mapRect, null) // Draw map scaled into rect
+                yPos += mapHeight + SECTION_SPACING
+                mapBitmap.recycle()
+            } else {
+                val noInternetText = getString(R.string.export_trackers_no_internet)
+                val placeholderHeight = 300f // Same height as MapView in layout
+                // Center the text within this placeholder area
+                val textBounds = Rect()
+                centerTextPaint.getTextBounds(noInternetText, 0, noInternetText.length, textBounds)
+                canvas.drawText(noInternetText, PAGE_WIDTH / 2f, yPos + (placeholderHeight / 2) , centerTextPaint)
+                yPos += placeholderHeight // Advance yPos by the placeholder height
             }
 
-            canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
-            yPos += NORMAL_LINE_HEIGHT
-            canvas.drawBitmap(mapBitmap, null, mapRect, null) // Draw map scaled into rect
-            yPos += mapHeight + SECTION_SPACING
-            mapBitmap.recycle()
+            yPos += SECTION_SPACING
 
             // --- Beacon Details Section ---
             canvas.drawText(getString(R.string.export_trackers_detections_title), MARGIN, yPos, boldTextPaint)
@@ -545,20 +578,23 @@ class ExportDeviceFragment: Fragment() {
         basicInfoHeight += SECTION_SPACING
         yPos += basicInfoHeight
 
-
         // --- Simulate Map ---
-        val mapBitmap = createMapBitmap() // Need to create it to get dimensions
-        val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width).toFloat()
-        mapBitmap.recycle()
+        val hasInternet = Utility.isInternetAvailable(requireContext())
+        if (hasInternet) {
+            val mapBitmap = createMapBitmap() // Need to create it to get dimensions
+            val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width).toFloat()
+            mapBitmap.recycle()
 
-        val mapSectionHeight = NORMAL_LINE_HEIGHT + mapHeight + SECTION_SPACING // Title + Map + Spacing
+            val mapSectionHeight = NORMAL_LINE_HEIGHT + mapHeight + SECTION_SPACING // Title + Map + Spacing
 
-        if (yPos + mapSectionHeight > drawablePageHeight) {
-            pageCount++
-            yPos = MARGIN // Reset for new page
+            if (yPos + mapSectionHeight > drawablePageHeight) {
+                pageCount++
+                yPos = MARGIN // Reset for new page
+            }
+            yPos += mapSectionHeight
+        } else {
+            yPos += 300f
         }
-        yPos += mapSectionHeight
-
 
         // --- Simulate Beacon Details ---
         val beaconListHeaderHeight = NORMAL_LINE_HEIGHT + LINE_SPACING // "Detections:" title + spacing

@@ -77,6 +77,17 @@
                     android:layout_height="300dp"
                     android:layout_marginBottom="24dp"/> <!-- Removed layout_margin, kept bottom margin -->
 
+                <!-- "No Internet" Message (if map cannot load) -->
+                <TextView
+                    android:id="@+id/no_internet_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:gravity="center"
+                    android:text="@string/export_trackers_no_internet"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
                 <!-- 4. Beacons -->
                 <TextView
                     android:id="@+id/beacons_title_textview"
