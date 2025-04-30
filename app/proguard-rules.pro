@@ -119,3 +119,14 @@
 
 # Keep the SharedPrefs class and its methods
 -keep class de.seemoo.at_tracking_detection.util.SharedPrefs { *; }
+
+# Keep Gson annotations
+-keepattributes Signature,RuntimeVisibleAnnotations
+
+# Keep all data classes with Gson annotations
+-keep class de.seemoo.at_tracking_detection.database.relations.** { *; }
+
+# Optionally, keep all Gson-annotated classes
+-keep class * {
+    @com.google.gson.annotations.SerializedName *;
+}

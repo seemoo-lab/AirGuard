@@ -248,12 +248,15 @@ object Utility {
         return DbmToPercent.convert(rssi.toDouble(), perfectRssi = perfectRssi, worstRssi = worstRssi).toDouble() / 100.0
     }
 
-    fun getSensitivity(): Int {
+    /**
+     * Risk sensitivity (security level) used for the statistics database
+     */
+    fun getSensitivityLevelValue(): Int {
         return when (SharedPrefs.riskSensitivity) {
-            "low" -> 1
-            "medium" -> 2
-            "high" -> 3
-            else -> 0
+            "low" -> 0
+            "medium" -> 1
+            "high" -> 2
+            else -> -1
         }
     }
 

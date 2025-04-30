@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models
 
+import androidx.annotation.Keep
 import androidx.room.*
 import de.seemoo.at_tracking_detection.database.Converters
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
@@ -24,6 +25,7 @@ import java.time.format.FormatStyle
         )
     ]
 )
+@Keep
 @TypeConverters(DateTimeConverter::class, Converters::class)
 data class Beacon(
     @PrimaryKey(autoGenerate = true) val beaconId: Int,
