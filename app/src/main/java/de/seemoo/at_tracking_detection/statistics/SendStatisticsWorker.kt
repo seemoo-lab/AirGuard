@@ -51,6 +51,10 @@ class SendStatisticsWorker @AssistedInject constructor(
                 Timber.e("Failed getting token")
                 Timber.e(e)
                 return Result.retry()
+            }catch (e: Exception) {
+                Timber.e("Failed getting token")
+                Timber.e(e.stackTrace.toString())
+                return Result.retry()
             }
         }
 

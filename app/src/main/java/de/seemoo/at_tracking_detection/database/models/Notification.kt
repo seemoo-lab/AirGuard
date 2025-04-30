@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.database.models
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,6 +8,7 @@ import androidx.room.TypeConverters
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 
+@Keep
 @Entity(tableName = "notification")
 @TypeConverters(DateTimeConverter::class)
 data class Notification(
@@ -16,7 +18,7 @@ data class Notification(
     @ColumnInfo(name = "dismissed") val dismissed: Boolean?,
     @ColumnInfo(name = "clicked") val clicked: Boolean?,
     @ColumnInfo(name = "createdAt") val createdAt: LocalDateTime,
-    @ColumnInfo(name = "sensitivity", defaultValue = "0") val sensitivity: Int // 0 = unknown, 1 = low, 2 = medium, 3 = high
+    @ColumnInfo(name = "sensitivity", defaultValue = "-1") val sensitivity: Int // -1 = unknown, 0 = low, 1 = medium, 2 = high
 ) {
     constructor(
         deviceAddress: String,

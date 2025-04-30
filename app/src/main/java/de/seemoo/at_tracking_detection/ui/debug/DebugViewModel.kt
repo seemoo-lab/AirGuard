@@ -4,13 +4,15 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class DebugViewModel @Inject constructor(
-    sharedPreferences: SharedPreferences
+    sharedPreferences: SharedPreferences,
+    val deviceRepository: DeviceRepository
 ) : ViewModel() {
 
     private var sharedPreferencesListener: SharedPreferences.OnSharedPreferenceChangeListener =
@@ -41,5 +43,9 @@ class DebugViewModel @Inject constructor(
         }
         nextScanDate.postValue(SharedPrefs.nextScanDate.toString())
         lastScanDate.postValue(SharedPrefs.lastScanDate.toString())
+    }
+
+    suspend  fun addDeviceToDb(device: BaseDevice) {
+        deviceRepository.insert(device)
     }
 }

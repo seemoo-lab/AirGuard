@@ -280,7 +280,6 @@
                     android:paddingEnd="16dp"
                     android:text="@{vm.lastSeenTimesString}"
                     android:textAppearance="?attr/textAppearanceBodyLarge"
-                    android:textColor="@color/white"
                     tools:text="20.01.2022 10:15\n12.12.2021 09:31\n11.12.2021 09:00" />
             </LinearLayout>
 

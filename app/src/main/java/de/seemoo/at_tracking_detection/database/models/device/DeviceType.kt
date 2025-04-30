@@ -167,4 +167,30 @@ enum class DeviceType {
             GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.numberOfLocationsToBeConsideredForTrackingDetectionHigh
         }
     }
+
+    fun getTrackingNetwork(): TrackingNetwork {
+        return when (this) {
+            AIRTAG,
+            APPLE,
+            FIND_MY,
+            AIRPODS -> TrackingNetwork.APPLE_FIND_MY
+            GOOGLE_FIND_MY_NETWORK -> TrackingNetwork.GOOGLE_FIND_MY_DEVICE
+            SAMSUNG_TRACKER,
+            SAMSUNG_FIND_MY_MOBILE -> TrackingNetwork.SAMSUNG_SMART_THINGS_FIND
+            TILE -> TrackingNetwork.TILE
+            CHIPOLO -> TrackingNetwork.CHIPOLO
+            PEBBLEBEE -> TrackingNetwork.PEBBLEBEE
+            UNKNOWN -> TrackingNetwork.UNKNOWN
+        }
+    }
+}
+
+enum class TrackingNetwork {
+    APPLE_FIND_MY,
+    GOOGLE_FIND_MY_DEVICE,
+    SAMSUNG_SMART_THINGS_FIND,
+    TILE,
+    CHIPOLO,
+    PEBBLEBEE,
+    UNKNOWN
 }

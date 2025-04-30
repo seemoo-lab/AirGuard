@@ -16,6 +16,7 @@ object DeviceManager {
     val appleDevicesWithInfoService = listOf(AppleFindMy, AirPods).map { it.deviceType }
     val unsafeConnectionState = listOf(ConnectionState.OVERMATURE_OFFLINE, ConnectionState.UNKNOWN)
     val savedConnectionStates = unsafeConnectionState // All: enumValues<ConnectionState>().toList()
+    val additionalSavedConnectionStates = listOf<Pair<DeviceType, ConnectionState>>(Pair<DeviceType, ConnectionState>(DeviceType.GOOGLE_FIND_MY_NETWORK, ConnectionState.PREMATURE_OFFLINE))
 
     // 15 minute algorithm: If a tracker changes its advertisement every 15 minutes we try to identify with a level of uncertainty if they are still the same
     // savedDeviceTypesWith15MinuteAlgorithm: Device types that are considered by this algorithm

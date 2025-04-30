@@ -390,10 +390,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 val statusBit = Utility.getBitsFromByte(serviceData[0], 0)
 
                 return if (statusBit) {
-                    Timber.d("Google Find My: Overmature Offline Mode")
                     ConnectionState.OVERMATURE_OFFLINE
                 } else {
-                    Timber.d("Google Find My: Premature Offline Mode")
                     ConnectionState.PREMATURE_OFFLINE
                 }
             }
@@ -438,6 +436,30 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 GoogleFindMyNetworkManufacturer.MOTOROLA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_motorola)
                 else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
             }
+        }
+
+        fun getAlternativeIdentifier(scanResult: ScanResult): String? {
+            // TODO: check if this is correct
+            try {
+                val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
+
+                fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+
+                return serviceData?.let { serviceData ->
+                    val startIndex = 1 // Skip first Byte
+                    val endIndex = when {
+                        serviceData.size >= 34 -> startIndex + 32
+                        serviceData.size >= 22 -> startIndex + 20
+                        else -> return null
+                    }
+
+                    serviceData.slice(startIndex until endIndex).toByteArray().toHexString()
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting unique identifier of Google Tracker")
+            }
+
+            return null
         }
     }
 

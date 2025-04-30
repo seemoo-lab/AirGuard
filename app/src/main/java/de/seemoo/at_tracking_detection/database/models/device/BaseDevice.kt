@@ -23,6 +23,8 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrack
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
 import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
+import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -60,7 +62,8 @@ data class BaseDevice(
     @ColumnInfo(name = "nextObservationNotification") var nextObservationNotification: LocalDateTime?,
     @ColumnInfo(name = "currentObservationDuration") var currentObservationDuration: Long?,
     @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
-    @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices
+    @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices and saving ConnectionState for Google Devices
+    @ColumnInfo(name = "alternativeIdentifier") var alternativeIdentifier: String? = null,
 ) {
 
     constructor(
@@ -90,12 +93,13 @@ data class BaseDevice(
         null,
         null,
         additionalData=null,
+        alternativeIdentifier = null,
     )
 
     constructor(scanResult: ScanResult) : this(
         0,
         UUID.randomUUID().toString(),
-        getPublicKey(scanResult),
+        getUniqueIdentifier(scanResult),
         getDeviceName(scanResult),
         false,
         scanResult.let {
@@ -112,7 +116,8 @@ data class BaseDevice(
         LocalDateTime.now(),
         null,
         null,
-        additionalData=null,
+        additionalData = getAdditionalData(scanResult),
+        alternativeIdentifier = getAlternativeIdentifier(scanResult)
     )
 
     fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId
@@ -168,10 +173,25 @@ data class BaseDevice(
             }
         }
 
-        fun getPublicKey(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
+        fun getUniqueIdentifier(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String {
             return when (deviceType) {
-                DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getPublicKey(scanResult)
+                DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getUniqueIdentifier(scanResult)
+                DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getUniqueIdentifier(scanResult)
                 else -> scanResult.device.address // Default case to handle unknown types
+            }
+        }
+
+        fun getAlternativeIdentifier(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String? {
+            return when (deviceType) {
+                DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.getAlternativeIdentifier(scanResult)
+                else -> null
+            }
+        }
+
+        fun getAdditionalData(scanResult: ScanResult, deviceType: DeviceType = DeviceManager.getDeviceType(scanResult)): String? {
+            return when (deviceType) {
+                DeviceType.GOOGLE_FIND_MY_NETWORK -> Utility.connectionStateToString(ScanResultWrapper(scanResult).connectionState)
+                else -> null
             }
         }
 

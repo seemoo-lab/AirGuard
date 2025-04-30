@@ -31,10 +31,10 @@ interface LocationDao {
     @Query("SELECT * FROM location WHERE locationId NOT IN (SELECT DISTINCT locationId FROM beacon WHERE locationId IS NOT NULL)")
     fun getLocationsWithNoBeacons(): List<LocationModel>
 
-    @Query("SELECT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress")
+    @Query("SELECT DISTINCT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress")
     fun getLocationsForDevice(deviceAddress: String): List<LocationModel>
 
-    @Query("SELECT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress AND b.receivedAt >= :since")
+    @Query("SELECT DISTINCT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.deviceAddress = :deviceAddress AND b.receivedAt >= :since")
     fun getLocationsForDeviceSince(deviceAddress: String, since: LocalDateTime): List<LocationModel>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

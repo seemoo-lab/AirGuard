@@ -11,28 +11,37 @@ class ScanRepository @Inject constructor(
     private val scanDao: ScanDao
 ) {
 
-    var lastScan = scanDao.lastScan()
+    val lastScan:Scan?
+        get() = scanDao.lastScan()
 
-    var lastCompletedScan = scanDao.lastCompletedScan()
+    val lastCompletedScan:Scan?
+        get() = scanDao.lastCompletedScan()
 
-    var relevantScans =
-        scanDao.getScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
+    val relevantScans: List<Scan>
+        get() = this.scanDao.getScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 
     fun relevantScans(manual: Boolean, limit: Int): List<Scan> = scanDao.getScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(), manual, limit)
 
-    val relevantDebugScans = scanDao.getDebugScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
+    val relevantDebugScans: List<Scan>
+        get() = scanDao.getDebugScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 
-    val flowDebugScans = scanDao.getFlowDebugRelevantScans(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
+    val flowDebugScans
+        get() = scanDao.getFlowDebugRelevantScans(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 
-    var allScans: List<Scan> = scanDao.getAllScans()
+    val allScans: List<Scan>
+        get() = scanDao.getAllScans()
 
-    var flowAllScans: Flow<List<Scan>> = scanDao.getFlowAllScans()
+    val flowAllScans: Flow<List<Scan>>
+        get() = scanDao.getFlowAllScans()
 
-    val totalCount: Int = scanDao.getNumberOfScans()
+    val totalCount: Int
+        get() = scanDao.getNumberOfScans()
 
-    var countInRelevantTime: Int = scanDao.getNumberOfScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
+    val countInRelevantTime: Int
+        get() = scanDao.getNumberOfScansSince(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 
-    val relevantUnfinishedScans: List<Scan> = scanDao.unfinishedScans(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
+    val relevantUnfinishedScans: List<Scan>
+        get() = scanDao.unfinishedScans(RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection())
 
     @WorkerThread
     suspend fun insert(scan: Scan): Long = scanDao.insert(scan)

@@ -21,7 +21,22 @@ data class Scan(
     @ColumnInfo(name = "isManual") val isManual: Boolean,
     /*Android Scan mode used*/
     @ColumnInfo(name = "scanMode") val scanMode: Int,
-    @ColumnInfo(name = "startDate") val startDate: LocalDateTime?
+
+    @ColumnInfo(name = "startDate") val startDate: LocalDateTime?,
+
+    @ColumnInfo(name = "location_deg") var locationDeg: String?,
+
+    @ColumnInfo(name = "location") var locationId: Int?,
+
+    /**
+     * Comma separated addresses of the devices found during the scan
+     */
+    @ColumnInfo(name = "device_addresses_found") var devicesAddressesFound: String?,
+    /**
+     *  Comma separated list of device types found during the scan
+     */
+    @ColumnInfo(name = "device_types_found") var devicesTypesFound: String?
+
 ) {
     constructor(
         endDate: LocalDateTime,
@@ -29,7 +44,11 @@ data class Scan(
         duration: Int,
         isManual: Boolean,
         scanMode: Int,
-        startDate: LocalDateTime
+        startDate: LocalDateTime,
+        locationDeg: String?,
+        locationId: Int?,
+        devicesAddressesFound: String?,
+        devicesTypesFound: String?
     ): this(
         scanId = 0,
         endDate,
@@ -37,7 +56,11 @@ data class Scan(
         duration,
         isManual,
         scanMode,
-        startDate
+        startDate,
+        locationDeg,
+        locationId,
+        devicesAddressesFound,
+        devicesTypesFound
     )
 
     constructor(
@@ -52,6 +75,10 @@ data class Scan(
         isManual = isManual,
         scanMode = scanMode,
         startDate = startDate,
-            )
+        locationDeg = null,
+        locationId = null,
+        devicesAddressesFound = null,
+        devicesTypesFound = null
+        )
 
 }

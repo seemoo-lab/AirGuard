@@ -75,19 +75,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>("delete_study_data")?.isVisible = false
         }
 
-        if (SharedPrefs.advancedMode) {
-            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
-        } else {
-            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = false
-        }
+        setAdvancedModeButtonVisibility()
 
         val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
         deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
@@ -113,6 +101,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 false
             } else {
                 // Allow the change immediately
+                deactivateBackgroundScanningPref.isVisible = SharedPrefs.advancedMode
                 true
             }
         }
@@ -155,21 +144,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
                 "advanced_mode" -> {
-                    if (SharedPrefs.advancedMode) {
-                        Timber.d("Enabled advanced mode!")
-                        findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
-                        findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
-                        findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
-                        findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
-                        findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
-                    } else {
-                        Timber.d("Disabled advanced mode!")
-                        findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
-                        findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
-                        findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
-                        findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
-                        findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = false
-                    }
+                    setAdvancedModeButtonVisibility()
                 }
                 "share_data" -> {
                     if (SharedPrefs.shareData) {
@@ -199,6 +174,26 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
         }
+
+    private fun setAdvancedModeButtonVisibility() {
+        if (SharedPrefs.advancedMode) {
+            Timber.d("Enabled advanced mode!")
+            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
+                true
+        } else {
+            Timber.d("Disabled advanced mode!")
+            findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
+                SharedPrefs.deactivateBackgroundScanning
+        }
+    }
 
     private fun updatePermissionSettings() {
         val locationPermissionState =

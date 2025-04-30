@@ -20,6 +20,7 @@ import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,7 +88,7 @@ class ScanViewModel @Inject constructor(
             if (location == null) {
                 LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
             } else {
-                LocationLogger.log("ScanViewModel: Got Location: Latitude: ${location.latitude}, Longitude: ${location.longitude}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
+                LocationLogger.log("ScanViewModel: Got Location: ${location.privacyPrint()}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
             }
 
             BackgroundBluetoothScanner.insertScanResult(

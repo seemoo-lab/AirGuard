@@ -70,7 +70,7 @@ class SamsungFindMyMobile(val id: Int) : Device()  {
             return null
         }
 
-        override fun getPublicKey(scanResult: ScanResult): String {
+        override fun getUniqueIdentifier(scanResult: ScanResult): String {
             try {
                 val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 

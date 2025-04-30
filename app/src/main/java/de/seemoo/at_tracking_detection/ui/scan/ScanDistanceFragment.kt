@@ -22,7 +22,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryStateAsString
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getPublicKey
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -70,7 +70,7 @@ class ScanDistanceFragment : Fragment() {
                     showSearchMessage()
                 }
 
-                if (getPublicKey(scanResult) == filteredIdentifier){
+                if (getUniqueIdentifier(scanResult) == filteredIdentifier){
                     latestWrappedScanResult = ScanResultWrapper(scanResult)
 
                     if (deviceType == null) {

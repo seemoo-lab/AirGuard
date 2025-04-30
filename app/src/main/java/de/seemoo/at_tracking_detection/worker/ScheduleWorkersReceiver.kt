@@ -3,11 +3,13 @@ package de.seemoo.at_tracking_detection.worker
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
+import de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.ScanBluetoothWorker
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.CoroutineScope
@@ -48,6 +50,11 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
             }else {
                 Timber.d("Could not find required dependencies")
             }
+        }
+
+        // Initiate the permanent background scanner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermanentBluetoothScanner.scan()
         }
     }
 

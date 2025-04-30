@@ -1,20 +1,25 @@
 package de.seemoo.at_tracking_detection.detection
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.privacyPrint
 import timber.log.Timber
 import java.util.Date
+import java.util.concurrent.Executor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -109,18 +114,20 @@ open class LocationProvider @Inject constructor(
         // If both locations are available, return the one that is more current and meets the minimum requirements
         if (networkLocation != null && gpsLocation != null) {
             val bestLocation = if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation
-            if (locationMatchesMinimumRequirements(bestLocation)) {
+            if (!checkRequirements || locationMatchesMinimumRequirements(bestLocation)) {
                 Utility.LocationLogger.log("LocationProvider: Both network and gps location available, return best location: ${bestLocation.latitude}, Longitude: ${bestLocation.longitude}, Altitude: ${bestLocation.altitude}, Accuracy: ${bestLocation.accuracy}")
                 return bestLocation
+            }else {
+                return null
             }
         }
 
         // If only one location is available, return it if it meets the minimum requirements
-        if (networkLocation != null && locationMatchesMinimumRequirements(networkLocation)) {
+        if (networkLocation != null && !checkRequirements && locationMatchesMinimumRequirements(networkLocation)) {
             Utility.LocationLogger.log("LocationProvider: only network location meets requirements: ${networkLocation.latitude}, Longitude: ${networkLocation.longitude}, Altitude: ${networkLocation.altitude}, Accuracy: ${networkLocation.accuracy}")
             return networkLocation
         }
-        if (gpsLocation != null && locationMatchesMinimumRequirements(gpsLocation)) {
+        if (gpsLocation != null && !checkRequirements && locationMatchesMinimumRequirements(gpsLocation)) {
             Utility.LocationLogger.log("LocationProvider: only gps location meets requirements: ${gpsLocation.latitude}, Longitude: ${gpsLocation.longitude}, Altitude: ${gpsLocation.altitude}, Accuracy: ${gpsLocation.accuracy}")
             return gpsLocation
         }
@@ -155,6 +162,73 @@ open class LocationProvider @Inject constructor(
             Timber.d("Location accuracy is not good enough")
         }
         return false
+    }
+
+    // Initiate background location updates from fused provider
+    @SuppressLint("MissingPermission")
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun requestFusedBackgroundLocationUpdates(executor: Executor, listener: LocationListener) {
+
+        if (checkPermissionsForProvider(LocationManager.FUSED_PROVIDER, true)) {
+            val builder = LocationRequest.Builder(120_000)
+            builder.setMinUpdateDistanceMeters(150.0F)
+            builder.setMaxUpdateDelayMillis(300_000)
+            val request = builder.build()
+//            locationManager.requestLocationUpdates(
+//                LocationManager.FUSED_PROVIDER,
+//                request.minUpdateIntervalMillis,
+//                request.minUpdateDistanceMeters,
+//                listener,
+//                handler.looper)
+            locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, request, executor, listener)
+        }
+
+    }
+
+
+    @SuppressLint("MissingPermission")
+    fun requestPassiveLocationProviderUpdates(listener: LocationListener) {
+        if (checkPermissionsForProvider(LocationManager.PASSIVE_PROVIDER, true)) {
+
+            locationManager.requestLocationUpdates(
+                LocationManager.PASSIVE_PROVIDER,
+                120_000,
+                150.0F,
+                listener,
+                handler.looper)
+        }
+    }
+
+    fun checkPermissionsForProvider(provider:String, checkBackgroundPermission: Boolean = false): Boolean {
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("Not requesting location, permission not granted")
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
+            return false
+        }
+
+        if (checkBackgroundPermission &&
+            ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("Not requesting location, permission not granted")
+            Utility.LocationLogger.log("LocationProvider: Insufficient permissions")
+            return false
+        }
+
+        // Check if provider is available
+        if(!locationManager.isProviderEnabled(provider)) {
+            Timber.w("Fused provider is not available")
+            return false
+        }
+
+        return true
     }
 
 
@@ -287,11 +361,14 @@ open class LocationProvider @Inject constructor(
 
     private fun stopLocationUpdates() {
         locationManager.removeUpdates(this)
-        Timber.i("Stopping location updates")
+        Utility.LocationLogger.log("Stopping location updates")
     }
 
     override fun onLocationChanged(location: Location) {
-        Timber.d("Location updated: ${location.latitude} ${location.longitude}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
+        Utility.LocationLogger.log("Location updated: ${location.privacyPrint()}, accuracy: ${location.accuracy}, date: ${Date(location.time)}")
+
+        LocationHistoryController.onLocationChanged(location)
+
         val bestLastLocation = this.bestLastLocation
         if (bestLastLocation == null) {
             this.bestLastLocation = location

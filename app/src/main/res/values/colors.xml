@@ -20,4 +20,6 @@
     <color name="gray_card_background">#434343</color>
     <color name="card_background_teal">#1B9CAE</color>
     <color name="warning_light_red">#FF3D2F</color>
+    <color name="low_risk_trackers_text_color">#000000</color>
+    <color name="low_risk_trackers_background_color">#D3D3D3</color>
 </resources>

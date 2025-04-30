@@ -9,10 +9,17 @@ import javax.inject.Inject
 
 class NotificationViewModel @Inject constructor(private val notificationRepository: NotificationRepository) {
 
-    suspend fun insert(deviceAddress: String): Int {
-        val sensitivity = Utility.getSensitivity()
+    /***
+     * Insert notification for this device to the Database
+     */
+    suspend fun insertToDb(deviceAddress: String): Int {
+        val sensitivity = Utility.getSensitivityLevelValue()
         val notification = Notification(deviceAddress, false, LocalDateTime.now(ZoneOffset.UTC), sensitivity)
         return notificationRepository.insert(notification).toInt()
+    }
+
+    suspend fun insert(deviceAddress: String): Int {
+        return insertToDb(deviceAddress)
     }
 
     suspend fun setFalseAlarm(notificationId: Int, state: Boolean) {

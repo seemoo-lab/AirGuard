@@ -22,6 +22,7 @@ import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
@@ -81,14 +82,16 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         instance = this
         super.onCreate()
 
-        Timber.plant(Timber.DebugTree())
-        Timber.d("Tree planted")
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+            Timber.d("Tree planted")
+        }
 
         if (BuildConfig.DEBUG) {
             // We use this to access our logs from a file for on device debugging
             File(filesDir.path + "/logs.log").createNewFile()
             val t: Timber.Tree = FileLoggerTree.Builder()
-                .withSizeLimit(500_000)
+                .withSizeLimit(3_500_000)
                 .withDir(filesDir)
                 .withFileName("logs.log")
                 .withMinPriority(Log.VERBOSE)
@@ -148,6 +151,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             Timber.e(throwable, "Uncaught exception on thread ${thread.name}")
+        }
+
+        // Initiate the permanent background scan
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermanentBluetoothScanner.scan()
         }
 
         Timber.d("Application onCreate completed")

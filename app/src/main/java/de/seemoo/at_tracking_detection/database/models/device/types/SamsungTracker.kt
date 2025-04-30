@@ -180,13 +180,10 @@ class SamsungTracker(val id: Int) : Device() {
                 val bit7 = getBitsFromByte(serviceData[0],0)
 
                 return if (!bit5 && bit6 && bit7) {
-                    Timber.d("Samsung Device in Overmature Offline Mode")
                     ConnectionState.OVERMATURE_OFFLINE
                 } else if (!bit5 && bit6 && !bit7) {
-                    Timber.d("Samsung: Offline Mode")
                     ConnectionState.OFFLINE
                 } else if (!bit5 && !bit6 && bit7) {
-                    Timber.d("Samsung: Premature Offline Mode")
                     ConnectionState.PREMATURE_OFFLINE
                 } else {
                     ConnectionState.CONNECTED
@@ -221,7 +218,7 @@ class SamsungTracker(val id: Int) : Device() {
             return BatteryState.UNKNOWN
         }
 
-        override fun getPublicKey(scanResult: ScanResult): String {
+        override fun getUniqueIdentifier(scanResult: ScanResult): String {
             try {
                 val serviceData = scanResult.scanRecord?.getServiceData(offlineFindingServiceUUID)
 
@@ -231,7 +228,7 @@ class SamsungTracker(val id: Int) : Device() {
                     return byteArrayOf(serviceData[4], serviceData[5], serviceData[6], serviceData[7], serviceData[8], serviceData[9], serviceData[10], serviceData[11]).toHexString()
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error getting public key")
+                Timber.e(e, "Error getting unique identifier of Samsung Tracker")
             }
             return scanResult.device.address
         }
