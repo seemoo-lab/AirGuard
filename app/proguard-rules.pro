@@ -125,8 +125,3 @@
 
 # Keep all data classes with Gson annotations
 -keep class de.seemoo.at_tracking_detection.database.relations.** { *; }
-
-# Optionally, keep all Gson-annotated classes
--keep class * {
-    @com.google.gson.annotations.SerializedName *;
-}
