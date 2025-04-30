@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 21,
-    "identityHash": "ce7ae59c31035cb60e500c9c6ca03e8f",
+    "version": 22,
+    "identityHash": "69e5a85ff30c1fc9c3b923666e9b0fb5",
     "entities": [
       {
         "tableName": "device",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER DEFAULT 0, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT, `subDeviceType` TEXT NOT NULL DEFAULT 'UNKNOWN', `riskLevel` INTEGER NOT NULL DEFAULT 0, `lastCalculatedRiskDate` TEXT, `nextObservationNotification` TEXT, `currentObservationDuration` INTEGER, `safeTracker` INTEGER NOT NULL DEFAULT false, `additionalData` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uniqueId` TEXT, `address` TEXT NOT NULL, `name` TEXT, `ignore` INTEGER NOT NULL, `connectable` INTEGER DEFAULT 0, `payloadData` INTEGER, `firstDiscovery` TEXT NOT NULL, `lastSeen` TEXT NOT NULL, `notificationSent` INTEGER NOT NULL, `lastNotificationSent` TEXT, `deviceType` TEXT, `subDeviceType` TEXT NOT NULL DEFAULT 'UNKNOWN', `riskLevel` INTEGER NOT NULL DEFAULT 0, `lastCalculatedRiskDate` TEXT, `nextObservationNotification` TEXT, `currentObservationDuration` INTEGER, `safeTracker` INTEGER NOT NULL DEFAULT false, `additionalData` TEXT, `alternativeIdentifier` TEXT)",
         "fields": [
           {
             "fieldPath": "deviceId",
@@ -17,8 +17,7 @@
           {
             "fieldPath": "uniqueId",
             "columnName": "uniqueId",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "address",
@@ -29,8 +28,7 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "ignore",
@@ -42,14 +40,12 @@
             "fieldPath": "connectable",
             "columnName": "connectable",
             "affinity": "INTEGER",
-            "notNull": false,
             "defaultValue": "0"
           },
           {
             "fieldPath": "payloadData",
             "columnName": "payloadData",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "firstDiscovery",
@@ -72,14 +68,12 @@
           {
             "fieldPath": "lastNotificationSent",
             "columnName": "lastNotificationSent",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "deviceType",
             "columnName": "deviceType",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "subDeviceType",
@@ -98,20 +92,17 @@
           {
             "fieldPath": "lastCalculatedRiskDate",
             "columnName": "lastCalculatedRiskDate",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "nextObservationNotification",
             "columnName": "nextObservationNotification",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "currentObservationDuration",
             "columnName": "currentObservationDuration",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "safeTracker",
@@ -123,8 +114,12 @@
           {
             "fieldPath": "additionalData",
             "columnName": "additionalData",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "alternativeIdentifier",
+            "columnName": "alternativeIdentifier",
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -180,12 +175,11 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_device_lastSeen_deviceType` ON `${TABLE_NAME}` (`lastSeen`, `deviceType`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "notification",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `deviceAddress` TEXT NOT NULL, `falseAlarm` INTEGER NOT NULL, `dismissed` INTEGER, `clicked` INTEGER, `createdAt` TEXT NOT NULL, `sensitivity` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `deviceAddress` TEXT NOT NULL, `falseAlarm` INTEGER NOT NULL, `dismissed` INTEGER, `clicked` INTEGER, `createdAt` TEXT NOT NULL, `sensitivity` INTEGER NOT NULL DEFAULT -1)",
         "fields": [
           {
             "fieldPath": "notificationId",
@@ -208,14 +202,12 @@
           {
             "fieldPath": "dismissed",
             "columnName": "dismissed",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "clicked",
             "columnName": "clicked",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "createdAt",
@@ -228,7 +220,7 @@
             "columnName": "sensitivity",
             "affinity": "INTEGER",
             "notNull": true,
-            "defaultValue": "0"
+            "defaultValue": "-1"
           }
         ],
         "primaryKey": {
@@ -236,9 +228,7 @@
           "columnNames": [
             "notificationId"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "beacon",
@@ -271,20 +261,17 @@
           {
             "fieldPath": "locationId",
             "columnName": "locationId",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "manufacturerData",
             "columnName": "mfg",
-            "affinity": "BLOB",
-            "notNull": false
+            "affinity": "BLOB"
           },
           {
             "fieldPath": "serviceUUIDs",
             "columnName": "serviceUUIDs",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "connectionState",
@@ -362,8 +349,7 @@
           {
             "fieldPath": "location",
             "columnName": "location",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -371,9 +357,7 @@
           "columnNames": [
             "feedbackId"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "scan",
@@ -388,20 +372,17 @@
           {
             "fieldPath": "endDate",
             "columnName": "endDate",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "noDevicesFound",
             "columnName": "noDevicesFound",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "duration",
             "columnName": "duration",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "isManual",
@@ -418,32 +399,27 @@
           {
             "fieldPath": "startDate",
             "columnName": "startDate",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "locationDeg",
             "columnName": "location_deg",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "locationId",
             "columnName": "location",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "devicesAddressesFound",
             "columnName": "device_addresses_found",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "devicesTypesFound",
             "columnName": "device_types_found",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -451,9 +427,7 @@
           "columnNames": [
             "scanId"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "location",
@@ -468,8 +442,7 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "firstDiscovery",
@@ -498,14 +471,12 @@
           {
             "fieldPath": "altitude",
             "columnName": "altitude",
-            "affinity": "REAL",
-            "notNull": false
+            "affinity": "REAL"
           },
           {
             "fieldPath": "accuracy",
             "columnName": "accuracy",
-            "affinity": "REAL",
-            "notNull": false
+            "affinity": "REAL"
           }
         ],
         "primaryKey": {
@@ -525,14 +496,12 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_location_latitude_longitude` ON `${TABLE_NAME}` (`latitude`, `longitude`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ce7ae59c31035cb60e500c9c6ca03e8f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69e5a85ff30c1fc9c3b923666e9b0fb5')"
     ]
   }
 }

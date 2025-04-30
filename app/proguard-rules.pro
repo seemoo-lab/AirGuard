@@ -35,6 +35,16 @@
     @retrofit2.http.* <methods>;
 }
 
+-keepclassmembers class * {
+      @com.google.gson.annotations.SerializedName <fields>;
+      @de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification <fields>;
+      @de.seemoo.at_tracking_detection.statistics.api.models.** <fields>;
+}
+
+-keepclassmembers class de.seemoo.at_tracking_detection.database.** { <fields>; }
+
+-keepclassmembers class de.seemoo.at_tracking_detection.statistics.api.models.** { <fields>; }
+
 # Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
@@ -109,3 +119,9 @@
 
 # Keep the SharedPrefs class and its methods
 -keep class de.seemoo.at_tracking_detection.util.SharedPrefs { *; }
+
+# Keep Gson annotations
+-keepattributes Signature,RuntimeVisibleAnnotations
+
+# Keep all data classes with Gson annotations
+-keep class de.seemoo.at_tracking_detection.database.relations.** { *; }

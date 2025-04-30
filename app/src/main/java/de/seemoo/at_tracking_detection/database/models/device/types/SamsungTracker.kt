@@ -180,13 +180,10 @@ class SamsungTracker(val id: Int) : Device() {
                 val bit7 = getBitsFromByte(serviceData[0],0)
 
                 return if (!bit5 && bit6 && bit7) {
-                    Timber.d("Samsung Device in Overmature Offline Mode")
                     ConnectionState.OVERMATURE_OFFLINE
                 } else if (!bit5 && bit6 && !bit7) {
-                    Timber.d("Samsung: Offline Mode")
                     ConnectionState.OFFLINE
                 } else if (!bit5 && !bit6 && bit7) {
-                    Timber.d("Samsung: Premature Offline Mode")
                     ConnectionState.PREMATURE_OFFLINE
                 } else {
                     ConnectionState.CONNECTED

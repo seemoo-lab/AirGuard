@@ -3,11 +3,13 @@ package de.seemoo.at_tracking_detection.ui.scan
 import android.annotation.SuppressLint
 import android.bluetooth.le.ScanResult
 import androidx.databinding.ObservableField
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getAlternativeIdentifier
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getAlternativeIdentifier
+import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager.getDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.TrackingNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 
 @SuppressLint("MissingPermission")
@@ -40,5 +42,19 @@ data class ScanResultWrapper(val scanResult: ScanResult){
 
     override fun equals(other: Any?): Boolean {
         return super.equals(other)
+    }
+
+    /**
+     * Checks if the device is performing tracking.
+     * For example AirTags only send out longer advertisements when they are tracking.
+     * Other trackers are usually always trackable.
+     */
+    fun deviceIsTracking(): Boolean {
+        if (deviceType.getTrackingNetwork() == TrackingNetwork.APPLE_FIND_MY) {
+            if (connectionState == ConnectionState.CONNECTED) {
+                return false
+            }
+        }
+        return true
     }
 }

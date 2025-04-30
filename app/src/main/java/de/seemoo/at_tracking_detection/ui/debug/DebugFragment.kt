@@ -105,7 +105,11 @@ class DebugFragment : Fragment() {
                 subDeviceType = "SMART_TAG_2"
             }
 
-            debugViewModel.viewModelScope.launch { notificationService.sendTrackingNotification(testBaseDevice) }
+
+            debugViewModel.viewModelScope.launch {
+                debugViewModel.addDeviceToDb(testBaseDevice)
+                notificationService.sendTrackingNotification(testBaseDevice)
+            }
         }
         view.findViewById<ListView>(R.id.bluetoothList)
             .setOnItemClickListener { _, _, position, _ ->

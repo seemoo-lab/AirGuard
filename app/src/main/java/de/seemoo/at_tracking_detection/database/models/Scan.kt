@@ -26,7 +26,16 @@ data class Scan(
 
     @ColumnInfo(name = "location_deg") var locationDeg: String?,
 
-    @ColumnInfo(name = "location") var locationId: Int?
+    @ColumnInfo(name = "location") var locationId: Int?,
+
+    /**
+     * Comma separated addresses of the devices found during the scan
+     */
+    @ColumnInfo(name = "device_addresses_found") var devicesAddressesFound: String?,
+    /**
+     *  Comma separated list of device types found during the scan
+     */
+    @ColumnInfo(name = "device_types_found") var devicesTypesFound: String?
 
 ) {
     constructor(
@@ -37,7 +46,9 @@ data class Scan(
         scanMode: Int,
         startDate: LocalDateTime,
         locationDeg: String?,
-        locationId: Int?
+        locationId: Int?,
+        devicesAddressesFound: String?,
+        devicesTypesFound: String?
     ): this(
         scanId = 0,
         endDate,
@@ -47,7 +58,9 @@ data class Scan(
         scanMode,
         startDate,
         locationDeg,
-        locationId
+        locationId,
+        devicesAddressesFound,
+        devicesTypesFound
     )
 
     constructor(
@@ -63,7 +76,9 @@ data class Scan(
         scanMode = scanMode,
         startDate = startDate,
         locationDeg = null,
-        locationId = null
+        locationId = null,
+        devicesAddressesFound = null,
+        devicesTypesFound = null
         )
 
 }

@@ -390,10 +390,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 val statusBit = Utility.getBitsFromByte(serviceData[0], 0)
 
                 return if (statusBit) {
-                    Timber.d("Google Find My: Overmature Offline Mode")
                     ConnectionState.OVERMATURE_OFFLINE
                 } else {
-                    Timber.d("Google Find My: Premature Offline Mode")
                     ConnectionState.PREMATURE_OFFLINE
                 }
             }

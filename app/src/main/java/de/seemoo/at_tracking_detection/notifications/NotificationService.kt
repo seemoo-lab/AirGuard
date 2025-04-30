@@ -30,7 +30,7 @@ class NotificationService @Inject constructor(
     @SuppressLint("MissingPermission")
     suspend fun sendTrackingNotification(baseDevice: BaseDevice) {
         val notificationId = generateUniqueNotificationId()
-        notificationViewModel.insert(deviceAddress = baseDevice.address)
+        notificationViewModel.insertToDb(deviceAddress = baseDevice.address)
         with(notificationManagerCompat) {
             if (this.areNotificationsEnabled() && !SharedPrefs.deactivateBackgroundScanning) {
                 notify(

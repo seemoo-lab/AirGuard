@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.statistics.api
 
 import android.os.Build.VERSION
+import androidx.annotation.Keep
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import de.seemoo.at_tracking_detection.statistics.api.models.Pong
@@ -9,8 +10,8 @@ import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
 
+@Keep
 interface Api {
-
 
     @Headers("Authorization: Api-Key $API_KEY")
     @POST("donate_data")
