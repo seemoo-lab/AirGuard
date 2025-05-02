@@ -41,6 +41,13 @@
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_bluetooth_24"
+        android:key="send_ble_error_messages"
+        android:summary="@string/settings_send_bluetooth_error_messages_summary"
+        android:title="@string/settings_send_bluetooth_error_messages" />
+
     <ListPreference
         android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"

@@ -265,6 +265,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("notification_priority_high", value) }
         }
 
+    var sendBLEErrorMessages: Boolean
+        get() {
+            return sharedPreferences.getBoolean("send_ble_error_messages", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("send_ble_error_messages", value) }
+        }
+
     private fun getAllDevicesFilterOptions(): Set<String> {
         val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
         return allOptions.toSet()

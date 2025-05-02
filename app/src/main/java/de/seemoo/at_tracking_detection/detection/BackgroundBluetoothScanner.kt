@@ -286,7 +286,7 @@ object BackgroundBluetoothScanner {
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             Timber.e("Bluetooth scan failed $errorCode")
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()
             }
         }

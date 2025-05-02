@@ -346,7 +346,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             BLELogger.e("Bluetooth scan failed $errorCode")
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()
             }
             CoroutineScope(Dispatchers.IO).launch {
