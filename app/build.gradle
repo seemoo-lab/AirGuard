@@ -160,13 +160,13 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.3.2'
     implementation 'androidx.compose.material3:material3-window-size-class:1.3.2'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.7.8'
+    implementation 'androidx.compose.animation:animation:1.8.0'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.7.8'
+    implementation 'androidx.compose.ui:ui-tooling:1.8.0'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.7.8'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.8.0'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 }
