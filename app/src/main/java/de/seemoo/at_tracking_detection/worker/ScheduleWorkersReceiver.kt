@@ -27,34 +27,30 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
 
         if (intent?.action == "AlarmManagerWakeUp_Schedule_BackgroundScan") {
             // The app has been launched because no scan was performed since two hours
-            val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler
+            val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler
             //Schedule the periodic scan worker which runs every 15min
-            backgroundWorkScheduler?.launch()
+            backgroundWorkScheduler.launch()
             if (SharedPrefs.shareData) {
-                backgroundWorkScheduler?.scheduleShareData()
+                backgroundWorkScheduler.scheduleShareData()
             }
             BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
         }else {
             // action = AlarmManagerWakeUp_Perform_BackgroundScan
             // The app has been launched to perform another scan
             BackgroundWorkScheduler.scheduleScanWithAlarm()
-            val app = ATTrackingDetectionApplication?.getCurrentApp()
-            if (app != null) {
-
-                @OptIn(DelicateCoroutinesApi::class)
-                GlobalScope.launch {
-                    Timber.d("Running scan launched from Alert")
-                    BackgroundBluetoothScanner.scanInBackground(startedFrom = "ScheduleWorkersReceiver")
-                }
-
-            }else {
-                Timber.d("Could not find required dependencies")
+            @OptIn(DelicateCoroutinesApi::class)
+            goAsync {
+                Timber.d("Running scan launched from Alert")
+                BackgroundBluetoothScanner.scanInBackground(startedFrom = "ScheduleWorkersReceiver")
             }
         }
 
         // Initiate the permanent background scanner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PermanentBluetoothScanner.scan()
+            goAsync {
+                Timber.d("Attempting to start PermanentBluetoothScanner from ScheduleWorkersReceiver")
+                PermanentBluetoothScanner.scan()
+            }
         }
     }
 
@@ -95,6 +91,8 @@ fun BroadcastReceiver.goAsync(
     GlobalScope.launch(context) {
         try {
             block()
+        } catch (e: Exception) {
+            Timber.e(e, "Error in async block for BroadcastReceiver")
         } finally {
             pendingResult.finish()
         }

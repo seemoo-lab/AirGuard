@@ -103,12 +103,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     private var isScanning = false
 
-
     private var executor = Executors.newFixedThreadPool(2)
     private var locationExecutor = Executors.newSingleThreadExecutor()
 
     fun scan() {
-
         if (!Utility.checkBluetoothPermission()) {
             BLELogger.d("Permission to perform bluetooth scan missing")
             return
@@ -130,7 +128,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         BLELogger.i("Launching new thread for background scanning")
 
         // Launch a new thread
-        executor.execute(kotlinx.coroutines.Runnable {
+        executor.execute(Runnable {
             BLELogger.i("Thread for background scanning started")
 
             BLELogger.d("Starting permanent Bluetooth scanner")
