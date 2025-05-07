@@ -131,8 +131,8 @@
     <string name="grant_permission">Berechtigung erteilen</string>
     <string name="cancel">Abbrechen</string>
     <string name="no_button">Nein danke</string>
-    <string name="twitter_description">Schau bei uns auf Twitter vorbei</string>
-    <string name="twitter">Twitter</string>
+    <string name="website_description">Schau bei uns auf Homepage vorbei</string>
+    <string name="website">Website</string>
     <string name="dashboard_scan_fab_description">Suche nach Geräten!</string>
     <string name="dashboard_scan_fab">Manueller Scan</string>
     <string name="onboarding_scan_title">Bluetooth-Suche</string>

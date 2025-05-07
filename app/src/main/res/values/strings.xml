@@ -178,8 +178,8 @@
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
     <string name="onboarding_notification_title">Sending Notifications</string>
     <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
-    <string name="twitter_description">Check out our Twitter account</string>
-    <string name="twitter">Twitter</string>
+    <string name="website_description">Check out our Website</string>
+    <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
     <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
