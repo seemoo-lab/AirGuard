@@ -173,7 +173,7 @@ class ExportDeviceFragment: Fragment() {
 
     private fun setupMapContent() {
         lifecycleScope.launch {
-            val locations = locationRepository.getLocationsForBeacon(deviceAddress!!)
+            val locations = viewModel.retrievedLocations.value ?: locationRepository.getLocationsForBeacon(deviceAddress!!)
             val geoPoints = locations.map { GeoPoint(it.latitude, it.longitude) }
 
             // Add markers
@@ -341,12 +341,12 @@ class ExportDeviceFragment: Fragment() {
 
     private suspend fun generatePdfContent(): ByteArray = withContext(Dispatchers.IO) {
         Timber.d("Generating PDF content")
-        val device = deviceRepository.getDevice(deviceAddress!!) ?: run {
+        val device = viewModel.retrievedDevice.value ?: deviceRepository.getDevice(deviceAddress!!) ?: run {
             Timber.e("Device not found in database: $deviceAddress")
             throw IllegalStateException("Device $deviceAddress not found for PDF export.")
         }
-        val beacons = beaconRepository.getDeviceBeacons(device.address)
-        val locations = locationRepository.getLocationsForBeacon(device.address)
+        val beacons = viewModel.retrievedBeacons.value ?: beaconRepository.getDeviceBeacons(device.address)
+        val locations = viewModel.retrievedLocations.value ?: locationRepository.getLocationsForBeacon(device.address)
 
         val hasInternet = Utility.isInternetAvailable(requireContext())
         Timber.d("Internet available for PDF generation: $hasInternet")

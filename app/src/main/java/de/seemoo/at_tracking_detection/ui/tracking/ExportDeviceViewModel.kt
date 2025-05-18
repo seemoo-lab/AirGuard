@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -21,6 +23,11 @@ class ExportDeviceViewModel : ViewModel() {
     val basicInfoText = MutableLiveData("Loading")
     val beaconPreviewList = MutableLiveData<List<BeaconPreviewItem>>()
 
+    // Cached Data for the Fragment
+    val retrievedDevice = MutableLiveData<BaseDevice?>()
+    val retrievedBeacons = MutableLiveData<List<Beacon>>()
+    val retrievedLocations = MutableLiveData<List<Location>>()
+
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
 
     fun loadDevice(deviceAddress: String?, context: Context) {
@@ -30,10 +37,13 @@ class ExportDeviceViewModel : ViewModel() {
 
         val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
         val device = deviceRepository.getDevice(deviceAddress)
+        retrievedDevice.postValue(device)
         val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
         val beacons = beaconRepository.getDeviceBeacons(deviceAddress)
+        retrievedBeacons.postValue(beacons)
         val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
         val locations = locationRepository.getLocationsForBeacon(deviceAddress)
+        retrievedLocations.postValue(locations)
 
         if (device != null) {
             val trackerFollowing = isTrackerFollowing(device)
