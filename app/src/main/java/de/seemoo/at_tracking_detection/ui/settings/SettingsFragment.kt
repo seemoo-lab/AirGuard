@@ -17,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
@@ -74,6 +75,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (SharedPrefs.token == null && !SharedPrefs.shareData) {
             findPreference<Preference>("delete_study_data")?.isVisible = false
         }
+
+        findPreference<Preference>("send_ble_error_messages")?.isVisible = BuildConfig.DEBUG
+
 
         setAdvancedModeButtonVisibility()
 

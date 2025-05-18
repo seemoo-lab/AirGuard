@@ -99,6 +99,7 @@
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_use_low_power_ble_summary">This settings will use less energy, but also lead to a worse detection of trackers</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Toggle to disable or enable bluetooth error messages</string>
     <string name="tracking_device_not_connectable">This device is not able to play a sound.</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information.</string>
     <string name="info">Information</string>
@@ -181,8 +182,8 @@
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
     <string name="onboarding_notification_title">Sending Notifications</string>
     <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
-    <string name="twitter_description">Check out our Twitter account</string>
-    <string name="twitter">Twitter</string>
+    <string name="website_description">Check out our Website</string>
+    <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
     <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
@@ -269,6 +270,7 @@
     <string name="none">None</string>
     <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Mode</string>
+    <string name="settings_send_bluetooth_error_messages">Send Bluetooth Error Messages</string>
     <string name="ignored_devices">Ignored devices</string>
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Apple Find My Devices found</string>
