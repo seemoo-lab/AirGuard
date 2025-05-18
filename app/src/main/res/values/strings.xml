@@ -464,7 +464,7 @@
     <string name="export_trackers_map">Map: %s</string>
     <string name="export_trackers_map_still_loading">Map still loading...</string>
     <string name="export_trackers_signal_strength">Signal Strength: %d"</string>
-    <string name="export_trackers_created_by">Created by AirGuard for Android</string>
+    <string name="export_trackers_created_by">Created by AirGuard %s for Android</string>
     <string name="export_trackers_basic_info_title">Information:</string>
     <string name="export_trackers_map_title">Map:</string>
     <string name="export_trackers_detections_title">This tracker was found at:</string>

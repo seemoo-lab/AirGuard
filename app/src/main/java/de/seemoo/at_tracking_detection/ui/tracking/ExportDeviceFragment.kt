@@ -533,7 +533,11 @@ class ExportDeviceFragment: Fragment() {
     }
 
     private fun drawPageFooter(canvas: Canvas, pageNumber: Int, totalPages: Int, paint: Paint) {
-        val footerText = getString(R.string.export_trackers_created_by)
+        val versionNumber = requireActivity().packageManager.getPackageInfo(
+            requireActivity().packageName,
+            0
+        ).versionName
+        val footerText = getString(R.string.export_trackers_created_by, versionNumber)
         val pageNumberText = getString(R.string.export_page_number, pageNumber, totalPages)
 
         val footerY = PAGE_HEIGHT - MARGIN / 2 // Position slightly above the bottom margin

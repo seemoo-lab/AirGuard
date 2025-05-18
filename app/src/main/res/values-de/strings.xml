@@ -419,7 +419,7 @@
     <string name="export_trackers_map">Karte: %s</string>
     <string name="export_trackers_map_still_loading">Karte ist noch nicht geladen...</string>
     <string name="export_trackers_signal_strength">Signalstärke: %d</string>
-    <string name="export_trackers_created_by">Erstellt von AirGuard auf Android</string>
+    <string name="export_trackers_created_by">Erstellt von AirGuard %s auf Android</string>
     <string name="export_trackers_basic_info_title">Informationen:</string>
     <string name="export_trackers_map_title">Karte:</string>
     <string name="export_trackers_detections_title">Dieser Tracker wurde gefunden am:</string>
