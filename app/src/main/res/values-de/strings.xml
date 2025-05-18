@@ -407,6 +407,7 @@
     <string name="export_trackers_create_document">Dokument erstellen</string>
     <string name="export_trackers_following">Dieser Tracker folgte dir</string>
     <string name="export_trackers_not_following">Dieser Tracker folgte dir nicht</string>
+    <string name="export_trackers_ignored">Dieser Tracker wurde ignoriert</string>
     <string name="export_trackers_location_unknown">Unbekannter Standort</string>
     <string name="export_trackers_tracker_type">Tracker Typ: %s</string>
     <string name="export_trackers_mac">MAC-Adresse: %s</string>

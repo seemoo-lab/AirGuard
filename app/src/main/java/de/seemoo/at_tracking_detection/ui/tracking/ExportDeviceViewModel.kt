@@ -1,7 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.content.Context
-import android.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -19,7 +19,7 @@ import java.time.format.FormatStyle
 
 class ExportDeviceViewModel : ViewModel() {
     val followingStatusText = MutableLiveData<String>()
-    var followingStatusColor = MutableLiveData(Color.RED)
+    var followingStatusColor = MutableLiveData(R.color.warning_light_red)
     val basicInfoText = MutableLiveData("Loading")
     val beaconPreviewList = MutableLiveData<List<BeaconPreviewItem>>()
 
@@ -49,10 +49,15 @@ class ExportDeviceViewModel : ViewModel() {
             val trackerFollowing = isTrackerFollowing(device)
             if (trackerFollowing) {
                 followingStatusText.postValue(context.getString(R.string.export_trackers_following))
-                followingStatusColor.postValue(Color.RED)
+                followingStatusColor.postValue(ContextCompat.getColor(context, R.color.tracker_following_red))
             } else {
-                followingStatusText.postValue(context.getString(R.string.export_trackers_not_following))
-                followingStatusColor.postValue(Color.BLUE)
+                if (device.ignore) {
+                    followingStatusText.postValue(context.getString(R.string.export_trackers_ignored))
+                } else {
+                    followingStatusText.postValue(context.getString(R.string.export_trackers_not_following))
+                }
+                followingStatusColor.postValue(ContextCompat.getColor(context, R.color.tracker_not_following_blue))
+
             }
 
             val deviceTypeStr = DeviceManager.deviceTypeToString(device.deviceType ?: DeviceType.UNKNOWN)

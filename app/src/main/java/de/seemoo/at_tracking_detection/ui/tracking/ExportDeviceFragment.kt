@@ -381,7 +381,7 @@ class ExportDeviceFragment: Fragment() {
 
             val trackerFollowing = ExportDeviceViewModel.isTrackerFollowing(device)
             headerPaint.color = if (trackerFollowing) Color.RED else Color.BLUE
-            val headerText = if (trackerFollowing) getString(R.string.export_trackers_following) else getString(R.string.export_trackers_not_following)
+            val headerText = if (trackerFollowing) getString(R.string.export_trackers_following) else if (device.ignore) getString(R.string.export_trackers_ignored) else getString(R.string.export_trackers_not_following)
             canvas.drawText(headerText, MARGIN, yPos + TEXT_SIZE_HEADER, headerPaint)
             yPos += TEXT_SIZE_HEADER + SECTION_SPACING
 
