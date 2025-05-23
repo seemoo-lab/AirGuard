@@ -68,9 +68,9 @@ class OnboardingActivity : AppIntro() {
 
         SharedPrefs.useLocationInTrackingDetection = locationPermissionState && backgroundPermissionState
 
-
         if (permission == null) {
             SharedPrefs.onBoardingCompleted = true
+            SharedPrefs.showOnboarding = false
             backgroundWorkScheduler.launch()
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java).apply {

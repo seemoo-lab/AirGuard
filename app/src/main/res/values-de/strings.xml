@@ -252,7 +252,7 @@
     <string name="survey_settings_title">Umfrage zum Thema Stalking und Location Tracking</string>
     <string name="survey_info_4">Durchgeführt von der Technischen Universität Darmstadt</string>
     <string name="smarttag_found">Gefundene SmartTags</string>
-    <string name="onboarding_setting_summary">Immer den Einrichtungsdialog anzeigen</string>
+    <string name="onboarding_setting_summary">Beim nächsten Start den Einrichtungsdialog erneut anzeigen</string>
     <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
     <string name="device_name_samsung_device">Samsung Gerät %s</string>
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>

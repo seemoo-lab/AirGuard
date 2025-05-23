@@ -292,7 +292,7 @@
     <string name="survey_alert_message">Do you want to be reminded about the survey later?</string>
     <string name="survery_settings_summary">Technical University of Darmstadt conducts a survey to find out how people are affected by stalking</string>
     <string name="survey_settings_title">Survey on stalking and location tracking</string>
-    <string name="onboarding_setting_summary">Will always show the app onboarding procedure</string>
+    <string name="onboarding_setting_summary">Show the app onboarding procedure on the next launch of the app</string>
     <string name="onboarding_setting_title">Show Onboarding</string>
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
