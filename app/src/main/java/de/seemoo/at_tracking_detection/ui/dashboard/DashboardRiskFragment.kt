@@ -19,12 +19,14 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -34,6 +36,9 @@ class DashboardRiskFragment : Fragment() {
 
     private var _binding: FragmentDashboardRiskBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var reviewController: ReviewController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +60,9 @@ class DashboardRiskFragment : Fragment() {
     @SuppressLint("DiscouragedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Increment app open count
+        reviewController.incrementAppOpenCount()
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
@@ -141,6 +149,19 @@ class DashboardRiskFragment : Fragment() {
                 articlesContainer.addView(articleCardsLinearLayout)
                 progressBar.visibility = View.GONE
             }
+        }
+
+        // Check if we should show review after data is loaded
+        checkAndShowReview()
+    }
+
+    private fun checkAndShowReview() {
+        Timber.d("Checking if review should be shown")
+        if (BuildConfig.DEBUG) {
+            reviewController.debugReviewStatus()
+        }
+        reviewController.requestReviewDialog(requireActivity()) {
+            Timber.d("Review dialog request completed")
         }
     }
 

@@ -240,6 +240,24 @@ object SharedPrefs {
             sharedPreferences.edit { putString("risk_sensitivity", value) }
         }
 
+    var appOpenCount: Int
+        // How often the app has been opened
+        get() {
+            return sharedPreferences.getInt("app_open_count", 0)
+        }
+        set(value) {
+            sharedPreferences.edit { putInt("app_open_count", value) }
+        }
+
+    var reviewShown: Boolean
+        // If the review dialog has been shown
+        get() {
+            return sharedPreferences.getBoolean("review_shown", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("review_shown", value) }
+        }
+
     var devicesFilter: Set<String>
         get() {
             val allOptions = getAllDevicesFilterOptions()

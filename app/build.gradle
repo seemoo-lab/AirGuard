@@ -169,6 +169,11 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.8.2'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
+
+    // Google Review Handling
+    implementation("com.google.android.play:review:2.0.2")
+    implementation("com.google.android.play:review-ktx:2.0.2")
+    implementation("com.google.android.gms:play-services-base:18.7.0")
 }
 
 ksp {
