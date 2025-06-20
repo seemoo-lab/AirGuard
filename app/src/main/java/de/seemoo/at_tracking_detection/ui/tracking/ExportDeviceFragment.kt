@@ -447,8 +447,11 @@ class ExportDeviceFragment: Fragment() {
             canvas.drawText(getString(R.string.export_trackers_detections_title), MARGIN, yPos, boldTextPaint)
             yPos += NORMAL_LINE_HEIGHT
 
+            // This creates a map of locations for faster lookups
+            val locationMap = locations.associateBy { it.locationId }
+
             for (beacon in beacons) {
-                val beaconLocation = locations.find { it.locationId == beacon.locationId }
+                val beaconLocation = locationMap[beacon.locationId]
 
                 val beaconConnectionState: ConnectionState = Utility.getConnectionStateFromString(beacon.connectionState)
                 val show15MinuteWarning = beaconConnectionState !in DeviceManager.unsafeConnectionState
@@ -608,8 +611,11 @@ class ExportDeviceFragment: Fragment() {
         }
         yPos += beaconListHeaderHeight
 
+        // This creates a map of locations for faster lookups
+        val locationMap = locations.associateBy { it.locationId }
+
         for (beacon in beacons) {
-            val beaconLocation = locations.find { it.locationId == beacon.locationId }
+            val beaconLocation = locationMap[beacon.locationId]
             val beaconConnectionState: ConnectionState = Utility.getConnectionStateFromString(beacon.connectionState)
             val show15MinuteWarning = beaconConnectionState !in DeviceManager.unsafeConnectionState
             val entryHeight = getBeaconEntryHeight(beaconLocation, show15MinuteWarning) + LINE_SPACING // Add spacing between entries

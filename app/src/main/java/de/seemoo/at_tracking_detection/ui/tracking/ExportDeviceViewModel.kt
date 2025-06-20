@@ -79,8 +79,12 @@ class ExportDeviceViewModel : ViewModel() {
 
             basicInfoText.postValue(infoBuilder.toString())
 
+            // This creates a map of locations for faster lookups
+            val locations = locationRepository.getLocationsForBeacon(deviceAddress)
+            val locationMap = locations.associateBy { it.locationId }
+
             val previewItems = beacons.map { beacon ->
-                val beaconLocation = locations.find { it.locationId == beacon.locationId }
+                val beaconLocation = locationMap[beacon.locationId]
                 val timeStr = context.getString(R.string.export_trackers_time, beacon.receivedAt.format(dateTimeFormatter))
                 val locationStr = if (beaconLocation != null) {
                     context.getString(R.string.export_trackers_location, "%.4f".format(beaconLocation.latitude), "%.4f".format(beaconLocation.longitude))
