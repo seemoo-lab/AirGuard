@@ -100,9 +100,14 @@ class ExportDeviceViewModel : ViewModel() {
 
     companion object {
         fun isTrackerFollowing(device: BaseDevice): Boolean {
+            // Backup in case something with the notification went wrong
             val useLocation = SharedPrefs.useLocationInTrackingDetection
             val deviceRiskLevel = checkRiskLevelForDevice(device, useLocation)
-            return deviceRiskLevel != RiskLevel.LOW
+
+            // This is the actual logic to determine if a tracker is following
+            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp().notificationRepository
+            val notificationExits = notificationRepository.existsNotificationForDevice(device.address)
+            return notificationExits || (deviceRiskLevel != RiskLevel.LOW)
         }
     }
 }
