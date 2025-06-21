@@ -32,17 +32,20 @@ class NotificationActionReceiver : BroadcastReceiver() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Intent received!")
+
         val notificationId = intent.getIntExtra("notificationId", -1)
         if (notificationId == -1) {
             Timber.e("Notification id missing!")
             return
         }
+
         when (intent.action) {
             NotificationConstants.FALSE_ALARM_ACTION -> {
                 Timber.d("False Alarm intent for notification $notificationId received")
                 GlobalScope.launch(Dispatchers.IO) {
                     notificationRepository.setFalseAlarm(notificationId, true)
                 }
+                // Dismiss the notification immediately for this action.
                 notificationManagerCompat.cancel(notificationId)
             }
             NotificationConstants.IGNORE_DEVICE_ACTION -> {
@@ -55,12 +58,14 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 GlobalScope.launch(Dispatchers.IO) {
                     deviceRepository.setIgnoreFlag(deviceAddress, true)
                 }
+                // Dismiss the notification immediately for this action.
                 notificationManagerCompat.cancel(notificationId)
             }
             NotificationConstants.CLICKED_ACTION -> {
                 GlobalScope.launch(Dispatchers.IO) {
                     notificationRepository.setClicked(notificationId, true)
                 }
+                notificationManagerCompat.cancel(notificationId)
             }
             NotificationConstants.DISMISSED_ACTION -> {
                 GlobalScope.launch(Dispatchers.IO) {
@@ -68,7 +73,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 }
             }
         }
-        notificationManagerCompat.cancel(notificationId)
     }
 }
 
