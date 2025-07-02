@@ -52,7 +52,7 @@ fun downloadJson(): String {
             },
             "article1": {
                 "title": "$iveGotANotification",
-                "author": "Alexander Heinrich",
+                "author": "Alexander Matern",
                 "readingTime": 0,
                 "previewText": "$searchManually",
                 "cardColor": "gray_card_background",
@@ -60,7 +60,7 @@ fun downloadJson(): String {
             },
             "article2": {
                 "title": "$iCanNotFindTracker",
-                "author": "Alexander Heinrich",
+                "author": "Alexander Matern",
                 "readingTime": 0,
                 "previewText": "$findTackerHelp",
                 "cardColor": "gray_card_background",

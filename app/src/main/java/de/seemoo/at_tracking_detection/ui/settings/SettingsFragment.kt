@@ -1,14 +1,14 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import android.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.navigation.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
@@ -145,7 +145,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html")
+                    "https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html".toUri()
                 )
                 startActivity(intent)
                 return@OnPreferenceClickListener true
@@ -154,7 +154,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("survey")?.setOnPreferenceClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
+                ATTrackingDetectionApplication.SURVEY_URL.toUri()
             )
             startActivity(intent)
             return@setOnPreferenceClickListener true

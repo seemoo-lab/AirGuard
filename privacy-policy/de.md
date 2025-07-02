@@ -5,10 +5,10 @@ Dieses Projekt ist Teil einer wissenschaftlichen Abschlussarbeit zum Erwerb des 
 
 ## Verantwortliche 
 Verantwortlich für die Entwicklung der App und des Studienservers ist *Niklas Bittner*, Student der Informatik an der Technischen Universität Darmstadt. 
-Hauptbetreuer dieser Arbeit ist *Alexander Heinrich, M.Sc* als Doktorand und wissenschaftlicher Mitarbeiter an der Technischen Universität Darmstadt im Secure Mobile Networking Lab. 
+Hauptbetreuer dieser Arbeit ist *Alexander Matern, M.Sc* als Doktorand und wissenschaftlicher Mitarbeiter an der Technischen Universität Darmstadt im Secure Mobile Networking Lab. 
 
 Anschrift: 
-Alexander Heinrich <br>
+Alexander Matern <br>
 Pankratiusstraße 2, <br>
 64289 Darmstadt 
 

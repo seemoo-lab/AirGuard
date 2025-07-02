@@ -55,7 +55,7 @@ class InformationFragment : Fragment() {
         val maintainerText = view.findViewById<TextView>(R.id.maintainer_text)
 
         developerText.text = getString(R.string.developer, "Dennis Arndt")
-        maintainerText.text = getString(R.string.maintainer, "Alexander Heinrich")
+        maintainerText.text = getString(R.string.maintainer, "Alexander Matern")
 
         val contact = view.findViewById<LinearLayout>(R.id.contact_mail)
         val developer = view.findViewById<LinearLayout>(R.id.developer_mail)
@@ -72,7 +72,7 @@ class InformationFragment : Fragment() {
             composeEmail(emailAddress)
         }
         maintainer.setOnClickListener {
-            val emailAddress = "aheinrich@seemoo.tu-darmstadt.de"
+            val emailAddress = "amatern@seemoo.tu-darmstadt.de"
             composeEmail(emailAddress)
         }
         website.setOnClickListener {
