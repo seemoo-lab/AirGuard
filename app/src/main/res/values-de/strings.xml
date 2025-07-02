@@ -90,6 +90,8 @@
     <string name="settings_risk_sensitivity_high">Hoch</string>
     <string name="settings_information_contact_title">Information &amp; Kontakt</string>
     <string name="settings_information_contact_summary">Bekomme Informationen über uns</string>
+    <string name="settings_super_scan_title">Superscan</string>
+    <string name="settings_super_scan_summary">Analysiere deine Scandaten auf modifiezierte Tracker</string>
     <string name="settings_export_found_trackers_title">Exportiere gefundene Tracker</string>
     <string name="settings_export_found_trackers_summary">Erstelle ein Dokument mit allen gefunden Trackern</string>
     <string name="settings_delete_study_data_title">Studiendaten löschen</string>
@@ -427,4 +429,7 @@
     <string name="export_trackers_detections_title_continued">Dieser Tracker wurde gefunden am (Fortsetzung):</string>
     <string name="export_page_number">Seite %d/%d</string>
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
+
+    <string name="super_scan_button">Scanne nach modifizierten Trackern</string>
+    <string name="super_scan_explanation">Platzhalter: Erklärung</string>
 </resources>

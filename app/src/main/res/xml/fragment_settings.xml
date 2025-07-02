@@ -17,6 +17,12 @@
         android:title="@string/settings_export_found_trackers_title" />
     -->
 
+    <Preference
+        android:icon="@drawable/ic_scan_icon"
+        android:key="super_scan"
+        android:summary="@string/settings_super_scan_summary"
+        android:title="@string/settings_super_scan_title" />
+
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="deactivate_background_scanning"

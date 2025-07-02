@@ -122,6 +122,9 @@
     <string name="settings_information_contact_title">Information &amp; Contact</string>
     <string name="settings_information_contact_summary">Get information about us</string>
 
+    <string name="settings_super_scan_title">Superscan</string>
+    <string name="settings_super_scan_summary">Analyze your scan data for modified custom trackers</string>
+
     <string name="settings_export_found_trackers_title">Export Found Trackers</string>
     <string name="settings_export_found_trackers_summary">Create a document with all identified trackers</string>
 
@@ -473,4 +476,7 @@
     <string name="export_page_number">Page %d/%d</string>
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
+
+    <string name="super_scan_button">Scan for custom trackers</string>
+    <string name="super_scan_explanation">Placeholder: Explanation</string>
 </resources>

@@ -117,7 +117,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-
+        findPreference<Preference>("super_scan")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_super_scan)
+                true
+            }
 
         findPreference<Preference>("information_contact")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
@@ -195,20 +199,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setAdvancedModeButtonVisibility() {
         if (SharedPrefs.advancedMode) {
             Timber.d("Enabled advanced mode!")
+            findPreference<Preference>("super_scan")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
-                true
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
         } else {
             Timber.d("Disabled advanced mode!")
+            findPreference<Preference>("super_scan")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
-                SharedPrefs.deactivateBackgroundScanning
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = SharedPrefs.deactivateBackgroundScanning
         }
     }
 
