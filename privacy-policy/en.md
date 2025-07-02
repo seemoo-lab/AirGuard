@@ -2,9 +2,9 @@
 This project is part of a scientific thesis to earn the degree of Bachelor of Science. To protect private data, we have used the Minimal Data Usage principle and the Offline First principle. Accordingly, all personal data is stored only locally on the device. In addition, we do not collect any data that is not necessary for the use of the app.
 
 ## Responsibility
-Responsible for the development of the app and the our study server is *Niklas Bittner*, student of computer science at the Technical University of Darmstadt. The main supervisor of this work is *Alexander Heinrich, M.Sc* as a PhD student and research assistant at the Technical University of Darmstadt at the Secure Mobile Networking Lab.
+Responsible for the development of the app and the our study server is *Niklas Bittner*, student of computer science at the Technical University of Darmstadt. The main supervisor of this work is *Alexander Matern, M.Sc* as a PhD student and research assistant at the Technical University of Darmstadt at the Secure Mobile Networking Lab.
 
-Address: Alexander Heinrich
+Address: Alexander Matern
 Pankratiusstraße 2,
 64289 Darmstadt
 
