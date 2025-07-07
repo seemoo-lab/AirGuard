@@ -50,6 +50,10 @@ class BeaconRepository @Inject constructor(
         }.flatten()
     }
 
+    fun getBeaconsAtLocation(locationId: Int): List<Beacon> = beaconDao.getBeaconsAtLocation(locationId)
+
+    fun getBeaconsBetween(startTime: LocalDateTime, endTime: LocalDateTime): List<Beacon> = beaconDao.getBeaconsBetween(startTime, endTime)
+
     @WorkerThread
     suspend fun insert(beacon: Beacon): Long = beaconDao.insert(beacon)
 

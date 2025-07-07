@@ -32,6 +32,12 @@ interface BeaconDao {
     @Query("SELECT COUNT(*) FROM beacon WHERE deviceAddress LIKE :deviceAddress")
     fun getDeviceBeaconsCount(deviceAddress: String): Int
 
+    @Query("SELECT * FROM beacon WHERE locationId = :locationId")
+    fun getBeaconsAtLocation(locationId: Int): List<Beacon>
+
+    @Query("SELECT * FROM beacon WHERE receivedAt BETWEEN :startTime AND :endTime")
+    fun getBeaconsBetween(startTime: LocalDateTime, endTime: LocalDateTime): List<Beacon>
+
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun getDeviceBeacons(deviceAddress: String): List<Beacon>
 
