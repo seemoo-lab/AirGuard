@@ -1,7 +1,11 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -14,7 +18,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
@@ -125,32 +128,6 @@ class TrackingFragment : Fragment() {
         mapView.onPause()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Register OnBackPressedCallback
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (safeArgs.notificationId != -1) {
-                requireActivity().finish()
-            } else {
-                findNavController().navigateUp()
-            }
-        }
-
-        // For Android 13+ (API level 33), register OnBackInvokedCallback for predictive gestures
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireActivity().onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT
-            ) {
-                if (safeArgs.notificationId != -1) {
-                    requireActivity().finish()
-                } else {
-                    findNavController().navigateUp()
-                }
-            }
-        }
-    }
-
     private fun initializeMap() {
         Utility.basicMapSetup(mapView)
 
@@ -173,6 +150,19 @@ class TrackingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Register OnBackPressedCallback
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (safeArgs.notificationId != -1) {
+                // Check if the activity is not finishing before calling finish()
+                if (!requireActivity().isFinishing) {
+                    requireActivity().finish()
+                }
+            } else {
+                // Safely find NavController as the view is attached
+                findNavController().navigateUp()
+            }
+        }
 
         mapView = view.findViewById(R.id.map)
 
