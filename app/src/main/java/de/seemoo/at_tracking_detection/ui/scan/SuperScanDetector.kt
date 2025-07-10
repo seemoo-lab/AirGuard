@@ -22,14 +22,14 @@ class SuperScanDetector(
      * within the same tracking network (e.g. AirTag to AirPods)
      *
      * @param daysToScan The number of past days to scan for tracker activity.
-     * @param durationHours The required continuous tracking duration in hours.
+     * @param durationMinutes The required continuous tracking duration in minutes.
      * @param minLocations The minimum number of distinct locations a tracker must be seen at during the continuous period.
      * @param intervalMinutes The maximum time gap allowed between beacon sightings for the tracking to be considered continuous. // TODO: add tolerance
      * @return A list of devices that are suspected to be advanced trackers.
      */
-    suspend fun checkTrackersWithIdentitySwitching(daysToScan: Int, durationHours: Long, minLocations: Int, intervalMinutes: Long = 15): List<BaseDevice> {
+    suspend fun checkTrackersWithIdentitySwitching(daysToScan: Long, durationMinutes: Long, minLocations: Int, intervalMinutes: Long = 15): List<BaseDevice> {
         val suspectedDevices = mutableListOf<BaseDevice>()
-        val scanStartTime = LocalDateTime.now().minusDays(daysToScan.toLong()) // TODO: Maybe modify
+        val scanStartTime = LocalDateTime.now().minusDays(daysToScan)
 
         // Fetch all beacons within the scan window and group them by device
         val allBeacons = beaconRepository.getBeaconsSince(scanStartTime).first()
@@ -63,7 +63,7 @@ class SuperScanDetector(
                 } else {
                     // The session is broken, check if the previous session meets the criteria
                     val sessionDuration = Duration.between(sessionStartTime, prevBeacon.receivedAt)
-                    if (sessionDuration.toHours() >= durationHours && currentSessionLocations.size >= minLocations) {
+                    if (sessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
                         suspectedDevices.add(device)
                         break // Device is suspect, move to the next one
                     }
@@ -77,7 +77,7 @@ class SuperScanDetector(
             // Check the last session after the loop finishes
             val lastBeacon = sortedBeacons.last()
             val lastSessionDuration = Duration.between(sessionStartTime, lastBeacon.receivedAt)
-            if (!suspectedDevices.contains(device) && lastSessionDuration.toHours() >= durationHours && currentSessionLocations.size >= minLocations) {
+            if (!suspectedDevices.contains(device) && lastSessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
                 suspectedDevices.add(device)
             }
         }
@@ -89,13 +89,13 @@ class SuperScanDetector(
      * This mode checks if a device has been seen at multiple new locations within a given duration.
      *
      * @param daysToScan The number of past days to scan for tracker activity.
-     * @param durationHours The time window in hours to look for new locations. // TODO: we need bigger duration for this mode / Alternative: get rid of durationHours and only consider daysToScan
+     * @param durationMinutes The time window in minutes to look for new locations. // TODO: we need bigger duration for this mode / Alternative: get rid of durationHours and only consider daysToScan
      * @param minLocations The minimum number of new locations a tracker must be seen at within the duration.
      * @return A list of devices that are suspected to be motion-activated trackers.
      */
-    suspend fun checkTrackersWithMotionSensor(daysToScan: Int, durationHours: Long, minLocations: Int): List<BaseDevice> {
+    suspend fun checkTrackersWithMotionSensor(daysToScan: Long, durationMinutes: Long, minLocations: Int): List<BaseDevice> {
         val suspectedDevices = mutableListOf<BaseDevice>()
-        val scanStartTime = LocalDateTime.now().minusDays(daysToScan.toLong())
+        val scanStartTime = LocalDateTime.now().minusDays(daysToScan)
 
         // Get all devices and filter them by the scan start time
         val allDevices = deviceRepository.devices.first().filter { it.lastSeen >= scanStartTime }
@@ -116,7 +116,7 @@ class SuperScanDetector(
                 val lastLocationTime = window.last().firstDiscovery
                 val timeDiff = Duration.between(firstLocationTime, lastLocationTime)
 
-                if (timeDiff.toHours() <= durationHours) {
+                if (timeDiff.toHours() <= durationMinutes) {
                     if (!suspectedDevices.any { it.address == device.address }) {
                         suspectedDevices.add(device)
                     }
@@ -132,12 +132,12 @@ class SuperScanDetector(
      * continuous tracking activity over a given period within a larger timeframe.
      *
      * @param daysToScan The number of past days to scan for tracker activity.
-     * @param durationHours The required continuous tracking duration in hours.
+     * @param durationMinutes The required continuous tracking duration in minutes.
      * @param minLocations The minimum number of distinct locations a tracker must be seen at during the continuous period.
      * @param intervalMinutes The maximum time gap allowed between beacon sightings for the tracking to be considered continuous.
      * @return A boolean indicating if a potential network-switching tracker is detected.
      */
-    suspend fun checkNetworkSwitchingTrackers(daysToScan: Int, durationHours: Long, minLocations: Int, intervalMinutes: Long): Boolean {
+    suspend fun checkNetworkSwitchingTrackers(daysToScan: Int, durationMinutes: Long, minLocations: Int, intervalMinutes: Long): Boolean {
         val scanStartTime = LocalDateTime.now().minusDays(daysToScan.toLong())
         val sortedBeacons = beaconRepository.getBeaconsSince(scanStartTime).first().sortedBy { it.receivedAt }
 
@@ -161,7 +161,7 @@ class SuperScanDetector(
             } else {
                 // The session is broken, check if the previous session meets the criteria
                 val sessionDuration = Duration.between(sessionStartTime, prevBeacon.receivedAt)
-                if (sessionDuration.toHours() >= durationHours && currentSessionLocations.size >= minLocations) {
+                if (sessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
                     return true // A suspicious tracking session was found
                 }
                 // Start a new session
@@ -174,7 +174,7 @@ class SuperScanDetector(
         // Check the last session after the loop finishes
         val lastBeacon = sortedBeacons.last()
         val lastSessionDuration = Duration.between(sessionStartTime, lastBeacon.receivedAt)
-        if (lastSessionDuration.toHours() >= durationHours && currentSessionLocations.size >= minLocations) {
+        if (lastSessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
             return true
         }
 
