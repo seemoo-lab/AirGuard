@@ -6,6 +6,7 @@ import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -28,6 +29,8 @@ class SuperScanDetector(
      * @return A list of devices that are suspected to be advanced trackers.
      */
     suspend fun checkTrackersWithIdentitySwitching(daysToScan: Long, durationMinutes: Long, minLocations: Int, intervalMinutes: Long = 15): List<BaseDevice> {
+        Timber.d("Checking for trackers with identity switching over the last $daysToScan days, with a minimum duration of $durationMinutes minutes and at least $minLocations locations.")
+
         val suspectedDevices = mutableListOf<BaseDevice>()
         val scanStartTime = LocalDateTime.now().minusDays(daysToScan)
 
@@ -81,6 +84,9 @@ class SuperScanDetector(
                 suspectedDevices.add(device)
             }
         }
+
+        Timber.d("Suspected devices: $suspectedDevices")
+
         return suspectedDevices
     }
 
@@ -94,6 +100,8 @@ class SuperScanDetector(
      * @return A list of devices that are suspected to be motion-activated trackers.
      */
     suspend fun checkTrackersWithMotionSensor(daysToScan: Long, durationMinutes: Long, minLocations: Int): List<BaseDevice> {
+        Timber.d("Checking for motion-activated trackers over the last $daysToScan days, with a minimum duration of $durationMinutes minutes and at least $minLocations locations.")
+
         val suspectedDevices = mutableListOf<BaseDevice>()
         val scanStartTime = LocalDateTime.now().minusDays(daysToScan)
 
@@ -124,6 +132,9 @@ class SuperScanDetector(
                 }
             }
         }
+
+        Timber.d("Suspected motion-activated devices: $suspectedDevices")
+
         return suspectedDevices
     }
 
@@ -137,11 +148,14 @@ class SuperScanDetector(
      * @param intervalMinutes The maximum time gap allowed between beacon sightings for the tracking to be considered continuous.
      * @return A boolean indicating if a potential network-switching tracker is detected.
      */
-    suspend fun checkNetworkSwitchingTrackers(daysToScan: Int, durationMinutes: Long, minLocations: Int, intervalMinutes: Long): Boolean {
-        val scanStartTime = LocalDateTime.now().minusDays(daysToScan.toLong())
+    suspend fun checkNetworkSwitchingTrackers(daysToScan: Long, durationMinutes: Long, minLocations: Int, intervalMinutes: Long): Boolean {
+        Timber.d("Checking for network-switching trackers over the last $daysToScan days, with a minimum duration of $durationMinutes minutes and at least $minLocations locations.")
+
+        val scanStartTime = LocalDateTime.now().minusDays(daysToScan)
         val sortedBeacons = beaconRepository.getBeaconsSince(scanStartTime).first().sortedBy { it.receivedAt }
 
         if (sortedBeacons.size < 2) {
+            Timber.d("Not enough beacons found to determine network-switching trackers.")
             return false
         }
 
@@ -162,6 +176,7 @@ class SuperScanDetector(
                 // The session is broken, check if the previous session meets the criteria
                 val sessionDuration = Duration.between(sessionStartTime, prevBeacon.receivedAt)
                 if (sessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
+                    Timber.d("Network-switching tracker detected. (Variant 1)")
                     return true // A suspicious tracking session was found
                 }
                 // Start a new session
@@ -175,9 +190,11 @@ class SuperScanDetector(
         val lastBeacon = sortedBeacons.last()
         val lastSessionDuration = Duration.between(sessionStartTime, lastBeacon.receivedAt)
         if (lastSessionDuration.toMinutes() >= durationMinutes && currentSessionLocations.size >= minLocations) {
+            Timber.d("Network-switching tracker detected. (Variant 2)")
             return true
         }
 
+        Timber.d("No network-switching trackers detected.")
         return false
     }
 }

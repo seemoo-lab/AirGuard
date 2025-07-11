@@ -478,5 +478,13 @@
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
 
     <string name="super_scan_button">Scan for custom trackers</string>
-    <string name="super_scan_explanation">Placeholder: Explanation</string>
+    <string name="super_scan_explanation">Placeholder: Default Explanation</string>
+    <string name="super_scan_mode1">Same Network, different Identity</string>
+    <string name="super_scan_mode2">Motion Trackers</string>
+    <string name="super_scan_mode3">Paranoid Mode</string>
+    <string name="super_scan_explanation_mode1">This mode detects trackers that try to hide by switching their identity within the same network (e.g., from AirTag to AirPods).</string>
+    <string name="super_scan_explanation_mode2">This mode is designed to find trackers that only activate when they detect motion.</string>
+    <string name="super_scan_explanation_mode3">This mode looks for trackers that attempt to evade detection by switching between different tracking networks.</string>
+    <string name="super_scan_mode3_result_positive">At least one potential network-switching tracker has been detected!</string>
+    <string name="super_scan_mode3_result_negative">No network-switching trackers were detected.</string>
 </resources>

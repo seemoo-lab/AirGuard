@@ -431,5 +431,13 @@
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
 
     <string name="super_scan_button">Scanne nach modifizierten Trackern</string>
-    <string name="super_scan_explanation">Platzhalter: Erklärung</string>
+    <string name="super_scan_explanation">Platzhalter: Standard Erklärung</string>
+    <string name="super_scan_mode1">Gleiches Netzwerk, Typwechsel</string>
+    <string name="super_scan_mode2">Bewegungssensoren</string>
+    <string name="super_scan_mode3">Paranoid Modus</string>
+    <string name="super_scan_explanation_mode1">Dieser Modus erkennt Tracker die innerhalb eines Tracking-Netzwerks ihre Identität ändern (z.b. AirTag zu AirPods)</string>
+    <string name="super_scan_explanation_mode2">Dieser Modus erkennt wenn ein Tracker nur sendet, wenn er in Bewegung ist.</string>
+    <string name="super_scan_explanation_mode3">Dieser Modus erkennt ob irgendwelche Tracker solange in der Nähe waren, dass es theoretisch möglich ist, dass es ein Supertracker ist.</string>
+    <string name="super_scan_mode3_result_positive">Mindestens ein potenzielle Tracker gefunden!</string>
+    <string name="super_scan_mode3_result_negative">Kein potentieller Tracker gefunden.</string>
 </resources>

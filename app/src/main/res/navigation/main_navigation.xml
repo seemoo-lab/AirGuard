@@ -113,6 +113,13 @@
         android:name="de.seemoo.at_tracking_detection.ui.scan.SuperScanFragment"
         android:label="@string/settings_super_scan_title"
         tools:layout="@layout/fragment_super_scan">
+        <action
+            android:id="@+id/action_super_scan_to_trackingFragment"
+            app:destination="@id/trackingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <!-- Found Trackers Export -->
