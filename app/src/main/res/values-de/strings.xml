@@ -440,4 +440,6 @@
     <string name="super_scan_explanation_mode3">Dieser Modus erkennt ob irgendwelche Tracker solange in der Nähe waren, dass es theoretisch möglich ist, dass es ein Supertracker ist.</string>
     <string name="super_scan_mode3_result_positive">Mindestens ein potenzielle Tracker gefunden!</string>
     <string name="super_scan_mode3_result_negative">Kein potentieller Tracker gefunden.</string>
+    <string name="super_scan_no_results">Es existieren keine Tracker nach diesen Kriterien.</string>
+    <string name="navigate_to_device_details">Navigiere zu den Geräte-Details</string>
 </resources>
