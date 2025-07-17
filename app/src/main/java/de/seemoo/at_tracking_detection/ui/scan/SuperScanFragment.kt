@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
 
 class SuperScanFragment : Fragment() {
@@ -30,6 +31,7 @@ class SuperScanFragment : Fragment() {
     private lateinit var mode3ResultTextView: TextView
     private lateinit var scanButton: Button
     private lateinit var modeSelector: RadioGroup
+    private lateinit var sensitivitySelector: RadioGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +51,7 @@ class SuperScanFragment : Fragment() {
 
         val explanationTextView = view.findViewById<TextView>(R.id.super_scan_explanation)
         modeSelector = view.findViewById(R.id.scan_mode_selector)
+        sensitivitySelector = view.findViewById(R.id.sensitivity_selector)
         scanButton = view.findViewById(R.id.start_scan_button)
         resultsRecyclerView = view.findViewById(R.id.scan_results_recycler_view)
         mode3ResultTextView = view.findViewById(R.id.mode3_result_text)
@@ -81,6 +84,8 @@ class SuperScanFragment : Fragment() {
                 R.id.mode2_button -> explanationTextView.text = getString(R.string.super_scan_explanation_mode2)
                 R.id.mode3_button -> explanationTextView.text = getString(R.string.super_scan_explanation_mode3)
             }
+            // Sensitivity selector is relevant for all modes
+            sensitivitySelector.visibility = View.VISIBLE
             updateUiForNewScan()
         }
 
@@ -93,12 +98,23 @@ class SuperScanFragment : Fragment() {
         updateUiForScanStart()
 
         lifecycleScope.launch {
-            // Parameters for the scan
-            // TODO: make adjustable by user
             val daysToScan = 7L
-            val durationMinutes = 60L
-            val minLocations = 3
-            val intervalMinutes = 20L
+            val intervalMinutes = 20L // 15 + 5 Tolerance
+
+            val (durationMinutes, minLocations) = when (sensitivitySelector.checkedRadioButtonId) {
+                R.id.sensitivity_low_button -> Pair(
+                    RiskLevelEvaluator.MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW,
+                    RiskLevelEvaluator.NUMBER_OF_LOCATIONS_BEFORE_ALARM_LOW
+                )
+                R.id.sensitivity_high_button -> Pair(
+                    RiskLevelEvaluator.MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH,
+                    RiskLevelEvaluator.NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH
+                )
+                else -> Pair( // Medium sensitivity by default
+                    RiskLevelEvaluator.MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM,
+                    RiskLevelEvaluator.NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM
+                )
+            }
 
             when (modeSelector.checkedRadioButtonId) {
                 R.id.mode1_button -> {

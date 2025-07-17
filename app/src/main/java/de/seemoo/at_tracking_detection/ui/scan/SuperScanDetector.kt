@@ -95,7 +95,7 @@ class SuperScanDetector(
      * This mode checks if a device has been seen at multiple new locations within a given duration.
      *
      * @param daysToScan The number of past days to scan for tracker activity.
-     * @param durationMinutes The time window in minutes to look for new locations. // TODO: we need bigger duration for this mode / Alternative: get rid of durationHours and only consider daysToScan
+     * @param durationMinutes The time window in minutes to look for new locations.
      * @param minLocations The minimum number of new locations a tracker must be seen at within the duration.
      * @return A list of devices that are suspected to be motion-activated trackers.
      */
@@ -124,7 +124,7 @@ class SuperScanDetector(
                 val lastLocationTime = window.last().firstDiscovery
                 val timeDiff = Duration.between(firstLocationTime, lastLocationTime)
 
-                if (timeDiff.toHours() <= durationMinutes) {
+                if (timeDiff.toMinutes() <= durationMinutes) {
                     if (!suspectedDevices.any { it.address == device.address }) {
                         suspectedDevices.add(device)
                     }

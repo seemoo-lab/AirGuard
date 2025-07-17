@@ -56,6 +56,39 @@
             android:text="@string/super_scan_mode3" />
     </RadioGroup>
 
+    <RadioGroup
+        android:id="@+id/sensitivity_selector"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scan_mode_selector">
+
+        <RadioButton
+            android:id="@+id/sensitivity_low_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_risk_sensitivity_low" />
+
+        <RadioButton
+            android:id="@+id/sensitivity_medium_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/settings_risk_sensitivity_medium" />
+
+        <RadioButton
+            android:id="@+id/sensitivity_high_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/settings_risk_sensitivity_high" />
+    </RadioGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scan_results_recycler_view"
         android:layout_width="0dp"
@@ -66,7 +99,7 @@
         app:layout_constraintBottom_toTopOf="@+id/start_scan_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scan_mode_selector"
+        app:layout_constraintTop_toBottomOf="@+id/sensitivity_selector"
         tools:listitem="@layout/item_suspected_device"
         tools:visibility="visible" />
 

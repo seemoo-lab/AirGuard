@@ -106,9 +106,9 @@ class RiskLevelEvaluator(
         private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Default Values: A single tracker gets tracked at least for x minutes until notification is created
-        private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30
-        private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
-        private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 120
+        const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30
+        const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
+        const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 120
 
         // Default Values:
         const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 2
