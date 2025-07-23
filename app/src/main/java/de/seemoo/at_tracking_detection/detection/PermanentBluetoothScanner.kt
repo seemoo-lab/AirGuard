@@ -51,8 +51,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
      * The duration how long a device remains in the recently seen. 7 min.
      * Afterward, the device can be added to the DB again with a new sighting.
      */
-    private val COOL_DOWN_TIME_MS = 420_000
-    private val MAX_LOCATION_AGE_S = 300
+    private const val COOL_DOWN_TIME_MS = 420_000
+    private const val MAX_LOCATION_AGE_S = 300
 
     private val applicationContext: Context
         get() {
@@ -228,7 +228,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
     }
 
     private suspend fun insertPendingDevices() {
-        if (pendingFoundDevices.size == 0) {
+        if (pendingFoundDevices.isEmpty()) {
             return
         }
 
@@ -266,44 +266,48 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     location = null
                 }
 
-//                BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
-                BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
-                val pair = BackgroundBluetoothScanner.insertScanResult(
-                    device.wrappedScanResult,
-                    latitude = location?.latitude,
-                    longitude = location?.longitude,
-                    altitude = location?.altitude,
-                    accuracy = location?.accuracy,
-                    discoveryDate = device.discoveryDate
-                )
-                savedDevices.add(device)
-                recentlySeenDevices.add(device)
-
-                if (pair.first != null && pair.second != null) {
-                    BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
-                    // Logging this as a scan
-                    scanRepository.insert(
-                        Scan(
-                            endDate = device.discoveryDate,
-                            duration = 0,
-                            noDevicesFound = 1,
-                            isManual = false,
-                            scanMode = ScanSettings.SCAN_MODE_LOW_POWER,
-                            startDate = device.discoveryDate,
-                            locationDeg = "${PermanentBluetoothScanner.location?.longitude},${PermanentBluetoothScanner.location?.latitude}",
-                            locationId = pair.second?.locationId,
-                            devicesAddressesFound = pair.first?.address,
-                            devicesTypesFound = pair.first?.deviceType?.name
-                        )
+                // BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
+                if (!Utility.getSkipDevice(device.wrappedScanResult) && device.wrappedScanResult.deviceType in validDeviceTypes) {
+                    BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
+                    val pair = BackgroundBluetoothScanner.insertScanResult(
+                        device.wrappedScanResult,
+                        latitude = location?.latitude,
+                        longitude = location?.longitude,
+                        altitude = location?.altitude,
+                        accuracy = location?.accuracy,
+                        discoveryDate = device.discoveryDate
                     )
+                    savedDevices.add(device)
+                    recentlySeenDevices.add(device)
 
-                    SharedPrefs.lastScanDate = device.discoveryDate
-                }else {
-                    BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB")
+                    if (pair.first != null && pair.second != null) {
+                        BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
+                        // Logging this as a scan
+                        scanRepository.insert(
+                            Scan(
+                                endDate = device.discoveryDate,
+                                duration = 0,
+                                noDevicesFound = 1,
+                                isManual = false,
+                                scanMode = ScanSettings.SCAN_MODE_LOW_POWER,
+                                startDate = device.discoveryDate,
+                                locationDeg = "${PermanentBluetoothScanner.location?.longitude},${PermanentBluetoothScanner.location?.latitude}",
+                                locationId = pair.second?.locationId,
+                                devicesAddressesFound = pair.first?.address,
+                                devicesTypesFound = pair.first?.deviceType?.name
+                            )
+                        )
+
+                        SharedPrefs.lastScanDate = device.discoveryDate
+                    }else {
+                        BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB")
+                    }
+                } else {
+                    BLELogger.d("Skipping device ${device.wrappedScanResult.uniqueIdentifier} because it should not be saved in the current configuration")
                 }
             }
 
-            if (savedDevices.size == 0 && pendingFoundDevices.size > 0) {
+            if (savedDevices.isEmpty() && pendingFoundDevices.isNotEmpty()) {
                 // No new devices were added.
                 isWaitingForLocationUpdate = true
             } else {
@@ -349,7 +353,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             }
             CoroutineScope(Dispatchers.IO).launch {
                 Thread.sleep(2_000)
-                PermanentBluetoothScanner.scan()
+                scan()
             }
         }
     }

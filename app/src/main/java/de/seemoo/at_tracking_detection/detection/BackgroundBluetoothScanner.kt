@@ -522,7 +522,7 @@ object BackgroundBluetoothScanner {
                                 }
                             }
 
-                            if (wrappedScanResult.isConnectable == false) {
+                            if (!wrappedScanResult.isConnectable) {
                                 // Note:
                                 // Google Find My Network Devices which can be bought are connectable
                                 // If a Device is not connectable, it means that is has been designed by someone else

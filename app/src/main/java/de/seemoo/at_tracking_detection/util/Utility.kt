@@ -327,7 +327,16 @@ object Utility {
         val resultsMap = mutableMapOf<UUID, Any?>()
         var currentCharacteristicIndex = 0
 
+        // Forward declaration of gatt
+        var gatt: BluetoothGatt? = null
+
         val gattCallback = object : BluetoothGattCallback() {
+            @SuppressLint("MissingPermission")
+            private fun closeGatt() {
+                gatt?.close()
+                gatt = null
+            }
+
             @SuppressLint("MissingPermission")
             override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
@@ -338,6 +347,7 @@ object Utility {
                     if (continuation.isActive) {
                         continuation.resume(resultsMap)
                     }
+                    closeGatt()
                 }
             }
 
@@ -345,36 +355,39 @@ object Utility {
             override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Services discovered.")
-                    gatt?.let {
-                        readNextCharacteristic(it)
-                    }
+                    gatt?.let { readNextCharacteristic(it) }
                 } else {
                     Timber.w("onServicesDiscovered received: $status")
                     if (continuation.isActive) {
                         continuation.resumeWithException(Exception("Failed to discover services: $status"))
                     }
+                    gatt?.disconnect()
+                    closeGatt()
                 }
             }
 
             @Deprecated("Deprecated in Java")
             @SuppressLint("MissingPermission")
             override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                super.onCharacteristicRead(gatt, characteristic, status)
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     characteristic?.let {
-                        val dataType = characteristicsToRead[currentCharacteristicIndex].third
+                        val (_, characteristicUUID, dataType) = characteristicsToRead[currentCharacteristicIndex]
                         val value = when (dataType) {
-                            "int" -> it.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0) // Example: 16-bit unsigned integer
-                            "string" -> it.getStringValue(0) // Read as a string
-                            "hex" -> it.value.joinToString("") { byte -> "%02x".format(byte) } // Convert to hex string
+                            "int" -> it.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0)
+                            "string" -> it.getStringValue(0)
+                            "hex" -> it.value.joinToString("") { byte -> "%02x".format(byte) }
                             else -> null
                         }
-                        resultsMap[it.uuid] = value
+                        resultsMap[characteristicUUID] = value
                     }
                 } else {
                     Timber.w("Failed to read characteristic: $status")
                 }
+                currentCharacteristicIndex++
                 gatt?.let { readNextCharacteristic(it) }
             }
+
 
             @SuppressLint("MissingPermission")
             private fun readNextCharacteristic(gatt: BluetoothGatt) {
@@ -383,23 +396,35 @@ object Utility {
                     val service = gatt.getService(serviceUUID)
                     val char = service?.getCharacteristic(characteristicUUID)
 
-                    if (char != null) {
+                    if (char != null && (char.properties and BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                         gatt.readCharacteristic(char)
                     } else {
-                        resultsMap[characteristicUUID] = "Unknown"
+                        Timber.w("Characteristic $characteristicUUID not found or not readable.")
+                        resultsMap[characteristicUUID] = null // Indicate failure for this char
                         currentCharacteristicIndex++
                         readNextCharacteristic(gatt)
                     }
                 } else {
+                    // Finished reading all characteristics
                     if (continuation.isActive) {
                         continuation.resume(resultsMap)
                     }
                     gatt.disconnect()
+                    closeGatt()
                 }
             }
         }
 
-        bluetoothDevice.connectGatt(context, false, gattCallback)
+        // Create the GATT connection
+        gatt = bluetoothDevice.connectGatt(context, false, gattCallback)
+
+        // Handle cancellation of the coroutine
+        continuation.invokeOnCancellation {
+            Timber.d("Coroutine cancelled. Disconnecting and closing GATT.")
+            gatt?.disconnect()
+            gatt?.close()
+            gatt = null
+        }
     }
 
     suspend fun isValidURL(url: URL): Boolean = withContext(Dispatchers.IO) {
