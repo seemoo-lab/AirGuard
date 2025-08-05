@@ -473,4 +473,7 @@
     <string name="export_page_number">Page %d/%d</string>
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
+    <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
 </resources>

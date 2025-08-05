@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,6 +27,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrack
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.getScanMode
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -102,13 +104,14 @@ class ScanFragment : Fragment() {
 
     private fun toggleInfoLayoutVisibility(view: View) {
         view.findViewById<LinearLayout>(R.id.info_layout).apply {
-            visibility = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            visibility = if (isVisible) View.GONE else View.VISIBLE
         }
     }
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
+            SharedPrefs.showSamsungAndroid15BugNotification = false
             result?.let { scanViewModel.addScanResult(it) }
         }
 
@@ -129,7 +132,11 @@ class ScanFragment : Fragment() {
         }
 
         if (!BLEScanner.isScanning) {
-            BLEScanner.startBluetoothScan(requireContext())
+            try {
+                BLEScanner.startBluetoothScan(requireContext())
+            } catch (e: InterruptedException) {
+                Timber.e(e, "Caught InterruptedException")
+            }
         }
 
         if (scanCallback !in BLEScanner.callbacks) {

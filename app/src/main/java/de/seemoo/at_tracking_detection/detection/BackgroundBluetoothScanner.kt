@@ -177,18 +177,23 @@ object BackgroundBluetoothScanner {
         val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
-        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
-            BLEScanCallback.startScanning(
-                scanner,
-                DeviceManager.scanFilter,
-                scanSettings,
-                leScanCallback
-            )
-        } ?: run {
-            Timber.e("Bluetooth LE Scanner is null, cannot perform scan.")
-            isScanning = false
-            return BackgroundScanResults(0, 0, 0, true)
+        try {
+            bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
+                BLEScanCallback.startScanning(
+                    scanner,
+                    DeviceManager.scanFilter,
+                    scanSettings,
+                    leScanCallback
+                )
+            } ?: run {
+                Timber.e("Bluetooth LE Scanner is null, cannot perform scan.")
+                isScanning = false
+                return BackgroundScanResults(0, 0, 0, true)
+            }
+        } catch (e: InterruptedException) {
+            Timber.e(e, "Caught InterruptedException")
         }
+
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
@@ -275,6 +280,7 @@ object BackgroundBluetoothScanner {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             val wrappedScanResult = ScanResultWrapper(scanResult)
+            SharedPrefs.showSamsungAndroid15BugNotification = false
             //Checks if the device has been found already
             if (!scanResultDictionary.containsKey(wrappedScanResult.uniqueIdentifier)) {
                 Timber.d("Found ${wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")

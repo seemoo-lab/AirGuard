@@ -123,6 +123,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
         if (SharedPrefs.deactivateBackgroundScanning) {
             BLELogger.d("Background scanning is deactivated")
+            return
         }
 
         BLELogger.i("Launching new thread for background scanning")
@@ -164,16 +165,18 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                 .build()
 
 
-
-            bluetoothAdapter?.bluetoothLeScanner?.startScan(
-                DeviceManager.scanFilter,
-                scanSettings,
-                leScanCallback
-            )
-                ?: run {
+            try {
+                bluetoothAdapter?.bluetoothLeScanner?.startScan(
+                    DeviceManager.scanFilter,
+                    scanSettings,
+                    leScanCallback
+                ) ?: run {
                     BLELogger.e("Bluetooth LE Scanner is null, cannot perform scan.")
                     isScanning = false
                 }
+            } catch (e: InterruptedException) {
+                BLELogger.e("Caught InterruptedException")
+            }
 
             LocationHistoryController.listenToLocationChanges(this)
             BLELogger.d("Requesting fused location updates")
@@ -183,11 +186,6 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             )
             BLELogger.d("Requesting passive location updates")
             locationProvider.requestPassiveLocationProviderUpdates(LocationHistoryController)
-
-//            while (true) {
-//                BLELogger.i( "Keeping permanent scanner active.")
-//                Thread.sleep(10000);
-//            }
         })
     }
 
@@ -335,6 +333,9 @@ object PermanentBluetoothScanner: LocationHistoryListener {
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
+
+            SharedPrefs.showSamsungAndroid15BugNotification = false
+
             val wrappedScanResult = ScanResultWrapper(scanResult)
             //Checks if the device has been found already
 
@@ -348,6 +349,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             BLELogger.e("Bluetooth scan failed $errorCode")
+
             if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()
             }

@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,8 +75,22 @@ class DashboardRiskFragment : Fragment() {
             Timber.d("Articles JSON: %s", articlesJSON)
 
             withContext(Dispatchers.Main) {
-                val articles = parseArticles(articlesJSON)
+                var articles = parseArticles(articlesJSON)
                 Timber.d("Number of Articles: %s", articles.size)
+
+                // Show an error message if the Bluetooth scan bug on Android 15 is detected
+                if (Build.VERSION.SDK_INT >= 35 && SharedPrefs.showSamsungAndroid15BugNotification) {
+                    val bugArticle = Article(
+                        title = getString(R.string.samsung_bug_notification_title),
+                        author = "System",
+                        readingTime = 0,
+                        previewText = getString(R.string.samsung_bug_notification_text),
+                        cardColor = "warning_light_red",
+                        preview_image = "",
+                        filename = ""
+                    )
+                    articles = listOf(bugArticle) + articles
+                }
 
                 // Create a new LinearLayout to hold the ArticleCards
                 val articleCardsLinearLayout = LinearLayout(context)
@@ -98,7 +114,7 @@ class DashboardRiskFragment : Fragment() {
                     }
 
                     val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
-                    materialCard.setBackgroundColor(colorResourceId)
+                    materialCard.setCardBackgroundColor(resources.getColor(colorResourceId, null))
 
                     articleCard.addView(layout)
                     Timber.tag("CardAdded").d("Article card added: %s", article.title)
@@ -110,8 +126,8 @@ class DashboardRiskFragment : Fragment() {
                         topMargin = 22
                     }
 
-                    if (!article.preview_image.isNullOrEmpty()) { // TODO: Rename when in production to PreviewImage, also in JSON
-                        val imageURL = getURL(article.preview_image) // TODO: Rename when in production to PreviewImage, also in JSON
+                    if (!article.preview_image.isNullOrEmpty()) {
+                        val imageURL = getURL(article.preview_image)
                         context?.let {
                             Glide.with(it)
                                 .load(imageURL)

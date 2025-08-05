@@ -427,4 +427,7 @@
     <string name="export_trackers_detections_title_continued">Dieser Tracker wurde gefunden am (Fortsetzung):</string>
     <string name="export_page_number">Seite %d/%d</string>
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
+    <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
 </resources>

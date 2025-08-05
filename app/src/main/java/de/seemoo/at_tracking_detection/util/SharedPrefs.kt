@@ -201,6 +201,13 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("dismiss_survey_information", value) }
         }
 
+    var showSamsungAndroid15BugNotification: Boolean
+        get() {
+            return sharedPreferences.getBoolean("samsung_bug_notification", false)
+        }set(value) {
+        sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
+    }
+
     var surveyNotificationDate: LocalDateTime?
         get() {
             val dateString = sharedPreferences.getString("survey_notification_date", null)

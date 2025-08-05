@@ -93,6 +93,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
                 Timber.d("Scan received during background scan")
             }else {
                 Timber.d("Scan outside of background scan $scanResult")
+                SharedPrefs.showSamsungAndroid15BugNotification = false
                 scanResult.timestampNanos
                 val millisecondsSinceEvent = (SystemClock.elapsedRealtimeNanos() - scanResult.timestampNanos) / 1000000L
                 val timeOfEvent = System.currentTimeMillis() - millisecondsSinceEvent
