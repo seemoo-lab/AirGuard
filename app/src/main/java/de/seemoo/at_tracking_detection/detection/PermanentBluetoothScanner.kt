@@ -335,6 +335,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             super.onScanResult(callbackType, scanResult)
 
             SharedPrefs.showSamsungAndroid15BugNotification = false
+            SharedPrefs.showGenericBluetoothBugNotification = false
 
             val wrappedScanResult = ScanResultWrapper(scanResult)
             //Checks if the device has been found already
@@ -348,6 +349,13 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
+
+            if (errorCode == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                SharedPrefs.showSamsungAndroid15BugNotification = true
+            } else  {
+                SharedPrefs.showGenericBluetoothBugNotification = true
+            }
+
             BLELogger.e("Bluetooth scan failed $errorCode")
 
             if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {

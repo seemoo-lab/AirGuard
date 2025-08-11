@@ -208,6 +208,13 @@ object SharedPrefs {
         sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
     }
 
+    var showGenericBluetoothBugNotification: Boolean
+        get() {
+            return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)
+        }set(value) {
+        sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
+    }
+
     var surveyNotificationDate: LocalDateTime?
         get() {
             val dateString = sharedPreferences.getString("survey_notification_date", null)

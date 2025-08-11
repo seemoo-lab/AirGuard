@@ -6,6 +6,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -281,6 +282,7 @@ object BackgroundBluetoothScanner {
             super.onScanResult(callbackType, scanResult)
             val wrappedScanResult = ScanResultWrapper(scanResult)
             SharedPrefs.showSamsungAndroid15BugNotification = false
+            SharedPrefs.showGenericBluetoothBugNotification = false
             //Checks if the device has been found already
             if (!scanResultDictionary.containsKey(wrappedScanResult.uniqueIdentifier)) {
                 Timber.d("Found ${wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")
@@ -291,6 +293,13 @@ object BackgroundBluetoothScanner {
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
+
+            if (errorCode == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                SharedPrefs.showSamsungAndroid15BugNotification = true
+            } else {
+                SharedPrefs.showGenericBluetoothBugNotification = true
+            }
+
             Timber.e("Bluetooth scan failed $errorCode")
             if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()

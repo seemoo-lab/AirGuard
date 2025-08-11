@@ -90,6 +90,17 @@ class DashboardRiskFragment : Fragment() {
                         filename = ""
                     )
                     articles = listOf(bugArticle) + articles
+                } else if (SharedPrefs.showGenericBluetoothBugNotification) {
+                    val bugArticle = Article(
+                        title = getString(R.string.samsung_bug_notification_title),
+                        author = "System",
+                        readingTime = 0,
+                        previewText = getString(R.string.generic_bluetooth_bug_notification_text),
+                        cardColor = "warning_light_red",
+                        preview_image = "",
+                        filename = ""
+                    )
+                    articles = listOf(bugArticle) + articles
                 }
 
                 // Create a new LinearLayout to hold the ArticleCards

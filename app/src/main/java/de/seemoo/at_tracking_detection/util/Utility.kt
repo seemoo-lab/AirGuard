@@ -532,9 +532,6 @@ object Utility {
         }
 
         fun e(message: String) {
-            if (message.contains("Bluetooth scan failed 2")) {
-                SharedPrefs.showSamsungAndroid15BugNotification = true
-            }
             Timber.e(message)
             logger.e(message)
         }
