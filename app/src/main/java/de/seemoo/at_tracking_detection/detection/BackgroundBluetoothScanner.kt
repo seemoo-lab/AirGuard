@@ -29,7 +29,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
-import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -179,28 +179,28 @@ object BackgroundBluetoothScanner {
 
         SharedPrefs.isScanningInBackground = true
         try {
-            bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
-                BLEScanCallback.startScanning(
-                    scanner,
-                    DeviceManager.scanFilter,
-                    scanSettings,
-                    leScanCallback
-                )
-            } ?: run {
-                Timber.e("Bluetooth LE Scanner is null, cannot perform scan.")
-                isScanning = false
-                return BackgroundScanResults(0, 0, 0, true)
-            }
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Caught InterruptedException")
+            // Use a process-wide static callback for background
+            val callback = leScanCallback
+            val filters = DeviceManager.scanFilter
+            ScanOrchestrator.startScan(
+                callerTag = "BackgroundBluetoothScanner",
+                filters = filters,
+                settings = scanSettings,
+                callback = callback,
+                allowReplaceExisting = true,
+                priority = ScanOrchestrator.Priority.MEDIUM
+            )
+        } catch (t: Throwable) {
+            Timber.e(t, "Failed to request scan start")
+            isScanning = false
+            return BackgroundScanResults(0, 0, 0, true)
         }
-
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
-        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
-            BLEScanCallback.stopScanning(scanner)
-        }
+
+        // Stop scan via orchestrator
+        ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
         isScanning = false
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
@@ -440,7 +440,7 @@ object BackgroundBluetoothScanner {
 
                 // We get the beacons of the last 15 min.
                 // The DB gets too slow if we add too many beacons, so we should only add one every 15min.
-                var beacon: Beacon? = null
+                var beacon: Beacon?
                 val beacons = beaconRepository.getDeviceBeaconsSince(
                     deviceAddress = uniqueIdentifier,
                     since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
