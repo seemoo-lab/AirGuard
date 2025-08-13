@@ -180,6 +180,12 @@ class ScanDistanceFragment : Fragment() {
         setHeight(1f, 100L)
     }
 
+    private fun readyToScan(): Boolean {
+        val btOn = viewModel.bluetoothEnabled.value == true
+        val locOn = viewModel.locationEnabled.value == true
+        return btOn && locOn
+    }
+
     private fun determineDeviceTypeButtonVisible() {
         if (latestWrappedScanResult == null) {
             binding.performActionButton.visibility = View.GONE
@@ -278,6 +284,8 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun startBluetoothScan() {
+        if (!readyToScan()) return
+
         // Start a scan if the BLEScanner is not already running
         if (!BLEScanner.isScanning) {
             BLEScanner.startBluetoothScan(this.requireContext())
@@ -561,10 +569,21 @@ class ScanDistanceFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.refreshLocationState()
         viewModel.isFirstScanCallback.postValue(true)
         determineDeviceTypeButtonVisible()
         showSearchMessage()
         startBluetoothScan()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.startMonitoringSystemToggles()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.stopMonitoringSystemToggles()
     }
 
     override fun onPause() {

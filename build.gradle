@@ -6,7 +6,7 @@ buildscript {
     ext.room_version = '2.7.2'
     ext.compose_version = '1.7.3'
     ext.about_libraries_version = '12.2.3'
-    ext.work_version = '2.10.2'
+    ext.work_version = '2.10.3'
     ext.ksp_version = '2.2.0-2.0.2'
 
     repositories {
@@ -19,10 +19,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:8.12.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.9.2"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.9.3"
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$about_libraries_version"
         classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:$ksp_version"
         classpath "org.jetbrains.compose:compose-gradle-plugin:$compose_version"

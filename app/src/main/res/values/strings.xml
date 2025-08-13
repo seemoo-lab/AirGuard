@@ -489,4 +489,8 @@
     <string name="super_scan_mode3_result_negative">No network-switching trackers were detected.</string>
     <string name="super_scan_no_results">No suspected trackers found with the selected criteria.</string>
     <string name="navigate_to_device_details">Navigate to device details</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
+    <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
+    <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
 </resources>

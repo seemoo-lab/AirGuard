@@ -1,18 +1,19 @@
 package de.seemoo.at_tracking_detection.util.ble
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
+import android.Manifest
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.provider.Settings
+import androidx.core.content.ContextCompat
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.detection.LocationRequester
-import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 
 
@@ -21,7 +22,6 @@ import timber.log.Timber
  * Not to be used for Background scanning. This is handled in the `ScanBluetoothWorker`
  */
 object BLEScanner {
-    private var bluetoothManager: BluetoothManager? = null
     var callbacks = ArrayList<ScanCallback>()
     var isScanning = false
     private var lastLocation: Location? = null
@@ -30,57 +30,48 @@ object BLEScanner {
     private var scanResults = ArrayList<ScanResult>()
 
     fun startBluetoothScan(appContext: Context): Boolean {
-        this.bluetoothManager = appContext.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
-        val bluetoothAdapter = this.bluetoothManager?.adapter
-
-        if (bluetoothAdapter == null) {
-            Timber.d("Bluetooth adapter is null.")
+        if (!hasScanPermission()) {
+            Timber.d("Missing BLUETOOTH_SCAN permission.")
             return false
-        } else if (!bluetoothAdapter.isEnabled) {
-            Timber.d("Bluetooth is not enabled")
+        }
+        val scanner = ScanOrchestrator.getLeScanner()
+        if (scanner == null) {
+            Timber.d("BluetoothLeScanner is null (adapter off or transient).")
             return false
         }
 
         val scanSettings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .build()
 
         scanResults.clear()
+        val scanFilter = DeviceManager.scanFilter
 
-        if (bluetoothAdapter.state == BluetoothAdapter.STATE_ON && Utility.checkBluetoothPermission()) {
-            val leScanner = bluetoothAdapter.bluetoothLeScanner
-            val scanFilter = DeviceManager.scanFilter
-            leScanner.startScan(scanFilter, scanSettings, ownScanCallback)
-            isScanning = true
-            fetchCurrentLocation()
-            Timber.d("Bluetooth foreground scan started")
-            return true
-        }
-
-        return false
+        ScanOrchestrator.startScan(
+            callerTag = "BLEScanner",
+            filters = scanFilter,
+            settings = scanSettings,
+            callback = ownScanCallback,
+            allowReplaceExisting = true,
+            priority = ScanOrchestrator.Priority.HIGH
+        )
+        isScanning = true
+        fetchCurrentLocation()
+        Timber.d("Bluetooth foreground scan requested")
+        return true
     }
-
 
     fun stopBluetoothScan() {
         callbacks.clear()
-        bluetoothManager?.let { manager ->
-            val adapter = manager.adapter
-            if (adapter != null && adapter.state == BluetoothAdapter.STATE_ON) {
-                if (!Utility.checkBluetoothPermission()) {
-                    return
-                }
-                adapter.bluetoothLeScanner.stopScan(ownScanCallback)
-            }
-        }
+        ScanOrchestrator.stopScan("BLEScanner", ownScanCallback)
         isScanning = false
         scanResults.clear()
-        Timber.d("Bluetooth scan stopped")
+        Timber.d("Bluetooth scan stopped (requested)")
     }
 
     fun registerCallback(callback: ScanCallback) {
         callbacks.add(callback)
         Timber.d("New BLE ScanCallback registered")
-
-        //Pass the last results
         scanResults.forEach {
             callback.onScanResult(ScanSettings.CALLBACK_TYPE_ALL_MATCHES, it)
         }
@@ -88,49 +79,31 @@ object BLEScanner {
 
     fun unregisterCallback(callback: ScanCallback) {
         callbacks.remove(callback)
-        // Timber.d("BLE ScanCallback unregistered")
     }
 
-    private var ownScanCallback = object: ScanCallback() {
+    private var ownScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            // TODO: Add scan result to DB here. Detection events should not be to close after each other.
-            // New detection events (Beacons) every 15min
-            // Timber.d("Found a device $result")
             result?.let { scanResult ->
                 scanResults.add(0, scanResult)
-                if (scanResults.size > 10) {
-                    scanResults.removeLastOrNull()
-                }
-            }
-
-            callbacks.forEach {
-                it.onScanResult(callbackType, result)
+                if (scanResults.size > 10) scanResults.removeLastOrNull()
+                callbacks.forEach { it.onScanResult(callbackType, result) }
             }
         }
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
-            callbacks.forEach {
-                it.onScanFailed(errorCode)
-            }
+            Timber.e("BLE Scan failed. $errorCode")
+            isScanning = false
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>?) {
             super.onBatchScanResults(results)
-            // Batch results are only delivered when using low power scanning.
-            // We use low latency so this method should not be called.
-            // We implement it anyways to be save.
-
-            //TODO: Add scan result to DB here
-            callbacks.forEach {
-                it.onBatchScanResults(results)
-            }
+            callbacks.forEach { it.onBatchScanResults(results) }
         }
     }
 
     private fun fetchCurrentLocation() {
-        // We fetch the current location and cache for saving the results to the DB
         val locationProvider = ATTrackingDetectionApplication.getCurrentApp().locationProvider
         val loc =
             locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
@@ -139,20 +112,35 @@ object BLEScanner {
         }
     }
 
-    private var locationRequester = object: LocationRequester() {
+    private var locationRequester = object : LocationRequester() {
         override fun receivedAccurateLocationUpdate(location: Location) {
             this@BLEScanner.lastLocation = location
         }
     }
 
+    // Consider Bluetooth "available" for scanning when scanner exists and permission granted
     fun isBluetoothOn(): Boolean {
-        val adapter = bluetoothManager?.adapter
-        return adapter != null && adapter.isEnabled
+        if (!hasScanPermission()) return false
+        return ScanOrchestrator.getLeScanner() != null
     }
 
     fun openBluetoothSettings(context: Context) {
-        val intentOpenBluetoothSettings = Intent()
-        intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
+        val intentOpenBluetoothSettings = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
         context.startActivity(intentOpenBluetoothSettings)
+    }
+
+    fun unregisterAllForViewModelStop() {
+        try { callbacks.clear() } catch (_: Throwable) {}
+        try { ScanOrchestrator.stopScan("BLEScanner-VMStop", ownScanCallback) } catch (_: Throwable) {}
+        isScanning = false
+    }
+
+    private fun hasScanPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ContextCompat.checkSelfPermission(
+                ATTrackingDetectionApplication.getAppContext(),
+                Manifest.permission.BLUETOOTH_SCAN
+            ) == PackageManager.PERMISSION_GRANTED
+        } else true
     }
 }

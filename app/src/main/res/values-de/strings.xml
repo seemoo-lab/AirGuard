@@ -442,4 +442,8 @@
     <string name="super_scan_mode3_result_negative">Kein potentieller Tracker gefunden.</string>
     <string name="super_scan_no_results">Es existieren keine Tracker nach diesen Kriterien.</string>
     <string name="navigate_to_device_details">Navigiere zu den Geräte-Details</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
+    <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
+    <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
 </resources>

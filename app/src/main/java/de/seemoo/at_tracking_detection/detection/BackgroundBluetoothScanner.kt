@@ -6,6 +6,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -28,7 +29,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
-import de.seemoo.at_tracking_detection.util.ble.BLEScanCallback
+import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -177,24 +178,29 @@ object BackgroundBluetoothScanner {
         val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
 
         SharedPrefs.isScanningInBackground = true
-        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
-            BLEScanCallback.startScanning(
-                scanner,
-                DeviceManager.scanFilter,
-                scanSettings,
-                leScanCallback
+        try {
+            // Use a process-wide static callback for background
+            val callback = leScanCallback
+            val filters = DeviceManager.scanFilter
+            ScanOrchestrator.startScan(
+                callerTag = "BackgroundBluetoothScanner",
+                filters = filters,
+                settings = scanSettings,
+                callback = callback,
+                allowReplaceExisting = true,
+                priority = ScanOrchestrator.Priority.MEDIUM
             )
-        } ?: run {
-            Timber.e("Bluetooth LE Scanner is null, cannot perform scan.")
+        } catch (t: Throwable) {
+            Timber.e(t, "Failed to request scan start")
             isScanning = false
             return BackgroundScanResults(0, 0, 0, true)
         }
 
         val scanDuration: Long = getScanDuration()
         delay(scanDuration)
-        bluetoothAdapter?.bluetoothLeScanner?.let { scanner ->
-            BLEScanCallback.stopScanning(scanner)
-        }
+
+        // Stop scan via orchestrator
+        ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
         isScanning = false
 
         Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
@@ -275,6 +281,8 @@ object BackgroundBluetoothScanner {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
             val wrappedScanResult = ScanResultWrapper(scanResult)
+            SharedPrefs.showSamsungAndroid15BugNotification = false
+            SharedPrefs.showGenericBluetoothBugNotification = false
             //Checks if the device has been found already
             if (!scanResultDictionary.containsKey(wrappedScanResult.uniqueIdentifier)) {
                 Timber.d("Found ${wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")
@@ -285,6 +293,13 @@ object BackgroundBluetoothScanner {
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
+
+            if (errorCode == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                SharedPrefs.showSamsungAndroid15BugNotification = true
+            } else {
+                SharedPrefs.showGenericBluetoothBugNotification = true
+            }
+
             Timber.e("Bluetooth scan failed $errorCode")
             if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()
@@ -425,7 +440,7 @@ object BackgroundBluetoothScanner {
 
                 // We get the beacons of the last 15 min.
                 // The DB gets too slow if we add too many beacons, so we should only add one every 15min.
-                var beacon: Beacon? = null
+                var beacon: Beacon?
                 val beacons = beaconRepository.getDeviceBeaconsSince(
                     deviceAddress = uniqueIdentifier,
                     since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
