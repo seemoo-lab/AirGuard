@@ -55,7 +55,27 @@ object ScanOrchestrator {
     init {
         handlerThread.start()
         handler = Handler(handlerThread.looper)
+
+        // Stop immediately if Bluetooth turns off while a scan is running
+        BluetoothStateMonitor.addListener(
+            object : BluetoothStateMonitor.Listener {
+                override fun onBluetoothStateChanged(enabled: Boolean) {
+                    if (!enabled) {
+                        handler.post {
+                            val scanner = getLeScanner()
+                            // Stop running scan if any
+                            if (scanner != null && (isStartingOrRunning || isStopping)) {
+                                internalStop(scanner, currentCallback)
+                            } else {
+                                clearState()
+                            }
+                        }
+                    }
+                }
+            }
+        )
     }
+
 
     private fun hasPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(appContext, permission) == PackageManager.PERMISSION_GRANTED

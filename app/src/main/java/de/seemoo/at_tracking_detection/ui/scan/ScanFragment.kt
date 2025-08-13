@@ -99,7 +99,19 @@ class ScanFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        scanViewModel.startMonitoringSystemToggles()
         scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scanViewModel.stopMonitoringSystemToggles()
+    }
+
+    private fun readyToScan(): Boolean {
+        val btOn = scanViewModel.bluetoothEnabled.value == true
+        val locOn = scanViewModel.locationEnabled.value == true
+        return btOn && locOn
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
@@ -126,6 +138,8 @@ class ScanFragment : Fragment() {
     }
 
     private fun startBluetoothScanIfNeeded() {
+        if (!readyToScan()) return
+
         if (!hasActiveScan) {
             createNewScanRecord()
             hasActiveScan = true
@@ -193,6 +207,7 @@ class ScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        scanViewModel.refreshLocationState()
         if (scanViewModel.scanFinished.value == false) {
             startBluetoothScanIfNeeded()
         }

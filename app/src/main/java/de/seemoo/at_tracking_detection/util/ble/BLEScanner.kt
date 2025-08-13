@@ -129,6 +129,12 @@ object BLEScanner {
         context.startActivity(intentOpenBluetoothSettings)
     }
 
+    fun unregisterAllForViewModelStop() {
+        try { callbacks.clear() } catch (_: Throwable) {}
+        try { ScanOrchestrator.stopScan("BLEScanner-VMStop", ownScanCallback) } catch (_: Throwable) {}
+        isScanning = false
+    }
+
     private fun hasScanPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ContextCompat.checkSelfPermission(
