@@ -79,18 +79,19 @@ class DashboardRiskFragment : Fragment() {
                 Timber.d("Number of Articles: %s", articles.size)
 
                 // Show an error message if the Bluetooth scan bug on Android 15 is detected
-                if (Build.VERSION.SDK_INT >= 35 && SharedPrefs.showSamsungAndroid15BugNotification) {
-                    val bugArticle = Article(
-                        title = getString(R.string.samsung_bug_notification_title),
-                        author = "System",
-                        readingTime = 0,
-                        previewText = getString(R.string.samsung_bug_notification_text),
-                        cardColor = "warning_light_red",
-                        preview_image = "",
-                        filename = ""
-                    )
-                    articles = listOf(bugArticle) + articles
-                } else if (SharedPrefs.showGenericBluetoothBugNotification) {
+//                if (Build.VERSION.SDK_INT >= 35 && SharedPrefs.showSamsungAndroid15BugNotification) {
+//                    val bugArticle = Article(
+//                        title = getString(R.string.samsung_bug_notification_title),
+//                        author = "System",
+//                        readingTime = 0,
+//                        previewText = getString(R.string.samsung_bug_notification_text),
+//                        cardColor = "warning_light_red",
+//                        preview_image = "",
+//                        filename = ""
+//                    )
+//                    articles = listOf(bugArticle) + articles
+//                } else
+                if (SharedPrefs.showGenericBluetoothBugNotification || SharedPrefs.showSamsungAndroid15BugNotification) {
                     val bugArticle = Article(
                         title = getString(R.string.samsung_bug_notification_title),
                         author = "System",
