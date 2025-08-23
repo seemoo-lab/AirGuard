@@ -166,8 +166,9 @@ object ScanOrchestrator {
                 return@post
             }
 
-            if (!canStartNow()) {
-                Timber.w("Scan start throttled: too many starts within window")
+            // High priority scans bypass throttling. This ensures front end scans always work
+            if (priority != Priority.HIGH && !canStartNow()) {
+                Timber.w("Scan start throttled for $callerTag: too many starts within window")
                 return@post
             }
 
@@ -249,7 +250,7 @@ object ScanOrchestrator {
         }
     }
 
-// Internal operations
+    // Internal operations
 
     private fun internalStart(
         scanner: BluetoothLeScanner,
