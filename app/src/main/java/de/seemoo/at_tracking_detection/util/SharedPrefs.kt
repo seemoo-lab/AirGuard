@@ -287,6 +287,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("send_ble_error_messages", value) }
         }
 
+    var usePermanentBluetoothScanner: Boolean
+        get() {
+            return sharedPreferences.getBoolean("use_permanent_bluetooth_scanner", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
+        }
+
     private fun getAllDevicesFilterOptions(): Set<String> {
         val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
         return allOptions.toSet()
