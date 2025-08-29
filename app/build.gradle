@@ -94,8 +94,8 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.9.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.9.3'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.2'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -165,7 +165,7 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation 'androidx.compose.ui:ui-tooling:1.9.0'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3'
     // UI Tests
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.0'
     // When using a MDC theme
