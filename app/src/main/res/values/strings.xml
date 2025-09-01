@@ -479,4 +479,6 @@
     <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
     <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
     <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
+
+    <string name="device_comment_hint">Add a comment</string>
 </resources>

@@ -64,6 +64,7 @@ data class BaseDevice(
     @ColumnInfo(name = "safeTracker", defaultValue = "false") var safeTracker: Boolean = false,
     @ColumnInfo(name = "additionalData") var additionalData: String?, // This is used for matching Samsung Devices and saving ConnectionState for Google Devices
     @ColumnInfo(name = "alternativeIdentifier") var alternativeIdentifier: String? = null,
+    @ColumnInfo(name = "comment") var comment: String? = null,
 ) {
 
     constructor(
