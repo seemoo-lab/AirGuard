@@ -10,6 +10,7 @@
     <string name="title_devices_tracking">Gerät mit ID: {deviceAddress}</string>
     <string name="title_scan_detail">Orten: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
+    <string name="title_export_device">Exportiere Daten: {deviceAddress}</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices_map_device">Karte: %1$s</string>
     <string name="title_devices">Geräte</string>
@@ -84,6 +85,7 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_use_low_power_ble_summary">Diese Einstellung verwendet weniger Strom, führt aber auch zu einer langsameren und schlechteren Erkennung von Trackern</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Modus</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Bluetooth Fehlermeldungen anzeigen</string>
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
     <string name="tracking_info">Scanne diesen AirTag mit Deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
     <string name="info">Informationen</string>
@@ -236,6 +238,7 @@
         <item quantity="other">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens %d Minuten gefolgt.</item>
     </plurals>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
+    <string name="settings_send_bluetooth_error_messages">Sende Bluetooth Fehler Meldungen</string>
     <string name="ignored_devices">Ignorierte Geräte</string>
     <string name="airtags_found">Gefundene AirTags</string>
     <string name="findmy_found">Gefundene Find My Geräte</string>
@@ -420,7 +423,7 @@
     <string name="export_trackers_time">Uhrzeit: %s</string>
     <string name="export_trackers_location">Standort: Latitude: %s, Longitude: %s</string>
     <string name="export_trackers_map">Karte: %s</string>
-    <string name="export_trackers_map_still_loading">Karte ist noch nicht geladen...</string>
+    <string name="export_trackers_map_still_loading">Karte ist noch nicht geladen…</string>
     <string name="export_trackers_signal_strength">Signalstärke: %d</string>
     <string name="export_trackers_created_by">Erstellt von AirGuard %s auf Android</string>
     <string name="export_trackers_basic_info_title">Informationen:</string>
@@ -430,6 +433,7 @@
     <string name="export_page_number">Seite %d/%d</string>
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
 
+    <string name="export_trackers_no_internet">Die Karte konnte nicht laden. überprüfe ob du eine aktive Internetverbindung hast.</string>
     <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
     <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
     <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
