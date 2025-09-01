@@ -281,6 +281,7 @@
                 android:maxLines="6"
                 android:inputType="textMultiLine"
                 android:imeOptions="actionDone"
+                android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tracking_tiles"
