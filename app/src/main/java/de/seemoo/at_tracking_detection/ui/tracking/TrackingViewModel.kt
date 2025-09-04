@@ -69,6 +69,8 @@ class TrackingViewModel @Inject constructor(
 
     val expertMode = MutableLiveData(false)
 
+    val deviceComment = MutableLiveData<String>("")
+
     fun loadDevice(address: String, deviceTypeOverride: DeviceType) =
         deviceRepository.getDevice(address).also { device ->
             this.device.postValue(device)
@@ -93,8 +95,11 @@ class TrackingViewModel @Inject constructor(
                     loadLastSeenTimes(device)
                     expertMode.postValue(SharedPrefs.advancedMode)
                 }
+
+                deviceComment.postValue(device.comment ?: "")
             } else {
                 noLocationsYet.postValue(true)
+                deviceComment.postValue("")
             }
             showNfcHint.postValue(deviceType.value == DeviceType.AIRTAG)
             if (deviceType.value != null) {
@@ -141,5 +146,18 @@ class TrackingViewModel @Inject constructor(
             val intent = Intent(Intent.ACTION_VIEW, webpage)
             context.startActivity(intent)
         }
+    }
+
+    // Add function to update comment and save to DB
+    fun updateDeviceComment(newComment: String) {
+        device.value?.let { baseDevice ->
+            if (baseDevice.comment != newComment) {
+                baseDevice.comment = newComment.ifBlank { null }
+                viewModelScope.launch {
+                    deviceRepository.update(baseDevice)
+                }
+            }
+        }
+        deviceComment.postValue(newComment)
     }
 }

@@ -46,7 +46,7 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
         }
 
         // Initiate the permanent background scanner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
             goAsync {
                 Timber.d("Attempting to start PermanentBluetoothScanner from ScheduleWorkersReceiver")
                 PermanentBluetoothScanner.scan()

@@ -79,8 +79,12 @@ class ExportDeviceViewModel : ViewModel() {
 
             basicInfoText.postValue(infoBuilder.toString())
 
+            // This creates a map of locations for faster lookups
+            val locations = locationRepository.getLocationsForBeacon(deviceAddress)
+            val locationMap = locations.associateBy { it.locationId }
+
             val previewItems = beacons.map { beacon ->
-                val beaconLocation = locations.find { it.locationId == beacon.locationId }
+                val beaconLocation = locationMap[beacon.locationId]
                 val timeStr = context.getString(R.string.export_trackers_time, beacon.receivedAt.format(dateTimeFormatter))
                 val locationStr = if (beaconLocation != null) {
                     context.getString(R.string.export_trackers_location, "%.4f".format(beaconLocation.latitude), "%.4f".format(beaconLocation.longitude))
@@ -100,9 +104,14 @@ class ExportDeviceViewModel : ViewModel() {
 
     companion object {
         fun isTrackerFollowing(device: BaseDevice): Boolean {
+            // Backup in case something with the notification went wrong
             val useLocation = SharedPrefs.useLocationInTrackingDetection
             val deviceRiskLevel = checkRiskLevelForDevice(device, useLocation)
-            return deviceRiskLevel != RiskLevel.LOW
+
+            // This is the actual logic to determine if a tracker is following
+            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp().notificationRepository
+            val notificationExits = notificationRepository.existsNotificationForDevice(device.address)
+            return notificationExits || (deviceRiskLevel != RiskLevel.LOW)
         }
     }
 }

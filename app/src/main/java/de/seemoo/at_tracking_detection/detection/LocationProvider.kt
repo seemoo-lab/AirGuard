@@ -411,6 +411,7 @@ open class LocationProvider @Inject constructor(
         const val MAX_AGE_SECONDS = 120L
         const val MIN_ACCURACY_METER = 120L
 
+        // Legacy Function to check if location is turned on
         fun isLocationTurnedOn(): Boolean {
             val context = ATTrackingDetectionApplication.getAppContext()
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager

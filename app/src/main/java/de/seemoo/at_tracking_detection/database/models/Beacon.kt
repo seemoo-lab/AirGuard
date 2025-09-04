@@ -14,7 +14,8 @@ import java.time.format.FormatStyle
     indices = [
         Index(value = ["receivedAt"]),
         Index(value = ["deviceAddress"]),
-        Index(value = ["connectionState"])
+        Index(value = ["connectionState"]),
+        Index(value = ["deviceAddress", "receivedAt"])
     ],
     foreignKeys = [
         ForeignKey(

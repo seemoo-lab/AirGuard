@@ -34,6 +34,8 @@
     <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="settings_deactivate_scanning_title">Deactivate background scan</string>
     <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker is following you anymore.</string>
+    <string name="settings_permanent_scanning_title">Permanent scanning</string>
+    <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but in rare cases might affect the stability of the app.</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="times_seen">Times seen</string>
@@ -463,7 +465,7 @@
     <string name="export_trackers_time">Time: %s"</string>
     <string name="export_trackers_location">Location: Latitude: %s, Longitude: %s"</string>
     <string name="export_trackers_map">Map: %s</string>
-    <string name="export_trackers_map_still_loading">Map still loading...</string>
+    <string name="export_trackers_map_still_loading">Map still loading…</string>
     <string name="export_trackers_signal_strength">Signal Strength: %d"</string>
     <string name="export_trackers_created_by">Created by AirGuard %s for Android</string>
     <string name="export_trackers_basic_info_title">Information:</string>
@@ -473,4 +475,10 @@
     <string name="export_page_number">Page %d/%d</string>
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
+    <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
+    <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
+
+    <string name="device_comment_hint">Add a comment</string>
 </resources>

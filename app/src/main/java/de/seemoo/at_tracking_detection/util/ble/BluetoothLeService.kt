@@ -51,20 +51,30 @@ class BluetoothLeService : Service() {
             Timber.d("Device type is ${baseDevice.deviceType} and therefore not able to play a sound!")
             return false
         }
+
+        // Close any existing connection before starting a new one
+        if (bluetoothGatt != null) {
+            Timber.d("Closing previous GATT connection before creating a new one.")
+            stopBLEService(bluetoothGatt)
+            bluetoothGatt = null
+        }
+
         broadcastUpdate(BluetoothConstants.ACTION_GATT_CONNECTING)
-        bluetoothAdapter?.let {
-            return try {
-                val device = it.getRemoteDevice(baseDevice.address)
-                bluetoothGatt =
-                    device.connectGatt(this, false, baseDevice.device.bluetoothGattCallback)
-                true
-            } catch (e: IllegalArgumentException) {
-                Timber.e("Failed to connect to device!")
-                false
-            }
-        } ?: run {
-            Timber.w("Bluetooth adapter is not initialized!")
+
+        if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled) {
+            Timber.w("Bluetooth adapter is not initialized or not enabled!")
             return false
+        }
+
+        return try {
+            val device = bluetoothAdapter?.getRemoteDevice(baseDevice.address)
+            bluetoothGatt =
+                device?.connectGatt(this, false, baseDevice.device.bluetoothGattCallback)
+            Timber.d("New GATT connection initiated.")
+            true
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Failed to connect to device!")
+            false
         }
     }
 
