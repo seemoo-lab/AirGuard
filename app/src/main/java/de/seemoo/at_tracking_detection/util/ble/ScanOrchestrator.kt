@@ -21,8 +21,10 @@ object ScanOrchestrator {
     enum class Priority { HIGH, MEDIUM, LOW }
 
     private const val STOP_START_GRACE_MS = 400L
+    // Increase throttle window and decrease max starts to free up slots for high priority
     private const val THROTTLE_WINDOW_MS = 30_000L
-    private const val THROTTLE_MAX_STARTS = 5
+    private const val THROTTLE_MAX_STARTS = 2 // This is actually 5, but we bypass front end scans, so we leave 3 as buffer
+    private var lastLowScanTime: Long = 0L // Ensures max. 1 Low scan per throttle window
 
     private val appContext: Context
         get() = ATTrackingDetectionApplication.getAppContext()
@@ -92,22 +94,38 @@ object ScanOrchestrator {
         return try { adapter.bluetoothLeScanner } catch (_: Throwable) { null }
     }
 
-    private fun canStartNow(): Boolean {
+    private fun canStartNow(priority: Priority): Boolean {
         val now = System.currentTimeMillis()
-        while (true) {
-            val head = recentStarts.peekFirst() ?: break
-            if (now - head > THROTTLE_WINDOW_MS) {
-                recentStarts.removeFirst()
-            } else break
+        when (priority) {
+            Priority.MEDIUM -> {
+                while (true) {
+                    val head = recentStarts.peekFirst() ?: break
+                    if (now - head > THROTTLE_WINDOW_MS) {
+                        recentStarts.removeFirst()
+                    } else break
+                }
+                return recentStarts.size < THROTTLE_MAX_STARTS
+            }
+            Priority.LOW -> {
+                return (now - lastLowScanTime) > THROTTLE_WINDOW_MS
+            }
+            Priority.HIGH -> return true
         }
-        return recentStarts.size < THROTTLE_MAX_STARTS
     }
 
-    private fun recordStart() {
+    private fun recordStart(priority: Priority) {
         val now = System.currentTimeMillis()
-        recentStarts.addLast(now)
-        while (recentStarts.size > THROTTLE_MAX_STARTS) {
-            recentStarts.removeFirst()
+        when (priority) {
+            Priority.MEDIUM -> {
+                recentStarts.addLast(now)
+                while (recentStarts.size > THROTTLE_MAX_STARTS) {
+                    recentStarts.removeFirst()
+                }
+            }
+            Priority.LOW -> {
+                lastLowScanTime = now
+            }
+            Priority.HIGH -> { /* no throttling */ }
         }
     }
 
@@ -134,10 +152,23 @@ object ScanOrchestrator {
                 return@post
             }
 
-            // Preemption logic
+            // Always process High Priority scan requests immediately, no exceptions
+            if (priority == Priority.HIGH) {
+                if (isStartingOrRunning || isStopping) {
+                    Timber.d("Force stopping current scan for HIGH priority request from $callerTag")
+                    internalStop(scanner, currentCallback)
+                    handler.postDelayed({
+                        internalStart(scanner, filters, settings, callback, priority, callerTag)
+                    }, STOP_START_GRACE_MS)
+                } else {
+                    internalStart(scanner, filters, settings, callback, priority, callerTag)
+                }
+                return@post
+            }
+
+            // For Medium/Low, use preemption and throttling logic
             if (isStartingOrRunning || isStopping) {
                 val runningPrio = currentPriority
-                // If current is lower priority than requested, preempt
                 val shouldPreempt = runningPrio != null && priorityHigherThan(priority, runningPrio)
                 if (shouldPreempt) {
                     Timber.d("Preempting $currentOwnerTag ($runningPrio) with $callerTag ($priority)")
@@ -148,12 +179,10 @@ object ScanOrchestrator {
                     return@post
                 }
 
-                // If not preempting, only replace if allowed and same or lower priority caller requests it
                 if (!allowReplaceExisting) {
                     Timber.d("Scan already running or stopping; ignoring request from $callerTag")
                     return@post
                 }
-                // If same caller and same or higher priority, we can replace (e.g., change mode)
                 if (callerTag == currentOwnerTag) {
                     Timber.d("Replacing running scan with new request from same owner $callerTag")
                     internalStop(scanner, currentCallback)
@@ -166,9 +195,9 @@ object ScanOrchestrator {
                 return@post
             }
 
-            // High priority scans bypass throttling. This ensures front end scans always work
-            if (priority != Priority.HIGH && !canStartNow()) {
-                Timber.w("Scan start throttled for $callerTag: too many starts within window")
+            // Throttling for Medium/Low only
+            if (!canStartNow(priority)) {
+                Timber.w("Scan start throttled for $callerTag: too many starts within window or too soon")
                 return@post
             }
 
@@ -211,7 +240,7 @@ object ScanOrchestrator {
                 return@post
             }
 
-            if (!canStartNow()) {
+            if (!canStartNow(Priority.LOW)) {
                 Timber.w("ensureRunningLease: throttled; will not start now")
                 return@post
             }
@@ -268,7 +297,7 @@ object ScanOrchestrator {
             currentSettings = settings
             currentPriority = priority
             currentOwnerTag = ownerTag
-            recordStart()
+            recordStart(priority)
             scanner.startScan(filters, settings, callback)
             Timber.d("BLE scan started owner=$ownerTag mode=${settings.scanMode} priority=$priority")
         } catch (sec: SecurityException) {
@@ -328,7 +357,7 @@ object ScanOrchestrator {
         val lCallback = leaseCallback ?: return
         if (!hasScanPermission()) return
         val scanner = getLeScanner() ?: return
-        if (!canStartNow()) return
+        if (!canStartNow(Priority.LOW)) return
 
         internalStart(scanner, lFilters, lSettings, lCallback, Priority.LOW, lTag)
     }
