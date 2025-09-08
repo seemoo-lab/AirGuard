@@ -27,7 +27,8 @@
         android:icon="@drawable/ic_scan_icon"
         android:key="use_permanent_bluetooth_scanner"
         android:summary="@string/settings_permanent_scanning_summary"
-        app:title="@string/settings_permanent_scanning_title" />
+        app:title="@string/settings_permanent_scanning_title"
+        app:defaultValue="true" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_analytics_24"
