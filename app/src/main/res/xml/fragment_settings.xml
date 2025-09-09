@@ -10,11 +10,25 @@
         android:summary="@string/settings_advanced_mode_summary"
         app:title="@string/settings_advanced_mode_title" />
 
+    <!--<Preference
+        android:icon="@drawable/ic_baseline_attach_file_24"
+        android:key="export_found_trackers"
+        android:summary="@string/settings_export_found_trackers_summary"
+        android:title="@string/settings_export_found_trackers_title" />
+    -->
+
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="deactivate_background_scanning"
         android:summary="@string/settings_deactivate_scanning_summary"
         app:title="@string/settings_deactivate_scanning_title" />
+
+    <SwitchPreferenceCompat
+        android:icon="@drawable/ic_scan_icon"
+        android:key="use_permanent_bluetooth_scanner"
+        android:summary="@string/settings_permanent_scanning_summary"
+        app:title="@string/settings_permanent_scanning_title"
+        app:defaultValue="false" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_analytics_24"
@@ -40,6 +54,13 @@
         android:key="use_low_power_ble"
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_bluetooth_24"
+        android:key="send_ble_error_messages"
+        android:summary="@string/settings_send_bluetooth_error_messages_summary"
+        android:title="@string/settings_send_bluetooth_error_messages" />
 
     <ListPreference
         android:defaultValue="medium"

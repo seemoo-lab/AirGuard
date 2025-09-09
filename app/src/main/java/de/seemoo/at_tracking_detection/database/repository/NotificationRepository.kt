@@ -44,13 +44,15 @@ class NotificationRepository @Inject constructor(
      */
     val last_notification: List<Notification> = notificationDao.getLastNotification()
 
-    fun notificationForDevice(device: BaseDevice) = notificationDao.getNotificationForDevice(device.address)
+    fun notificationForDevice(device: BaseDevice): List<Notification> = notificationDao.getNotificationForDevice(device.address)
 
     fun getNotificationForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getNotificationForDeviceSinceCount(deviceAddress, since)
 
     fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getFalseAlarmForDeviceSinceCount(deviceAddress, since)
 
     fun existsNotificationForDevice(deviceAddress: String): Boolean = notificationDao.existsNotificationForDevice(deviceAddress)
+
+    fun getAllNotifications(): List<Notification> = notificationDao.getAllNotifications()
 
     @WorkerThread
     suspend fun insert(notification: Notification): Long {

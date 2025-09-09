@@ -1,14 +1,14 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import android.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.navigation.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
@@ -17,10 +17,15 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -75,7 +80,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>("delete_study_data")?.isVisible = false
         }
 
+        findPreference<Preference>("send_ble_error_messages")?.isVisible = BuildConfig.DEBUG
+
+
         setAdvancedModeButtonVisibility()
+
+        // TODO
+//        if (ATTrackingDetectionApplication.getCurrentApp().beaconRepository.totalCount > 0) {
+//            findPreference<SwitchPreferenceCompat>("export_found_trackers")?.isVisible = true
+//        } else {
+//            findPreference<SwitchPreferenceCompat>("export_found_trackers")?.isVisible = false
+//        }
 
         val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
         deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
@@ -114,6 +129,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreference<Preference>("export_found_trackers")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_export_found_trackers)
+                true
+            }
+
         findPreference<Preference>("delete_study_data")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view?.findNavController()?.navigate(R.id.action_settings_to_data_deletion)
@@ -124,7 +145,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html")
+                    "https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html".toUri()
                 )
                 startActivity(intent)
                 return@OnPreferenceClickListener true
@@ -133,13 +154,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("survey")?.setOnPreferenceClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(ATTrackingDetectionApplication.SURVEY_URL)
+                ATTrackingDetectionApplication.SURVEY_URL.toUri()
             )
             startActivity(intent)
             return@setOnPreferenceClickListener true
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private val sharedPreferenceListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
@@ -172,6 +194,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         ATTrackingDetectionApplication.getCurrentActivity()?.recreate()
                     }
                 }
+                "use_permanent_bluetooth_scanner" -> {
+                    if (SharedPrefs.usePermanentBluetoothScanner) {
+                        Timber.d("Enabled permanent bluetooth scanner!")
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            try {
+                                GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                    PermanentBluetoothScanner.scan()
+                                }
+                            } catch (t: Throwable) {
+                                Timber.e(t, "Failed to start PermanentBluetoothScanner from Settings")
+                            }
+                        }
+                    } else {
+                        Timber.d("Disabled permanent bluetooth scanner!")
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            try {
+                                PermanentBluetoothScanner.stopPermanentScan()
+                            } catch (t: Throwable) {
+                                Timber.e(t, "Failed to stop PermanentBluetoothScanner from Settings")
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -179,6 +224,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (SharedPrefs.advancedMode) {
             Timber.d("Enabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
+            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
@@ -187,6 +233,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         } else {
             Timber.d("Disabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
+            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false

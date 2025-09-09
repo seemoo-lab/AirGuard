@@ -201,6 +201,20 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("dismiss_survey_information", value) }
         }
 
+    var showSamsungAndroid15BugNotification: Boolean
+        get() {
+            return sharedPreferences.getBoolean("samsung_bug_notification", false)
+        }set(value) {
+        sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
+    }
+
+    var showGenericBluetoothBugNotification: Boolean
+        get() {
+            return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)
+        }set(value) {
+        sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
+    }
+
     var surveyNotificationDate: LocalDateTime?
         get() {
             val dateString = sharedPreferences.getString("survey_notification_date", null)
@@ -263,6 +277,22 @@ object SharedPrefs {
         }
         set(value) {
             sharedPreferences.edit { putBoolean("notification_priority_high", value) }
+        }
+
+    var sendBLEErrorMessages: Boolean
+        get() {
+            return sharedPreferences.getBoolean("send_ble_error_messages", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("send_ble_error_messages", value) }
+        }
+
+    var usePermanentBluetoothScanner: Boolean
+        get() {
+            return sharedPreferences.getBoolean("use_permanent_bluetooth_scanner", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
         }
 
     private fun getAllDevicesFilterOptions(): Set<String> {

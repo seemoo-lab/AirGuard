@@ -119,8 +119,6 @@
     <string name="onboarding_scan_description">追跡デバイスをスキャンするには、Bluetoothデバイスをスキャンするための許可が必要です</string>
     <string name="onboarding_connect_title">Bluetooth接続</string>
     <string name="onboarding_connect_description">追跡デバイスが見つかった場合、AirGuardはその上でサウンドを再生する機能を提供します。このためには、このデバイスに接続するための許可が必要です。</string>
-    <string name="twitter_description">私達のTwitterを見る</string>
-    <string name="twitter">Twitter</string>
     <string name="title_scan">手動スキャン</string>
     <string name="scan_result_item_image_description">スキャン結果</string>
     <string name="scan_result_no_devices">安心してください。タグは見つかりませんでした</string>
@@ -215,4 +213,196 @@
     <string name="survey_alert_message">後で調査について知りたいですか</string>
     <string name="survery_settings_summary">ダルムシュタット工科大学は、ストーカー行為によって人々がどのように影響を受けるかを調べるために調査を実施しています</string>
     <string name="survey_settings_title">ストーカーと位置追跡に関する調査</string>
+    <string name="title_scan_detail">タグを探す: {deviceAddress}</string>
+    <string name="title_observe_tracker">タグを監視する: {deviceAddress}</string>
+    <string name="title_export_device">タグデータをエクスポート: {deviceAddress}</string>
+    <string name="title_devices_map_device">マップ: %1$s</string>
+    <string name="title_data_deletion">データ削除リクエスト</string>
+    <string name="title_article">記事</string>
+    <string name="settings_advanced_mode_summary">AirGuardに高度なオプションを追加します。これらのオプションは上級者向けです。</string>
+    <string name="settings_advanced_mode_title">エキスパートモード</string>
+    <string name="settings_deactivate_scanning_title">バックグラウンドスキャンを無効化</string>
+    <string name="settings_deactivate_scanning_summary">これによりAirGuardのバックグラウンド動作が無効化されます。注意: 追跡されても警告されなくなります。</string>
+    <string name="settings_permanent_scanning_title">常時スキャン</string>
+    <string name="settings_permanent_scanning_summary">常時バックグラウンドスキャナーを使用します。精度が向上しますが、稀にアプリの安定性に影響する場合があります。</string>
+    <string name="times_seen">検知回数</string>
+    <string name="device_name_airtag" translatable="false">AirTag %s</string>
+    <string name="device_name_find_my_device_google">Google「Find My Device」%s</string>
+    <string name="settings_show_connected_devices_title">接続済みデバイスを表示</string>
+    <string name="settings_show_connected_devices">スキャンタブで所有者デバイスに接続されているデバイスを表示する</string>
+    <string name="settings_notification_priority_high_title">高優先度通知</string>
+    <string name="settings_notification_priority_high">有効にすると通知が高優先度のアラームとして発行されます</string>
+    <string name="settings_attributions_title">謝辞</string>
+    <string name="settings_attributions_summary">謝辞のリストを表示する</string>
+    <string name="settings_export_found_trackers_title">検出されたタグをエクスポート</string>
+    <string name="settings_export_found_trackers_summary">検出されたタグの一覧を文書として作成する</string>
+    <string name="settings_delete_study_data_title">研究データの削除</string>
+    <string name="settings_delete_study_data_summary">研究データの削除をリクエストする</string>
+    <string name="settings_device_filter_title">デバイスタイプを除外</string>
+    <string name="settings_device_filter_dialog_title">除外するデバイスタイプ</string>
+    <string name="settings_device_filter_summary">AirGuardが無視するデバイスタイプを選択します。選択したタイプは手動スキャンに表示されず、追跡通知もされません。</string>
+    <string name="device_name_tile" translatable="false">Tile %s</string>
+    <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
+    <string name="device_name_samsung_device">Samsungデバイス %s</string>
+    <string name="device_name_samsung_tracker" translatable="false">Samsung Tracker %s</string>
+    <string name="device_name_airpods" translatable="false">AirPods %s</string>
+    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
+    <string name="bluetooth_off_explanation">Bluetoothがオフになっています。このアプリは近くのタグを検出するためにBluetoothが必要です。</string>
+    <string name="location_off_explanation">位置情報がオフになっています。このアプリは近くのタグを検出するために位置情報の許可が必要です。システム設定で位置情報をオンにしてください。\n\n効果を反映するにはアプリの再起動が必要な場合があります。</string>
+    <string name="open_bluetooth_settings">Bluetooth設定を開く</string>
+    <string name="open_location_settings">位置情報設定を開く</string>
+    <string name="battery_text">バッテリー残量: </string>
+    <string name="battery_full">満タン</string>
+    <string name="battery_medium">中</string>
+    <string name="battery_low" translatable="false">低</string>
+    <string name="battery_very_low">非常に低い</string>
+    <string name="battery_unknown">不明</string>
+    <string name="connection_state_offline">オフライン</string>
+    <string name="connection_state_offline_explanation">デバイスは所有者から切り離されています</string>
+    <string name="connection_state_overmature_offline">長時間オフライン</string>
+    <string name="connection_state_overmature_offline_explanation">デバイスは少なくとも15分間所有者から切り離されています</string>
+    <string name="connection_state_overmature_offline_explanation_samsung">デバイスは少なくとも8時間所有者から切り離されています</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">デバイスは少なくとも30分間所有者から切り離されています</string>
+    <string name="connection_state_premature_offline">短時間オフライン</string>
+    <string name="connection_state_premature_offline_explanation">過去15分以内に所有者と接続されていました</string>
+    <string name="connection_state_connected">接続済み</string>
+    <string name="connection_state_connected_explanation">デバイスは現在所有者と接続されています</string>
+    <string name="connection_state_unknown">不明</string>
+    <string name="connection_state_content_description">デバイスの接続状態に関する情報</string>
+    <string name="connection_state_unknown_explanation">トラッカーの接続状態を判定できません</string>
+    <string name="scan_accessibility">スキャン開始/停止</string>
+    <string name="scan_sorting_by_rssi">信号強度順</string>
+    <string name="scan_sorting_by_recently">最近検知順</string>
+    <string name="scan_sorting_by_address">MACアドレス順</string>
+    <string name="scan_sorting_by_name">名前順</string>
+    <string name="scan_sorting_by_type">タイプ順</string>
+    <string name="scan_not_in_range">デバイスが範囲外です</string>
+    <string name="scan_battery_icon_description">このアイコンはタグのバッテリー状態を示します</string>
+    <string name="scan_state_info_icon_description">このアイコンをクリックすると接続状態の説明が表示されます</string>
+    <string name="scan_explanation">ゆっくり動いて信号強度を最大化しタグを探してください。</string>
+    <string name="play_sound_description">追跡デバイスで音を鳴らします</string>
+    <string name="bell_icon_description">このデバイスはトラッカーとして識別されました</string>
+    <string name="searching_for_device">デバイスを検索中</string>
+    <string name="battery_status_text">バッテリー: </string>
+    <string name="airtag" translatable="false">Airtag</string>
+    <string name="airpods" translatable="false">Airpods</string>
+    <string name="apple_device">Appleデバイス</string>
+    <string name="chipolo" translatable="false">Chipolo</string>
+    <string name="pebblebee" translatable="false">Pebblebee</string>
+    <string name="find_my_device">Apple FindMyデバイス</string>
+    <string name="samsung_tracker">Samsungトラッカー</string>
+    <string name="samsung_tracker_name">Samsungトラッカー</string>
+    <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
+    <string name="tile" translatable="false">Tile</string>
+    <string name="google_find_my">Google「Find My Device」デバイス</string>
+    <string name="airguard_for_android">AirGuard for Android</string>
+    <string name="version_number">バージョン %s</string>
+    <string name="contact_us">お問い合わせ</string>
+    <string name="google_find_my_default_name">Google「Find My Device」</string>
+    <string name="google_find_my_tag_name">「Find My Device」トラッカー</string>
+    <string name="google_find_my_phone_name">Androidスマートフォン</string>
+    <string name="apple_find_my_default_name">Apple「FindMy」</string>
+    <string name="apple_device_default_name">Appleデバイス</string>
+    <string name="airtag_default_name" translatable="false">AirTag</string>
+    <string name="airpods_default_name" translatable="false">AirPods</string>
+    <string name="chipolo_default_name" translatable="false">Chipolo</string>
+    <string name="tile_default_name" translatable="false">Tile</string>
+    <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
+    <string name="article_image_description">記事のプレビュー画像</string>
+    <string name="info_button_description">説明文を表示</string>
+    <string name="export_device_title">PDFにエクスポート</string>
+    <string name="export_device_subtitle">このトラッカーのPDF概要ファイルを作成する</string>
+    <string name="observe_tracker_title">トラッカーを監視する</string>
+    <string name="observe_tracker_clock_description">時計の画像</string>
+    <string name="observe_tracker_start_observation">監視開始</string>
+    <string name="observe_tracker_stop_observation">監視停止</string>
+    <string name="observe_tracker_stop_observation_explanation">このトラッカーは現在監視されています。</string>
+    <string name="observe_tracker_explanation">このトラッカーがあなたを追跡しているか不明な場合は手動で監視できます。\n\n1時間後、AirGuardはこのトラッカーを検索し、すぐに通知します。トラッカーが近くにいなければ通知されます。</string>
+    <string name="observe_tracker_changing_id">このトラッカーは識別子を変更する可能性があります。検知できなくても追跡されている場合があります。</string>
+    <string name="tracking_observe_tracker_subtitle">このトラッカーがあなたを追跡しているか確認する</string>
+    <string name="observe_tracker_success">監視開始しました</string>
+    <string name="observe_tracker_stopped">監視停止しました</string>
+    <string name="observe_tracker_failure">すでにこのトラッカーを監視しています</string>
+    <string name="credits">クレジット</string>
+    <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
+    <string name="smarttag_uwb">SmartTag（UWB付き）</string>
+    <string name="website_manufacturer">メーカーのウェブサイト</string>
+    <string name="website_manufacturer_detail">トラッカーのメーカーのウェブサイトを開く</string>
+    <string name="no_browser">ブラウザが見つかりません</string>
+    <string name="delete_data_button">データ削除をリクエストする</string>
+    <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止されます。再度参加したい場合は、オンボーディングを再度有効化し「はい」を選択してください。</string>
+    <string name="delete_data_success">データ削除に成功しました</string>
+    <string name="delete_data_error">エラーが発生しました</string>
+    <string name="delete_data_server_error">サーバーに接続できません。後でもう一度お試しください。</string>
+    <string name="delete_data_no_data">削除するデータがありません</string>
+    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
+    <string name="article_reading_time">読了時間: %d分</string>
+    <string name="article_offline_header">インターネット接続なし</string>
+    <string name="article_offline_text">現在インターネットに接続されていません。接続時にアプリの使い方を説明する記事が表示されます。</string>
+    <string name="explanation_apple">注意:\nAppleデバイスは識別子を定期的に変更します。\nAirTag、AirPods、FindMyなどは新しいデバイスとして認識され複数回表示される場合があります。</string>
+    <string name="explanation_samsung">注意:\nSamsungデバイスは識別子を定期的に変更します。\nSmartTagなどは新しいデバイスとして認識され複数回表示される場合があります。</string>
+    <string name="explanation_tile">注意:\nTileデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
+    <string name="explanation_chipolo">注意:\nChipoloデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
+    <string name="explanation_pebblebee">注意:\nPebblebeeデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
+    <string name="explanation_unknown">注意:\n一部のデバイスは識別子を定期的に変更します。\nこれらは新しいデバイスとして認識され複数回表示される場合があります。</string>
+    <string name="explanation_safe_trackers">安全なトラッカーは、現在所有者と接続されているか、直近で接続されていたものです。これらは脅威となる可能性が低いです。\n無視されたトラッカーも安全とみなされます。</string>
+    <string name="device_name_cannot_be_empty">デバイス名は空にできません</string>
+    <string name="copyright">著作権</string>
+    <string name="developer">開発者: %s</string>
+    <string name="maintainer">メンテナー: %s</string>
+    <string name="high_risk_trackers">潜在的なトラッカー</string>
+    <string name="low_risk_trackers">安全なトラッカー</string>
+    <string name="marker_legend">凡例</string>
+    <string name="device_marker">潜在的なトラッカーが見つかった場所</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">過去30分以内に所有者と接続されていました</string>
+    <string name="samsung_determine_button">特定のトラッカータイプを判定する</string>
+    <string name="device_determine_failed">正確なデバイスタイプを判定できませんでした</string>
+    <string name="retrieve_owner_information">所有者情報を表示</string>
+    <string name="retrieve_owner_information_failed">所有者情報を取得できませんでした</string>
+    <string name="retrieve_owner_information_alert_title">所有者情報の取得</string>
+    <string name="retrieve_owner_information_explanation_unknown">所有者情報を得るには、物理的にトラッカーを発見する必要があります。発見後、特定のモードにする必要があります。例えばボタンを3回押す、または30秒間長押しするなどです。成功すると音で確認できます。その後「次へ」を押してください。</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">所有者情報を得るには、物理的にトラッカーを発見し、ボタンを3回押してください。音で確認できます。その後「次へ」を押してください。</string>
+    <string name="retrieve_owner_information_explanation_chipolo">所有者情報を得るには、物理的にトラッカーを発見し、ボタンを30秒間押し、2回目のビープ音の直後に離してください。成功すると音で確認できます。その後「次へ」を押してください。</string>
+    <string name="retrieve_owner_information_explanation_motorola">所有者情報を得るには、物理的にトラッカーを発見し、ボタンを10秒間長押ししてビープ音が鳴ったら離し、すぐにもう一度押して離してください。その後「次へ」を押してください。</string>
+    <string name="retrieve_owner_information_alert_next">次へ</string>
+    <string name="retrieve_owner_information_alert_close">閉じる</string>
+    <string name="confirm_deactivating_background_scan_title">バックグラウンドスキャン無効化の確認</string>
+    <string name="confirm_deactivating_background_scan_text">本当にバックグラウンドスキャンを無効化しますか？無効化すると追跡通知が届かなくなります。</string>
+    <string name="confirm_deactivating_background_scan_yes">はい、無効化する</string>
+    <string name="confirm_deactivating_background_scan_no">いいえ、保護を維持する</string>
+    <string name="last_seen_times_title">トラッカーの最終検知場所:</string>
+    <string name="no_last_seen_times">最終検知日時はありません</string>
+    <string name="tracker_or_phone">トラッカーかスマートフォンか判定する</string>
+    <string name="left">左</string>
+    <string name="right">右</string>
+    <string name="export_trackers_label">トラッカーをエクスポート</string>
+    <string name="export_trackers_explanation">下のボタンをクリックすると、長期間あなたを追跡していたトラッカーのPDF文書を作成できます。</string>
+    <string name="export_trackers_create_document">文書を作成</string>
+    <string name="export_trackers_following">このトラッカーはあなたを追跡しています</string>
+    <string name="export_trackers_not_following">このトラッカーはあなたを追跡していません</string>
+    <string name="export_trackers_ignored">このトラッカーは無視されました</string>
+    <string name="export_trackers_location_unknown">場所: 不明</string>
+    <string name="export_trackers_tracker_type">トラッカータイプ: %s</string>
+    <string name="export_trackers_mac">MACアドレス: %s</string>
+    <string name="export_trackers_last_seen">最終検知: %s</string>
+    <string name="export_trackers_first_seen">初回検知: %s</string>
+    <string name="export_trackers_detections">検知回数: %d</string>
+    <string name="export_trackers_unique_locations">ユニークな場所: %d</string>
+    <string name="export_trackers_time">時間: %s</string>
+    <string name="export_trackers_location">場所: 緯度: %s, 経度: %s</string>
+    <string name="export_trackers_map">マップ: %s</string>
+    <string name="export_trackers_map_still_loading">マップを読み込み中…</string>
+    <string name="export_trackers_signal_strength">信号強度: %d</string>
+    <string name="export_trackers_created_by">AirGuard %s for Androidによって作成</string>
+    <string name="export_trackers_basic_info_title">情報:</string>
+    <string name="export_trackers_map_title">マップ:</string>
+    <string name="export_trackers_detections_title">このトラッカーは以下で検知されました:</string>
+    <string name="export_trackers_detections_title_continued">このトラッカーは以下でも検知されました（続き）:</string>
+    <string name="export_page_number">ページ %d/%d</string>
+    <string name="export_trackers_15_minute_warning">警告: このエントリは推定値に基づいています。誤検知の可能性があります。</string>
+    <string name="export_trackers_no_internet">マップを読み込めません。インターネット接続を確認してください。</string>
+    <string name="samsung_bug_notification_title">Bluetoothエラー検知</string>
+    <string name="samsung_bug_notification_text">このデバイスはAndroid 15以上で発生するBluetooth Low Energyスキャンの不具合の影響を受けています。すべてのアプリがBluetoothスキャンを利用できません。スマートフォンを再起動してください。</string>
+    <string name="generic_bluetooth_bug_notification_text">Bluetoothスキャン中に問題が発生しました。AirGuardに必要な権限があり、Bluetoothがオンになっていることを確認してください。問題が解決しない場合はスマートフォンを再起動してください。</string>
+    <string name="device_comment_hint">コメントを追加</string>
 </resources>

@@ -1,7 +1,11 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -14,9 +18,9 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
+import androidx.core.graphics.toColorInt
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -125,45 +129,18 @@ class TrackingFragment : Fragment() {
         mapView.onPause()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Register OnBackPressedCallback
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (safeArgs.notificationId != -1) {
-                requireActivity().finish()
-            } else {
-                findNavController().navigateUp()
-            }
-        }
-
-        // For Android 13+ (API level 33), register OnBackInvokedCallback for predictive gestures
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireActivity().onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT
-            ) {
-                if (safeArgs.notificationId != -1) {
-                    requireActivity().finish()
-                } else {
-                    findNavController().navigateUp()
-                }
-            }
-        }
-    }
-
     private fun initializeMap() {
         Utility.basicMapSetup(mapView)
 
         mapView.addMapListener(object : MapListener {
             override fun onZoom(event: ZoomEvent?): Boolean {
-                if (mapView.zoomLevelDouble >= 0 && mapView.zoomLevelDouble <= mapView.maxZoomLevel) {
-                    zoomToMarkers()
-                }
-                return true
+                Timber.d("MapListener: Zoom event received (zoom level: ${event?.zoomLevel})")
+                return false
             }
 
             override fun onScroll(event: ScrollEvent?): Boolean {
-                return true
+                Timber.d("MapListener: Scroll event received")
+                return false
             }
         })
 
@@ -174,6 +151,19 @@ class TrackingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Register OnBackPressedCallback
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (safeArgs.notificationId != -1) {
+                // Check if the activity is not finishing before calling finish()
+                if (!requireActivity().isFinishing) {
+                    requireActivity().finish()
+                }
+            } else {
+                // Safely find NavController as the view is attached
+                findNavController().navigateUp()
+            }
+        }
 
         mapView = view.findViewById(R.id.map)
 
@@ -203,6 +193,12 @@ class TrackingFragment : Fragment() {
         view.findViewById<CardView>(R.id.tracking_observation).setOnClickListener {
             trackingViewModel.deviceAddress.value?.let { deviceAddress ->
                 navigateToObserveTracker(deviceAddress)
+            }
+        }
+
+        view.findViewById<CardView>(R.id.export_device).setOnClickListener {
+            trackingViewModel.deviceAddress.value?.let { deviceAddress ->
+                navigateToExportDevice(deviceAddress)
             }
         }
 
@@ -266,6 +262,33 @@ class TrackingFragment : Fragment() {
                     .show()
             }
         }
+
+        val commentEditText = view.findViewById<EditText>(R.id.device_comment)
+
+        // Set colors of the EditText for the comment based on the selected theme
+        // Hint: In the future this should be replaced with the new color, theme system
+        if (Utility.isActualThemeDark(requireContext())) {
+            commentEditText.setBackgroundColor(resources.getColor(R.color.light_black))
+            commentEditText.setTextColor("#FFFFFF".toColorInt())
+            commentEditText.setHintTextColor(resources.getColor(R.color.light_grey))
+        } else {
+            commentEditText.setBackgroundColor("#FFFFFF".toColorInt())
+            commentEditText.setTextColor("#222222".toColorInt())
+            commentEditText.setHintTextColor(resources.getColor(R.color.grey))
+        }
+
+        trackingViewModel.deviceComment.observe(viewLifecycleOwner) { comment ->
+            if (commentEditText.text.toString() != comment) {
+                commentEditText.setText(comment ?: "")
+            }
+        }
+        commentEditText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                trackingViewModel.updateDeviceComment(s?.toString() ?: "")
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
 
     private fun zoomToMarkers() {
@@ -292,6 +315,12 @@ class TrackingFragment : Fragment() {
     private fun navigateToObserveTracker(deviceAddress: String) {
         val directions: NavDirections =
             TrackingFragmentDirections.actionTrackingToObserveTracker(deviceAddress)
+        findNavController().navigate(directions)
+    }
+
+    private fun navigateToExportDevice(deviceAddress: String) {
+        val directions: NavDirections =
+            TrackingFragmentDirections.actionTrackingToExportDevice(deviceAddress)
         findNavController().navigate(directions)
     }
 

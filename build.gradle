@@ -1,13 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '2.1.20'
-    ext.hilt_compiler_version = '2.56.2'
+    ext.kotlin_version = '2.2.10'
+    ext.hilt_compiler_version = '2.57.1'
     ext.hilt_version = '1.2.0'
-    ext.room_version = '2.7.0'
+    ext.room_version = '2.7.2'
     ext.compose_version = '1.7.3'
-    ext.about_libraries_version = '12.0.0'
-    ext.work_version = '2.10.0'
-    ext.ksp_version = '2.1.20-2.0.0'
+    ext.about_libraries_version = '12.2.4'
+    ext.work_version = '2.10.3'
+    ext.ksp_version = '2.2.10-2.0.2'
 
     repositories {
         google()
@@ -19,10 +19,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.2'
+        classpath 'com.android.tools.build:gradle:8.13.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.9"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.9.3"
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$about_libraries_version"
         classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:$ksp_version"
         classpath "org.jetbrains.compose:compose-gradle-plugin:$compose_version"

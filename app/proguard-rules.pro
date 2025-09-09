@@ -125,3 +125,26 @@
 
 # Keep all data classes with Gson annotations
 -keep class de.seemoo.at_tracking_detection.database.relations.** { *; }
+
+# --- BLE ScanOrchestrator and BLE-related keep rules ---
+# Keep the ScanOrchestrator singleton and all its methods/fields
+-keep class de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator { *; }
+
+# Keep all classes that extend or implement android.bluetooth.le.ScanCallback
+-keep class * extends android.bluetooth.le.ScanCallback { *; }
+
+# Keep all classes that extend or implement android.bluetooth.le.ScanFilter
+-keep class * extends android.bluetooth.le.ScanFilter { *; }
+
+# Keep all classes that extend or implement android.bluetooth.le.ScanSettings
+-keep class * extends android.bluetooth.le.ScanSettings { *; }
+
+# Keep all classes in the BLE util package (if you have more helpers)
+-keep class de.seemoo.at_tracking_detection.util.ble.** { *; }
+
+# Keep all ScanCallback implementations, including anonymous and inner classes
+-keep class * extends android.bluetooth.le.ScanCallback { *; }
+-keepclassmembers class * {
+    void onScanResult(...);
+    void onScanFailed(...);
+}

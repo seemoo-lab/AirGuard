@@ -10,6 +10,7 @@
     <string name="title_devices_tracking">Gerät mit ID: {deviceAddress}</string>
     <string name="title_scan_detail">Orten: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
+    <string name="title_export_device">Exportiere Daten: {deviceAddress}</string>
     <string name="title_device_map">Alle Geräte</string>
     <string name="title_devices_map_device">Karte: %1$s</string>
     <string name="title_devices">Geräte</string>
@@ -29,6 +30,8 @@
     <string name="ignored_device_list_empty">Immer wenn Du eine Benachrichtigung erhalten hast, dass Du von einem Dir bekannten Gerät (z.B. einem Tile, den Du besitzt) verfolgt wirst, dann kannst Du dies als Fehlalarm kennzeichnen. Geräte, die ihre Bluetooth-Adresse nicht ändern (z.B. Pebblebee, Tile oder Chipolo) kannst Du auch ignorieren. Diese ignorierten Geräte werden hier angezeigt. Denke daran: Ein AirTag ändert seine Bluetooth-Adresse einmal am Tag, kann also nicht ignoriert werden und wird am nächsten Tag als neuer AirTag angezeigt.</string>
     <string name="settings_deactivate_scanning_title">Hintergrundscan deaktivieren</string>
     <string name="settings_deactivate_scanning_summary">Diese Option deaktiviert den Hintergrundscan. Achtung: Wenn diese Option aktiviert ist, bekommst du keine Benachrichtigungen mehr, wenn dir ein Tracker folgt.</string>
+    <string name="settings_permanent_scanning_title">Permanenter Scanner</string>
+    <string name="settings_permanent_scanning_summary">Nutze einen permanenten Hintergrund-Scan. Diese Feature sorgt für akkuratere Scans, könnte aber in Ausnahmefällen die Stabilität der App beeinflussen.</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>
@@ -82,6 +85,7 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_use_low_power_ble_summary">Diese Einstellung verwendet weniger Strom, führt aber auch zu einer langsameren und schlechteren Erkennung von Trackern</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Modus</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Bluetooth Fehlermeldungen anzeigen</string>
     <string name="tracking_device_not_connectable">Dieses Gerät kann keinen Ton abspielen.</string>
     <string name="tracking_info">Scanne diesen AirTag mit Deinem Telefon über NFC, um weitere Informationen zu erhalten.</string>
     <string name="info">Informationen</string>
@@ -90,6 +94,8 @@
     <string name="settings_risk_sensitivity_high">Hoch</string>
     <string name="settings_information_contact_title">Information &amp; Kontakt</string>
     <string name="settings_information_contact_summary">Bekomme Informationen über uns</string>
+    <string name="settings_export_found_trackers_title">Exportiere gefundene Tracker</string>
+    <string name="settings_export_found_trackers_summary">Erstelle ein Dokument mit allen gefunden Trackern</string>
     <string name="settings_delete_study_data_title">Studiendaten löschen</string>
     <string name="settings_delete_study_data_summary">Anfrage der Löschung der Studiendaten</string>
     <string name="settings_device_filter_title">Gerätetypen herausfiltern</string>
@@ -131,8 +137,8 @@
     <string name="grant_permission">Berechtigung erteilen</string>
     <string name="cancel">Abbrechen</string>
     <string name="no_button">Nein danke</string>
-    <string name="twitter_description">Schau bei uns auf Twitter vorbei</string>
-    <string name="twitter">Twitter</string>
+    <string name="website_description">Schau bei uns auf Homepage vorbei</string>
+    <string name="website">Website</string>
     <string name="dashboard_scan_fab_description">Suche nach Geräten!</string>
     <string name="dashboard_scan_fab">Manueller Scan</string>
     <string name="onboarding_scan_title">Bluetooth-Suche</string>
@@ -232,6 +238,7 @@
         <item quantity="other">Öffnen, um weitere Informationen zu erhalten. Ein Gerät ist Dir für mindestens %d Minuten gefolgt.</item>
     </plurals>
     <string name="notification_title_base">Ein Tracker folgt dir</string>
+    <string name="settings_send_bluetooth_error_messages">Sende Bluetooth Fehler Meldungen</string>
     <string name="ignored_devices">Ignorierte Geräte</string>
     <string name="airtags_found">Gefundene AirTags</string>
     <string name="findmy_found">Gefundene Find My Geräte</string>
@@ -250,7 +257,7 @@
     <string name="survey_settings_title">Umfrage zum Thema Stalking und Location Tracking</string>
     <string name="survey_info_4">Durchgeführt von der Technischen Universität Darmstadt</string>
     <string name="smarttag_found">Gefundene SmartTags</string>
-    <string name="onboarding_setting_summary">Immer den Einrichtungsdialog anzeigen</string>
+    <string name="onboarding_setting_summary">Beim nächsten Start den Einrichtungsdialog erneut anzeigen</string>
     <string name="onboarding_setting_title">Einrichtungsdialog anzeigen</string>
     <string name="device_name_samsung_device">Samsung Gerät %s</string>
     <string name="settings_notification_priority_high_title">Benachrichtigung mit hoher Prioriät</string>
@@ -309,6 +316,9 @@
     <string name="google_find_my_phone_name">Android Smartphone</string>
     <string name="apple_find_my_default_name">Apple \"FindMy\"</string>
     <string name="apple_device_default_name">Apple Gerät</string>
+
+    <string name="export_device_title">Exportiere Geräte-Infos als PDF</string>
+    <string name="export_device_subtitle">Erstelle eine Zusammenfassung über dieses Gerät als PDF</string>
 
     <string name="observe_tracker_title">Tracker beobachten</string>
     <string name="observe_tracker_stop_observation">Beobachtung stoppen</string>
@@ -396,4 +406,37 @@
 
     <string name="left">Links</string>
     <string name="right">Rechts</string>
+
+    <string name="export_trackers_label">Tracker exportieren</string>
+    <string name="export_trackers_explanation">Der Button unten ermöglicht es ein PDF Dokument zu erstellen, welche alle Geräte enthält, die als Tracker identifiziert wurden.</string>
+    <string name="export_trackers_create_document">Dokument erstellen</string>
+    <string name="export_trackers_following">Dieser Tracker folgte dir</string>
+    <string name="export_trackers_not_following">Dieser Tracker folgte dir nicht</string>
+    <string name="export_trackers_ignored">Dieser Tracker wurde ignoriert</string>
+    <string name="export_trackers_location_unknown">Unbekannter Standort</string>
+    <string name="export_trackers_tracker_type">Tracker Typ: %s</string>
+    <string name="export_trackers_mac">MAC-Adresse: %s</string>
+    <string name="export_trackers_last_seen">Zuerst gesehen am: %s</string>
+    <string name="export_trackers_first_seen">Zuletzt gesehen am: %s</string>
+    <string name="export_trackers_detections">Wie oft erkannt: %d</string>
+    <string name="export_trackers_unique_locations">Erkannt an Standorten: %d</string>
+    <string name="export_trackers_time">Uhrzeit: %s</string>
+    <string name="export_trackers_location">Standort: Latitude: %s, Longitude: %s</string>
+    <string name="export_trackers_map">Karte: %s</string>
+    <string name="export_trackers_map_still_loading">Karte ist noch nicht geladen…</string>
+    <string name="export_trackers_signal_strength">Signalstärke: %d</string>
+    <string name="export_trackers_created_by">Erstellt von AirGuard %s auf Android</string>
+    <string name="export_trackers_basic_info_title">Informationen:</string>
+    <string name="export_trackers_map_title">Karte:</string>
+    <string name="export_trackers_detections_title">Dieser Tracker wurde gefunden am:</string>
+    <string name="export_trackers_detections_title_continued">Dieser Tracker wurde gefunden am (Fortsetzung):</string>
+    <string name="export_page_number">Seite %d/%d</string>
+    <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
+
+    <string name="export_trackers_no_internet">Die Karte konnte nicht laden. überprüfe ob du eine aktive Internetverbindung hast.</string>
+    <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
+    <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
+    <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
+
+    <string name="device_comment_hint">Kommentar zu diesem Tracker</string>
 </resources>

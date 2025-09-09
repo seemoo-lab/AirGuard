@@ -4,11 +4,10 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.view.WindowInsetsController
-import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,7 +16,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.elevation.SurfaceColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
@@ -116,31 +114,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun configureSystemBars() {
         val isDarkTheme = Utility.isActualThemeDark(context = this)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.apply {
-                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                if (isDarkTheme) {
-                    setSystemBarsAppearance(
-                        0, // Clear APPEARANCE_LIGHT_STATUS_BARS
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                } else {
-                    setSystemBarsAppearance(
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+            windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+            if (isDarkTheme) {
+                windowInsetsController.isAppearanceLightStatusBars = false
+                windowInsetsController.isAppearanceLightNavigationBars = false
+            } else {
+                windowInsetsController.isAppearanceLightStatusBars = true
+                windowInsetsController.isAppearanceLightNavigationBars = true
             }
-            val lp = window.attributes
-            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
-            window.attributes = lp
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, false)
-            window.statusBarColor = SurfaceColors.SURFACE_2.getColor(this)
-            window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
-            val lp = window.attributes
-            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            window.attributes = lp
         }
     }
 

@@ -13,7 +13,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.app.ActivityCompat.startActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
@@ -131,6 +133,7 @@ object Utility {
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
+        map.maxZoomLevel = MAX_ZOOM_LEVEL
 
         map.overlays.add(copyrightOverlay)
     }
@@ -144,10 +147,14 @@ object Utility {
         val mapController = map.controller
         val geoPointList = ArrayList<GeoPoint>()
 
-        val iconDrawable = R.drawable.ic_baseline_location_on_45_black
+        val icon = R.drawable.ic_baseline_location_on_45_black
+        val iconDrawable = ContextCompat.getDrawable(
+            context, icon
+
+        )
 
         val clusterer = RadiusMarkerClusterer(context)
-        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, iconDrawable)
+        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
         clusterer.setIcon(clusterIcon)
         clusterer.setRadius(100)
         clusterer.mAnchorU = Marker.ANCHOR_CENTER
@@ -161,10 +168,7 @@ object Utility {
                     val marker = Marker(map)
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     marker.position = geoPoint
-                    marker.icon = ContextCompat.getDrawable(
-                        context,
-                        iconDrawable
-                    )
+                    marker.icon = iconDrawable
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     geoPointList.add(geoPoint)
 
@@ -182,6 +186,7 @@ object Utility {
 
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)
+            map.post { map.invalidate() }
             return false
         }
 
@@ -270,6 +275,17 @@ object Utility {
         }
     }
 
+    fun getConnectionStateFromString(connectionState: String): ConnectionState {
+        return when (connectionState) {
+            "CONNECTED" -> ConnectionState.CONNECTED
+            "OFFLINE" -> ConnectionState.OFFLINE
+            "OVERMATURE_OFFLINE" -> ConnectionState.OVERMATURE_OFFLINE
+            "PREMATURE_OFFLINE" -> ConnectionState.PREMATURE_OFFLINE
+            "UNKNOWN" -> ConnectionState.UNKNOWN
+            else -> ConnectionState.UNKNOWN
+        }
+    }
+
     fun getExplanationTextForDeviceType(deviceType: DeviceType?): String {
         Timber.d("get Explanation for DeviceType: $deviceType")
         return when (deviceType) {
@@ -282,6 +298,19 @@ object Utility {
             DeviceType.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_chipolo)
             DeviceType.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_pebblebee)
             else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.explanation_unknown)
+        }
+    }
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
         }
     }
 
@@ -298,7 +327,16 @@ object Utility {
         val resultsMap = mutableMapOf<UUID, Any?>()
         var currentCharacteristicIndex = 0
 
+        // Forward declaration of gatt
+        var gatt: BluetoothGatt? = null
+
         val gattCallback = object : BluetoothGattCallback() {
+            @SuppressLint("MissingPermission")
+            private fun closeGatt() {
+                gatt?.close()
+                gatt = null
+            }
+
             @SuppressLint("MissingPermission")
             override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
@@ -309,6 +347,7 @@ object Utility {
                     if (continuation.isActive) {
                         continuation.resume(resultsMap)
                     }
+                    closeGatt()
                 }
             }
 
@@ -316,36 +355,39 @@ object Utility {
             override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Services discovered.")
-                    gatt?.let {
-                        readNextCharacteristic(it)
-                    }
+                    gatt?.let { readNextCharacteristic(it) }
                 } else {
                     Timber.w("onServicesDiscovered received: $status")
                     if (continuation.isActive) {
                         continuation.resumeWithException(Exception("Failed to discover services: $status"))
                     }
+                    gatt?.disconnect()
+                    closeGatt()
                 }
             }
 
             @Deprecated("Deprecated in Java")
             @SuppressLint("MissingPermission")
             override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                super.onCharacteristicRead(gatt, characteristic, status)
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     characteristic?.let {
-                        val dataType = characteristicsToRead[currentCharacteristicIndex].third
+                        val (_, characteristicUUID, dataType) = characteristicsToRead[currentCharacteristicIndex]
                         val value = when (dataType) {
-                            "int" -> it.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0) // Example: 16-bit unsigned integer
-                            "string" -> it.getStringValue(0) // Read as a string
-                            "hex" -> it.value.joinToString("") { byte -> "%02x".format(byte) } // Convert to hex string
+                            "int" -> it.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0)
+                            "string" -> it.getStringValue(0)
+                            "hex" -> it.value.joinToString("") { byte -> "%02x".format(byte) }
                             else -> null
                         }
-                        resultsMap[it.uuid] = value
+                        resultsMap[characteristicUUID] = value
                     }
                 } else {
                     Timber.w("Failed to read characteristic: $status")
                 }
+                currentCharacteristicIndex++
                 gatt?.let { readNextCharacteristic(it) }
             }
+
 
             @SuppressLint("MissingPermission")
             private fun readNextCharacteristic(gatt: BluetoothGatt) {
@@ -354,23 +396,35 @@ object Utility {
                     val service = gatt.getService(serviceUUID)
                     val char = service?.getCharacteristic(characteristicUUID)
 
-                    if (char != null) {
+                    if (char != null && (char.properties and BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                         gatt.readCharacteristic(char)
                     } else {
-                        resultsMap[characteristicUUID] = "Unknown"
+                        Timber.w("Characteristic $characteristicUUID not found or not readable.")
+                        resultsMap[characteristicUUID] = null // Indicate failure for this char
                         currentCharacteristicIndex++
                         readNextCharacteristic(gatt)
                     }
                 } else {
+                    // Finished reading all characteristics
                     if (continuation.isActive) {
                         continuation.resume(resultsMap)
                     }
                     gatt.disconnect()
+                    closeGatt()
                 }
             }
         }
 
-        bluetoothDevice.connectGatt(context, false, gattCallback)
+        // Create the GATT connection
+        gatt = bluetoothDevice.connectGatt(context, false, gattCallback)
+
+        // Handle cancellation of the coroutine
+        continuation.invokeOnCancellation {
+            Timber.d("Coroutine cancelled. Disconnecting and closing GATT.")
+            gatt?.disconnect()
+            gatt?.close()
+            gatt = null
+        }
     }
 
     suspend fun isValidURL(url: URL): Boolean = withContext(Dispatchers.IO) {
@@ -401,7 +455,7 @@ object Utility {
             url
         }
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+        val intent = Intent(Intent.ACTION_VIEW, finalUrl.toUri())
 
         // Check if there's an app to handle this intent
         try {

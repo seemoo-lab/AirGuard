@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="de.seemoo.at_tracking_detection.ui.tracking.ExportDeviceViewModel" />
+        <import type="android.view.View" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Scrollable Content Area -->
+        <ScrollView
+            android:id="@+id/content_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottom_bar_container"
+            android:fillViewport="true"> <!-- Ensure ScrollView fills space -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- 1. Following Status -->
+                <TextView
+                    android:id="@+id/following_status_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textStyle="bold"
+                    android:text="@{vm.followingStatusText}"
+                    android:textColor="@{vm.followingStatusColor}"
+                    tools:text="@string/export_trackers_following" />
+
+                <!-- 2. Basic Info -->
+                <TextView
+                    android:id="@+id/basic_info_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/export_trackers_basic_info_title"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/basic_info_content_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@{vm.basicInfoText}"
+                    tools:text="Type: Unknown\nMAC: AA:BB:CC:DD:EE:FF\nFirst Seen: Jan 1, 2024\nLast Seen: Jan 10, 2024\nDetections: 50\nUnique Locations: 10" />
+
+                <!-- 3. Map -->
+                <TextView
+                    android:id="@+id/map_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/export_trackers_map_title"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textStyle="bold" />
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/map_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="24dp"/> <!-- Removed layout_margin, kept bottom margin -->
+
+                <!-- "No Internet" Message (if map cannot load) -->
+                <TextView
+                    android:id="@+id/no_internet_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:gravity="center"
+                    android:text="@string/export_trackers_no_internet"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <!-- 4. Beacons -->
+                <TextView
+                    android:id="@+id/beacons_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/export_trackers_detections_title"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/beacons_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    bind:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="vertical"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_beacon_preview"
+                    tools:itemCount="5" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Fixed Bottom Bar Area -->
+        <FrameLayout
+            android:id="@+id/bottom_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="?android:attr/windowBackground" >
+
+            <Button
+                android:id="@+id/create_document_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:padding="16dp"
+                android:text="@string/export_trackers_create_document" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+        </FrameLayout>
+
+    </RelativeLayout>
+
+</layout>

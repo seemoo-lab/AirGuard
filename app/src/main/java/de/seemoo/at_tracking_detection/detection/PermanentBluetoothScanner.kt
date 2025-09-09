@@ -19,6 +19,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.BLELogger
+import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -37,6 +37,9 @@ import kotlin.math.abs
 @RequiresApi(Build.VERSION_CODES.S)
 object PermanentBluetoothScanner: LocationHistoryListener {
     private var bluetoothAdapter: BluetoothAdapter? = null
+
+    private var executor = Executors.newSingleThreadExecutor()
+    @Volatile private var keepRunning = false
 
     private var pendingFoundDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> =
         ArrayList()
@@ -51,8 +54,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
      * The duration how long a device remains in the recently seen. 7 min.
      * Afterward, the device can be added to the DB again with a new sighting.
      */
-    private val COOL_DOWN_TIME_MS = 420_000
-    private val MAX_LOCATION_AGE_S = 300
+    private const val COOL_DOWN_TIME_MS = 420_000
+    private const val MAX_LOCATION_AGE_S = 300
 
     private val applicationContext: Context
         get() {
@@ -103,94 +106,78 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     private var isScanning = false
 
-
-    private var executor = Executors.newFixedThreadPool(2)
-    private var locationExecutor = Executors.newSingleThreadExecutor()
-
     fun scan() {
-
-        if (!Utility.checkBluetoothPermission()) {
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            BLELogger.d("Background scanning is deactivated")
+            return
+        } else if (!Utility.checkBluetoothPermission()) {
             BLELogger.d("Permission to perform bluetooth scan missing")
             return
         }
 
-        // Scan permanently on a background thread
-        if (isScanning) {
-            Timber.d("App is already scanning in background. Stopping ongoing scans and restarting.")
-            bluetoothAdapter?.bluetoothLeScanner?.stopScan(leScanCallback)
-            executor.shutdownNow()
-            executor = Executors.newFixedThreadPool(2)
-            Timber.d("Ongoing scans have been stopped.")
-        }
+        keepRunning = true
 
-        if (SharedPrefs.deactivateBackgroundScanning) {
-            BLELogger.d("Background scanning is deactivated")
-        }
-
-        BLELogger.i("Launching new thread for background scanning")
-
-        // Launch a new thread
-        executor.execute(kotlinx.coroutines.Runnable {
-            BLELogger.i("Thread for background scanning started")
-
-            BLELogger.d("Starting permanent Bluetooth scanner")
-            // For a permanent scanner, we use low power
+        // Avoid creating multiple loops
+        executor.execute {
+            BLELogger.i("Permanent scanning loop started")
             val scanMode = ScanSettings.SCAN_MODE_LOW_POWER
+            val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
+            val filters = DeviceManager.scanFilter
 
-            try {
-                val bluetoothManager =
-                    applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                bluetoothAdapter = bluetoothManager.adapter
-                if (bluetoothAdapter == null) {
-                    BLELogger.e("BluetoothAdapter is null, cannot perform scan.")
-                } else if (!bluetoothAdapter!!.isEnabled) {
-                    BLELogger.e("Bluetooth is disabled, cannot perform scan.")
-                } else if (bluetoothAdapter!!.bluetoothLeScanner == null) {
-                    BLELogger.e("BLE is not supported on this device.")
+            while (keepRunning) {
+                try {
+                    // Check adapter/scanner availability
+                    val manager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                    val adapter = manager.adapter
+                    val scanner = try { adapter?.bluetoothLeScanner } catch (_: Throwable) { null }
+                    if (adapter == null || scanner == null || !adapter.isEnabled) {
+                        BLELogger.d("Adapter/scanner not ready; sleeping")
+                        Thread.sleep(1000)
+                        continue
+                    }
+
+                    // Ask orchestrator to ensure a running low-power session (our lease)
+                    ScanOrchestrator.ensureRunningLease(
+                        callerTag = "PermanentBluetoothScanner",
+                        filters = filters,
+                        settings = scanSettings,
+                        callback = leScanCallback
+                    )
+
+                    // Sleep a bit before re-asserting; not too often to avoid churn
+                    Thread.sleep(3000)
+
+                } catch (ie: InterruptedException) {
+                    // If the app wants to stop, executor shutdown will interrupt; exit cleanly
+                    BLELogger.d("Permanent scanning loop interrupted")
+                    break
+                } catch (t: Throwable) {
+                    BLELogger.e("Permanent scanning loop error: ${t.message}")
+                    // Back off a little to avoid tight loops
+                    try { Thread.sleep(1500) } catch (_: InterruptedException) { break }
                 }
-            } catch (e: Throwable) {
-                BLELogger.e("BluetoothAdapter not found or BLE not supported!")
             }
 
-            isScanning = true
-            location = null
+            // Release the lease when leaving
+            ScanOrchestrator.releaseLease("PermanentBluetoothScanner")
+            BLELogger.i("Permanent scanning loop finished")
+        }
+    }
 
-
-            // Starting BLE Scan
-            BLELogger.d("Start Scanning for bluetooth le devices...")
-            val scanSettings = ScanSettings.Builder()
-                .setScanMode(scanMode)
-                // Adding other scan settings results in not receiving any devices in the callback
-//                .setReportDelay(5_000)
-//                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
-                .build()
-
-
-
-            bluetoothAdapter?.bluetoothLeScanner?.startScan(
-                DeviceManager.scanFilter,
-                scanSettings,
-                leScanCallback
-            )
-                ?: run {
-                    BLELogger.e("Bluetooth LE Scanner is null, cannot perform scan.")
-                    isScanning = false
-                }
-
-            LocationHistoryController.listenToLocationChanges(this)
-            BLELogger.d("Requesting fused location updates")
-            locationProvider.requestFusedBackgroundLocationUpdates(
-                locationExecutor,
-                LocationHistoryController
-            )
-            BLELogger.d("Requesting passive location updates")
-            locationProvider.requestPassiveLocationProviderUpdates(LocationHistoryController)
-
-//            while (true) {
-//                BLELogger.i( "Keeping permanent scanner active.")
-//                Thread.sleep(10000);
-//            }
-        })
+    fun stopPermanentScan() {
+        keepRunning = false
+        // Do NOT call shutdownNow; it interrupts threads mid-call and can trigger InterruptedException in the framework.
+        executor.shutdown()
+        // Optionally, replace the executor with a new one if you need to start again later
+        if (executor.isShutdown || executor.isTerminated) {
+            executor = Executors.newSingleThreadExecutor()
+        }
+        // Ask orchestrator to stop only if we are the current callback
+        try {
+            ScanOrchestrator.stopScan("PermanentBluetoothScanner", leScanCallback)
+        } catch (_: Throwable) {
+            // ignore
+        }
     }
 
     /**
@@ -230,7 +217,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
     }
 
     private suspend fun insertPendingDevices() {
-        if (pendingFoundDevices.size == 0) {
+        if (pendingFoundDevices.isEmpty()) {
             return
         }
 
@@ -268,44 +255,48 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     location = null
                 }
 
-//                BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
-                BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
-                val pair = BackgroundBluetoothScanner.insertScanResult(
-                    device.wrappedScanResult,
-                    latitude = location?.latitude,
-                    longitude = location?.longitude,
-                    altitude = location?.altitude,
-                    accuracy = location?.accuracy,
-                    discoveryDate = device.discoveryDate
-                )
-                savedDevices.add(device)
-                recentlySeenDevices.add(device)
-
-                if (pair.first != null && pair.second != null) {
-                    BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
-                    // Logging this as a scan
-                    scanRepository.insert(
-                        Scan(
-                            endDate = device.discoveryDate,
-                            duration = 0,
-                            noDevicesFound = 1,
-                            isManual = false,
-                            scanMode = ScanSettings.SCAN_MODE_LOW_POWER,
-                            startDate = device.discoveryDate,
-                            locationDeg = "${PermanentBluetoothScanner.location?.longitude},${PermanentBluetoothScanner.location?.latitude}",
-                            locationId = pair.second?.locationId,
-                            devicesAddressesFound = pair.first?.address,
-                            devicesTypesFound = pair.first?.deviceType?.name
-                        )
+                // BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
+                if (!Utility.getSkipDevice(device.wrappedScanResult) && device.wrappedScanResult.deviceType in validDeviceTypes) {
+                    BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
+                    val pair = BackgroundBluetoothScanner.insertScanResult(
+                        device.wrappedScanResult,
+                        latitude = location?.latitude,
+                        longitude = location?.longitude,
+                        altitude = location?.altitude,
+                        accuracy = location?.accuracy,
+                        discoveryDate = device.discoveryDate
                     )
+                    savedDevices.add(device)
+                    recentlySeenDevices.add(device)
 
-                    SharedPrefs.lastScanDate = device.discoveryDate
-                }else {
-                    BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB")
+                    if (pair.first != null && pair.second != null) {
+                        BLELogger.d("Inserted device ${pair.first?.address} (${pair.first?.deviceType}) at ${pair.second?.locationId} to the DB")
+                        // Logging this as a scan
+                        scanRepository.insert(
+                            Scan(
+                                endDate = device.discoveryDate,
+                                duration = 0,
+                                noDevicesFound = 1,
+                                isManual = false,
+                                scanMode = ScanSettings.SCAN_MODE_LOW_POWER,
+                                startDate = device.discoveryDate,
+                                locationDeg = "${PermanentBluetoothScanner.location?.longitude},${PermanentBluetoothScanner.location?.latitude}",
+                                locationId = pair.second?.locationId,
+                                devicesAddressesFound = pair.first?.address,
+                                devicesTypesFound = pair.first?.deviceType?.name
+                            )
+                        )
+
+                        SharedPrefs.lastScanDate = device.discoveryDate
+                    }else {
+                        BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB")
+                    }
+                } else {
+                    BLELogger.d("Skipping device ${device.wrappedScanResult.uniqueIdentifier} because it should not be saved in the current configuration")
                 }
             }
 
-            if (savedDevices.size == 0 && pendingFoundDevices.size > 0) {
+            if (savedDevices.isEmpty() && pendingFoundDevices.isNotEmpty()) {
                 // No new devices were added.
                 isWaitingForLocationUpdate = true
             } else {
@@ -329,10 +320,13 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         }
     }
 
-
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
+
+            SharedPrefs.showSamsungAndroid15BugNotification = false
+            SharedPrefs.showGenericBluetoothBugNotification = false
+
             val wrappedScanResult = ScanResultWrapper(scanResult)
             //Checks if the device has been found already
 
@@ -345,13 +339,21 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
+
+            if (errorCode == 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                SharedPrefs.showSamsungAndroid15BugNotification = true
+            } else  {
+                SharedPrefs.showGenericBluetoothBugNotification = true
+            }
+
             BLELogger.e("Bluetooth scan failed $errorCode")
-            if (BuildConfig.DEBUG) {
+
+            if (BuildConfig.DEBUG && SharedPrefs.sendBLEErrorMessages) {
                 notificationService.sendBLEErrorNotification()
             }
             CoroutineScope(Dispatchers.IO).launch {
                 Thread.sleep(2_000)
-                PermanentBluetoothScanner.scan()
+                scan()
             }
         }
     }

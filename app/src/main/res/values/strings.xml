@@ -11,6 +11,7 @@
     <string name="title_scan">Scan</string>
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
+    <string name="title_export_device">Export device data: {deviceAddress}</string>
     <string name="title_device_map">All Devices</string>
     <string name="title_devices_map_device">Map: %1$s</string>
     <string name="title_devices">Devices</string>
@@ -33,6 +34,8 @@
     <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="settings_deactivate_scanning_title">Deactivate background scan</string>
     <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker is following you anymore.</string>
+    <string name="settings_permanent_scanning_title">Permanent scanning</string>
+    <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but in rare cases might affect the stability of the app.</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="times_seen">Times seen</string>
@@ -98,6 +101,7 @@
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_use_low_power_ble_summary">This settings will use less energy, but also lead to a worse detection of trackers</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Toggle to disable or enable bluetooth error messages</string>
     <string name="tracking_device_not_connectable">This device is not able to play a sound.</string>
     <string name="tracking_info">Scan this AirTag with your phone via NFC to get more Information.</string>
     <string name="info">Information</string>
@@ -119,6 +123,9 @@
 
     <string name="settings_information_contact_title">Information &amp; Contact</string>
     <string name="settings_information_contact_summary">Get information about us</string>
+
+    <string name="settings_export_found_trackers_title">Export Found Trackers</string>
+    <string name="settings_export_found_trackers_summary">Create a document with all identified trackers</string>
 
     <string name="settings_delete_study_data_title">Delete study data</string>
     <string name="settings_delete_study_data_summary">Request deletion of study data</string>
@@ -177,8 +184,8 @@
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
     <string name="onboarding_notification_title">Sending Notifications</string>
     <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
-    <string name="twitter_description">Check out our Twitter account</string>
-    <string name="twitter">Twitter</string>
+    <string name="website_description">Check out our Website</string>
+    <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
     <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
@@ -265,6 +272,7 @@
     <string name="none">None</string>
     <string name="already_scanning_warning">The app is already scanning in the background. Please wait 10s and restart the manual scan</string>
     <string name="settings_use_low_power_ble_title">Low Power Scan Mode</string>
+    <string name="settings_send_bluetooth_error_messages">Send Bluetooth Error Messages</string>
     <string name="ignored_devices">Ignored devices</string>
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Apple Find My Devices found</string>
@@ -286,7 +294,7 @@
     <string name="survey_alert_message">Do you want to be reminded about the survey later?</string>
     <string name="survery_settings_summary">Technical University of Darmstadt conducts a survey to find out how people are affected by stalking</string>
     <string name="survey_settings_title">Survey on stalking and location tracking</string>
-    <string name="onboarding_setting_summary">Will always show the app onboarding procedure</string>
+    <string name="onboarding_setting_summary">Show the app onboarding procedure on the next launch of the app</string>
     <string name="onboarding_setting_title">Show Onboarding</string>
     <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth is turned off. This app requires Bluetooth to scan for nearby trackers.</string>
@@ -360,6 +368,9 @@
 
     <string name="article_image_description">Preview Image for this article</string>
     <string name="info_button_description">Show explanation text</string>
+
+    <string name="export_device_title">Export Device to PDF</string>
+    <string name="export_device_subtitle">Create a PDF file summary about this tracker</string>
 
     <string name="observe_tracker_title">Observe Tracker</string>
     <string name="observe_tracker_clock_description">Image of a clock</string>
@@ -438,4 +449,36 @@
     <string name="left">Left</string>
     <string name="right">Right</string>
 
+    <string name="export_trackers_label">Export Trackers</string>
+    <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
+    <string name="export_trackers_create_document">Create document</string>
+    <string name="export_trackers_following">The tracker has been following you</string>
+    <string name="export_trackers_not_following">The tracker has not been following you</string>
+    <string name="export_trackers_ignored">The tracker has been ignored</string>
+    <string name="export_trackers_location_unknown">Location: Unknown</string>
+    <string name="export_trackers_tracker_type">Tracker Type: %s</string>
+    <string name="export_trackers_mac">MAC Address: %s</string>
+    <string name="export_trackers_last_seen">Last Seen: %s</string>
+    <string name="export_trackers_first_seen">First Seen: %s</string>
+    <string name="export_trackers_detections">Detections: %d</string>
+    <string name="export_trackers_unique_locations">Unique Locations: %d</string>
+    <string name="export_trackers_time">Time: %s"</string>
+    <string name="export_trackers_location">Location: Latitude: %s, Longitude: %s"</string>
+    <string name="export_trackers_map">Map: %s</string>
+    <string name="export_trackers_map_still_loading">Map still loading…</string>
+    <string name="export_trackers_signal_strength">Signal Strength: %d"</string>
+    <string name="export_trackers_created_by">Created by AirGuard %s for Android</string>
+    <string name="export_trackers_basic_info_title">Information:</string>
+    <string name="export_trackers_map_title">Map:</string>
+    <string name="export_trackers_detections_title">This tracker was found at:</string>
+    <string name="export_trackers_detections_title_continued">This tracker was found at (continuation):</string>
+    <string name="export_page_number">Page %d/%d</string>
+    <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
+    <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
+
+    <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
+    <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
+    <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
+
+    <string name="device_comment_hint">Add a comment</string>
 </resources>
