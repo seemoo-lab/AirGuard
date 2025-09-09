@@ -1,0 +1,6 @@
+NEU: PDF-Export mit Übersicht aller gefundenen Standorte
+NEU: Jeder gefundene Tracker kann mit einem Kommentar versehen werden
+VERBESSERT: Hintergrund-Scan verbessert
+VERBESSERT: Kompatibilität mit Android 15 und 16
+VERBESSERT: Japanische Übersetzung
+VERBESSERT: Fehlerbehebungen
