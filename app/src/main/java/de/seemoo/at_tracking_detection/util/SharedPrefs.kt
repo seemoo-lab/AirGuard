@@ -289,7 +289,7 @@ object SharedPrefs {
 
     var usePermanentBluetoothScanner: Boolean
         get() {
-            return sharedPreferences.getBoolean("use_permanent_bluetooth_scanner", true)
+            return sharedPreferences.getBoolean("use_permanent_bluetooth_scanner", false)
         }
         set(value) {
             sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
