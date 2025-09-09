@@ -1,0 +1,6 @@
+NEW: PDF Export with an overview of all found locations
+NEW: Each found tracker can be annotated with a comment
+IMPROVED: Background Scanning improved
+IMPROVED: Compatibility with Android 15 and 16
+IMPROVED: Japanese Translation
+IMPROVED: Bugfixes
