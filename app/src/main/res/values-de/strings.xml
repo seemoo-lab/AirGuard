@@ -439,4 +439,6 @@
     <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
 
     <string name="device_comment_hint">Kommentar zu diesem Tracker</string>
+    <string name="notification_permission_missing_title">Benachrichtigungen sind deaktiviert</string>
+    <string name="notification_permission_missing_text">Benachrichtigungen sind für diese App deaktiviert. Du wirst nicht gewarnt, wenn dir ein Tracker folgen sollte.</string>
 </resources>

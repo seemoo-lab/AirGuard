@@ -170,7 +170,12 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            // requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            SharedPrefs.showMissingNotificationPermissionWarning =
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
         }
 
         for (permission in requiredPermissions) {

@@ -208,6 +208,13 @@ object SharedPrefs {
         sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
     }
 
+    var showMissingNotificationPermissionWarning: Boolean
+        get() {
+            return sharedPreferences.getBoolean("missing_notification_permission_warning", false)
+        }set(value) {
+        sharedPreferences.edit { putBoolean("missing_notification_permission_warning", value) }
+    }
+
     var showGenericBluetoothBugNotification: Boolean
         get() {
             return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)

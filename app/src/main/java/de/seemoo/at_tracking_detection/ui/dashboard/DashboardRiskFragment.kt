@@ -1,7 +1,10 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -110,6 +114,19 @@ class DashboardRiskFragment : Fragment() {
                         filename = ""
                     )
                     articles = listOf(bugArticle) + articles
+                }
+
+                if (SharedPrefs.showMissingNotificationPermissionWarning) {
+                    val notificationArticle = Article(
+                        title = getString(R.string.notification_permission_missing_title),
+                        author = "System",
+                        readingTime = 0,
+                        previewText = getString(R.string.notification_permission_missing_text),
+                        cardColor = "warning_light_red",
+                        preview_image = "",
+                        filename = ""
+                    )
+                    articles = listOf(notificationArticle) + articles
                 }
 
                 // Create a new LinearLayout to hold the ArticleCards
