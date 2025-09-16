@@ -406,5 +406,7 @@
     <string name="generic_bluetooth_bug_notification_text">Bluetoothスキャン中に問題が発生しました。AirGuardに必要な権限があり、Bluetoothがオンになっていることを確認してください。問題が解決しない場合はスマートフォンを再起動してください。</string>
     <string name="device_comment_hint">コメントを追加</string>
     <string name="notification_permission_missing_title">通知が無効になっています</string>
-    <string name="notification_permission_missing_text">このデバイスでは通知が無効になっています。トラッカーがあなたを追跡している場合、警告は表示されません。</string>
+    <string name="notification_permission_missing_text">このアプリでは通知が無効になっています。トラッカーがあなたを追跡している場合、警告は表示されません。通知を有効にするには、システム設定でこのアプリの通知を有効にしてください。</string>
+    <string name="background_location_permission_missing_title">バックグラウンドでの位置情報取得が無効です</string>
+    <string name="background_location_permission_missing_text">このアプリにはバックグラウンドでの位置情報取得の許可がありません。アプリが閉じている間にトラッカーがあなたを追跡しても警告されません。システム設定でバックグラウンド位置情報を有効にしてください。</string>
 </resources>

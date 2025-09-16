@@ -234,6 +234,7 @@ class OnboardingActivity : AppIntro() {
     private fun handleRequiredPermission(permissionName: String) {
         if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
             SharedPrefs.useLocationInTrackingDetection = false
+            goToNextSlide()
         } else if (permissionName == Manifest.permission.POST_NOTIFICATIONS) {
             goToNextSlide()
         } else if (dialog?.isShowing != true) {

@@ -481,6 +481,8 @@
     <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
 
     <string name="device_comment_hint">Add a comment</string>
-    <string name="notification_permission_missing_title">Notifications disabled</string>
-    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you.</string>
+    <string name="notification_permission_missing_title">Notification Permission disabled</string>
+    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you. To change this enable notifications for this app in your system settings.</string>
+    <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
+    <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
 </resources>

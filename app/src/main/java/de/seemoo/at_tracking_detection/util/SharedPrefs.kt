@@ -197,28 +197,35 @@ object SharedPrefs {
     var dismissSurveyInformation: Boolean
         get() {
             return sharedPreferences.getBoolean("dismiss_survey_information", false)
-        }set(value) {
+        } set(value) {
             sharedPreferences.edit { putBoolean("dismiss_survey_information", value) }
         }
 
     var showSamsungAndroid15BugNotification: Boolean
         get() {
             return sharedPreferences.getBoolean("samsung_bug_notification", false)
-        }set(value) {
+        } set(value) {
         sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
     }
 
     var showMissingNotificationPermissionWarning: Boolean
         get() {
             return sharedPreferences.getBoolean("missing_notification_permission_warning", false)
-        }set(value) {
+        } set(value) {
         sharedPreferences.edit { putBoolean("missing_notification_permission_warning", value) }
+    }
+
+    var showMissingBackgroundLocationPermissionWarning: Boolean
+        get() {
+            return sharedPreferences.getBoolean("missing_background_permission_warning", false)
+        } set(value) {
+        sharedPreferences.edit { putBoolean("missing_background_permission_warning", value) }
     }
 
     var showGenericBluetoothBugNotification: Boolean
         get() {
             return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)
-        }set(value) {
+        } set(value) {
         sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
     }
 
@@ -233,8 +240,7 @@ object SharedPrefs {
                 }
             }
             return null
-        }
-        set(value) {
+        } set(value) {
             sharedPreferences.edit {
                 putString(
                     "survey_notification_date",
