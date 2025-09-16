@@ -50,6 +50,8 @@ class NotificationRepository @Inject constructor(
 
     fun getFalseAlarmForDeviceSinceCount(deviceAddress: String, since: LocalDateTime): Int = notificationDao.getFalseAlarmForDeviceSinceCount(deviceAddress, since)
 
+    fun getFalseAlarmForDeviceCount(deviceAddress: String): Int = notificationDao.getFalseAlarmForDeviceCount(deviceAddress)
+
     fun existsNotificationForDevice(deviceAddress: String): Boolean = notificationDao.existsNotificationForDevice(deviceAddress)
 
     fun getAllNotifications(): List<Notification> = notificationDao.getAllNotifications()
