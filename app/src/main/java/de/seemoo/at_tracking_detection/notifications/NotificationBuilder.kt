@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -83,11 +84,14 @@ class NotificationBuilder @Inject constructor(
     private fun buildPendingIntent(
         bundle: Bundle,
         notificationAction: String,
+        notificationId: Int,
         code: Int
     ): PendingIntent {
         val intent = Intent(context, NotificationActionReceiver::class.java).apply {
             action = notificationAction
             putExtras(bundle)
+            val tag = bundle.getString("notificationTag") ?: "none"
+            data = "airguard://notif/$tag/$notificationId/$notificationAction".toUri()
         }
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -96,9 +100,11 @@ class NotificationBuilder @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
+        val uniqueRequestCode = (notificationId and 0x7FFFFFFF) xor (code shl 16)
+
         return PendingIntent.getBroadcast(
             context,
-            code,
+            uniqueRequestCode,
             intent,
             flags
         )
@@ -168,6 +174,7 @@ class NotificationBuilder @Inject constructor(
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.FALSE_ALARM_ACTION,
+                    notificationId,
                     NotificationConstants.FALSE_ALARM_CODE
                 )
             ).setAutoCancel(true)
@@ -179,6 +186,7 @@ class NotificationBuilder @Inject constructor(
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.IGNORE_DEVICE_ACTION,
+                    notificationId,
                     NotificationConstants.IGNORE_DEVICE_CODE
                 )
             ).setAutoCancel(true)
@@ -188,6 +196,7 @@ class NotificationBuilder @Inject constructor(
             buildPendingIntent(
                 bundle,
                 NotificationConstants.DISMISSED_ACTION,
+                notificationId,
                 NotificationConstants.DISMISSED_CODE
             )
         ).setAutoCancel(true)
@@ -232,6 +241,7 @@ class NotificationBuilder @Inject constructor(
             buildPendingIntent(
                 bundle,
                 NotificationConstants.DISMISSED_ACTION,
+                notificationId,
                 NotificationConstants.DISMISSED_CODE
             )
         ).setAutoCancel(true)

@@ -4,17 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrackingNotificationActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
 
     private lateinit var navController: NavController
 
@@ -76,6 +84,13 @@ class TrackingNotificationActivity : AppCompatActivity() {
         val deviceTypeAsString = intent.getStringExtra("deviceTypeAsString") ?: "UNKNOWN"
         val notificationId = intent.getIntExtra("notificationId", -1)
         Timber.d("Tracking Activity with device $deviceAddress and notification $notificationId started!")
+
+        // Mark as clicked if we have a valid notification id
+        if (notificationId != -1) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                notificationRepository.setClicked(notificationId, true)
+            }
+        }
 
         if (deviceAddress == null) {
             Timber.e("Device address is needed! Going home...")
