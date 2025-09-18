@@ -29,9 +29,16 @@ class IgnoreDeviceWorker @AssistedInject constructor(
             Timber.e("No notification id passed!")
             return Result.failure()
         }
+        val notificationTag = inputData.getString("notificationTag")
+
         deviceViewModel.setIgnoreFlag(deviceAddress, true)
-        //TODO: cancel specific notification by calling cancel(notificationId) which somehow doesn't work...
-        notificationManagerCompat.cancelAll()
+
+        if (notificationTag.isNullOrEmpty()) {
+            notificationManagerCompat.cancel(notificationId)
+        } else {
+            notificationManagerCompat.cancel(notificationTag, notificationId)
+        }
+
         Timber.d("Added device $deviceAddress to the ignored devices list!")
         return Result.success()
     }

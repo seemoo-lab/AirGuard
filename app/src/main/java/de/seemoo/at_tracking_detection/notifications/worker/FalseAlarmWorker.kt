@@ -17,17 +17,23 @@ class FalseAlarmWorker @AssistedInject constructor(
     private val notificationViewModel: NotificationViewModel,
     private val notificationManagerCompat: NotificationManagerCompat
 ) : CoroutineWorker(appContext, workerParams) {
-
     override suspend fun doWork(): Result {
         val notificationId = inputData.getInt("notificationId", -1)
         if (notificationId == -1) {
             Timber.e("No notification id passed!")
             return Result.failure()
         }
+        val notificationTag = inputData.getString("notificationTag")
+
         notificationViewModel.setFalseAlarm(notificationId, true)
-        //TODO: cancel specific notification by calling cancel(notificationId) which somehow doesn't work...
-        notificationManagerCompat.cancelAll()
-        Timber.d("Marked notification $notificationId as false alarm!")
+
+        if (notificationTag.isNullOrEmpty()) {
+            notificationManagerCompat.cancel(notificationId)
+        } else {
+            notificationManagerCompat.cancel(notificationTag, notificationId)
+        }
+
+        Timber.d("Marked notification $notificationId as false alarm and canceled it!")
         return Result.success()
     }
 }

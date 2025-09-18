@@ -45,19 +45,23 @@ class BackgroundWorkBuilder @Inject constructor() {
             .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
             .build()
 
-    fun buildIgnoreDeviceWorker(deviceAddress: String, notificationId: Int): OneTimeWorkRequest =
+    fun buildIgnoreDeviceWorker(deviceAddress: String, notificationId: Int, notificationTag: String?): OneTimeWorkRequest =
         OneTimeWorkRequestBuilder<IgnoreDeviceWorker>().addTag(WorkerConstants.IGNORE_DEVICE_WORKER)
             .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
             .setInputData(
                 Data.Builder().putString("deviceAddress", deviceAddress)
-                    .putInt("notificationId", notificationId).build()
+                    .putInt("notificationId", notificationId)
+                    .putString("notificationTag", notificationTag)
+                    .build()
             )
             .build()
 
-    fun buildFalseAlarmWorker(notificationId: Int): OneTimeWorkRequest =
+    fun buildFalseAlarmWorker(notificationId: Int, notificationTag: String?): OneTimeWorkRequest =
         OneTimeWorkRequestBuilder<FalseAlarmWorker>().addTag(WorkerConstants.FALSE_ALARM_WORKER)
             .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
-            .setInputData(Data.Builder().putInt("notificationId", notificationId).build())
+            .setInputData(Data.Builder().putInt("notificationId", notificationId)
+                .putString("notificationTag", notificationTag)
+                .build())
             .build()
 
     private fun buildConstraints(): Constraints =
