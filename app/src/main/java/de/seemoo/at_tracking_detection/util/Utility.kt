@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -153,6 +154,9 @@ object Utility {
 
         )
 
+        // Remove previously added clusterer overlays to avoid performance issues
+        map.overlays.removeAll { it is RadiusMarkerClusterer }
+
         val clusterer = RadiusMarkerClusterer(context)
         val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
         clusterer.setIcon(clusterIcon)
@@ -186,7 +190,7 @@ object Utility {
 
         if (geoPointList.isEmpty()) {
             mapController.setZoom(MAX_ZOOM_LEVEL)
-            map.post { map.invalidate() }
+            runWhenMapReady(map) { map.invalidate() }
             return false
         }
 
@@ -195,18 +199,37 @@ object Utility {
         myLocationOverlay?.disableFollowLocation()
         val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
 
-        map.post {
+        // Ensure the map has been loaded before attempting to zoom.
+        runWhenMapReady(map) {
             try {
-                Timber.d("Zoom in to bounds -> $boundingBox")
+                Timber.d("Zoom in to bounds -> $boundingBox (w=${map.width}, h=${map.height})")
                 map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
             } catch (e: IllegalArgumentException) {
                 mapController.setCenter(boundingBox.centerWithDateLine)
                 mapController.setZoom(10.0)
                 Timber.e("Failed to zoom to bounding box! ${e.message}")
+            } finally {
+                map.invalidate()
             }
         }
 
         return true
+    }
+
+    // Helper to run actions only after the MapView is loaded (has non-zero size)
+    private fun runWhenMapReady(map: MapView, action: () -> Unit) {
+        if (map.width > 0 && map.height > 0) {
+            map.post { action() }
+            return
+        }
+        map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (map.width > 0 && map.height > 0) {
+                    map.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    map.post { action() }
+                }
+            }
+        })
     }
 
     fun fetchLocationListFromBeaconList(locations: List<Beacon>): List<Location> {
