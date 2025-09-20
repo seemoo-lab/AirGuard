@@ -29,6 +29,10 @@ class TrackingNotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracking)
+
+        // For notification entry: disable edge-to-edge so content area automatically respects system bars
+        MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -41,17 +45,9 @@ class TrackingNotificationActivity : AppCompatActivity() {
         })
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return if (navController.currentDestination?.id == R.id.trackingFragment) {
-            finish()
-            true
-        } else {
-            navController.navigateUp()
-        }
-    }
-
     override fun onResume() {
         super.onResume()
+        MainActivity.configureSystemBars(this, edgeToEdge = false, applyRootPadding = false)
         val fragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment)
         if (fragment is NavHostFragment) {
             val trackingFragment = fragment.childFragmentManager.primaryNavigationFragment
@@ -75,7 +71,6 @@ class TrackingNotificationActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
         navigateToTrackingFragment()
     }
 
@@ -85,7 +80,6 @@ class TrackingNotificationActivity : AppCompatActivity() {
         val notificationId = intent.getIntExtra("notificationId", -1)
         Timber.d("Tracking Activity with device $deviceAddress and notification $notificationId started!")
 
-        // Mark as clicked if we have a valid notification id
         if (notificationId != -1) {
             lifecycleScope.launch(Dispatchers.IO) {
                 notificationRepository.setClicked(notificationId, true)
@@ -96,9 +90,8 @@ class TrackingNotificationActivity : AppCompatActivity() {
             Timber.e("Device address is needed! Going home...")
             this.onSupportNavigateUp()
         } else {
-            // Workaround: Somehow not possible to use getString with deviceAddress as an Argument
             var getTitle = getString(R.string.title_devices_tracking)
-            getTitle = getTitle.replace("{deviceAddress}", deviceAddress.toString())
+            getTitle = getTitle.replace("{deviceAddress}", deviceAddress)
             supportActionBar?.title = getTitle
 
             val args = TrackingFragmentArgs(
@@ -107,9 +100,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
                 notificationId = notificationId
             ).toBundle()
             navController.setGraph(R.navigation.main_navigation)
-            val navOptions = NavOptions.Builder()
-                // .setPopUpTo(R.id.navigation_dashboard, true)
-                .build()
+            val navOptions = NavOptions.Builder().build()
             navController.navigate(R.id.trackingFragment, args, navOptions)
         }
     }
