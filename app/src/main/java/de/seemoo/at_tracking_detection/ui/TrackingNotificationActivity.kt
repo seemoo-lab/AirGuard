@@ -36,11 +36,16 @@ class TrackingNotificationActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        navigateToTrackingFragment()
+        // Only navigate on fresh creation or when a new intent with different device arrives
+        if (savedInstanceState == null) {
+            navigateToTrackingFragment(firstTime = true)
+        } else {
+            updateActionBarTitle()
+        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                onSupportNavigateUp()
+                handleBackNavigation()
             }
         })
     }
@@ -71,10 +76,10 @@ class TrackingNotificationActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        navigateToTrackingFragment()
+        navigateToTrackingFragment(replaceGraph = true, firstTime = true)
     }
 
-    private fun navigateToTrackingFragment() {
+    private fun navigateToTrackingFragment(replaceGraph: Boolean = false, firstTime: Boolean = false) {
         val deviceAddress = intent.getStringExtra("deviceAddress")
         val deviceTypeAsString = intent.getStringExtra("deviceTypeAsString") ?: "UNKNOWN"
         val notificationId = intent.getIntExtra("notificationId", -1)
@@ -87,21 +92,52 @@ class TrackingNotificationActivity : AppCompatActivity() {
         }
 
         if (deviceAddress == null) {
-            Timber.e("Device address is needed! Going home...")
-            this.onSupportNavigateUp()
-        } else {
-            var getTitle = getString(R.string.title_devices_tracking)
-            getTitle = getTitle.replace("{deviceAddress}", deviceAddress)
-            supportActionBar?.title = getTitle
-
-            val args = TrackingFragmentArgs(
-                deviceAddress = deviceAddress,
-                deviceTypeAsString = deviceTypeAsString,
-                notificationId = notificationId
-            ).toBundle()
-            navController.setGraph(R.navigation.main_navigation)
-            val navOptions = NavOptions.Builder().build()
-            navController.navigate(R.id.trackingFragment, args, navOptions)
+            Timber.e("Device was not provided! Finishing TrackingNotificationActivity.")
+            finish()
+            return
         }
+
+        updateActionBarTitle(deviceAddress)
+        val args = TrackingFragmentArgs(deviceAddress, deviceTypeAsString, notificationId).toBundle()
+
+        if (replaceGraph || (firstTime && navController.currentDestination == null)) {
+            navController.setGraph(R.navigation.main_navigation)
+            // When accessing through Notification: trackingFragment is the root
+            val startDest = navController.graph.startDestinationId
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(startDest, inclusive = true)
+                .setLaunchSingleTop(true)
+                .build()
+            navController.navigate(R.id.trackingFragment, args, navOptions)
+            return
+        }
+
+        if (navController.currentDestination?.id != R.id.trackingFragment) {
+            navController.navigate(
+                R.id.trackingFragment,
+                args,
+                NavOptions.Builder().setLaunchSingleTop(true).build()
+            )
+        }
+    }
+
+    private fun updateActionBarTitle(deviceAddress: String? = intent.getStringExtra("deviceAddress")) {
+        deviceAddress ?: return
+        var getTitle = getString(R.string.title_devices_tracking)
+        getTitle = getTitle.replace("{deviceAddress}", deviceAddress)
+        supportActionBar?.title = getTitle
+    }
+
+    private fun handleBackNavigation() {
+        if (navController.currentDestination?.id != R.id.trackingFragment && navController.popBackStack()) {
+            return
+        }
+        // When at root --> finish
+        finish()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        handleBackNavigation()
+        return true
     }
 }
