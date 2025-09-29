@@ -98,12 +98,18 @@ class RiskLevelEvaluator(
         private const val NUMBER_OF_BEACONS_BEFORE_ALARM: Int = 3 // Number of total beacons before notification is created
         private const val MAX_ACCURACY_FOR_LOCATIONS: Float = 100.0F // Minimum Location accuracy for high risk
         const val MAX_NUMBER_MEDIUM_RISK: Long = 3 // Maximum number of devices with MEDIUM risk until the total risk level is set to high
-        val relevantTrackingDateForRiskCalculation: LocalDateTime = LocalDateTime.now().minusDays(
-            RELEVANT_DAYS_RISK_LEVEL) // Fallback Option, if possible use getRelevantTrackingDate() Function
-        val deleteBeforeDate: LocalDateTime = LocalDateTime.now().minusDays(DELETE_SAFE_DEVICES_OLDER_THAN_DAYS)
-        val deleteSafeGoogleTrackersBeforeDate: LocalDateTime = LocalDateTime.now().minusHours(DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
-        val matchNotConnectableGoogleTrackersBeforeDate: LocalDateTime = LocalDateTime.now().minusHours(MATCH_NOT_CONNECTABLE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
-        private val relevantNotificationDate: LocalDateTime = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
+
+        // Dates used for queries. They will calculate a new date when accessed again
+        val relevantTrackingDateForRiskCalculation: LocalDateTime
+            get() = LocalDateTime.now().minusDays(RELEVANT_DAYS_RISK_LEVEL)
+        val deleteBeforeDate: LocalDateTime
+            get() = LocalDateTime.now().minusDays(DELETE_SAFE_DEVICES_OLDER_THAN_DAYS)
+        val deleteSafeGoogleTrackersBeforeDate: LocalDateTime
+            get() = LocalDateTime.now().minusHours(DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
+        val matchNotConnectableGoogleTrackersBeforeDate: LocalDateTime
+            get() = LocalDateTime.now().minusHours(MATCH_NOT_CONNECTABLE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
+        private val relevantNotificationDate: LocalDateTime
+            get() = LocalDateTime.now().minusDays(RELEVANT_DAYS_NOTIFICATIONS)
 
         // Default Values: A single tracker gets tracked at least for x minutes until notification is created
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH: Long = 30

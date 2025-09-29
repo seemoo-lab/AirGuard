@@ -4,9 +4,11 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import androidx.activity.enableEdgeToEdge
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -51,9 +53,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        enableEdgeToEdge()
+
+        configureSystemBars(this, edgeToEdge = true, applyRootPadding = false)
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-        configureSystemBars()
 
         val configuration = Configuration.getInstance()
         configuration.load(this, PreferenceManager.getDefaultSharedPreferences(this))
@@ -108,25 +110,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, args=null, navOptions = navOptions)
             }
             return@setOnItemSelectedListener true
-        }
-    }
-
-    private fun configureSystemBars() {
-        val isDarkTheme = Utility.isActualThemeDark(context = this)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-            windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
-            if (isDarkTheme) {
-                windowInsetsController.isAppearanceLightStatusBars = false
-                windowInsetsController.isAppearanceLightNavigationBars = false
-            } else {
-                windowInsetsController.isAppearanceLightStatusBars = true
-                windowInsetsController.isAppearanceLightNavigationBars = true
-            }
-        } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
 
@@ -186,6 +169,39 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     companion object {
         private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
+
+        fun configureSystemBars(
+            activity: AppCompatActivity,
+            edgeToEdge: Boolean = true,
+            applyRootPadding: Boolean = true,
+        ) {
+            if (edgeToEdge) {
+                WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+            } else {
+                WindowCompat.setDecorFitsSystemWindows(activity.window, true)
+            }
+
+            val isDarkTheme = Utility.isActualThemeDark(activity)
+            val controller = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.isAppearanceLightStatusBars = !isDarkTheme
+            controller.isAppearanceLightNavigationBars = !isDarkTheme
+
+            if (applyRootPadding) {
+                applySystemBarPadding(activity)
+            }
+        }
+
+        fun applySystemBarPadding(activity: AppCompatActivity) {
+            val content = activity.findViewById<ViewGroup>(android.R.id.content)
+            val root = content.getChildAt(0) ?: return
+            ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+                val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(sysBars.left, sysBars.top, sysBars.right, sysBars.bottom)
+                insets
+            }
+            ViewCompat.requestApplyInsets(root)
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

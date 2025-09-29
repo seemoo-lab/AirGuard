@@ -1,30 +1,30 @@
-With AirGuard, you get the anti-stalking protection you deserve!
-The app scans your surroundings in the background to detect trackers like AirTags, Samsung SmartTags, or Google Find My Device trackers. If a tracker is following you, you will receive an instant notification.
+Mit AirGuard bekommst du den Anti-Stalking-Schutz, den du verdienst!
+Die App scannt im Hintergrund deine Umgebung, um Tracker wie AirTags, Samsung SmartTags oder Google Find My Device-Tracker zu erkennen. Wenn ein Tracker dir folgt, erhältst du sofort eine Benachrichtigung.
 
-These trackers are often no larger than a coin and are unfortunately misused to secretly track people. Since each tracker works differently, you would typically need multiple apps to detect unwanted tracking.
-AirGuard combines the detection of various trackers into a single app – keeping you protected with ease.
+Diese Tracker sind oft nicht größer als eine Münze und werden leider missbraucht, um Menschen heimlich zu verfolgen. Da jeder Tracker anders funktioniert, bräuchtest du normalerweise mehrere Apps, um unerwünschtes Tracking zu erkennen.
+AirGuard vereint die Erkennung verschiedener Tracker in einer einzigen App – so bleibst du einfach geschützt.
 
-Once a tracker is detected, you can make it play a sound (for supported models) or perform a manual scan to locate it. If you find a tracker, we recommend disabling it to prevent further tracking of your location.
+Sobald ein Tracker entdeckt wurde, kannst du ihn einen Ton abspielen lassen (für unterstützte Modelle) oder einen manuellen Scan durchführen, um ihn zu lokalisieren. Wenn du einen Tracker findest, empfehlen wir, ihn zu deaktivieren, damit er deinen Standort nicht weiter verfolgen kann.
 
-The app stores location data exclusively on your device, allowing you to review where a tracker has followed you. Your personal data is never shared.
+Die App speichert Standortdaten ausschließlich auf deinem Gerät, sodass du später nachvollziehen kannst, wo dich ein Tracker verfolgt hat. Deine persönlichen Daten werden niemals weitergegeben.
 
-If no trackers are found, the app runs silently in the background and won’t bother you.
+Wenn keine Tracker gefunden werden, läuft die App im Hintergrund und stört dich nicht.
 
-<h2><b>How does the app work?</b></h2>
-AirGuard uses Bluetooth to detect AirTags, Samsung SmartTags, and other trackers. All data is processed and stored locally on your device.
-If a tracker is detected in at least three different locations, you will receive a warning. You can adjust the security level in the settings to receive even faster alerts.
+<h2><b>Wie funktioniert die App?</b></h2>
+AirGuard verwendet Bluetooth, um AirTags, Samsung SmartTags und andere Tracker zu erkennen. Alle Daten werden lokal auf deinem Gerät verarbeitet und gespeichert.
+Wenn ein Tracker an mindestens drei verschiedenen Orten festgestellt wird, erhältst du eine Warnung. Du kannst das Sicherheitsniveau in den Einstellungen anpassen, um noch schneller benachrichtigt zu werden.
 
-<h2><b>Who are we?</b></h2>
-We are part of the Technical University of Darmstadt. This project is part of the scientific research conducted by the Secure Mobile Networking Lab.
-Our goal is to protect people’s privacy and investigate how widespread the issue of tracker-based stalking is.
+<h2><b>Wer sind wir?</b></h2>
+Wir sind Teil der Technischen Universität Darmstadt. Dieses Projekt ist Teil der wissenschaftlichen Forschung des Secure Mobile Networking Lab.
+Unser Ziel ist es, die Privatsphäre von Menschen zu schützen und zu untersuchen, wie weit verbreitet das Problem des tracker-basierten Stalkings ist.
 
-You can voluntarily participate in an anonymous study to help us gain more insights into the usage and spread of these trackers.
+Du kannst freiwillig an einer anonymen Studie teilnehmen, um uns mehr Einblicke in die Nutzung und Verbreitung dieser Tracker zu geben.
 
-This app will never be monetized – there are no ads and no paid features. You will never be charged for using it.
+Diese App wird niemals monetarisiert – es gibt keine Werbung und keine kostenpflichtigen Funktionen. Für die Nutzung fallen keine Kosten an.
 
-Our privacy policy can be found here:
+Unsere Datenschutzerklärung findest du hier:
 https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
 
-<h2><b>Legal Notice</b></h2>
-AirTag, Find My, and iOS are registered trademarks of Apple Inc.
-This project is not affiliated with Apple Inc.
+<h2><b>Rechtlicher Hinweis</b></h2>
+AirTag, Find My und iOS sind eingetragene Marken der Apple Inc.
+Dieses Projekt ist nicht mit Apple Inc. verbunden

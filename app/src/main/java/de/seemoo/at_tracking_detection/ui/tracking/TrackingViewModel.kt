@@ -89,6 +89,7 @@ class TrackingViewModel @Inject constructor(
                 canBeIgnored.postValue(deviceType.value!!.canBeIgnored(ConnectionState.OVERMATURE_OFFLINE))
                 val notification = notificationRepository.notificationForDevice(device).firstOrNull()
                 notification?.let { notificationId.postValue(it.notificationId) }
+                falseAlarm.postValue(notification?.falseAlarm ?: false)
 
                 // Load last seen times
                 viewModelScope.launch {

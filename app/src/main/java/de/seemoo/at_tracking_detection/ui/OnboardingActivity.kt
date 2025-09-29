@@ -140,7 +140,7 @@ class OnboardingActivity : AppIntro() {
             askForPermissions(
                 permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN),
                 slideNumber = slideNumber,
-                required = false
+                required = true
             )
             return true
         }
@@ -234,6 +234,9 @@ class OnboardingActivity : AppIntro() {
     private fun handleRequiredPermission(permissionName: String) {
         if (permissionName == Manifest.permission.ACCESS_BACKGROUND_LOCATION) {
             SharedPrefs.useLocationInTrackingDetection = false
+            goToNextSlide()
+        } else if (permissionName == Manifest.permission.POST_NOTIFICATIONS) {
+            goToNextSlide()
         } else if (dialog?.isShowing != true) {
             MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.permission_required)

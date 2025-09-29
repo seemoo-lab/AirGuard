@@ -38,6 +38,15 @@ class NotificationActionReceiver : BroadcastReceiver() {
             Timber.e("Notification id missing!")
             return
         }
+        val notificationTag = intent.getStringExtra("notificationTag")
+
+        fun cancelNotification() {
+            if (notificationTag.isNullOrEmpty()) {
+                notificationManagerCompat.cancel(notificationId)
+            } else {
+                notificationManagerCompat.cancel(notificationTag, notificationId)
+            }
+        }
 
         when (intent.action) {
             NotificationConstants.FALSE_ALARM_ACTION -> {
@@ -46,7 +55,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     notificationRepository.setFalseAlarm(notificationId, true)
                 }
                 // Dismiss the notification immediately for this action.
-                notificationManagerCompat.cancel(notificationId)
+                cancelNotification()
+                backgroundWorkScheduler.scheduleFalseAlarm(notificationId, notificationTag)
             }
             NotificationConstants.IGNORE_DEVICE_ACTION -> {
                 val deviceAddress = intent.getStringExtra("deviceAddress")
@@ -59,13 +69,14 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     deviceRepository.setIgnoreFlag(deviceAddress, true)
                 }
                 // Dismiss the notification immediately for this action.
-                notificationManagerCompat.cancel(notificationId)
+                cancelNotification()
+                backgroundWorkScheduler.scheduleIgnoreDevice(deviceAddress, notificationId, notificationTag)
             }
             NotificationConstants.CLICKED_ACTION -> {
                 GlobalScope.launch(Dispatchers.IO) {
                     notificationRepository.setClicked(notificationId, true)
                 }
-                notificationManagerCompat.cancel(notificationId)
+                cancelNotification()
             }
             NotificationConstants.DISMISSED_ACTION -> {
                 GlobalScope.launch(Dispatchers.IO) {
@@ -75,4 +86,3 @@ class NotificationActionReceiver : BroadcastReceiver() {
         }
     }
 }
-

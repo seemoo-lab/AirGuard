@@ -197,21 +197,35 @@ object SharedPrefs {
     var dismissSurveyInformation: Boolean
         get() {
             return sharedPreferences.getBoolean("dismiss_survey_information", false)
-        }set(value) {
+        } set(value) {
             sharedPreferences.edit { putBoolean("dismiss_survey_information", value) }
         }
 
     var showSamsungAndroid15BugNotification: Boolean
         get() {
             return sharedPreferences.getBoolean("samsung_bug_notification", false)
-        }set(value) {
+        } set(value) {
         sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
+    }
+
+    var showMissingNotificationPermissionWarning: Boolean
+        get() {
+            return sharedPreferences.getBoolean("missing_notification_permission_warning", false)
+        } set(value) {
+        sharedPreferences.edit { putBoolean("missing_notification_permission_warning", value) }
+    }
+
+    var showMissingBackgroundLocationPermissionWarning: Boolean
+        get() {
+            return sharedPreferences.getBoolean("missing_background_permission_warning", false)
+        } set(value) {
+        sharedPreferences.edit { putBoolean("missing_background_permission_warning", value) }
     }
 
     var showGenericBluetoothBugNotification: Boolean
         get() {
             return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)
-        }set(value) {
+        } set(value) {
         sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
     }
 
@@ -226,8 +240,7 @@ object SharedPrefs {
                 }
             }
             return null
-        }
-        set(value) {
+        } set(value) {
             sharedPreferences.edit {
                 putString(
                     "survey_notification_date",
@@ -252,6 +265,24 @@ object SharedPrefs {
         }
         set(value) {
             sharedPreferences.edit { putString("risk_sensitivity", value) }
+        }
+
+    var appOpenCount: Int
+        // How often the app has been opened
+        get() {
+            return sharedPreferences.getInt("app_open_count", 0)
+        }
+        set(value) {
+            sharedPreferences.edit { putInt("app_open_count", value) }
+        }
+
+    var reviewShown: Boolean
+        // If the review dialog has been shown
+        get() {
+            return sharedPreferences.getBoolean("review_shown", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("review_shown", value) }
         }
 
     var devicesFilter: Set<String>

@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
@@ -29,7 +30,7 @@ import javax.inject.Singleton
 
 @Singleton
 class NotificationBuilder @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     private fun pendingNotificationIntent(bundle: Bundle, notificationId: Int): PendingIntent {
@@ -83,11 +84,14 @@ class NotificationBuilder @Inject constructor(
     private fun buildPendingIntent(
         bundle: Bundle,
         notificationAction: String,
+        notificationId: Int,
         code: Int
     ): PendingIntent {
         val intent = Intent(context, NotificationActionReceiver::class.java).apply {
             action = notificationAction
             putExtras(bundle)
+            val tag = bundle.getString("notificationTag") ?: "none"
+            data = "airguard://notif/$tag/$notificationId/$notificationAction".toUri()
         }
 
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -96,9 +100,11 @@ class NotificationBuilder @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
+        val uniqueRequestCode = (notificationId and 0x7FFFFFFF) xor (code shl 16)
+
         return PendingIntent.getBroadcast(
             context,
-            code,
+            uniqueRequestCode,
             intent,
             flags
         )
@@ -118,7 +124,10 @@ class NotificationBuilder @Inject constructor(
         }
             ?: "UNKNOWN"
 
-        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId)
+        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId).apply {
+            // Provide the tag so the receiver can cancel using tag+id
+            putString("notificationTag", NotificationService.TRACKING_NOTIFICATION_TAG)
+        }
         val device = baseDevice.device
         val notificationText: String
         val notificationTitle: String
@@ -165,6 +174,7 @@ class NotificationBuilder @Inject constructor(
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.FALSE_ALARM_ACTION,
+                    notificationId,
                     NotificationConstants.FALSE_ALARM_CODE
                 )
             ).setAutoCancel(true)
@@ -176,6 +186,7 @@ class NotificationBuilder @Inject constructor(
                 buildPendingIntent(
                     bundle,
                     NotificationConstants.IGNORE_DEVICE_ACTION,
+                    notificationId,
                     NotificationConstants.IGNORE_DEVICE_CODE
                 )
             ).setAutoCancel(true)
@@ -185,6 +196,7 @@ class NotificationBuilder @Inject constructor(
             buildPendingIntent(
                 bundle,
                 NotificationConstants.DISMISSED_ACTION,
+                notificationId,
                 NotificationConstants.DISMISSED_CODE
             )
         ).setAutoCancel(true)
@@ -200,7 +212,9 @@ class NotificationBuilder @Inject constructor(
         observationPositive: Boolean
     ): Notification {
         Timber.d("Notification with id $notificationId for device $deviceAddress has been build!")
-        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId)
+        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId).apply {
+            putString("notificationTag", NotificationService.OBSERVE_TRACKER_NOTIFICATION_TAG)
+        }
 
         val notifyText = if (observationPositive) {
             context.resources.getQuantityString(
@@ -227,6 +241,7 @@ class NotificationBuilder @Inject constructor(
             buildPendingIntent(
                 bundle,
                 NotificationConstants.DISMISSED_ACTION,
+                notificationId,
                 NotificationConstants.DISMISSED_CODE
             )
         ).setAutoCancel(true)
@@ -236,7 +251,10 @@ class NotificationBuilder @Inject constructor(
     }
 
     fun buildObserveTrackerFailedNotification(notificationId: Int): Notification {
-        val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+        val bundle: Bundle = Bundle().apply {
+            putInt("notificationId", notificationId)
+            putString("notificationTag", NotificationService.OBSERVE_TRACKER_NOTIFICATION_TAG)
+        }
 
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_observe_tracker_title_base))
@@ -251,7 +269,10 @@ class NotificationBuilder @Inject constructor(
 
     fun buildBluetoothErrorNotification(): Notification {
         val notificationId = -100
-        val bundle: Bundle = Bundle().apply { putInt("notificationId", notificationId) }
+        val bundle: Bundle = Bundle().apply {
+            putInt("notificationId", notificationId)
+            putString("notificationTag", NotificationService.BLE_SCAN_ERROR_TAG)
+        }
 
         return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.notification_title_ble_error))

@@ -7,19 +7,19 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import androidx.work.*
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.Operation
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
-import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import android.Manifest
-import de.seemoo.at_tracking_detection.util.SharedPrefs
-import java.time.Instant
-import java.util.TimeZone
 
 @Singleton
 class BackgroundWorkScheduler @Inject constructor(
@@ -78,17 +78,17 @@ class BackgroundWorkScheduler @Inject constructor(
     fun removeShareData() =
         workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SEND_STATISTICS_WORKER)
 
-    fun scheduleIgnoreDevice(deviceAddress: String, notificationId: Int) =
+    fun scheduleIgnoreDevice(deviceAddress: String, notificationId: Int, notificationTag: String?) =
         workManager.enqueueUniqueWork(
             WorkerConstants.IGNORE_DEVICE_WORKER,
             ExistingWorkPolicy.APPEND_OR_REPLACE,
-            backgroundWorkBuilder.buildIgnoreDeviceWorker(deviceAddress, notificationId)
+            backgroundWorkBuilder.buildIgnoreDeviceWorker(deviceAddress, notificationId, notificationTag)
         ).also { it.logOperationSchedule(WorkerConstants.IGNORE_DEVICE_WORKER) }
 
-    fun scheduleFalseAlarm(notificationId: Int) = workManager.enqueueUniqueWork(
-        WorkerConstants.IGNORE_DEVICE_WORKER,
+    fun scheduleFalseAlarm(notificationId: Int, notificationTag: String?) = workManager.enqueueUniqueWork(
+        WorkerConstants.FALSE_ALARM_WORKER,
         ExistingWorkPolicy.APPEND_OR_REPLACE,
-        backgroundWorkBuilder.buildFalseAlarmWorker(notificationId)
+        backgroundWorkBuilder.buildFalseAlarmWorker(notificationId, notificationTag)
     ).also { it.logOperationSchedule(WorkerConstants.FALSE_ALARM_WORKER) }
 
     private fun Operation.logOperationSchedule(uniqueWorker: String) =

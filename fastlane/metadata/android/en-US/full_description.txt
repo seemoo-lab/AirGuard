@@ -1,13 +1,30 @@
-With AirGuard you get the anti-stalking protection you deserve!
-The app scans your surroundings in the background to find trackers such as AirTags, Samsung SmartTags or Google Find My Device trackers. If the app finds out that a tracker is following you, you will receive a notification.
+With AirGuard, you get the anti-stalking protection you deserve!
+The app scans your surroundings in the background to detect trackers like AirTags, Samsung SmartTags, or Google Find My Device trackers. If a tracker is following you, you will receive an instant notification.
 
-These trackers are only the size of a coin and are often used to track people. Unfortunately, each tracker works differently, so you often need multiple apps to detect tracking.
-AirGuard combines the detection of different trackers so you only need one app to keep you safe.
+These trackers are often no larger than a coin and are unfortunately misused to secretly track people. Since each tracker works differently, you would typically need multiple apps to detect unwanted tracking.
+AirGuard combines the detection of various trackers into a single app – keeping you protected with ease.
 
-Once a tracker has been found, you can make it ring (doesn't work on all models) or go searching with a manual scan.
-If you find a tracker, we advise you to deactivate it so that it no longer tracks your location.
+Once a tracker is detected, you can make it play a sound (for supported models) or perform a manual scan to locate it. If you find a tracker, we recommend disabling it to prevent further tracking of your location.
 
-The app only saves your location locally to show you later where a tracker has followed you. This app never shares personal data.
+The app stores location data exclusively on your device, allowing you to review where a tracker has followed you. Your personal data is never shared.
 
-If the app does not find any trackers, then the app will not bother you.
+If no trackers are found, the app runs silently in the background and won’t bother you.
 
+<h2><b>How does the app work?</b></h2>
+AirGuard uses Bluetooth to detect AirTags, Samsung SmartTags, and other trackers. All data is processed and stored locally on your device.
+If a tracker is detected in at least three different locations, you will receive a warning. You can adjust the security level in the settings to receive even faster alerts.
+
+<h2><b>Who are we?</b></h2>
+We are part of the Technical University of Darmstadt. This project is part of the scientific research conducted by the Secure Mobile Networking Lab.
+Our goal is to protect people’s privacy and investigate how widespread the issue of tracker-based stalking is.
+
+You can voluntarily participate in an anonymous study to help us gain more insights into the usage and spread of these trackers.
+
+This app will never be monetized – there are no ads and no paid features. You will never be charged for using it.
+
+Our privacy policy can be found here:
+https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
+
+<h2><b>Legal Notice</b></h2>
+AirTag, Find My, and iOS are registered trademarks of Apple Inc.
+This project is not affiliated with Apple Inc.

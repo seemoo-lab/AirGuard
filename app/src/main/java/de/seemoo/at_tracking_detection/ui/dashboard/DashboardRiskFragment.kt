@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentDashboardRiskBinding
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -36,6 +37,9 @@ class DashboardRiskFragment : Fragment() {
 
     private var _binding: FragmentDashboardRiskBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var reviewController: ReviewController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +61,9 @@ class DashboardRiskFragment : Fragment() {
     @SuppressLint("DiscouragedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Increment app open count
+        reviewController.incrementAppOpenCount()
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
@@ -102,6 +109,32 @@ class DashboardRiskFragment : Fragment() {
                         filename = ""
                     )
                     articles = listOf(bugArticle) + articles
+                }
+
+                if (SharedPrefs.showMissingNotificationPermissionWarning) {
+                    val notificationArticle = Article(
+                        title = getString(R.string.notification_permission_missing_title),
+                        author = "System",
+                        readingTime = 0,
+                        previewText = getString(R.string.notification_permission_missing_text),
+                        cardColor = "warning_light_red",
+                        preview_image = "",
+                        filename = ""
+                    )
+                    articles = listOf(notificationArticle) + articles
+                }
+
+                if (SharedPrefs.showMissingBackgroundLocationPermissionWarning) {
+                    val locationArticle = Article(
+                        title = getString(R.string.background_location_permission_missing_title),
+                        author = "System",
+                        readingTime = 0,
+                        previewText = getString(R.string.background_location_permission_missing_text),
+                        cardColor = "warning_light_red",
+                        preview_image = "",
+                        filename = ""
+                    )
+                    articles = listOf(locationArticle) + articles
                 }
 
                 // Create a new LinearLayout to hold the ArticleCards
@@ -169,6 +202,19 @@ class DashboardRiskFragment : Fragment() {
                 articlesContainer.addView(articleCardsLinearLayout)
                 progressBar.visibility = View.GONE
             }
+        }
+
+        // Check if we should show review after data is loaded
+        checkAndShowReview()
+    }
+
+    private fun checkAndShowReview() {
+        Timber.d("Checking if review should be shown")
+        if (BuildConfig.DEBUG) {
+            reviewController.debugReviewStatus()
+        }
+        reviewController.requestReviewDialog(requireActivity()) {
+            Timber.d("Review dialog request completed")
         }
     }
 

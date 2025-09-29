@@ -29,8 +29,7 @@ class NotificationService @Inject constructor(
 ) {
     @SuppressLint("MissingPermission")
     suspend fun sendTrackingNotification(baseDevice: BaseDevice) {
-        val notificationId = generateUniqueNotificationId()
-        notificationViewModel.insertToDb(deviceAddress = baseDevice.address)
+        val notificationId = notificationViewModel.insertToDb(deviceAddress = baseDevice.address)
         with(notificationManagerCompat) {
             if (this.areNotificationsEnabled() && !SharedPrefs.deactivateBackgroundScanning) {
                 notify(
@@ -175,7 +174,7 @@ class NotificationService @Inject constructor(
             "de.seemoo.at_tracking_detection.ble_scan_error_notification"
         const val OBSERVE_TRACKER_NOTIFICATION_TAG =
             "de.seemoo.at_tracking_detection.observe_tracker_notification"
-        // const val SURVEY_INFO_TAG = "de.seemoo.at_tracking_detection.survey_info"
+        const val SURVEY_INFO_TAG = "de.seemoo.at_tracking_detection.survey_info"
 
         fun generateUniqueNotificationId(): Int {
             return Random.nextInt()

@@ -170,7 +170,23 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             requiredPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            // requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            SharedPrefs.showMissingNotificationPermissionWarning =
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val backgroundLocationPermission =
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            SharedPrefs.showMissingBackgroundLocationPermissionWarning = !backgroundLocationPermission
+            if (backgroundLocationPermission) {
+                SharedPrefs.useLocationInTrackingDetection = true
+            }
         }
 
         for (permission in requiredPermissions) {
@@ -217,7 +233,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         fun getCurrentApp(): ATTrackingDetectionApplication {
             return instance
         }
-        //TODO: Add real survey URL
+
         const val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
         const val SURVEY_IS_RUNNING = false
     }
