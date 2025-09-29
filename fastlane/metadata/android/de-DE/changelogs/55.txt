@@ -1,0 +1,3 @@
+VERBESSERT: Die App funktioniert mit weniger Berechtigungen (Funktionsumfang abhängig von den gewährten Berechtigungen).
+VERBESSERT: Bessere Kompatibilität bei ungewöhnlichen Bildschirmformaten.
+VERBESSERT: Fehlerbehebungen

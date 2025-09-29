@@ -1,0 +1,3 @@
+IMPROVED: App works with less permissions (functionality limited depending on given permissions)
+IMPROVED: better compatibility on unusual Screen Formats
+IMPROVED: Bugfixes

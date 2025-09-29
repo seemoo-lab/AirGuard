@@ -1,1 +1,1 @@
-Protect yourself from Apple's Find My Tracking
+AirGuard dectects trackers that are used for stalking and warns you.
