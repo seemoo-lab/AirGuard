@@ -56,12 +56,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     entries.add(getString(R.string.samsung_find_my_mobile_name))
                     entryValues.add("samsung_find_my_mobile")
                 }
+
+                if (!entryValues.contains("apple_devices")) {
+                    entries.add(getString(R.string.apple_device))
+                    entryValues.add("apple_devices")
+                }
             } else {
                 // Remove samsung_find_my_mobile if present
-                val index = entryValues.indexOf("samsung_find_my_mobile")
-                if (index != -1) {
-                    entries.removeAt(index)
-                    entryValues.removeAt(index)
+                val samsungIndex = entryValues.indexOf("samsung_find_my_mobile")
+                if (samsungIndex != -1) {
+                    entries.removeAt(samsungIndex)
+                    entryValues.removeAt(samsungIndex)
+                }
+
+                // Remove apple_devices if present
+                val appleIndex = entryValues.indexOf("apple_devices")
+                if (appleIndex != -1) {
+                    entries.removeAt(appleIndex)
+                    entryValues.removeAt(appleIndex)
                 }
             }
 
