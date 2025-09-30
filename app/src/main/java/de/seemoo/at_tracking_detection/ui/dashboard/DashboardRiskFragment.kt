@@ -39,8 +39,8 @@ class DashboardRiskFragment : Fragment() {
     private val binding get() = _binding!!
 
     // Google Play Review Controller: Only active in Google Play builds
-    // @Inject
-    // lateinit var reviewController: ReviewController
+     @Inject
+     lateinit var reviewController: ReviewController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,7 +65,7 @@ class DashboardRiskFragment : Fragment() {
 
         // Google Play Review Controller: Only active in Google Play builds
         // Increment app open count
-        // reviewController.incrementAppOpenCount()
+         reviewController.incrementAppOpenCount()
 
         val riskCard: MaterialCardView = view.findViewById(R.id.risk_card)
         riskCard.setOnClickListener {
@@ -208,19 +208,19 @@ class DashboardRiskFragment : Fragment() {
 
         // Google Play Review Controller: Only active in Google Play builds
         // Check if we should show review after data is loaded
-        // checkAndShowReview()
+         checkAndShowReview()
     }
 
     // Google Play Review Controller: Only active in Google Play builds
-//    private fun checkAndShowReview() {
-//        Timber.d("Checking if review should be shown")
-//        if (BuildConfig.DEBUG) {
-//            reviewController.debugReviewStatus()
-//        }
-//        reviewController.requestReviewDialog(requireActivity()) {
-//            Timber.d("Review dialog request completed")
-//        }
-//    }
+    private fun checkAndShowReview() {
+        Timber.d("Checking if review should be shown")
+        if (BuildConfig.DEBUG) {
+            reviewController.debugReviewStatus()
+        }
+        reviewController.requestReviewDialog(requireActivity()) {
+            Timber.d("Review dialog request completed")
+        }
+    }
 
     override fun onStart() {
         super.onStart()
