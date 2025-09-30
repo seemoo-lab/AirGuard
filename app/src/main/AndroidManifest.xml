@@ -11,6 +11,8 @@
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true" />
+<!-- Receive boot completed to re-establish schedules after reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <!--  Required for finding Bluetooth trackers  -->
     <uses-permission
         android:name="android.permission.BLUETOOTH"
