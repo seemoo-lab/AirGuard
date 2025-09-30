@@ -145,7 +145,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         // Initiate the permanent background scan
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && SharedPrefs.usePermanentBluetoothScanner) {
             PermanentBluetoothScanner.scan()
         }
 
