@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroFragment
@@ -37,6 +39,15 @@ class OnboardingActivity : AppIntro() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
+
+        try {
+            WindowCompat.getInsetsController(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to disable immersive mode or show system bars")
+        }
+
         permission = intent.getStringExtra("permission")
         Timber.d("Onboarding started with: $permission")
         if (permission != null) {
@@ -49,6 +60,15 @@ class OnboardingActivity : AppIntro() {
             }
         } else {
             buildSlides()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            WindowCompat.getInsetsController(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to disable immersive mode or show system bars in onResume")
         }
     }
 
