@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrack
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
 import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
@@ -129,8 +130,14 @@ data class BaseDevice(
     } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && subDeviceType != "UNKNOWN") {
         val subType = GoogleFindMyNetworkType.stringToSubType(subDeviceType)
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, name))
-    }
-    else {
+    } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(uniqueId)) {
+        val subType = ScanFragment.samsungSubDeviceTypeMap[uniqueId]!!
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
+    } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(uniqueId)) {
+        val subType = ScanFragment.googleSubDeviceTypeMap[uniqueId]!!
+        val deviceNameFromCache = ScanFragment.deviceNameMap[uniqueId]
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache))
+    } else {
         device.getDrawable()
     }
 

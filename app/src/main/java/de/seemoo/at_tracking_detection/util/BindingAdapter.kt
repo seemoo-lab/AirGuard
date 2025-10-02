@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -51,26 +52,11 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
-    val drawableResId = if (deviceFromDb != null && deviceFromDb.subDeviceType != "UNKNOWN" && deviceFromDb.deviceType == DeviceType.SAMSUNG_TRACKER) {
-        val subTypeString = deviceFromDb.subDeviceType
-        val subType = SamsungTrackerType.stringToSubType(subTypeString)
-        SamsungTrackerType.drawableForSubType(subType)
-    } else if (deviceFromDb != null && deviceFromDb.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-        val subTypeString = deviceFromDb.subDeviceType
-        val subType = GoogleFindMyNetworkType.stringToSubType(subTypeString)
-        GoogleFindMyNetworkType.drawableForSubType(subType, deviceFromDb.name)
-    } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-        val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
-        SamsungTrackerType.drawableForSubType(subType)
-    } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-        val subType = ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
-        val deviceNameFromCache = ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
-        GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache)
+    val drawable = if (deviceFromDb != null) {
+        deviceFromDb.getDrawable()
     } else {
-        DeviceType.getImageDrawable(wrappedScanResult)
+        DeviceType.getImageDrawable(wrappedScanResult).let { ContextCompat.getDrawable(imageView.context, it) }
     }
-
-    val drawable = ContextCompat.getDrawable(imageView.context, drawableResId)
     imageView.setImageDrawable(drawable)
 }
 
