@@ -67,6 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:setAdapter="@{adapter_high_risk}" />
 
@@ -74,6 +75,7 @@
                 <RelativeLayout
                     android:id="@+id/low_risk_trackers_wrapper"
                     android:visibility="@{vm.lowRiskIsEmpty ? View.GONE : View.VISIBLE, default=visible}"
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/low_risk_trackers_background_color">
