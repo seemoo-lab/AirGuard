@@ -36,23 +36,6 @@ enum class DeviceType {
             }
         }
 
-        fun userReadableName(wrappedScanResult: ScanResultWrapper): String {
-            val deviceType: DeviceType = wrappedScanResult.deviceType
-            return when (deviceType) {
-                UNKNOWN -> Unknown.defaultDeviceName
-                AIRPODS -> AirPods.defaultDeviceName
-                AIRTAG -> AirTag.defaultDeviceName
-                APPLE -> AppleDevice.defaultDeviceName
-                FIND_MY -> AppleFindMy.defaultDeviceName
-                TILE -> Tile.defaultDeviceName
-                CHIPOLO -> Chipolo.defaultDeviceName
-                PEBBLEBEE -> PebbleBee.defaultDeviceName
-                SAMSUNG_TRACKER -> SamsungTracker.defaultDeviceName
-                SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.defaultDeviceName
-                GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
-            }
-        }
-
         fun getImageDrawable(wrappedScanResult: ScanResultWrapper): Int {
             val deviceType: DeviceType = wrappedScanResult.deviceType
             return when (deviceType) {

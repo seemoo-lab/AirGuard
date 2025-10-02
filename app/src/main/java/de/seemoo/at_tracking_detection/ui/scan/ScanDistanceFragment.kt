@@ -123,8 +123,8 @@ class ScanDistanceFragment : Fragment() {
                             viewModel.displayName.postValue(GoogleFindMyNetworkType.visibleStringFromSubtype(googleSubType))
                         } else {
                             Timber.d("Display Name - Default")
-                            binding.deviceTypeText.text = DeviceType.userReadableName(
-                                latestWrappedScanResult!!
+                            binding.deviceTypeText.text = DeviceType.userReadableNameDefault(
+                                latestWrappedScanResult!!.deviceType
                             )
                         }
 
