@@ -129,4 +129,7 @@ interface DeviceDao {
 
     @Query("SELECT * FROM device WHERE deviceType = :deviceType AND lastSeen >= :since AND connectable = :connectableState LIMIT 1")
     fun getDeviceWithConnectableStateSince(deviceType: String, since: LocalDateTime, connectableState: Boolean): BaseDevice?
+
+    @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
+    fun observeByAddress(address: String): Flow<BaseDevice?>
 }

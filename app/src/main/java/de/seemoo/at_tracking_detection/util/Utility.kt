@@ -497,7 +497,10 @@ object Utility {
         val deviceType = wrappedScanResult.deviceType
         val securityLevel = SharedPrefs.riskSensitivity
 
+        // Skip Samsung Find My Mobile and Apple devices if security level is set to high as this causes a lot of false positives
         if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE) {
+            return securityLevel != "high"
+        } else if (deviceType == DeviceType.APPLE) {
             return securityLevel != "high"
         }
 

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">AirGuard</string>
     <string name="title_ignored_devices">Ignorierte Geräte</string>
-    <string name="title_dashboard">Übersicht</string>
+    <string name="title_dashboard">Startseite</string>
     <string name="title_settings">Einstellungen</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
@@ -31,7 +31,7 @@
     <string name="settings_deactivate_scanning_title">Hintergrundscan deaktivieren</string>
     <string name="settings_deactivate_scanning_summary">Diese Option deaktiviert den Hintergrundscan. Achtung: Wenn diese Option aktiviert ist, bekommst du keine Benachrichtigungen mehr, wenn dir ein Tracker folgt.</string>
     <string name="settings_permanent_scanning_title">Permanenter Scanner</string>
-    <string name="settings_permanent_scanning_summary">Nutze einen permanenten Hintergrund-Scan. Diese Feature sorgt für akkuratere Scans, könnte aber in Ausnahmefällen die Stabilität der App beeinflussen.</string>
+    <string name="settings_permanent_scanning_summary">Nutze einen permanenten Hintergrund-Scan. Diese Feature sorgt für akkuratere Scans, könnte aber die Stabilität der App beeinflussen. Im Zweifel: Deaktiviert lassen</string>
     <string name="settings_use_location_summary">Aktivieren, um detailliertere Standortinformationen bei einer Warnung zu erhalten</string>
     <string name="settings_use_location_title">Standort nutzen</string>
     <string name="settings_show_connected_devices_title">Verbundene Geräte anzeigen</string>

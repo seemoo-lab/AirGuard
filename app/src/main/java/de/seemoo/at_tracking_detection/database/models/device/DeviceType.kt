@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.database.models.device
 
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 
@@ -35,23 +36,6 @@ enum class DeviceType {
             }
         }
 
-        fun userReadableName(wrappedScanResult: ScanResultWrapper): String {
-            val deviceType: DeviceType = wrappedScanResult.deviceType
-            return when (deviceType) {
-                UNKNOWN -> Unknown.defaultDeviceName
-                AIRPODS -> AirPods.defaultDeviceName
-                AIRTAG -> AirTag.defaultDeviceName
-                APPLE -> AppleDevice.defaultDeviceName
-                FIND_MY -> AppleFindMy.defaultDeviceName
-                TILE -> Tile.defaultDeviceName
-                CHIPOLO -> Chipolo.defaultDeviceName
-                PEBBLEBEE -> PebbleBee.defaultDeviceName
-                SAMSUNG_TRACKER -> SamsungTracker.defaultDeviceName
-                SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.defaultDeviceName
-                GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.defaultDeviceName
-            }
-        }
-
         fun getImageDrawable(wrappedScanResult: ScanResultWrapper): Int {
             val deviceType: DeviceType = wrappedScanResult.deviceType
             return when (deviceType) {
@@ -63,9 +47,28 @@ enum class DeviceType {
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
                 PEBBLEBEE -> R.drawable.ic_pebblebee_clip
-                SAMSUNG_TRACKER -> R.drawable.ic_smarttag_icon
+                SAMSUNG_TRACKER -> getSamsungDrawable(wrappedScanResult)
                 SAMSUNG_FIND_MY_MOBILE -> R.drawable.ic_baseline_device_unknown_24
-                GOOGLE_FIND_MY_NETWORK -> R.drawable.ic_chipolo
+                GOOGLE_FIND_MY_NETWORK -> getGoogleDrawable(wrappedScanResult)
+            }
+        }
+
+        private fun getSamsungDrawable(wrappedScanResult: ScanResultWrapper): Int {
+            return if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+                val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+                SamsungTrackerType.drawableForSubType(subType)
+            } else {
+                R.drawable.ic_smarttag_icon
+            }
+        }
+
+        private fun getGoogleDrawable(wrappedScanResult: ScanResultWrapper): Int {
+            return if (ScanFragment.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+                val subType = ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+                val deviceNameFromCache = ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
+                GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache)
+            } else {
+                R.drawable.ic_chipolo
             }
         }
 

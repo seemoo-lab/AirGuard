@@ -2,7 +2,7 @@
     <string name="app_name">AirGuard</string>
 
     <string name="title_ignored_devices">Ignored</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_dashboard">Home</string>
     <string name="title_settings">Settings</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
@@ -35,7 +35,7 @@
     <string name="settings_deactivate_scanning_title">Deactivate background scan</string>
     <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker is following you anymore.</string>
     <string name="settings_permanent_scanning_title">Permanent scanning</string>
-    <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but in rare cases might affect the stability of the app.</string>
+    <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but it might affect the stability of the app. When in doubt: leave this option disabled.</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
     <string name="times_seen">Times seen</string>

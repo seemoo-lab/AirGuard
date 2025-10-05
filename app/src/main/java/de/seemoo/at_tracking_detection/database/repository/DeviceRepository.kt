@@ -47,6 +47,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getDevice(deviceAddress: String): BaseDevice? = deviceDao.getByAddress(deviceAddress)
 
+    fun observeDevice(deviceAddress: String): Flow<BaseDevice?> = deviceDao.observeByAddress(deviceAddress)
+
     val countNotTracking = deviceDao.getCountNotTracking(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
 
     val countIgnored = deviceDao.getCountIgnored()

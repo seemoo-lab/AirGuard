@@ -56,12 +56,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     entries.add(getString(R.string.samsung_find_my_mobile_name))
                     entryValues.add("samsung_find_my_mobile")
                 }
+
+                if (!entryValues.contains("apple_devices")) {
+                    entries.add(getString(R.string.apple_device))
+                    entryValues.add("apple_devices")
+                }
             } else {
                 // Remove samsung_find_my_mobile if present
-                val index = entryValues.indexOf("samsung_find_my_mobile")
-                if (index != -1) {
-                    entries.removeAt(index)
-                    entryValues.removeAt(index)
+                val samsungIndex = entryValues.indexOf("samsung_find_my_mobile")
+                if (samsungIndex != -1) {
+                    entries.removeAt(samsungIndex)
+                    entryValues.removeAt(samsungIndex)
+                }
+
+                // Remove apple_devices if present
+                val appleIndex = entryValues.indexOf("apple_devices")
+                if (appleIndex != -1) {
+                    entries.removeAt(appleIndex)
+                    entryValues.removeAt(appleIndex)
                 }
             }
 
@@ -197,7 +209,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "use_permanent_bluetooth_scanner" -> {
                     if (SharedPrefs.usePermanentBluetoothScanner) {
                         Timber.d("Enabled permanent bluetooth scanner!")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                             try {
                                 GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                                     PermanentBluetoothScanner.scan()
@@ -224,7 +236,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (SharedPrefs.advancedMode) {
             Timber.d("Enabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
