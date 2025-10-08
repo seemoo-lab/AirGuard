@@ -28,8 +28,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 36
-        versionCode 55
-        versionName "2.6.1"
+        versionCode 56
+        versionName "2.6.2"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -92,8 +92,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.4'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.9.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.9.5'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -159,23 +159,23 @@ dependencies {
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.11.0'
     // Compose Material3 Design
-    implementation 'androidx.compose.material3:material3:1.3.2'
-    implementation 'androidx.compose.material3:material3-window-size-class:1.3.2'
+    implementation 'androidx.compose.material3:material3:1.4.0'
+    implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.9.1'
+    implementation 'androidx.compose.animation:animation:1.9.2'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.9.1'
+    implementation 'androidx.compose.ui:ui-tooling:1.9.2'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.1'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.2'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 
-    // Google Review Handling
-    implementation("com.google.android.play:review:2.0.2")
-    implementation("com.google.android.play:review-ktx:2.0.2")
-    implementation("com.google.android.gms:play-services-base:18.8.0")
+    // Google Review Handling (only active in Google Play Builds done from the googlePlyStore Branch)
+    // implementation("com.google.android.play:review:2.0.2")
+    // implementation("com.google.android.play:review-ktx:2.0.2")
+    // implementation("com.google.android.gms:play-services-base:18.9.0")
 }
 
 ksp {

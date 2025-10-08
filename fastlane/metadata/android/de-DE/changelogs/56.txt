@@ -1,0 +1,4 @@
+Änderung: Apple-Geräte (MacBooks, iPhones) sind standardmäßig deaktiviert, wenn die Sensitivität nicht auf "hoch" eingestellt ist
+Verbessert: Absturz behoben, der auf neueren Android-Geräten auftreten konnte
+Verbessert: Leistungsverbesserungen im Hintergrund
+Verbessert: Fehlerbehebungen

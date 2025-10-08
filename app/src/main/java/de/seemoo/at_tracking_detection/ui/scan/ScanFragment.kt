@@ -115,8 +115,42 @@ class ScanFragment : Fragment() {
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
-        view.findViewById<LinearLayout>(R.id.info_layout).apply {
-            visibility = if (isVisible) View.GONE else View.VISIBLE
+        val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
+
+        val duration = 200L
+        val density = view.context.resources.displayMetrics.density
+        val slidePx = (-10 * density)
+
+        if (infoLayout.isVisible) {
+            infoLayout.animate()
+                .alpha(0f)
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .translationY(slidePx)
+                .setDuration(duration)
+                .withEndAction {
+                    infoLayout.visibility = View.GONE
+                    // reset properties for next show
+                    infoLayout.alpha = 1f
+                    infoLayout.scaleX = 1f
+                    infoLayout.scaleY = 1f
+                    infoLayout.translationY = 0f
+                }
+                .start()
+        } else {
+            infoLayout.alpha = 0f
+            infoLayout.scaleX = 0.95f
+            infoLayout.scaleY = 0.95f
+            infoLayout.translationY = slidePx
+            infoLayout.visibility = View.VISIBLE
+
+            infoLayout.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .translationY(0f)
+                .setDuration(duration)
+                .start()
         }
     }
 

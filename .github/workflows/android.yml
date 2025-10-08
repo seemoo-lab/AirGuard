@@ -10,16 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v2
+      - name: Set up JDK 17 with Gradle cache
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          distribution: temurin
+          java-version: 17
           cache: gradle
 
-      - name: Build app
-        uses: gradle/gradle-command-action@v2
-        with:
-          arguments: build
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build (assemble & test)
+        run: ./gradlew build --no-daemon

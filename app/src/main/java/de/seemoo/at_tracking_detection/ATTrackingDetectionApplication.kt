@@ -31,10 +31,14 @@ import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
 import fr.bipi.treessence.file.FileLoggerTree
+import kotlinx.coroutines.DelicateCoroutinesApi
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 @HiltAndroidApp
@@ -78,6 +82,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         instance = this
         super.onCreate()
@@ -116,7 +121,13 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 //        }
 
         if (SharedPrefs.shareData) {
-            backgroundWorkScheduler.scheduleShareData()
+            GlobalScope.launch(Dispatchers.Default) {
+                try {
+                    backgroundWorkScheduler.scheduleShareData()
+                } catch (t: Throwable) {
+                    Timber.w(t, "Failed scheduling share data on startup")
+                }
+            }
         }
 
         if (SharedPrefs.lastDataDonation == null) {
@@ -129,32 +140,12 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         registerBroadcastReceiver()
 
-        if (BuildConfig.DEBUG) {
-//            // Get a location for testing
-//            Timber.d("Request location")
-//            val startTime = Date()
-//            val locationRequester: LocationRequester = object  : LocationRequester() {
-//                override fun receivedAccurateLocationUpdate(location: Location) {
-//                    val endTime = Date()
-//                    val duration = (endTime.time - startTime.time) / 1000
-//                    Timber.d("Got location $location after $duration s")
-//                }
-//            }
-//            val location =  locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, 20_000L)
-//            if (location != null) {
-//                Timber.d("Using last known location")
-//            }
-//
-//            // Printing time zone and user agent
-//            Timber.d("Timezone: ${Api.TIME_ZONE} useragent ${Api.USER_AGENT}")
-        }
-
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             Timber.e(throwable, "Uncaught exception on thread ${thread.name}")
         }
 
         // Initiate the permanent background scan
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && SharedPrefs.usePermanentBluetoothScanner) {
             PermanentBluetoothScanner.scan()
         }
 
