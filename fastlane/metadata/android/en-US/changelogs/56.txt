@@ -1,0 +1,4 @@
+CHANGE: Apple Devices (MacBooks, iPhones) are disabled by default when risk sensitivity is not set to high
+IMPROVED: Fix crash that could occur on newer Android devices
+IMPROVED: Background Performance Improvements
+IMPROVED: Bugfixes
