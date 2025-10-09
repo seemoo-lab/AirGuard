@@ -503,7 +503,7 @@ object BackgroundBluetoothScanner {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    public suspend fun saveDevice(
+    suspend fun saveDevice(
         wrappedScanResult: ScanResultWrapper,
         discoveryDate: LocalDateTime
     ): BaseDevice? {
