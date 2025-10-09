@@ -401,6 +401,8 @@
     <string name="export_page_number">ページ %d/%d</string>
     <string name="export_trackers_15_minute_warning">警告: このエントリは推定値に基づいています。誤検知の可能性があります。</string>
     <string name="export_trackers_no_internet">マップを読み込めません。インターネット接続を確認してください。</string>
+    <string name="export_trackers_algo_warning_text">このデバイスは、まれに誤りを生じる可能性のあるアルゴリズムで検出されました。本書類の取り扱いにはご注意ください。</string>
+    <string name="export_trackers_no_internet_during_generation">この書類の生成時にインターネット接続がなかったため、マップを読み込めませんでした。</string>
     <string name="samsung_bug_notification_title">Bluetoothエラー検知</string>
     <string name="samsung_bug_notification_text">このデバイスはAndroid 15以上で発生するBluetooth Low Energyスキャンの不具合の影響を受けています。すべてのアプリがBluetoothスキャンを利用できません。スマートフォンを再起動してください。</string>
     <string name="generic_bluetooth_bug_notification_text">Bluetoothスキャン中に問題が発生しました。AirGuardに必要な権限があり、Bluetoothがオンになっていることを確認してください。問題が解決しない場合はスマートフォンを再起動してください。</string>

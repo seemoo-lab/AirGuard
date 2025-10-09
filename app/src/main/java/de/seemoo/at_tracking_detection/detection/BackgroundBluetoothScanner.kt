@@ -577,7 +577,7 @@ object BackgroundBluetoothScanner {
                             return@withLock null
                         }
 
-                        val baseInterval = 15
+                        val baseInterval = 15 // in minutes
 
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
@@ -651,7 +651,7 @@ object BackgroundBluetoothScanner {
                         )
 
                         if (correspondingDevice == null) {
-                            Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
+                            Timber.d("Add new Device to the database!")
                             device.additionalData = additionalDataString
                             deviceRepository.insert(device)
                         } else {
@@ -659,6 +659,7 @@ object BackgroundBluetoothScanner {
                             device = correspondingDevice
                             device.lastSeen = discoveryDate
                             device.additionalData = additionalDataString
+                            device.matchedUsing15MinAlgo = true
                             deviceRepository.update(device)
                         }
                     } else {

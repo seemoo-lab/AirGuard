@@ -75,6 +75,13 @@ android {
     }
     namespace 'de.seemoo.at_tracking_detection'
 
+    // TODO: check this out
+//    lint {
+//        abortOnError false
+//        warningsAsErrors false
+//        checkReleaseBuilds false
+//    }
+
 }
 
 aboutLibraries {
@@ -106,12 +113,12 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.11.0"
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.2.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.2.0'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation "androidx.work:work-testing:$work_version"
     implementation 'androidx.core:core-ktx:1.17.0'
-    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.1.0'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.2.0'
 
     implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
     implementation "androidx.hilt:hilt-work:$hilt_version"
@@ -162,13 +169,13 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.4.0'
     implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.9.2'
+    implementation 'androidx.compose.animation:animation:1.9.3'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.9.2'
+    implementation 'androidx.compose.ui:ui-tooling:1.9.3'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.2'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.3'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 

@@ -434,6 +434,9 @@
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
 
     <string name="export_trackers_no_internet">Die Karte konnte nicht laden. überprüfe ob du eine aktive Internetverbindung hast.</string>
+    <string name="export_trackers_algo_warning_text">Dieses Gerät wurde mithilfe eines Algorithmus erkannt, der in seltenen Fällen Fehler verursachen kann. Verwenden Sie dieses Dokument mit Vorsicht.</string>
+    <string name="export_trackers_no_internet_during_generation">Die Karte konnte nicht geladen werden, weil während der Erstellung dieses Dokuments keine Internetverbindung verfügbar war.</string>
+
     <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
     <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
     <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
