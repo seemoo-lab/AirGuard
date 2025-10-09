@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
@@ -675,6 +676,17 @@ object BackgroundBluetoothScanner {
                     val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
                     device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
+                }
+
+                if (device.deviceType == DeviceType.SAMSUNG_TRACKER) {
+                    try {
+                        if (wrappedScanResult.advertisedName == "Smart Tag2") {
+                            device.subDeviceType = SamsungTrackerType.subTypeToString(SamsungTrackerType.SMART_TAG_2)
+                            deviceRepository.update(device)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error while detecting Samsung Tracker subtype")
+                    }
                 }
 
                 Timber.d("Device: $device")
