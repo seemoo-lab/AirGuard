@@ -35,6 +35,7 @@ import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -63,6 +64,8 @@ object Utility {
 
     private const val MAX_ZOOM_LEVEL = 18.0
     private const val ZOOMED_OUT_LEVEL = 15.0
+    private const val CIRCLE_VISIBILITY_ZOOM_THRESHOLD = 16.0
+    private const val LOCATION_CLUSTER_RADIUS_METERS: Double = BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION.toDouble()
 
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity() ?: return false
@@ -139,7 +142,7 @@ object Utility {
         map.overlays.add(copyrightOverlay)
     }
 
-    suspend fun setGeoPointsFromListOfLocations(
+    fun setGeoPointsFromListOfLocations(
         locationList: List<Location>,
         map: MapView,
     ): Boolean {
@@ -156,6 +159,8 @@ object Utility {
 
         // Remove previously added clusterer overlays to avoid performance issues
         map.overlays.removeAll { it is RadiusMarkerClusterer }
+        // Remove previously added radius circles to avoid performance issues
+        map.overlays.removeAll { it is org.osmdroid.views.overlay.Polygon && it.subDescription == "LOCATION_RADIUS_CIRCLE" }
 
         val clusterer = RadiusMarkerClusterer(context)
         val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
@@ -165,25 +170,100 @@ object Utility {
         clusterer.mAnchorV = Marker.ANCHOR_BOTTOM
         clusterer.mTextAnchorV = 0.6f
 
-        withContext(Dispatchers.Default) {
-            locationList
-                .filter { it.locationId != 0 }
-                .forEach { location ->
-                    val marker = Marker(map)
-                    val geoPoint = GeoPoint(location.latitude, location.longitude)
-                    marker.position = geoPoint
-                    marker.icon = iconDrawable
-                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    geoPointList.add(geoPoint)
+        // Store circles for dynamic visibility control based on zoom level
+        val circles = mutableListOf<org.osmdroid.views.overlay.Polygon>()
 
-                    marker.setOnMarkerClickListener { clickedMarker, _ ->
-                        clickedMarker.closeInfoWindow()
-                        false
-                    }
+        // Helper function to update circle visibility based on zoom level and viewport for efficiency
+        fun updateCircleVisibility() {
+            val currentZoom = map.zoomLevelDouble
+            val shouldShowCircles = currentZoom >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
 
-                    clusterer.add(marker)
+            // Trivial case: hide all circles
+            if (!shouldShowCircles) {
+                circles.forEach { circle ->
+                    circle.isEnabled = false
+                    circle.isVisible = false
                 }
+                return
+            }
+
+            // Get current bounding box with error margin
+            val boundingBox = map.boundingBox
+            val latMargin = (boundingBox.latNorth - boundingBox.latSouth) * 0.2 // 20% error margin, just to be safe
+            val lonMargin = (boundingBox.lonEast - boundingBox.lonWest) * 0.2 // 20% error margin, just to be safe
+
+            // Calculate error margin for bounding box, just to be safe
+            val expandedBoundingBox = BoundingBox(
+                boundingBox.latNorth + latMargin,
+                boundingBox.lonEast + lonMargin,
+                boundingBox.latSouth - latMargin,
+                boundingBox.lonWest - lonMargin
+            )
+
+            circles.forEach { circle ->
+                // Get the center point of the circle
+                val centerPoint = circle.actualPoints.firstOrNull()
+                // Only show circle if its center is within the current bounding box
+                // This is for optimization to not render too many circles at once
+                val isInCurrentFrame = centerPoint?.let {
+                    expandedBoundingBox.contains(it)
+                } ?: false
+
+                circle.isEnabled = isInCurrentFrame
+                circle.isVisible = isInCurrentFrame
+            }
         }
+
+        // Create markers and circles on the main thread to avoid concurrency issues with MapView overlays
+        locationList
+            .filter { it.locationId != 0 }
+            .forEach { location ->
+                // Marker:
+                val marker = Marker(map)
+                val geoPoint = GeoPoint(location.latitude, location.longitude)
+                marker.position = geoPoint
+                marker.icon = iconDrawable
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                geoPointList.add(geoPoint)
+
+                marker.setOnMarkerClickListener { clickedMarker, _ ->
+                    clickedMarker.closeInfoWindow()
+                    false
+                }
+
+                clusterer.add(marker)
+
+                // Circles:
+                val circle = org.osmdroid.views.overlay.Polygon(map).apply {
+                    points = org.osmdroid.views.overlay.Polygon.pointsAsCircle(geoPoint, LOCATION_CLUSTER_RADIUS_METERS)
+                    fillColor = 0x2034A7FF
+                    strokeColor = 0x5534A7FF
+                    strokeWidth = 2f
+                    subDescription = "LOCATION_RADIUS_CIRCLE"
+                    // Only show circle if zoom level is at or above threshold
+                    isVisible = map.zoomLevelDouble >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
+                    isEnabled = map.zoomLevelDouble >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
+                    infoWindow = null
+                }
+
+                circles.add(circle)
+                map.overlays.add(circle)
+            }
+
+        // Add zoom change listener to toggle circle visibility
+        map.addMapListener(object : org.osmdroid.events.MapListener {
+            override fun onScroll(event: org.osmdroid.events.ScrollEvent?): Boolean {
+                updateCircleVisibility()
+                map.invalidate()
+                return false
+            }
+
+            override fun onZoom(event: org.osmdroid.events.ZoomEvent?): Boolean {
+                updateCircleVisibility()
+                map.invalidate()
+                return true
+            }
+        })
 
         map.overlays.add(clusterer)
         Timber.d("Added ${geoPointList.size} markers to the map!")
