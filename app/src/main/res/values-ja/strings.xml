@@ -412,4 +412,34 @@
     <string name="notification_permission_missing_text">このアプリでは通知が無効になっています。トラッカーがあなたを追跡している場合、警告は表示されません。通知を有効にするには、システム設定でこのアプリの通知を有効にしてください。</string>
     <string name="background_location_permission_missing_title">バックグラウンドでの位置情報取得が無効です</string>
     <string name="background_location_permission_missing_text">このアプリにはバックグラウンドでの位置情報取得の許可がありません。アプリが閉じている間にトラッカーがあなたを追跡しても警告されません。システム設定でバックグラウンド位置情報を有効にしてください。</string>
+    <string name="chipolo_found">発見されたChipolo</string>
+    <string name="feedback_location_not_found">トラッカーは見つかりませんでした</string>
+    <string name="feedback_location_other">その他</string>
+    <string name="feedback_success">フィードバックが正常に送信されました</string>
+    <string name="google_found">発見されたGoogle Find Myデバイス</string>
+    <string name="notification_observe_tracker_error">トラッカーの監視中にエラーが発生しました。もう一度お試しください。</string>
+    <string name="notification_observe_tracker_negative">監視対象のトラッカーはあなたを追跡していません。</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="other">監視対象のトラッカーはあなたを追跡しています。</item>
+    </plurals>
+    <string name="notification_observe_tracker_title_base">監視中のトラッカー</string>
+    <string name="onboarding_notification_description">トラッカーがあなたを追跡していると判断した際に通知を送るために、通知の許可が必要です。</string>
+    <string name="onboarding_notification_title">通知の送信</string>
+    <string name="onboarding_setting_summary">次回起動時にアプリのオンボーディング手順を表示します</string>
+    <string name="onboarding_setting_title">オンボーディングを表示</string>
+    <string name="pebblebee_found">発見されたPebblebee</string>
+    <string name="settings_information_contact_summary">私たちについての情報を表示します</string>
+    <string name="settings_information_contact_title">情報と連絡先</string>
+    <string name="settings_risk_sensitivity_high">高</string>
+    <string name="settings_risk_sensitivity_low">低</string>
+    <string name="settings_risk_sensitivity_medium">中</string>
+    <string name="settings_risk_sensitivity_summary">この設定は追跡検出の感度を制御します。高い設定はより速い検出を行いますが、誤検出が増える可能性があります。</string>
+    <string name="settings_risk_sensitivity_title">検出感度</string>
+    <string name="settings_send_bluetooth_error_messages">Bluetoothエラーメッセージを送信する</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Bluetoothエラーメッセージの送信を有効または無効にします</string>
+    <string name="smarttag_found">発見されたSmartTag</string>
+    <string name="tracking_detail_scan_subtitle">このトラッカーのライブ情報を表示します</string>
+    <string name="tracking_detail_scan_title">トラッカーを探す</string>
+    <string name="website">ウェブサイト</string>
+    <string name="website_description">ウェブサイトをご覧ください</string>
 </resources>
