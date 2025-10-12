@@ -379,6 +379,7 @@
     <string name="low_risk_trackers">Sichere Tracker</string>
     <string name="marker_legend">Legende</string>
     <string name="device_marker">Standort an dem potenzieller Tracker gefunden wurde</string>
+    <string name="location_radius_circle">Radius innerhalb dessen Standorte liegen</string>
     <string name="times_seen">Anzahl gesehen</string>
 
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>

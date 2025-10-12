@@ -354,6 +354,7 @@
     <string name="low_risk_trackers">安全なトラッカー</string>
     <string name="marker_legend">凡例</string>
     <string name="device_marker">潜在的なトラッカーが見つかった場所</string>
+    <string name="location_radius_circle">場所が同一とみなされる半径</string>
     <string name="connection_state_premature_offline_explanation_chipolo">過去30分以内に所有者と接続されていました</string>
     <string name="samsung_determine_button">特定のトラッカータイプを判定する</string>
     <string name="device_determine_failed">正確なデバイスタイプを判定できませんでした</string>

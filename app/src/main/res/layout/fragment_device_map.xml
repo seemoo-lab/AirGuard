@@ -12,20 +12,16 @@
         <import type="android.view.View" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.devices.DeviceMapFragment">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mapContainer"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}"
-            bind:layout_constraintBottom_toTopOf="@+id/legendContainer"
-            bind:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
 
             <TextView
                 android:id="@+id/info_text_locations"
@@ -36,8 +32,7 @@
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintTop_toTopOf="parent"
                 android:background="#B3FFFFFF"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <include
                 android:id="@+id/include_beacon_map"
@@ -52,38 +47,136 @@
             android:id="@+id/legendContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            bind:layout_constraintTop_toBottomOf="@id/mapContainer"
-            bind:layout_constraintBottom_toBottomOf="parent">
+            android:layout_gravity="bottom"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:elevation="8dp"
+            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
 
-            <!-- Marker Legend -->
-            <TextView
-                android:id="@+id/legendTitle"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/legendHeaderBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/marker_legend"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"
+                android:background="?attr/colorSurface"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:elevation="16dp"
+                android:translationZ="16dp"
+                bind:layout_constraintTop_toTopOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toTopOf="parent" />
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintBottom_toTopOf="@id/legendContent">
 
-            <TextView
-                android:id="@+id/legendDeviceMarker"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/legendHeaderTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/marker_legend"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toStartOf="@id/legendCollapseButton"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/legendCollapseButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/marker_legend"
+                    android:src="@drawable/ic_baseline_chevron_right_24"
+                    android:rotation="270"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/legendContent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/device_marker"
-                android:drawablePadding="4dp"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="4dp"
+                android:background="?attr/colorSurface"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp"
+                android:visibility="gone"
+                bind:layout_constraintTop_toBottomOf="@id/legendHeaderBar"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@id/legendTitle"
-                bind:drawableLeftCompat="@drawable/ic_baseline_location_on_45_black" />
+                bind:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/legendRowMarker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:id="@+id/legendMarkerIcon"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/ic_baseline_location_on_45_black"
+                        android:contentDescription="@null"
+                        bind:layout_constraintStart_toStartOf="parent"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintBottom_toBottomOf="parent" />
+
+                    <TextView
+                        android:id="@+id/legendMarkerText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/device_marker"
+                        android:textSize="14sp"
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="12dp"
+                        bind:layout_constraintStart_toEndOf="@id/legendMarkerIcon"
+                        bind:layout_constraintEnd_toEndOf="parent"
+                        bind:layout_constraintTop_toTopOf="@id/legendMarkerIcon"
+                        bind:layout_constraintBottom_toBottomOf="@id/legendMarkerIcon" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/legendRowCircle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    bind:layout_constraintTop_toBottomOf="@id/legendRowMarker"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:id="@+id/legendCircleIcon"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/ic_legend_circle"
+                        android:contentDescription="@null"
+                        bind:layout_constraintStart_toStartOf="parent"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintBottom_toBottomOf="parent" />
+
+                    <TextView
+                        android:id="@+id/legendCircleText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/location_radius_circle"
+                        android:textSize="14sp"
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="12dp"
+                        bind:layout_constraintStart_toEndOf="@id/legendCircleIcon"
+                        bind:layout_constraintEnd_toEndOf="parent"
+                        bind:layout_constraintTop_toTopOf="@id/legendCircleIcon"
+                        bind:layout_constraintBottom_toBottomOf="@id/legendCircleIcon" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -102,6 +195,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

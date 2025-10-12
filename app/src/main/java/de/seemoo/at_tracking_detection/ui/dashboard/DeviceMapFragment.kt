@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
@@ -31,6 +32,7 @@ class DeviceMapFragment : Fragment() {
     private lateinit var binding: FragmentDeviceMapBinding
 
     private var deviceAddress: String? = null
+    private var isLegendExpanded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +46,7 @@ class DeviceMapFragment : Fragment() {
             false
         )
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = viewModel
 
         deviceAddress = safeArgs.deviceAddress
         viewModel.deviceAddress.postValue(deviceAddress)
@@ -65,6 +68,24 @@ class DeviceMapFragment : Fragment() {
         // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
         setTitle()
 
+        binding.legendContent.visibility = View.INVISIBLE
+
+        binding.legendContainer.post {
+            val widthSpec = View.MeasureSpec.makeMeasureSpec(binding.legendContainer.width - binding.legendContainer.paddingStart - binding.legendContainer.paddingEnd, View.MeasureSpec.EXACTLY)
+            val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            binding.legendContent.measure(widthSpec, heightSpec)
+            val contentHeight = binding.legendContent.measuredHeight
+            // Shift container down by content height so only header remains visible
+            binding.legendContainer.translationY = contentHeight.toFloat()
+            isLegendExpanded = false
+            // Set arrow to up
+            binding.legendCollapseButton.rotation = 270f
+            binding.legendContent.visibility = View.INVISIBLE
+        }
+
+        // Setup legend toggle functionality
+        setupLegendToggle()
+
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
             val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
@@ -81,6 +102,63 @@ class DeviceMapFragment : Fragment() {
                 viewModel.isMapLoading.postValue(false)
             }
         }
+    }
+
+    private fun setupLegendToggle() {
+        // Toggle when tapping header title or arrow
+        binding.legendHeaderTitle.setOnClickListener {
+            if (isLegendExpanded) hideLegend() else showLegend()
+        }
+        binding.legendCollapseButton.setOnClickListener {
+            if (isLegendExpanded) hideLegend() else showLegend()
+        }
+    }
+
+    private fun showLegend() {
+        if (isLegendExpanded) return
+        isLegendExpanded = true
+
+        binding.legendContent.visibility = View.VISIBLE
+
+        // Animate the whole container upward to reveal content. translationY -> 0
+        binding.legendContainer.animate()
+            .translationY(0f)
+            .setDuration(300)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+
+        // Rotate arrow to point down
+        binding.legendCollapseButton.animate()
+            .rotation(90f)
+            .setDuration(300)
+            .start()
+    }
+
+    private fun hideLegend() {
+        if (!isLegendExpanded) return
+        isLegendExpanded = false
+
+        // Re-measure in case layout changed
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(binding.legendContainer.width - binding.legendContainer.paddingStart - binding.legendContainer.paddingEnd, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        binding.legendContent.measure(widthSpec, heightSpec)
+        val contentHeight = binding.legendContent.measuredHeight
+
+        // Animate container back down so only header is visible
+        binding.legendContainer.animate()
+            .translationY(contentHeight.toFloat())
+            .setDuration(300)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .withEndAction {
+                binding.legendContent.visibility = View.INVISIBLE
+            }
+            .start()
+
+        // Rotate arrow to point up
+        binding.legendCollapseButton.animate()
+            .rotation(270f)
+            .setDuration(300)
+            .start()
     }
 
     override fun onResume() {

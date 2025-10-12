@@ -421,6 +421,7 @@
     <string name="low_risk_trackers">Safe Trackers</string>
     <string name="marker_legend">Legend</string>
     <string name="device_marker">Location where a potential tracker was found</string>
+    <string name="location_radius_circle">Radius within each location was found</string>
     <string name="connection_state_premature_offline_explanation_chipolo">Connection to owner in the last 30 minutes</string>
 
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
