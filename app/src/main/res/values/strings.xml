@@ -489,4 +489,8 @@
     <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you. To change this enable notifications for this app in your system settings.</string>
     <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
     <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
+
+    <!-- Footer explanatory texts for the device map legend -->
+    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
+    <string name="map_footer_device">This map shows all locations where this device was found.</string>
 </resources>

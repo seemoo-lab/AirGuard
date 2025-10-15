@@ -269,6 +269,11 @@
     <string name="location_off_explanation">Standort ist ausgeschaltet. Diese App benötigt die Standort-Berechtigung, um nach Trackern in der Nähe zu scannen. Bitte aktivieren sie Standorte in ihren System-Einstellungen.\n\nEs kann sein, dass die App neu gestartet werden muss, dass der Scan funktioniert.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
     <string name="open_location_settings">Standort Einstellungen öffnen</string>
+
+    <!-- Footer explanatory texts for the device map legend -->
+    <string name="map_footer_all_devices">Diese Karte zeigt alle Standorte der letzten %d Tage.</string>
+    <string name="map_footer_device">Diese Karte zeigt alle Standorte, an denen dieses Gerät gefunden wurde.</string>
+
     <string name="battery_text">"Batterie Status: "</string>
     <string name="battery_full">Voll</string>
     <string name="battery_medium">Mittel</string>

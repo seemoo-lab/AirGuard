@@ -182,6 +182,19 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <TextView
+                    android:id="@+id/legendFooterText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="12dp"
+                    bind:layout_constraintTop_toBottomOf="@id/legendRowCircle"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent"
+                    tools:text="This map shows locations"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -81,6 +81,13 @@ class DeviceMapFragment : Fragment() {
             // Set arrow to up
             binding.legendCollapseButton.rotation = 270f
             binding.legendContent.visibility = View.INVISIBLE
+
+            val footerText = if (deviceAddress.isNullOrEmpty()) {
+                getString(R.string.map_footer_all_devices, RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)
+            } else {
+                getString(R.string.map_footer_device)
+            }
+            binding.legendFooterText.text = footerText
         }
 
         // Setup legend toggle functionality
