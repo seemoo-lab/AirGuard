@@ -435,6 +435,8 @@
     <string name="settings_risk_sensitivity_high">高</string>
     <string name="settings_risk_sensitivity_low">低</string>
     <string name="settings_risk_sensitivity_medium">中</string>
+    <string name="settings_prevent_screenshots_title">スクリーンショットを防止</string>
+    <string name="settings_prevent_screenshots_summary">プライバシー保護のため、スクリーンショット、画面録画、および最近使用したアプリでのプレビューを防止します</string>
     <string name="settings_risk_sensitivity_summary">この設定は追跡検出の感度を制御します。高い設定はより速い検出を行いますが、誤検出が増える可能性があります。</string>
     <string name="settings_risk_sensitivity_title">検出感度</string>
     <string name="settings_send_bluetooth_error_messages">Bluetoothエラーメッセージを送信する</string>

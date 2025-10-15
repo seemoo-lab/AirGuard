@@ -62,6 +62,13 @@
         android:summary="@string/settings_send_bluetooth_error_messages_summary"
         android:title="@string/settings_send_bluetooth_error_messages" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_privacy_tip_24"
+        android:key="prevent_screenshots"
+        android:summary="@string/settings_prevent_screenshots_summary"
+        android:title="@string/settings_prevent_screenshots_title" />
+
     <ListPreference
         android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"

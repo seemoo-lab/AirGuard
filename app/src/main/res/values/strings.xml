@@ -239,6 +239,8 @@
     <string name="settings_risk_sensitivity_low">Low</string>
     <string name="settings_risk_sensitivity_medium">Medium</string>
     <string name="settings_risk_sensitivity_high">High</string>
+    <string name="settings_prevent_screenshots_title">Prevent Screenshots</string>
+    <string name="settings_prevent_screenshots_summary">Prevents screenshots, screen recordings, and previews in recent apps for enhanced privacy</string>
     <string name="settings_risk_sensitivity_title">Detection Sensitivity</string>
     <string name="settings_risk_sensitivity_summary">This setting controls how sensitive the tracking detection is. A higher setting results in a faster but possibly more inaccurate detection.</string>
     <string name="settings_app_theme_title">App Theme</string>
@@ -490,7 +492,6 @@
     <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
     <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
 
-    <!-- Footer explanatory texts for the device map legend -->
     <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
     <string name="map_footer_device">This map shows all locations where this device was found.</string>
 </resources>

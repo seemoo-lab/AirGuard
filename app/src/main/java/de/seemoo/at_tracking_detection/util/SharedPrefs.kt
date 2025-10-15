@@ -113,6 +113,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("advanced_mode", value) }
         }
 
+    var preventScreenshots: Boolean
+        get() {
+            return sharedPreferences.getBoolean("prevent_screenshots", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("prevent_screenshots", value) }
+        }
+
     var token: String?
         get() {
             return sharedPreferences.getString("token", null)
