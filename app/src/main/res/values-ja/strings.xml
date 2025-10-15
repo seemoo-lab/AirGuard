@@ -446,4 +446,9 @@
     <string name="tracking_detail_scan_title">トラッカーを探す</string>
     <string name="website">ウェブサイト</string>
     <string name="website_description">ウェブサイトをご覧ください</string>
+
+    <string name="translation_supporters">翻訳協力者</string>
+    <string name="language_english">英語</string>
+    <string name="language_german">ドイツ語</string>
+    <string name="language_japanese">日本語</string>
 </resources>

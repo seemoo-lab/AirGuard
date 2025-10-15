@@ -101,6 +101,8 @@
     <string name="settings_device_filter_title">Gerätetypen herausfiltern</string>
     <string name="settings_device_filter_dialog_title">Gerätetypen ignorieren</string>
     <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard nicht scannen soll. Markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
+
+
     <string name="settings_prevent_screenshots_title">Screenshots verhindern</string>
     <string name="settings_prevent_screenshots_summary">Verhindert Screenshots, Bildschirmaufnahmen und Vorschaubilder in kürzlich verwendeten Apps für mehr Privatsphäre</string>
     <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
@@ -338,6 +340,12 @@
     <string name="observe_tracker_failure">Dieser Tracker wird bereits beobachtet</string>
     <string name="settings_attributions_title">Attributionen</string>
     <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
+
+    <string name="translation_supporters">Übersetzungsunterstützer</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_japanese">Japanisch</string>
+
     <string name="airguard_for_android">AirGuard für Android</string>
     <string name="version_number">Version %s</string>
     <string name="contact_us">Kontaktiere uns</string>

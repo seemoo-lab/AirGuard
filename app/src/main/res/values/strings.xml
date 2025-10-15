@@ -416,6 +416,10 @@
     <string name="explanation_safe_trackers">Safe Trackers are trackers around you that are currently connected or have been connected to their owner devices in the last minutes. They most likely do not pose a threat to you.\nAdditionally all tracker marked as ignored will be considered to be safe.</string>
     <string name="device_name_cannot_be_empty">The device name cannot be empty</string>
 
+    <string name="translation_supporters">Translation supporters</string>
+    <string name="language_english">English</string>
+    <string name="language_german">German</string>
+    <string name="language_japanese">Japanese</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>

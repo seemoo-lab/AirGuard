@@ -22,6 +22,8 @@ class InformationFragment : Fragment() {
 
     private lateinit var attributionList: RecyclerView
     private lateinit var attributionAdapter: AttributionAdapter
+    private lateinit var translationSupportersList: RecyclerView
+    private lateinit var translationSupporterAdapter: TranslationSupporterAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,8 +32,10 @@ class InformationFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_information, container, false)
         attributionList = rootView.findViewById(R.id.recyclerViewAttributions)
+        translationSupportersList = rootView.findViewById(R.id.recyclerViewTranslationSupporters)
 
         setupRecyclerView()
+        setupTranslationSupportersRecyclerView()
 
         val versionNumberTextView = rootView.findViewById<TextView>(R.id.versionNumber)
         try {
@@ -101,16 +105,52 @@ class InformationFragment : Fragment() {
         }
     }
 
+    private fun setupTranslationSupportersRecyclerView() {
+        val translationSupports = getTranslationSupports()
+        translationSupporterAdapter = TranslationSupporterAdapter(translationSupports)
+
+        translationSupportersList.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = translationSupporterAdapter
+        }
+    }
+
     private fun openAttributionLink(link: String) {
         val intent = Intent(Intent.ACTION_VIEW, link.toUri())
         startActivity(intent)
     }
 
     private fun getAttributions(): List<AttributionItem> {
-        // Replace this with your list of attributions
         return listOf(
             AttributionItem("Image by storyset on Freepik", "https://www.freepik.com/free-vector/push-notifications-concept-illustration_12463949.htm#query=notification&position=0&from_view=search&track=sph"),
             // Add more attributions as needed
+        )
+    }
+
+    private fun getTranslationSupports(): List<TranslationSupportItem> {
+        return listOf(
+            TranslationSupportItem(
+                language = getString(R.string.language_english),
+                translators = listOf(
+                    Translator("Dennis Arndt", "https://github.com/imbissbudenaesthetik"),
+                    Translator("Alexander Matern", "https://github.com/Sn0wfreezeDev"),
+                    Translator("Niklas Bittner", "https://github.com/Trup3s")
+                )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_german),
+                translators = listOf(
+                    Translator("Dennis Arndt", "https://github.com/imbissbudenaesthetik"),
+                    Translator("Alexander Matern", "https://github.com/Sn0wfreezeDev"),
+                    Translator("Niklas Bittner", "https://github.com/Trup3s")
+                )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_japanese),
+                translators = listOf(
+                    Translator("Itou-Kouki", "https://github.com/Itou-Kouki")
+                )
+            )
         )
     }
 
