@@ -21,6 +21,7 @@
             android:id="@+id/mapContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="64dp"
             android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
 
             <TextView
@@ -50,7 +51,10 @@
             android:layout_gravity="bottom"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:elevation="8dp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:stateListAnimator="@null"
+            android:outlineProvider="none"
             android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,8 +66,10 @@
                 android:paddingEnd="16dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:elevation="16dp"
-                android:translationZ="16dp"
+                android:elevation="0dp"
+                android:translationZ="0dp"
+                android:stateListAnimator="@null"
+                android:outlineProvider="none"
                 bind:layout_constraintTop_toTopOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintEnd_toEndOf="parent"
