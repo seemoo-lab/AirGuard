@@ -153,6 +153,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreference<Preference>("old_device_cleanup")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_old_device_cleanup)
+                true
+            }
+
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 val intent = Intent(
@@ -240,8 +246,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
-                true
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
+            findPreference<Preference>("old_device_cleanup")?.isVisible = true
         } else {
             Timber.d("Disabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
@@ -249,8 +255,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible =
-                SharedPrefs.deactivateBackgroundScanning
+            findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = SharedPrefs.deactivateBackgroundScanning
+            findPreference<Preference>("old_device_cleanup")?.isVisible = false
         }
     }
 

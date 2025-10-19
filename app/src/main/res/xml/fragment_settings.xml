@@ -69,6 +69,12 @@
         android:summary="@string/settings_prevent_screenshots_summary"
         android:title="@string/settings_prevent_screenshots_title" />
 
+    <Preference
+        android:icon="@drawable/ic_delete"
+        android:key="old_device_cleanup"
+        android:summary="@string/settings_old_device_cleanup_summary"
+        android:title="@string/settings_old_device_cleanup_title" />
+
     <ListPreference
         android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"

@@ -157,10 +157,26 @@ class TrackingDetectorWorker @AssistedInject constructor(
     private suspend fun deleteOldAndSafeTrackers() {
         // Delete old devices and beacons from the database
         Timber.d("Start deleting old and safe Trackers")
+
+        val deleteTrackers = SharedPrefs.deleteOldDevices
+
+        if (!deleteTrackers) {
+            Timber.d("Deleting old devices is disabled in settings, skipping deletion")
+            return
+        }
+
+        val alsoDeleteUnsafeTrackers = SharedPrefs.deleteUnsafeOldDevices
         val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
 
         try {
-            val devicesToBeDeleted = deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+            val devicesToBeDeleted = if (alsoDeleteUnsafeTrackers) {
+                Timber.d("Deleting all devices older than $deleteSafeTrackersBefore")
+                deviceRepository.getDevicesOlderThan(deleteSafeTrackersBefore)
+            } else {
+                Timber.d("Only deleting safe trackers older than $deleteSafeTrackersBefore")
+                deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
+            }
+
             if (devicesToBeDeleted.isNotEmpty()) {
                 Timber.d("Deleting ${devicesToBeDeleted.size} devices")
                 deviceRepository.deleteDevices(devicesToBeDeleted)

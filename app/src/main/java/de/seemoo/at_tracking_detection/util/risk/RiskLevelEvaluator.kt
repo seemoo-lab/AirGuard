@@ -88,7 +88,6 @@ class RiskLevelEvaluator(
     companion object {
         /** The number of days that we use to calculate the risk **/
         const val RELEVANT_HOURS_TRACKING: Long = 24 // Only consider beacons in the last x hours, default value, can be overwritten in the specific device properties
-        private const val DELETE_SAFE_DEVICES_OLDER_THAN_DAYS: Long = 30 // Delete devices that have been seen more than x days ago
         private const val DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS: Long = 12 // Delete Google devices in Premature Offline Mode that have been seen more than x hours ago
         private const val MATCH_NOT_CONNECTABLE_GOOGLE_DEVICES_OLDER_THAN_HOURS: Long = 24 // Match Google devices that are not connectable for this amount of time
         const val RELEVANT_DAYS_RISK_LEVEL: Long = 14
@@ -103,7 +102,7 @@ class RiskLevelEvaluator(
         val relevantTrackingDateForRiskCalculation: LocalDateTime
             get() = LocalDateTime.now().minusDays(RELEVANT_DAYS_RISK_LEVEL)
         val deleteBeforeDate: LocalDateTime
-            get() = LocalDateTime.now().minusDays(DELETE_SAFE_DEVICES_OLDER_THAN_DAYS)
+            get() = LocalDateTime.now().minusDays(SharedPrefs.oldDeviceTimeframeDays)
         val deleteSafeGoogleTrackersBeforeDate: LocalDateTime
             get() = LocalDateTime.now().minusHours(DELETE_SAFE_GOOGLE_DEVICES_OLDER_THAN_HOURS)
         val matchNotConnectableGoogleTrackersBeforeDate: LocalDateTime

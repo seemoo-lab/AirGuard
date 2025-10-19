@@ -498,4 +498,20 @@
 
     <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
     <string name="map_footer_device">This map shows all locations where this device was found.</string>
+
+    <string name="title_old_device_cleanup">Auto delete old devices</string>
+    <string name="settings_old_device_cleanup_title">Auto delete old devices</string>
+    <string name="settings_old_device_cleanup_summary">Configure automatic deletion of old devices from database</string>
+    <string name="old_device_cleanup_description">Configure whether old devices that have not been seen for a longer time should be automatically deleted from the database.</string>
+    <string name="delete_old_devices_title">Delete old devices</string>
+    <string name="delete_old_devices_summary">Automatically delete devices that are not considered a potential threat and are older than the specified timeframe.</string>
+    <string name="delete_unsafe_old_devices_title">Also delete unsafe old devices</string>
+    <string name="delete_unsafe_old_devices_summary">Include devices that are considered a potential threat.</string>
+    <string name="old_device_timeframe_label">Deletion timeframe</string>
+    <string name="old_device_timeframe_hint">Select timeframe</string>
+    <string name="old_device_timeframe_7_days">7 days</string>
+    <string name="old_device_timeframe_14_days">14 days</string>
+    <string name="old_device_timeframe_1_month">1 month</string>
+    <string name="old_device_timeframe_2_months">2 months</string>
+    <string name="old_device_timeframe_3_months">3 months</string>
 </resources>

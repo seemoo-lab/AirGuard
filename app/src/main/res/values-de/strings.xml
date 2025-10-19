@@ -459,4 +459,20 @@
     <string name="notification_permission_missing_text">Benachrichtigungen sind für diese App deaktiviert. Du wirst nicht gewarnt, wenn dir ein Tracker folgen sollte. Um dies zu ändern, aktiviere Benachrichtigungen für diese App in deinen Systemeinstellungen.</string>
     <string name="background_location_permission_missing_title">Hintergrund-Standortberechtigung deaktiviert</string>
     <string name="background_location_permission_missing_text">Die Berechtigung für den Standort im Hintergrund wurde dieser App nicht erteilt. Du wirst nicht gewarnt, wenn dir ein Tracker folgt, während die App geschlossen ist. Um dies zu ändern, aktiviere die Hintergrund-Standortberechtigung für diese App in deinen Systemeinstellungen.</string>
+
+    <string name="title_old_device_cleanup">Alte Geräte automatisch löschen</string>
+    <string name="settings_old_device_cleanup_title">Alte Geräte automatisch löschen</string>
+    <string name="settings_old_device_cleanup_summary">Automatisches Löschen alter Geräte aus der Datenbank konfigurieren</string>
+    <string name="old_device_cleanup_description">Konfigurieren Sie, ob alte Geräte, die längere Zeit nicht gesehen wurden, automatisch aus der Datenbank gelöscht werden sollen.</string>
+    <string name="delete_old_devices_title">Alte Geräte löschen</string>
+    <string name="delete_old_devices_summary">Löscht automatisch Geräte, die keine potenzielle Bedrohung darstellen und älter als der angegebene Zeitraum sind.</string>
+    <string name="delete_unsafe_old_devices_title">Unsichere alte Geräte ebenfalls löschen</string>
+    <string name="delete_unsafe_old_devices_summary">Geräte einbeziehen, die als potenzielle Bedrohung gelten.</string>
+    <string name="old_device_timeframe_label">Löschzeitraum</string>
+    <string name="old_device_timeframe_hint">Zeitraum auswählen</string>
+    <string name="old_device_timeframe_7_days">7 Tage</string>
+    <string name="old_device_timeframe_14_days">14 Tage</string>
+    <string name="old_device_timeframe_1_month">1 Monat</string>
+    <string name="old_device_timeframe_2_months">2 Monate</string>
+    <string name="old_device_timeframe_3_months">3 Monate</string>
 </resources>

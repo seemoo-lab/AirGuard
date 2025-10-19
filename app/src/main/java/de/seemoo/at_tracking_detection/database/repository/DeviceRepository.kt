@@ -59,6 +59,8 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     fun getNumberOfLocationsForDeviceWithAccuracyLimitSince(deviceAddress: String, maxAccuracy: Float, since: LocalDateTime): Int = deviceDao.getNumberOfLocationsForWithAccuracyLimitDevice(deviceAddress, maxAccuracy, since)
 
+    fun getDevicesOlderThan(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThan(since)
+
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesOlderThanWithoutNotifications(since)
 
     fun getDeviceWithRecentBeacon(deviceType: DeviceType, additionalData: String, since: LocalDateTime, until: LocalDateTime): BaseDevice? = deviceDao.getDeviceWithRecentBeacon(deviceType.name, additionalData, since, until)

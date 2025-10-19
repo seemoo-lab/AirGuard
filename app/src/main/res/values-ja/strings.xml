@@ -451,4 +451,19 @@
     <string name="language_english">英語</string>
     <string name="language_german">ドイツ語</string>
     <string name="language_japanese">日本語</string>
+    <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
+    <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>
+    <string name="settings_old_device_cleanup_summary">データベースから古いデバイスの自動削除を設定します</string>
+    <string name="old_device_cleanup_description">長期間検出されていない古いデバイスをデータベースから自動的に削除するかどうかを設定します。</string>
+    <string name="delete_old_devices_title">古いデバイスを削除</string>
+    <string name="delete_old_devices_summary">潜在的な脅威と見なされない指定期間より古いデバイスを自動的に削除します。</string>
+    <string name="delete_unsafe_old_devices_title">安全でない古いデバイスも削除</string>
+    <string name="delete_unsafe_old_devices_summary">潜在的な脅威と見なされるデバイスも含めます。</string>
+    <string name="old_device_timeframe_label">削除期間</string>
+    <string name="old_device_timeframe_hint">期間を選択</string>
+    <string name="old_device_timeframe_7_days">7日間</string>
+    <string name="old_device_timeframe_14_days">14日間</string>
+    <string name="old_device_timeframe_1_month">1ヶ月</string>
+    <string name="old_device_timeframe_2_months">2ヶ月</string>
+    <string name="old_device_timeframe_3_months">3ヶ月</string>
 </resources>

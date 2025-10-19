@@ -46,4 +46,20 @@
     </string-array>
     <string-array name="defaultFilterSetEmpty">
     </string-array>
+
+    <string-array name="old_device_timeframes">
+        <item>@string/old_device_timeframe_7_days</item>
+        <item>@string/old_device_timeframe_14_days</item>
+        <item>@string/old_device_timeframe_1_month</item>
+        <item>@string/old_device_timeframe_2_months</item>
+        <item>@string/old_device_timeframe_3_months</item>
+    </string-array>
+
+    <integer-array name="old_device_timeframe_values">
+        <item>7</item>
+        <item>14</item>
+        <item>30</item>
+        <item>60</item>
+        <item>90</item>
+    </integer-array>
 </resources>
