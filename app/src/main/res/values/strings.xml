@@ -256,6 +256,7 @@
     <string name="empty_image_content_description">Image showing an empty list</string>
     <string name="beacon_locations">Beacon locations</string>
     <string name="other_devices_found">Other devices found</string>
+    <string name="all_devices_found">All devices found</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device" translatable="true">Samsung Device %s</string>

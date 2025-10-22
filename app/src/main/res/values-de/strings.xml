@@ -215,6 +215,7 @@
     <string name="notification_title_ble_error">BLE Scan fehlgeschlagen</string>
     <string name="beacon_locations">Beacon Standorte</string>
     <string name="other_devices_found">Andere Geräte</string>
+    <string name="all_devices_found">Alle Geräte gefunden</string>
     <string name="info_text_all_locations">Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben.</string>
     <string name="play_sound_error_fail">Ton konnte nicht abgespielt werden! Versuche es erneut!</string>
     <string name="play_sound_error_init">Es konnte keine Verbindung zum Bluetooth-Dienst hergestellt werden!</string>

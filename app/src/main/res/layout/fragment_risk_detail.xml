@@ -44,7 +44,7 @@
                     app:layout_constraintWidth_percent="0.48"
                     android:layout_marginTop="22dp"
                     android:visibility="visible"
-                    app:cardName="@{@string/other_devices_found}"
+                    app:cardName="@{@string/all_devices_found}"
                     app:cardBackgroundColorInt="@{viewModel.riskColor}"
                     app:cardNumber="@{viewModel.totalNumberOfDevicesFound}"
                     />

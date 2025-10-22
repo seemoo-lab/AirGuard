@@ -182,6 +182,7 @@
     <string name="empty_image_content_description">空のリストを示す画像</string>
     <string name="beacon_locations">ビーコンの場所</string>
     <string name="other_devices_found">見つかった他のデバイス</string>
+    <string name="all_devices_found">すべてのデバイスが見つかりました</string>
     <string name="device_name_apple_device">Appleデバイス %s</string>
     <string name="device_name_unknown_device">不明なデバイス %s</string>
     <string name="play_sound_error_fail">音を出すことに失敗しました。やり直してください！</string>
