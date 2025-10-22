@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,9 +40,46 @@ class OldDeviceCleanupFragment : Fragment() {
         switchDeleteUnsafeDevices = view.findViewById(R.id.switch_delete_unsafe_devices)
         timeframeDropdown = view.findViewById(R.id.timeframe_dropdown)
 
+        setupDeactivationWarning()
         setupTimeframeDropdown()
         loadSettings()
         setupListeners()
+    }
+
+    private fun setupDeactivationWarning() {
+        switchDeleteOldDevices.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) {
+                switchDeleteOldDevices.setOnCheckedChangeListener(null)
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.old_device_deactivate_title))
+                    .setMessage(getString(R.string.old_device_deactivate_text))
+                    .setPositiveButton(getString(R.string.old_device_deactivate_yes)) { _, _ ->
+                        SharedPrefs.deleteOldDevices = false
+                        switchDeleteOldDevices.isChecked = false
+                        updateUnsafeSwitchState()
+                        setupDeactivationWarning()
+                    }
+                    .setNegativeButton(getString(R.string.old_device_deactivate_no)) { _, _ ->
+                        SharedPrefs.deleteOldDevices = true
+                        switchDeleteOldDevices.isChecked = true
+                        updateUnsafeSwitchState()
+                        setupDeactivationWarning()
+                    }
+                    .setOnCancelListener {
+                        // If dialog is dismissed, revert to enabled
+                        SharedPrefs.deleteOldDevices = true
+                        switchDeleteOldDevices.isChecked = true
+                        updateUnsafeSwitchState()
+                        setupDeactivationWarning()
+                    }
+                    .show()
+            } else {
+                // Enabling automatic deletion: apply immediately
+                SharedPrefs.deleteOldDevices = true
+                updateUnsafeSwitchState()
+            }
+        }
     }
 
     private fun setupTimeframeDropdown() {
@@ -71,10 +109,7 @@ class OldDeviceCleanupFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        switchDeleteOldDevices.setOnCheckedChangeListener { _, isChecked ->
-            SharedPrefs.deleteOldDevices = isChecked
-            updateUnsafeSwitchState()
-        }
+        // Note: switchDeleteOldDevices listener is handled by setupDeactivationWarning() to show a confirmation dialog
 
         switchDeleteUnsafeDevices.setOnCheckedChangeListener { _, isChecked ->
             SharedPrefs.deleteUnsafeOldDevices = isChecked

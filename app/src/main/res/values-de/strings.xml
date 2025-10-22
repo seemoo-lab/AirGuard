@@ -475,4 +475,8 @@
     <string name="old_device_timeframe_1_month">1 Monat</string>
     <string name="old_device_timeframe_2_months">2 Monate</string>
     <string name="old_device_timeframe_3_months">3 Monate</string>
+    <string name="old_device_deactivate_title">Deaktivierung der automatischen Löschung</string>
+    <string name="old_device_deactivate_text">Möchten Sie wirklich das automatische Löschen alter Tracker-Daten deaktivieren? Wenn Sie dies bestätigen, wird diese App mit der Zeit langsamer werden. Eine spätere Aktivierung dieser Einstellung kann bis zu 24 Stunden dauern.</string>
+    <string name="old_device_deactivate_yes">Ja, deaktivieren</string>
+    <string name="old_device_deactivate_no">Nein, aktiviert lassen</string>
 </resources>
