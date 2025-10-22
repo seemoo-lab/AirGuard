@@ -452,6 +452,8 @@
     <string name="language_english">英語</string>
     <string name="language_german">ドイツ語</string>
     <string name="language_japanese">日本語</string>
+    <string name="language_italian">イタリア語</string>
+
     <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
     <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>
     <string name="settings_old_device_cleanup_summary">データベースから古いデバイスの自動削除を設定します</string>

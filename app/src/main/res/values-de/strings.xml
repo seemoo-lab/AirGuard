@@ -346,6 +346,7 @@
     <string name="language_english">Englisch</string>
     <string name="language_german">Deutsch</string>
     <string name="language_japanese">Japanisch</string>
+    <string name="language_italian">Italienisch</string>
 
     <string name="airguard_for_android">AirGuard für Android</string>
     <string name="version_number">Version %s</string>

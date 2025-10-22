@@ -150,7 +150,13 @@ class InformationFragment : Fragment() {
                 translators = listOf(
                     Translator("Itou-Kouki", "https://github.com/Itou-Kouki")
                 )
-            )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_italian),
+                translators = listOf(
+                    Translator("Erika Adriomi", "https://linkedin.com/in/erika-adriomi")
+                )
+            ),
         )
     }
 
