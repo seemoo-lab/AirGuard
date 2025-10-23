@@ -483,14 +483,13 @@
     <string name="old_device_deactivate_yes">Sì, disattiva</string>
     <string name="old_device_deactivate_no">No, mantieni attivata</string>
 
-    <!-- Plurals, needs human oversight regarding quantities -->
     <plurals name="notification_observe_tracker_positive">
         <item quantity="one">Un tracker che stavi osservando ti segue da almeno un\'ora.</item>
-        <item quantity="other">Un tracker che stavi osservando ti segue da almeno %d ore.</item>
+        <item quantity="many">Un tracker che stavi osservando ti segue da almeno %d ore.</item>
     </plurals>
     <plurals name="notification_text_base">
         <item quantity="one">Apri la notifica per maggiori info. Un tracker ti segue da almeno un minuto.</item>
-        <item quantity="other">Apri la notifica per maggiori info. Un tracker ti segue da almeno %d minuti.</item>
+        <item quantity="many">Apri la notifica per maggiori info. Un tracker ti segue da almeno %d minuti.</item>
     </plurals>
 
     <!-- Fixed, caused issues in italian -->
