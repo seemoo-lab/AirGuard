@@ -157,6 +157,18 @@ class InformationFragment : Fragment() {
                     Translator("Erika Adriomi", "https://linkedin.com/in/erika-adriomi")
                 )
             ),
+            TranslationSupportItem(
+                language = getString(R.string.language_czech),
+                translators = listOf(
+                    Translator("Linda Polívková", null)
+                )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_slovak),
+                translators = listOf(
+                    Translator("Barbora Strelcová", null)
+                )
+            ),
         )
     }
 

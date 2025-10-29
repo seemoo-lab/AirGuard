@@ -384,6 +384,8 @@
     <string name="language_german">Tedesco</string>
     <string name="language_japanese">Giapponese</string>
     <string name="language_italian">Italiano</string>
+    <string name="language_czech">Ceco</string>
+    <string name="language_slovak">Slovacco</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Sviluppatore: %s</string>
     <string name="maintainer">Manutentore: %s</string>

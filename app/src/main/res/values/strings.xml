@@ -423,6 +423,8 @@
     <string name="language_german">German</string>
     <string name="language_japanese">Japanese</string>
     <string name="language_italian">Italian</string>
+    <string name="language_czech">Czech</string>
+    <string name="language_slovak">Slovak</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>

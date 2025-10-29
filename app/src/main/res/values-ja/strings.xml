@@ -325,10 +325,13 @@
     <string name="observe_tracker_stopped">監視停止しました</string>
     <string name="observe_tracker_failure">すでにこのトラッカーを監視しています</string>
     <string name="credits">クレジット</string>
+
     <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
     <string name="smarttag_uwb">SmartTag（UWB付き）</string>
+
     <string name="website_manufacturer">メーカーのウェブサイト</string>
-    <string name="website_manufacturer_detail">トラッカーのメーカーのウェブサイトを開く</string>
+    <string name="website_manufacturer_detail">トラッカーの製造元のウェブサイトを開く</string>
+
     <string name="no_browser">ブラウザが見つかりません</string>
     <string name="delete_data_button">データ削除をリクエストする</string>
     <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止されます。再度参加したい場合は、オンボーディングを再度有効化し「はい」を選択してください。</string>
@@ -453,6 +456,8 @@
     <string name="language_german">ドイツ語</string>
     <string name="language_japanese">日本語</string>
     <string name="language_italian">イタリア語</string>
+    <string name="language_czech">チェコ語</string>
+    <string name="language_slovak">スロバキア語</string>
 
     <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
     <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>

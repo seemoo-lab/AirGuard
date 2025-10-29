@@ -427,6 +427,8 @@
     <string name="language_german">Nemčina</string>
     <string name="language_japanese">Japončina</string>
     <string name="language_italian">Taliančina</string>
+    <string name="language_czech">Čeština</string>
+    <string name="language_slovak">Slovenčina</string>
     <string name="copyright">Autorské práva</string>
     <string name="developer">Vývojár: %s</string>
     <string name="maintainer">Správca: %s</string>

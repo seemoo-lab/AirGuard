@@ -425,6 +425,8 @@
     <string name="language_german">Němčina</string>
     <string name="language_japanese">Japonština</string>
     <string name="language_italian">Italština</string>
+    <string name="language_czech">Čeština</string>
+    <string name="language_slovak">Slovenština</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Vývojář: %s</string>
     <string name="maintainer">Správce: %s</string>
