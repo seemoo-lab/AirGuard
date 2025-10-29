@@ -13,4 +13,7 @@
 
     <!-- Czech -->
     <locale android:name="cs" />
+
+    <!-- Slovak -->
+    <locale android:name="sk" />
 </locale-config>
