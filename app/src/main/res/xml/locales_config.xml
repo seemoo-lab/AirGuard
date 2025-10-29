@@ -10,4 +10,7 @@
 
     <!-- Italian -->
     <locale android:name="it" />
+
+    <!-- Czech -->
+    <locale android:name="cs" />
 </locale-config>
