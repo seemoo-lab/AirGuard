@@ -38,7 +38,7 @@
     <string name="settings_permanent_scanning_title">Trvalé skenovanie</string>
     <string name="settings_permanent_scanning_summary">Použiť trvalý skener na pozadí. Povolenie tejto funkcie vedie k presnejším výsledkom, ale môže ovplyvniť stabilitu aplikácie. Ak máte pochybnosti: nechajte túto možnosť zakázanú.</string>
     <string name="device_item_first_discovery">Objavené:</string>
-    <string name="beacons">Majáky</string>
+    <string name="beacons">Beacony</string>
     <string name="times_seen">Koľkokrát videné</string>
     <string name="devices_swipe">Potiahnutím odstránite</string>
     <string name="devices_list_empty">Vždy, keď aplikácia zistí AirTag alebo iné sledovacie zariadenie, zobrazí sa tu. Zoznam bude pravdepodobne obsahovať zariadenia, ktoré vás nesledovali. Pri zariadeniach, ktoré vás sledujú, dostanete upozornenie.</string>
@@ -59,7 +59,7 @@
     <string name="tracking_ignore_device_subtitle">Stíšiť upozornenia pre toto zariadenie</string>
     <string name="tracking_false_alarm_title">Falošný poplach</string>
     <string name="tracking_false_alarm_subtitle">Označiť toto upozornenie ako falošný poplach</string>
-    <string name="tracking_missing_beacons_info">Niektoré majáky boli zachytené bez akýchkoľvek údajov o polohe, a preto sa nezobrazujú.</string>
+    <string name="tracking_missing_beacons_info">Niektoré beacony boli zachytené bez akýchkoľvek údajov o polohe, a preto sa nezobrazujú.</string>
     <string name="feedback_question1">Kde bol skrytý Tracker, ktorý ste našli?</string>
     <string name="feedback_location_backpack">Batoh</string>
     <string name="feedback_location_clothes">Oblečenie</string>
@@ -214,7 +214,7 @@
     <string name="i_got_a_notification_what_should_i_do">Dostal som upozornenie, čo mám robiť?</string>
 
     <string name="find_tracker_help">
-        • Sú možné falošné poplachy. Pretože niekto vedľa vás môže používať Tracker (napr. niekto vo verejnej doprave)\n<br />
+        • Sú to možné falošné poplachy. Pretože niekto vedľa vás môže používať Tracker (napr. niekto vo verejnej doprave)\n<br />
         • Ak dostanete viacero upozornení v rôznych dňoch, určite použite funkciu Prehrať zvuk!
     </string>
     <string name="i_cannot_find_the_tracker">Nemôžem nájsť tracker</string>
@@ -259,7 +259,7 @@
     <string name="empty_list_trackers">Tento zoznam zobrazuje iba zariadenia, ktoré sledovali vašu polohu za posledných 14 dní. Keďže je prázdny, žiadne zariadenie sa vás nepokúsilo sledovať a sledovať vašu polohu. Vždy, keď vás zariadenie sleduje, dostanete upozornenie. Nezabudnite mať aktivovaný Bluetooth, aby ste našli sledovacie zariadenia. Pomocou tlačidla nižšie si môžete zobraziť všetky zariadenia, aj tie, ktoré neboli identifikované ako tracker.</string>
     <string name="show_all_button">Zobraziť všetky zariadenia</string>
     <string name="empty_image_content_description">Obrázok zobrazujúci prázdny zoznam</string>
-    <string name="beacon_locations">Polohy majákov</string>
+    <string name="beacon_locations">Polohy beaconov</string>
     <string name="other_devices_found">Nájdené ďalšie zariadenia</string>
     <string name="all_devices_found">Všetky nájdené zariadenia</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
