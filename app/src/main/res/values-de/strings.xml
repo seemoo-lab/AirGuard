@@ -349,6 +349,9 @@
     <string name="language_italian">Italienisch</string>
     <string name="language_czech">Tschechisch</string>
     <string name="language_slovak">Slowakisch</string>
+    <string name="language_russian">Russisch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_traditional_chinese">Traditionelles Chinesisch</string>
 
     <string name="airguard_for_android">AirGuard für Android</string>
     <string name="version_number">Version %s</string>

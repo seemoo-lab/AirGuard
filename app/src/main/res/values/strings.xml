@@ -425,6 +425,9 @@
     <string name="language_italian">Italian</string>
     <string name="language_czech">Czech</string>
     <string name="language_slovak">Slovak</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_french">French</string>
+    <string name="language_traditional_chinese">Traditional Chinese</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>

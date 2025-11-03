@@ -429,6 +429,9 @@
     <string name="language_italian">Taliančina</string>
     <string name="language_czech">Čeština</string>
     <string name="language_slovak">Slovenčina</string>
+    <string name="language_russian">Ruština</string>
+    <string name="language_french">Francúzština</string>
+    <string name="language_traditional_chinese">Tradičná čínština</string>
     <string name="copyright">Autorské práva</string>
     <string name="developer">Vývojár: %s</string>
     <string name="maintainer">Správca: %s</string>

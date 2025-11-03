@@ -458,6 +458,9 @@
     <string name="language_italian">イタリア語</string>
     <string name="language_czech">チェコ語</string>
     <string name="language_slovak">スロバキア語</string>
+    <string name="language_russian">ロシア語</string>
+    <string name="language_french">フランス語</string>
+    <string name="language_traditional_chinese">繁体字中国語</string>
 
     <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
     <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>

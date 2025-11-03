@@ -134,14 +134,16 @@
 
     <string name="notification_observe_tracker_title_base">Vos traceurs observés</string>
     <plurals name="notification_observe_tracker_positive">
-        <item quantity="one">Un traceur que vous observez vous suit depuis au moins une heure.</item>
+        <item quantity="one">Un traceur que vous observez vous suit depuis au moins %d heure.</item>
+        <item quantity="many">Un traceur que vous observez vous suit depuis au moins %d heures.</item>
         <item quantity="other">Un traceur que vous observez vous suit depuis au moins %d heures.</item>
     </plurals>
     <string name="notification_observe_tracker_negative">Un traceur que vous observez ne vous suit pas.</string>
     <string name="notification_observe_tracker_error">Une erreur s\u02bcest produite lors de l\u02bcobservation de ce traceur. Merci de réessayer.</string>
 
     <plurals name="notification_text_base">
-        <item quantity="one">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins une minute.</item>
+        <item quantity="one">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minute.</item>
+        <item quantity="many">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minutes.</item>
         <item quantity="other">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minutes.</item>
     </plurals>
     <string name="notification_title_base">Un traceur vous suit</string>
@@ -174,8 +176,6 @@
     <string name="onboarding_connect_description">Si un appareil est trouvé, AirGuard vous donne la possibilité de le faire sonner. Pour cela, nous avons besoin de la permission de se connecter à cet appareil.</string>
     <string name="onboarding_notification_title">Envoyer des notifications</string>
     <string name="onboarding_notification_description">Pour vous envoyer une notification lorsque nous identifions un traceur en train de vous suivre, nous avons besoin de la permission d\u02bcenvoyer des notifications.</string>
-    <string name="twitter_description">Visitez notre compte Twitter</string>
-    <string name="twitter">Twitter</string>
     <string name="scan_result_item_image_description">Résultat d\u02bcanalyse</string>
     <string name="scan_result_no_devices">Aucun traceur n\u02bca été identifié.\nNous détectons seulement les appareils Find My (AirTags), Google "Find My Device" Devices, Galaxy SmartTags, Pebblebees, Chipolos et Tiles.</string>
     <string name="ble_service_connection_error">La connection à l\u02bcappareil a échoué</string>
@@ -186,7 +186,7 @@
     <string name="risk_level_medium">Risque moyen</string>
     <string name="risk_level_high">Risque élevé</string>
     <string name="no_trackers_found">Pas de traceur identifié depuis\u00a0: %s</string>
-    <string name="found_x_trackers">%d traceurs identifiés pendant les %d jours passés</string>
+    <string name="found_x_trackers">%d traceur(s) identifié(s) durant les %d derniers jours</string>
     <string name="last_scan_info">Dernier scan\u00a0: %s</string>
     <string name="last_discovery">Dernier traceur découvert à %s</string>
     <string name="how_does_airguard_work">Comment fonctionne AirGuard\u202f?</string>
@@ -247,8 +247,6 @@
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device" translatable="true">Appareil Samsung %s</string>
-    <string name="device_name_smarttag" translatable="false">SmartTag %s</string>
-    <string name="device_name_smarttag_plus" translatable="false">SmartTag Plus %s</string>
     <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Appareil Apple %s</string>
     <string name="device_name_unknown_device">Appareil inconnu %s</string>
@@ -336,8 +334,6 @@
     <string name="chipolo" translatable="false">Chipolos</string>
     <string name="pebblebee" translatable="false">Pebblebees</string>
     <string name="find_my_device">Appareils Apple FindMy</string>
-    <string name="samsung_device">Appareils Samsung</string>
-    <string name="smart_tag" translatable="false">SmartTags</string>
     <string name="tile" translatable="false">Tiles</string>
     <string name="google_find_my">Appareils Google "Find My Device"</string>
     <string name="airguard_for_android">AirGuard pour Android</string>
@@ -384,7 +380,7 @@
     <string name="delete_data_server_error">Le serveur n\u02bcest pas accessible, veuillez réessayer dans un moment.</string>
     <string name="delete_data_no_data">Aucune donnée à supprimer</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
+    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_fr.json</string>
     <string name="article_reading_time">Temps de lecture\u00a0: %d minutes</string>
     <string name="article_offline_header">Pas de connexion Internet</string>
     <string name="article_offline_text">Vous n\u02bcêtes pas connecté à Internet. Vous pourrez accéder à des articles vous aidant à utiliser cette application quand vous aurez un accès à Internet.</string>
@@ -407,4 +403,14 @@
     <string name="marker_legend">Légende</string>
     <string name="device_marker">Localisation où un traceur potentiel a été identifié</string>
     <string name="connection_state_premature_offline_explanation_chipolo">Connecté à son propriétaire au cours des 30 minutes passées</string>
+
+    <string name="language_english">Anglais</string>
+    <string name="language_german">Allemand</string>
+    <string name="language_japanese">Japonais</string>
+    <string name="language_italian">Italien</string>
+    <string name="language_czech">Tchèque</string>
+    <string name="language_slovak">Slovaque</string>
+    <string name="language_russian">Russe</string>
+    <string name="language_french">Français</string>
+    <string name="language_traditional_chinese">Chinois traditionnel</string>
 </resources>

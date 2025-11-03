@@ -47,7 +47,7 @@
     <string name="settings_app_theme_summary">Выбрать тему</string>
     <string name="settings_notification_priority_high">Если включено, уведомления будут отрабатывать как тревога с высоким приоритетом</string>
     <string name="settings_third_party_libraries_title">Библиотеки от сторонних разработчиков</string>
-    <string name="settings_third_party_libraries_summary">Показать список всех используемых библиотек от сторонных разработчиков и их лицензии</string>
+    <string name="settings_third_party_libraries_summary">Показать список всех используемых библиотек от сторонних разработчиков и их лицензии</string>
     <string name="onboarding_share_data_no">Нет</string>
     <string name="onboarding_share_data_yes">Да</string>
     <string name="onboarding_share_data_dialog">Решите, будете ли вы участвовать. Все отправляемые данные абсолютно анонимны</string>
@@ -102,8 +102,6 @@
     <string name="grant_permission">Предоставить разрешение</string>
     <string name="cancel">Отмена</string>
     <string name="no_button">Нет, спасибо</string>
-    <string name="twitter_description">Мы в X (Twitter)</string>
-    <string name="twitter">X</string>
     <string name="dashboard_scan_fab_description">Поиск меток</string>
     <string name="dashboard_scan_fab">Принудительный поиск</string>
     <string name="onboarding_scan_title">Bluetooth поиск</string>
@@ -228,7 +226,7 @@
     <string name="settings_attributions_title">Свойства</string>
     <string name="notification_title_base">Устройство следовало за вами</string>
     <string name="notification_text_single">Откройте уведомление, чтобы получить больше информации. %s следовал за вами как минимум %d минут</string>
-    <string name="notification_text_multiple">Откройте уведомление, чтобы получить больше информации. % следовали за вами как минимум %d минут</string>
+    <string name="notification_text_multiple">Откройте уведомление, чтобы получить больше информации. %s следовали за вами как минимум %d минут</string>
     <string name="notification_title_vocal">%s следует за вами</string>
     <string name="notification_title_consonant">%s следует за вами</string>
     <string name="device_name_samsung_device">Устройство Samsung %s</string>
@@ -297,14 +295,13 @@
     <string name="battery_status_text">"Батарея: "</string>
     <string name="apple_device">Устройства Apple</string>
     <string name="find_my_device">Устройства Apple FindMy</string>
-    <string name="samsung_device">Устройства Samsung</string>
     <string name="google_find_my">Устройства Google Find My</string>
     <string name="contact_us">Связаться с нами</string>
     <string name="google_find_my_default_name">Google Find My</string>
     <string name="apple_find_my_default_name">Apple Find My</string>
     <string name="apple_device_default_name">Устройство Apple</string>
     <string name="airguard_for_android">AirGuard для Android</string>
-    <string name="version_number">Версия</string>
+    <string name="version_number">Версия %s</string>
     <string name="article_image_description">Предпросмотр изображения для этой статьи</string>
     <string name="info_button_description">Показать текст с объяснением</string>
     <string name="observe_tracker_title">Наблюдиение за меткой</string>
@@ -346,4 +343,14 @@
     <string name="high_risk_trackers">Подозрительные метки</string>
     <string name="low_risk_trackers">Безопасные метки</string>
     <string name="marker_legend">Обозначения</string>
+
+    <string name="language_english">Английский</string>
+    <string name="language_german">Немецкий</string>
+    <string name="language_japanese">Японский</string>
+    <string name="language_italian">Итальянский</string>
+    <string name="language_czech">Чешский</string>
+    <string name="language_slovak">Словацкий</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_french">Французский</string>
+    <string name="language_traditional_chinese">Традиционный китайский</string>
 </resources>

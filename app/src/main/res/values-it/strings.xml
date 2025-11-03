@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">AirGuard</string>
 
     <string name="title_ignored_devices">Ignorati</string>
@@ -386,6 +386,9 @@
     <string name="language_italian">Italiano</string>
     <string name="language_czech">Ceco</string>
     <string name="language_slovak">Slovacco</string>
+    <string name="language_russian">Russo</string>
+    <string name="language_french">Francese</string>
+    <string name="language_traditional_chinese">Cinese tradizionale</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Sviluppatore: %s</string>
     <string name="maintainer">Manutentore: %s</string>

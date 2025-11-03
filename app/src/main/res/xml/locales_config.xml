@@ -16,4 +16,13 @@
 
     <!-- Slovak -->
     <locale android:name="sk" />
+
+    <!-- Russian -->
+    <locale android:name="ru" />
+
+    <!-- French -->
+    <locale android:name="fr" />
+
+    <!-- Traditional Chinese -->
+    <locale android:name="zh-rTW" />
 </locale-config>

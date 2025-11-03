@@ -122,17 +122,17 @@
     <string name="onboarding_share_data_yes">是</string>
     <string name="onboarding_share_data_dialog">請決定是否要參與。所有分享的資料都是完全匿名的。</string>
     <string name="device_name_airtag" translatable="false">AirTag %s</string>
-    <string name="device_name_find_my_device">Find My 裝置 %s</string>
 
     <string name="notification_observe_tracker_title_base">您觀察的追蹤器</string>
-    <string name="notification_observe_tracker_positive_singular">您觀察的追蹤器已至少追蹤您一小時。</string>
-    <string name="notification_observe_tracker_positive_plural">您觀察的追蹤器已至少追蹤您 %d 小時。</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="other">您觀察的追蹤器已至少追蹤您 %d 小時。</item>
+    </plurals>
     <string name="notification_observe_tracker_negative">您觀察的追蹤器並未追蹤您。</string>
 
-    <string name="notification_text_base">開啟通知以取得更多資訊。追蹤器已至少追蹤您 %d 分鐘。</string>
     <string name="notification_title_base">有追蹤器一直在追蹤您</string>
-    <string name="notification_text_single">開啟通知以取得更多資訊。%s 已至少追蹤您 %d 分鐘。</string>
-    <string name="notification_text_multiple">開啟通知以取得更多資訊。%s 已至少追蹤您 %d 分鐘。</string>
+    <plurals name="notification_text_base">
+        <item quantity="other">開啟通知以取得更多資訊。追蹤器已至少追蹤您 %d 分鐘。</item>
+    </plurals>
     <string name="notification_title_vocal">%s 在追蹤您</string>
     <string name="notification_title_consonant">%s 在追蹤您</string>
     <string name="notification_title_multiple">%s 在追蹤您</string>
@@ -160,8 +160,6 @@
     <string name="onboarding_connect_description">如果找到追蹤裝置，AirGuard 可以讓您在其上播放音效。為此，我們需要連線到此裝置的權限。</string>
     <string name="onboarding_notification_title">發送通知</string>
     <string name="onboarding_notification_description">當我們確認有追蹤器在追蹤您時，我們需要發送通知的權限。</string>
-    <string name="twitter_description">關注我們的 Twitter 帳號</string>
-    <string name="twitter">Twitter</string>
     <string name="scan_result_item_image_description">掃描結果項目</string>
     <string name="scan_result_no_devices">未找到追蹤裝置。您是安全的！\n我們只掃描 Apple Find My 追蹤器（AirTags），Galaxy SmartTags，Chipolos 和 Tiles。</string>
     <string name="ble_service_connection_error">無法連線到裝置</string>
@@ -171,8 +169,8 @@
     <string name="risk_level_low">無風險</string>
     <string name="risk_level_medium">中風險</string>
     <string name="risk_level_high">高風險</string>
-    <string name="no_trackers_found">在過去的 %d 天內未找到追蹤器</string>
-    <string name="found_x_trackers">在過去的 %d 天內檢測到 %d 個追蹤器</string>
+    <string name="no_trackers_found">自 %s 起未找到追蹤器</string>
+    <string name="found_x_trackers">檢測到 %d 個追蹤器（在過去的 %d 天內）</string>
     <string name="last_scan_info">最後掃描：%s</string>
     <string name="last_discovery">最後在 %s 發現追蹤器</string>
     <string name="how_does_airguard_work">AirGuard 如何運作？</string>
@@ -232,8 +230,6 @@
     <string name="other_devices_found">找到的其他裝置</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_samsung_device" translatable="true">Samsung 的裝置 %s</string>
-    <string name="device_name_smarttag" translatable="false">SmartTag %s</string>
-    <string name="device_name_smarttag_plus" translatable="false">SmartTag Plus %s</string>
     <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Apple 的裝置 %s</string>
     <string name="device_name_unknown_device">未知裝置 %s</string>
@@ -314,8 +310,6 @@
     <string name="apple_device">Apple 的裝置</string>
     <string name="chipolo" translatable="false">Chipolo</string>
     <string name="find_my_device">Find My 裝置</string>
-    <string name="samsung_device">Samsung 的裝置</string>
-    <string name="smart_tag" translatable="false">SmartTag</string>
     <string name="tile" translatable="false">Tile</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">版本 %s</string>
@@ -335,4 +329,14 @@
     <string name="copyright">版權</string>
     <string name="developer">開發者：%s</string>
     <string name="maintainer">維護者：%s</string>
+
+    <string name="language_english">英語</string>
+    <string name="language_german">德語</string>
+    <string name="language_japanese">日語</string>
+    <string name="language_italian">意大利語</string>
+    <string name="language_czech">捷克語</string>
+    <string name="language_slovak">斯洛伐克語</string>
+    <string name="language_russian">俄語</string>
+    <string name="language_french">法語</string>
+    <string name="language_traditional_chinese">繁體中文</string>
 </resources>

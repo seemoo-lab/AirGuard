@@ -169,6 +169,24 @@ class InformationFragment : Fragment() {
                     Translator("Barbora Strelcová", null)
                 )
             ),
+            TranslationSupportItem(
+                language = getString(R.string.language_russian),
+                translators = listOf(
+                    Translator("DMyachin", "https://github.com/DMyachin")
+                )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_french),
+                translators = listOf(
+                    Translator("Tek", "https://github.com/Te-k")
+                )
+            ),
+            TranslationSupportItem(
+                language = getString(R.string.language_traditional_chinese),
+                translators = listOf(
+                    Translator("PeterDaveHello", "https://github.com/PeterDaveHello")
+                )
+            ),
         )
     }
 
