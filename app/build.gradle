@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -5,7 +7,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
-    id 'com.mikepenz.aboutlibraries.plugin'
+    id 'com.mikepenz.aboutlibraries.plugin.android'
     id 'org.jetbrains.compose'
     id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version"
 }
@@ -85,7 +87,15 @@ android {
 }
 
 aboutLibraries {
-    exclusionPatterns = [~"androidx.*", ~"com_android.*", ~/de_seemoo.*/, ~"com_google.*", ~"org_jetbrains.*"]
+    library {
+        exclusionPatterns.addAll(
+                Pattern.compile("androidx\\..*"),
+                Pattern.compile("com\\.android\\..*"),
+                Pattern.compile("de\\.seemoo\\..*"),
+                Pattern.compile("com\\.google\\..*"),
+                Pattern.compile("org\\.jetbrains\\..*")
+        )
+    }
 }
 
 dependencies {
@@ -132,6 +142,7 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
+
 
     // TODO: check if this can be replaced with markwon
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
