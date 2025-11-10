@@ -16,7 +16,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
-    val preview_image: String, // TODO: Rename when in production to PreviewImage, also in JSON
+    val preview_image: String, // This has to be named like this, because that is the format on the server
     val filename: String
 )
 

@@ -14,7 +14,7 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url "https://plugins.gradle.org/m2/" // TODO: add jitpack
+            url "https://plugins.gradle.org/m2/"
         }
     }
 

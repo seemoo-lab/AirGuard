@@ -143,9 +143,6 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
 
-
-    // TODO: check if this can be replaced with markwon
-    implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
     implementation 'io.noties.markwon:core:4.6.2'
 
     implementation 'com.github.bumptech.glide:glide:5.0.5'
