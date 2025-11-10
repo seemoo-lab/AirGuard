@@ -9,16 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import java.net.URL
-import com.mukesh.MarkDown
+import androidx.lifecycle.lifecycleScope
 import de.seemoo.at_tracking_detection.R
+import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.net.URL
 
 
 class ArticleFragment : Fragment() {
@@ -33,9 +33,9 @@ class ArticleFragment : Fragment() {
             Toast.makeText(requireContext(), "No internet connection. Cannot load article.", Toast.LENGTH_SHORT).show()
         }
 
-        val titleTextView = view.findViewById<TextView>(R.id.article_title)
+        // val titleTextView = view.findViewById<TextView>(R.id.article_title) // We removed this in the current version
         val authorTextView = view.findViewById<TextView>(R.id.article_author)
-        val markdownView = view.findViewById<ComposeView>(R.id.markdown_view)
+        val markdownView = view.findViewById<TextView>(R.id.markdown_view)
         val articleReadingTimeView = view.findViewById<TextView>(R.id.article_reading_time)
 
         val title = arguments?.getString("title")
@@ -51,31 +51,33 @@ class ArticleFragment : Fragment() {
 
         val url = getURL(filename)
 
-        titleTextView.text = title
+        // titleTextView.text = title
         authorTextView.text = author
         articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
-
-        val modifier = Modifier.fillMaxSize()
 
         val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
         if ((networkCapabilities != null) && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-            try {
-                markdownView.apply {
-                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                    setContent {
-                        MaterialTheme {
-                            MarkDown(
-                                url = URL(url),
-                                modifier = modifier
-                            )
-                        }
+            val markwon = Markwon.builder(requireContext())
+                .usePlugin(SoftBreakAddsNewLinePlugin.create()) // This makes a single line in Markdown break be rendered as a single line break
+                .build()
+
+            // Launch coroutine to fetch markdown content
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    // IO thread: network operation
+                    val markdownString = withContext(Dispatchers.IO) {
+                        URL(url).readText()
                     }
+
+                    // Main thread: update the UI
+                    markwon.setMarkdown(markdownView, markdownString)
+
+                } catch (e: Exception) {
+                    Timber.d(e)
+                    errorHandling()
                 }
-            } catch (e: Exception) {
-                Timber.d(e)
-                errorHandling()
             }
 
         } else {
@@ -85,4 +87,3 @@ class ArticleFragment : Fragment() {
         return view
     }
 }
-

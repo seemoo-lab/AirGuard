@@ -22,18 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="64dp"
-            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
-
-            <TextView
-                android:id="@+id/info_text_locations"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/info_text_all_devices"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"
-                android:background="#B3FFFFFF"
-                android:visibility="gone" />
+            android:visibility="@{vm.hideMapShowNoDevicesFoundInstead || vm.hideMapShowNoInternetInstead ? View.GONE : View.VISIBLE, default=visible}">
 
             <include
                 android:id="@+id/include_beacon_map"
@@ -55,7 +44,7 @@
             android:translationZ="0dp"
             android:stateListAnimator="@null"
             android:outlineProvider="none"
-            android:visibility="@{vm.hideMap ? View.GONE : View.VISIBLE, default=visible}">
+            android:visibility="@{vm.hideMapShowNoDevicesFoundInstead || vm.hideMapShowNoInternetInstead ? View.GONE : View.VISIBLE, default=visible}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/legendHeaderBar"
@@ -200,9 +189,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noDevicesFoundConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{vm.hideMap ? View.VISIBLE : View.GONE, default=gone}">
+            android:visibility="@{vm.hideMapShowNoDevicesFoundInstead ? View.VISIBLE : View.GONE, default=gone}">
 
             <include
                 android:id="@+id/include_map_empty_explanation"
@@ -211,6 +201,24 @@
                 android:layout_height="match_parent"
                 bind:drawable="@{@drawable/ic_walk_in_the_city}"
                 bind:text="@{@string/map_empty_text}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noInternetConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{vm.hideMapShowNoInternetInstead ? View.VISIBLE : View.GONE, default=gone}"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp">
+
+            <TextView
+                android:id="@+id/noInternetTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/export_trackers_no_internet"
+                android:gravity="center"
+                android:textSize="16sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
