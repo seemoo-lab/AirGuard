@@ -99,8 +99,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.9.5'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.6'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.9.6'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -113,12 +113,12 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.11.0"
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.2.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.3.0'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation "androidx.work:work-testing:$work_version"
     implementation 'androidx.core:core-ktx:1.17.0'
-    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.2.0'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.3.0'
 
     implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
     implementation "androidx.hilt:hilt-work:$hilt_version"
@@ -133,7 +133,9 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
 
+    // TODO: check if this can be replaced with markwon
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
+    implementation 'io.noties.markwon:core:4.6.2'
 
     implementation 'com.github.bumptech.glide:glide:5.0.5'
 
@@ -169,13 +171,13 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.4.0'
     implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.9.3'
+    implementation 'androidx.compose.animation:animation:1.9.4'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.9.3'
+    implementation 'androidx.compose.ui:ui-tooling:1.9.4'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.3'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.4'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 
