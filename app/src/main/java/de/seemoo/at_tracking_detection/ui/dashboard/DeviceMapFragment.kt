@@ -1,6 +1,9 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.Manifest
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -58,18 +61,10 @@ class DeviceMapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewCompat.setTranslationZ(view, 100f)
-        val map: MapView = view.findViewById(R.id.map)
 
-        Utility.basicMapSetup(map)
-
-        Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-        viewModel.isMapLoading.postValue(true)
-        // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
         setTitle()
 
         binding.legendContent.visibility = View.INVISIBLE
-
         binding.legendContainer.post {
             val widthSpec = View.MeasureSpec.makeMeasureSpec(binding.legendContainer.width - binding.legendContainer.paddingStart - binding.legendContainer.paddingEnd, View.MeasureSpec.EXACTLY)
             val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -92,6 +87,25 @@ class DeviceMapFragment : Fragment() {
 
         // Setup legend toggle functionality
         setupLegendToggle()
+
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+        if (networkCapabilities == null || !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+            viewModel.isMapLoading.postValue(false)
+            viewModel.hideMapShowNoInternetInstead.postValue(true)
+
+            return
+        }
+
+        ViewCompat.setTranslationZ(view, 100f)
+        val map: MapView = view.findViewById(R.id.map)
+
+        Utility.basicMapSetup(map)
+
+        Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        viewModel.isMapLoading.postValue(true)
+        // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
 
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
