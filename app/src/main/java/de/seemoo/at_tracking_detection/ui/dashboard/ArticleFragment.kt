@@ -33,10 +33,11 @@ class ArticleFragment : Fragment() {
             Toast.makeText(requireContext(), "No internet connection. Cannot load article.", Toast.LENGTH_SHORT).show()
         }
 
+        // Commented lines: old code that still showed meta data
         // val titleTextView = view.findViewById<TextView>(R.id.article_title) // We removed this in the current version
-        val authorTextView = view.findViewById<TextView>(R.id.article_author)
+        // val authorTextView = view.findViewById<TextView>(R.id.article_author)
         val markdownView = view.findViewById<TextView>(R.id.markdown_view)
-        val articleReadingTimeView = view.findViewById<TextView>(R.id.article_reading_time)
+        /// val articleReadingTimeView = view.findViewById<TextView>(R.id.article_reading_time)
 
         val title = arguments?.getString("title")
         val author = arguments?.getString("author")
@@ -52,8 +53,8 @@ class ArticleFragment : Fragment() {
         val url = getURL(filename)
 
         // titleTextView.text = title
-        authorTextView.text = author
-        articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
+        // authorTextView.text = author
+        // articleReadingTimeView.text = context?.getString(R.string.article_reading_time, readingTime)
 
         val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
