@@ -26,30 +26,42 @@ fun parseArticles(jsonString: String): List<Article> {
 }
 
 // Returns the best matching language code for which an articles file exists.
-// TODO: rewrite to not use fixed list of values
+// Dynamically discovers available languages from assets/articles/airguard_articles_*.json
 private fun resolveLanguageCode(context: Context): String {
-    val available = listOf(
-        "en", "de", "fr", "it", "ja", "ru", "sk", "cs", "zh-rTW"
-    )
+    val assetPath = "articles"
+    val availableCodes: Set<String> = try {
+        val entries = context.assets.list(assetPath)?.toList().orEmpty()
+        val regex = Regex("^airguard_articles_(.+)\\.json$", RegexOption.IGNORE_CASE)
+        entries.mapNotNull { name ->
+            regex.matchEntire(name)?.groupValues?.getOrNull(1)
+        }.toSet()
+    } catch (e: Exception) {
+        Timber.w(e, "Could not list assets in %s; falling back to defaults", assetPath)
+        emptySet()
+    }
+
     val locale = context.resources.configuration.locales[0]
     val lang = locale.language // e.g. "en"
     val country = locale.country // e.g. "US"
 
-    val candidates = mutableListOf<String>()
-    if (country.isNotEmpty()) {
-        candidates += "$lang-$country" // try language-country (e.g. zh-TW)
-    }
-    candidates += lang // try plain language
-
-    // Normalize candidate casing for special file like zh-rTW
-    val normalized = candidates.map { cand ->
-        if (cand.equals("zh-tw", ignoreCase = true)) "zh-rTW" else cand
+    // Build candidates in preference order.
+    val candidates = buildList {
+        if (country.isNotEmpty()) {
+            add("$lang-r$country") // e.g. zh-rTW
+            add("$lang-$country")  // e.g. zh-TW
+        }
+        add(lang) // e.g. zh
     }
 
-    for (c in normalized) {
-        if (available.contains(c)) return c
+    fun findMatch(c: String): String? = availableCodes.firstOrNull { it.equals(c, ignoreCase = true) }
+
+    for (cand in candidates) {
+        findMatch(cand)?.let { return it }
     }
-    return "en" // fallback
+
+    // Fallback preference: English if present; otherwise any available; otherwise "en"
+    findMatch("en")?.let { return it }
+    return availableCodes.firstOrNull() ?: "en"
 }
 
 fun loadArticlesJson(context: Context = ATTrackingDetectionApplication.getAppContext()): String {
