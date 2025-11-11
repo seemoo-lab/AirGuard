@@ -1,0 +1,38 @@
+{
+  "limitations": {
+    "title": "このアプリの制限事項",
+    "author": "Leon Böttger",
+    "readingTime": 5,
+    "previewText": "このアプリにはどのような制限がありますか？",
+    "cardColor": "blue_card_background",
+    "preview_image": "Investigating.png",
+    "filename": "ja/limitations_of_the_app.md"
+  },
+  "how": {
+    "title": "AirGuardはどのように機能しますか？",
+    "author": "Dennis Arndt, Leon Böttger",
+    "readingTime": 2,
+    "previewText": "AirGuardがどのように悪意のあるトラッカーからあなたを守るかをご覧ください",
+    "cardColor": "gray_card_background",
+    "preview_image": "Map.png",
+    "filename": "ja/how_does_airguard_work.md"
+  },
+  "get_help": {
+    "title": "ヘルプとサポートを見つける",
+    "author": "Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "トラッカーを見つけた場合の連絡先",
+    "cardColor": "gray_card_background",
+    "preview_image": "Stopsign.png",
+    "filename": "ja/get_help.md"
+  },
+  "faq": {
+    "title": "FAQ",
+    "author": "Dennis Arndt, Leon Böttger, Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "AirGuardに関するよくある質問",
+    "cardColor": "gray_card_background",
+    "preview_image": "FAQ.png",
+    "filename": "ja/faq.md"
+  }
+}
