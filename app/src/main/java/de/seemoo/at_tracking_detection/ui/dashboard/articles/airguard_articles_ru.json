@@ -1,0 +1,38 @@
+{
+  "limitations": {
+    "title": "Ограничения этого приложения",
+    "author": "Leon Böttger",
+    "readingTime": 5,
+    "previewText": "Какие ограничения есть у этого приложения?",
+    "cardColor": "blue_card_background",
+    "preview_image": "Investigating.png",
+    "filename": "ru/limitations_of_the_app.md"
+  },
+  "how": {
+    "title": "Как работает AirGuard?",
+    "author": "Dennis Arndt, Leon Böttger",
+    "readingTime": 2,
+    "previewText": "Узнайте больше о том, как AirGuard защищает вас от вредоносных трекеров",
+    "cardColor": "gray_card_background",
+    "preview_image": "Map.png",
+    "filename": "ru/how_does_airguard_work.md"
+  },
+  "get_help": {
+    "title": "Найти помощь и поддержку",
+    "author": "Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "К кому обратиться, если вы нашли трекер",
+    "cardColor": "gray_card_background",
+    "preview_image": "Stopsign.png",
+    "filename": "ru/get_help.md"
+  },
+  "faq": {
+    "title": "FAQ",
+    "author": "Dennis Arndt, Leon Böttger, Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "Часто задаваемые вопросы о AirGuard",
+    "cardColor": "gray_card_background",
+    "preview_image": "FAQ.png",
+    "filename": "ru/faq.md"
+  }
+}

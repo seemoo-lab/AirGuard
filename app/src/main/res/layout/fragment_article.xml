@@ -13,40 +13,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/markdown_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"> <TextView
-            android:id="@+id/article_author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="by author"
-            android:textSize="16sp"
-            android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/article_reading_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="x min read"
-                android:textSize="16sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/markdown_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="0dp"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
+            android:padding="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

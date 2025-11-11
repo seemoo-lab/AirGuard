@@ -69,6 +69,8 @@ android {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
 //        androidTest.assets.srcDirs += files("/Users/seemoo/Work/Research/AirGuard/airguard-app/app/schemas/de.seemoo.at_tracking_detection.database.AppDatabase".toString())
+        // Include in-app bundled articles (JSON, markdown, images) as assets (preserve 'articles/' path)
+        main.assets.srcDirs += ["src/main/java/de/seemoo/at_tracking_detection/ui/dashboard"]
     }
     packagingOptions {
         resources {

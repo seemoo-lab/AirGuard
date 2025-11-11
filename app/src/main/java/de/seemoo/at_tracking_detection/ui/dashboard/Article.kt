@@ -1,14 +1,12 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import java.util.Locale
 
 data class Article(
     val title: String,
@@ -16,7 +14,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
-    val preview_image: String, // This has to be named like this, because that is the format on the server
+    val preview_image: String, // This has to be named like this because of the file format
     val filename: String
 )
 
@@ -27,70 +25,53 @@ fun parseArticles(jsonString: String): List<Article> {
     return articleMap.values.toList()
 }
 
-fun getURL(filename: String): String {
-    return "https://tpe.seemoo.tu-darmstadt.de/articles/$filename"
+// Returns the best matching language code for which an articles file exists.
+// TODO: rewrite to not use fixed list of values
+private fun resolveLanguageCode(context: Context): String {
+    val available = listOf(
+        "en", "de", "fr", "it", "ja", "ru", "sk", "cs", "zh-rTW"
+    )
+    val locale = context.resources.configuration.locales[0]
+    val lang = locale.language // e.g. "en"
+    val country = locale.country // e.g. "US"
+
+    val candidates = mutableListOf<String>()
+    if (country.isNotEmpty()) {
+        candidates += "$lang-$country" // try language-country (e.g. zh-TW)
+    }
+    candidates += lang // try plain language
+
+    // Normalize candidate casing for special file like zh-rTW
+    val normalized = candidates.map { cand ->
+        if (cand.equals("zh-tw", ignoreCase = true)) "zh-rTW" else cand
+    }
+
+    for (c in normalized) {
+        if (available.contains(c)) return c
+    }
+    return "en" // fallback
 }
 
-fun downloadJson(): String {
-    val url = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_download_url)
-
-    val articleOfflineTitle = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_offline_header)
-    val articleOfflineText = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_offline_text)
-    val iveGotANotification = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.i_got_a_notification_what_should_i_do)
-    val searchManually = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.notification_help)
-    val iCanNotFindTracker = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.i_cannot_find_the_tracker)
-    val findTackerHelp = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_tracker_help)
-
-    val errorReturnValue = """{
-            "article0": {
-                "title": "$articleOfflineTitle",
-                "author": "Dennis Arndt",
-                "readingTime": 0,
-                "previewText": "$articleOfflineText",
-                "cardColor": "blue_card_background",
-                "filename": ""
-            },
-            "article1": {
-                "title": "$iveGotANotification",
-                "author": "Alexander Matern",
-                "readingTime": 0,
-                "previewText": "$searchManually",
-                "cardColor": "gray_card_background",
-                "filename": ""
-            },
-            "article2": {
-                "title": "$iCanNotFindTracker",
-                "author": "Alexander Matern",
-                "readingTime": 0,
-                "previewText": "$findTackerHelp",
-                "cardColor": "gray_card_background",
-                "filename": ""
-            }
-        }
-        """.trimIndent()
-
-    val connection = URL(url).openConnection() as HttpURLConnection
+fun loadArticlesJson(context: Context = ATTrackingDetectionApplication.getAppContext()): String {
+    val languageCode = resolveLanguageCode(context)
+    val assetFileName = "articles/airguard_articles_${languageCode}.json"
 
     return try {
-        connection.requestMethod = "GET"
-        val responseCode = connection.responseCode
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
-            val response = StringBuilder()
-            var inputLine: String?
-            while (reader.readLine().also { inputLine = it } != null) {
-                response.append(inputLine)
-            }
-            reader.close()
-            response.toString()
-        } else {
-            errorReturnValue
-        }
+        context.assets.open(assetFileName).bufferedReader().use { it.readText() }
     } catch (e: Exception) {
-        Timber.e(e)
-        errorReturnValue
-    } finally {
-        connection.disconnect()
+        Timber.e(e, "Failed to load articles for %s, falling back to en", languageCode)
+        try {
+            context.assets.open("articles/airguard_articles_en.json").bufferedReader().use { it.readText() }
+        } catch (inner: Exception) {
+            Timber.e(inner, "Failed to load fallback english articles")
+            // Build a minimal fallback inline so UI still shows something.
+            val offlineTitle = context.getString(R.string.article_offline_header)
+            val offlineText = context.getString(R.string.article_offline_text)
+            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"blue_card_background","preview_image":"","filename":""}}"""
+        }
     }
+}
+
+fun getLocalImageUri(imageFilename: String): String {
+    return "file:///android_asset/articles/$imageFilename"
 }

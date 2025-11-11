@@ -526,4 +526,6 @@
     <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time. Reverting this setting at a later point may take up to 24 hours.</string>
     <string name="old_device_deactivate_yes">Yes, deactivate</string>
     <string name="old_device_deactivate_no">No, keep activated</string>
+
+    <string name="article_load_error" translatable="false">Article Load Error</string>
 </resources>
