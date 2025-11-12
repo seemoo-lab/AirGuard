@@ -185,7 +185,7 @@
     <string name="location_sample_image">Immagine di esempio posizione</string>
 
     <string name="permissions_location_title">Posizione in background</string>
-    <string name="permission_location_message">Questa autorizzazione è necessaria per fornire informazioni di tracciamento più dettagliate nel caso in cui un AirTag, un dispositivo compatibile con \"Dov\'è\" di Apple, un dispositivo compatibile con \"Trova il mio dispositivo\" di Google, un Samsung SmartTag, un Pebblebee, un Chipolo o un Tile ti stia tracciando. Questa autorizzazione è facoltativa.</string>
+    <string name="permission_location_message">Questa autorizzazione è necessaria per fornire informazioni di tracciamento più dettagliate nel caso in cui un AirTag, un dispositivo compatibile con \"Dov\'è\" di Apple, un dispositivo compatibile con \"Trova il mio dispositivo\" di Google, un Samsung SmartTag, un Pebblebee, un Chipolo o un Tile ti stia tracciando. Questa autorizzazione è opzionale.</string>
 
     <string name="onboarding_2_title">Accesso alla posizione</string>
     <string name="onboarding_2_description">Questa app ha bisogno di accedere alla tua posizione per cercare i tracker circostanti tramite Bluetooth Low Energy. Senza questa autorizzazione, l\'app non funziona e non troverà alcun dispositivo di tracciamento. I tuoi dati sulla posizione non lasciano mai il tuo dispositivo.</string>
@@ -253,7 +253,7 @@
 
     <string name="title_risk_detail">Valutazione del rischio</string>
     <string name="show_all">Mostra tutto</string>
-    <string name="tracker_detected">Tracker rilevato</string>
+    <string name="tracker_detected">Tracker rilevati</string>
     <string name="locations_tracked">Tutte le posizioni</string>
     <string name="dates_detected">Date rilevate</string>
 
@@ -549,7 +549,7 @@
     <string name="notification_permission_missing_text">Le notifiche sono disabilitate per questa app. Non sarai avvisato/a quando un tracker ti sta seguendo. Per modificare questa impostazione, abilita le notifiche per questa app nelle impostazioni di sistema.</string>
 
     <string name="background_location_permission_missing_title">Accesso alla posizione in background disabilitato</string>
-    <string name="background_location_permission_missing_text">L\'autorizzazione per l\'accesso alla posizione in background non è stata concessa per questa app. Non sarai avvisato/a quando un tracker ti sta seguendo while questa app è chiusa. Per modificare questa impostazione, abilita la posizione in background per questa app nelle impostazioni di sistema.</string>
+    <string name="background_location_permission_missing_text">L\'autorizzazione per l\'accesso alla posizione in background non è stata concessa per questa app. Non sarai avvisato/a quando un tracker ti sta seguendo mentre questa app è chiusa. Per modificare questa impostazione, abilita la posizione in background per questa app nelle impostazioni di sistema.</string>
 
     <string name="map_footer_all_devices">Questa mappa mostra tutte le posizioni degli ultimi %d giorni.</string>
     <string name="map_footer_device">Questa mappa mostra tutte le posizioni in cui è stato trovato questo dispositivo.</string>
@@ -580,11 +580,11 @@
 
     <plurals name="notification_observe_tracker_positive">
         <item quantity="one">Un tracker che stavi osservando ti segue da almeno un\'ora.</item>
-        <item quantity="other">Un tracker che stavi osservando ti segue da almeno %d ore.</item>Ci sono stati alcuni problemi con le modifiche. Le sistemo subito.</plurals>
+        <item quantity="many">Un tracker che stavi osservando ti segue da almeno %d ore.</item>Ci sono stati alcuni problemi con le modifiche. Le sistemo subito.</plurals>
 
     <plurals name="notification_text_base">
         <item quantity="one">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno un minuto.</item>
-        <item quantity="other">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno %d minuti.</item>
+        <item quantity="many">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno %d minuti.</item>
     </plurals>
 
     <!-- Fixed, caused issues in italian -->
