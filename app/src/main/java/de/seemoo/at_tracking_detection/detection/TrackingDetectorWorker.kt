@@ -69,6 +69,12 @@ class TrackingDetectorWorker @AssistedInject constructor(
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
 
         try {
+            checkTooManyNotificationsHint()
+        } catch (e: Exception) {
+            Timber.e("Checking too many notifications hint failed: $e")
+        }
+
+        try {
             deleteSafeGoogleTrackers()
             deleteOldAndSafeTrackers()
         } catch (e:Exception) {
@@ -203,6 +209,41 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
 
         Timber.d("Deleting old and safe Trackers finished")
+    }
+
+    /**
+     * Checks if there are too many notifications in the last 24 hours and sets a hint in SharedPrefs.
+     * Conditions:
+     * - At least x notifications in the last 24 hours OR
+     * - At least y notifications for the same device in the last 24 hours
+     */
+    private fun checkTooManyNotificationsHint(
+        notificationsLastDay: Int = 5,
+        notificationsPerDeviceLastDay: Int = 3
+    ) {
+        val since = LocalDateTime.now().minusHours(24)
+        val recentNotifications = notificationRepository.notificationsSince(since)
+
+        // Check if there are at least x notifications in total
+        val totalNotifications = recentNotifications.size
+        if (totalNotifications >= notificationsLastDay) {
+            SharedPrefs.showTooManyNotificationsHint = true
+            // TODO: Throw Notification
+            Timber.d("Too many notifications hint set: $totalNotifications notifications in last 24 hours")
+            return
+        }
+
+        // Check if there are at least y notifications for the same device
+        val notificationsByDevice = recentNotifications.groupBy { it.deviceAddress }
+        val maxNotificationsForDevice = notificationsByDevice.values.maxOfOrNull { it.size } ?: 0
+        if (maxNotificationsForDevice >= notificationsPerDeviceLastDay) {
+            SharedPrefs.showTooManyNotificationsHint = true
+            // TODO: Throw Notification
+            Timber.d("Too many notifications hint set: $maxNotificationsForDevice notifications for same device in last 24 hours")
+            return
+        }
+
+        Timber.d("No excessive notifications detected: $totalNotifications total, max $maxNotificationsForDevice per device")
     }
 
     companion object {

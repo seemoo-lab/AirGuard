@@ -358,7 +358,15 @@ object SharedPrefs {
             sharedPreferences.edit { putLong("old_device_timeframe_days", value) }
         }
 
-    private fun getAllDevicesFilterOptions(): Set<String> {
+    var showTooManyNotificationsHint: Boolean
+        get() {
+            return sharedPreferences.getBoolean("show_too_many_notifications_hint", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("show_too_many_notifications_hint", value) }
+        }
+
+    fun getAllDevicesFilterOptions(): Set<String> {
         val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
         return allOptions.toSet()
     }
