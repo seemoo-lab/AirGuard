@@ -522,4 +522,6 @@
     <string name="old_device_deactivate_no">No, keep activated</string>
 
     <string name="article_load_error" translatable="false">Article Load Error</string>
+
+    <string name="dismiss_article">Dismiss article</string>
 </resources>

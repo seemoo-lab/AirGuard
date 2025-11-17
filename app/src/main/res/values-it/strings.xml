@@ -580,11 +580,11 @@
 
     <plurals name="notification_observe_tracker_positive">
         <item quantity="one">Un tracker che stavi osservando ti segue da almeno un\'ora.</item>
-        <item quantity="other">Un tracker che stavi osservando ti segue da almeno %d ore.</item>Ci sono stati alcuni problemi con le modifiche. Le sistemo subito.</plurals>
+        <item quantity="many">Un tracker che stavi osservando ti segue da almeno %d ore.</item>Ci sono stati alcuni problemi con le modifiche. Le sistemo subito.</plurals>
 
     <plurals name="notification_text_base">
         <item quantity="one">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno un minuto.</item>
-        <item quantity="other">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno %d minuti.</item>
+        <item quantity="many">Apri la notifica per maggiori informazioni. Un tracker ti segue da almeno %d minuti.</item>
     </plurals>
 
     <!-- Fixed, caused issues in italian -->
@@ -598,4 +598,5 @@
 
     <string name="onboarding_share_data_description"> Questa app è stata sviluppata da un team di ricercatori dell\'Università Tecnica di Darmstadt, Germania. \n\n Con il nostro studio, vogliamo scoprire quante persone sono colpite da tentativi dannosi di tracciamento e se i dispositivi \"Dov\'è\" di Apple vengono utilizzati impropriamente per tracciare le persone. Vogliamo inoltre capire quanto possiamo proteggere le persone da queste pratiche con la nostra app.\n \n<b>Per partecipare devi avere compiuto 18 anni.</b> \n\n • Raccoglieremo alcune informazioni sui dispositivi di tracciamento rilevati come il <b>tipo di dispositivo</b>, il <b>valore RSSI</b> (intensità del segnale) e la <b>data e l\'ora</b> del rilevamento \n\n • Quante <b>notifiche</b> ti sono state inviate, la <b>data e l\'ora</b> dell\'avviso, il tuo <b>feedback</b> facoltativo\n\n Non condivideremo <b>MAI</b> dati sulla tua posizione o dati che potrebbero identificarti! La partecipazione è completamente anonima.</string>
 
+    <string name="dismiss_article">Nascondi articolo</string>
 </resources>

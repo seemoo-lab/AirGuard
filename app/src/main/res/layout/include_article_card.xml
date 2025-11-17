@@ -15,17 +15,37 @@
             android:layout_margin="8dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/card_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:maxLines="3"
-                android:text="article title"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                android:textColor="@color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/card_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toStartOf="@+id/dismiss_button"
+                    android:maxLines="3"
+                    android:text="article title"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textColor="@color/white"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/dismiss_button"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/dismiss_article"
+                    android:src="@drawable/ic_baseline_close_24"
+                    android:visibility="gone"
+                    app:tint="@color/white" />
+
+            </RelativeLayout>
 
             <ImageView
                 android:id="@+id/preview_image"

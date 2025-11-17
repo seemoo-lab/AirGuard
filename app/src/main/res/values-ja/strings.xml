@@ -473,4 +473,6 @@
     <string name="old_device_deactivate_text">古いトラッカーデータの自動削除を無効にしてもよろしいですか？無効化すると、時間の経過とともにアプリの動作が遅くなります。後でこの設定を元に戻す場合、最大24時間かかる場合があります。</string>
     <string name="old_device_deactivate_yes">はい、無効にする</string>
     <string name="old_device_deactivate_no">いいえ、有効のままにする</string>
+
+    <string name="dismiss_article">記事を非表示</string>
 </resources>

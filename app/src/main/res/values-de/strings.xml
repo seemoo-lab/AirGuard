@@ -481,4 +481,6 @@
     <string name="old_device_deactivate_text">Möchten Sie wirklich das automatische Löschen alter Tracker-Daten deaktivieren? Wenn Sie dies bestätigen, wird diese App mit der Zeit langsamer werden. Eine spätere Aktivierung dieser Einstellung kann bis zu 24 Stunden dauern.</string>
     <string name="old_device_deactivate_yes">Ja, deaktivieren</string>
     <string name="old_device_deactivate_no">Nein, aktiviert lassen</string>
+
+    <string name="dismiss_article">Artikel ausblenden</string>
 </resources>

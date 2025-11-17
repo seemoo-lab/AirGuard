@@ -87,19 +87,8 @@ class DashboardRiskFragment : Fragment() {
                 var articles = parseArticles(articlesJSON)
                 Timber.d("Number of Articles: %s", articles.size)
 
-                // Show an error message if the Bluetooth scan bug on Android 15 is detected
-//                if (Build.VERSION.SDK_INT >= 35 && SharedPrefs.showSamsungAndroid15BugNotification) {
-//                    val bugArticle = Article(
-//                        title = getString(R.string.samsung_bug_notification_title),
-//                        author = "System",
-//                        readingTime = 0,
-//                        previewText = getString(R.string.samsung_bug_notification_text),
-//                        cardColor = "warning_light_red",
-//                        preview_image = "",
-//                        filename = ""
-//                    )
-//                    articles = listOf(bugArticle) + articles
-//                } else
+                // Error articles
+
                 if (SharedPrefs.showGenericBluetoothBugNotification || SharedPrefs.showSamsungAndroid15BugNotification) {
                     val bugArticle = Article(
                         title = getString(R.string.samsung_bug_notification_title),
@@ -152,6 +141,7 @@ class DashboardRiskFragment : Fragment() {
                     val textViewPreviewText = layout.findViewById<TextView>(R.id.card_text_preview)
                     val imageViewPreview = layout.findViewById<ImageView>(R.id.preview_image)
                     val materialCard = layout.findViewById<MaterialCardView>(R.id.material_card)
+                    val dismissButton = layout.findViewById<ImageView>(R.id.dismiss_button)
 
                     textViewTitle.text = article.title
                     if (article.previewText.isNotEmpty()){
@@ -162,6 +152,21 @@ class DashboardRiskFragment : Fragment() {
 
                     val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
                     materialCard.setCardBackgroundColor(resources.getColor(colorResourceId, null))
+
+                    // Show dismiss button for error articles (aka articles without filenames)
+                    if (article.filename.isEmpty()) {
+                        dismissButton.visibility = View.VISIBLE
+                        dismissButton.setOnClickListener {
+                            articleCardsLinearLayout.removeView(articleCard)
+
+                            if (article.title == getString(R.string.samsung_bug_notification_title) && SharedPrefs.showGenericBluetoothBugNotification) {
+                                SharedPrefs.showGenericBluetoothBugNotification = false
+                            }
+                            if (article.title == getString(R.string.samsung_bug_notification_title) && SharedPrefs.showSamsungAndroid15BugNotification) {
+                                SharedPrefs.showSamsungAndroid15BugNotification = false
+                            }
+                        }
+                    }
 
                     articleCard.addView(layout)
                     Timber.tag("CardAdded").d("Article card added: %s", article.title)
