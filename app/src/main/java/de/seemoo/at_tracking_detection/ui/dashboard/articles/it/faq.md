@@ -37,7 +37,7 @@ A volte, i tuoi AirTag potrebbero non apparire nell'app. Tuttavia, sono sempre v
 ## Avvisi di tracciamento e rischi
 
 **In che modo l'app valuta il rischio di tracciamento?**
-L'app calcola dei livelli di rischio di tracciamento: nessun rischio, rischio medio e rischio alto. Ciò si basa su diversi fattori, tra cui la frequenza e il luogo in cui il dispositivo di tracciamento è stato vicino a te. Un rischio alto non significa sempre che stai essendo tracciato/a, quindi controlla sempre la mappa del tracker.
+L'app calcola dei livelli di rischio di tracciamento: nessun rischio, rischio medio e rischio alto. Ciò si basa su diversi fattori, tra cui la frequenza e il luogo in cui il dispositivo di tracciamento è stato vicino a te. Un rischio alto non significa sempre che qualcuno ti sta tracciando, quindi controlla sempre la mappa del tracker.
 
 **Cosa devo fare se ricevo un avviso di tracciamento?**
 1. Cerca manualmente il tracker.
@@ -59,7 +59,7 @@ Questo problema può sorgere se sei troppo lontano/a dal tracker. Avvicinati e u
 Questa impostazione regola per quanto tempo un tracker deve seguirti prima di essere considerato un rischio. Una sensibilità più bassa significa che deve seguirti più a lungo; una sensibilità più alta segnala i dispositivi più rapidamente.
 
 **Qual è l'impatto dell'attivazione della modalità di scansione a basso consumo?**
-Questa modalità riduce la frequenza di scansione, risparmiando energia ma diminuendo l'efficacia del rilevamento. Potrebbe non rilevare alcuni dispositivi rischiosi. Per una maggiore sicurezza, suggeriamo di utilizzare la modalità normale, che sui telefoni moderni non consuma molta più batteria.
+Questa modalità riduce la frequenza di scansione, risparmiando energia ma diminuendo l'efficacia del rilevamento. Potrebbe non rilevare alcuni dispositivi rischiosi. Per una maggiore sicurezza, suggeriamo di utilizzare la modalità normale, che sui telefoni moderni non consuma molta più batteria rispetto a quella a basso consumo.
 
 **Cosa succede se limito l'accesso alla posizione di AirGuard?**
 Senza l'accesso alla posizione, l'app si basa solo sulle scansioni Bluetooth. Ciò può portare a più falsi allarmi poiché non possiamo tracciare il tuo movimento rispetto al tracker. Raccomandiamo di consentire l'accesso alla posizione per avvisi più accurati.

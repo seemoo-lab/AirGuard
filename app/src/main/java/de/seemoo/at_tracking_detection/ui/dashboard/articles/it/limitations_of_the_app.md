@@ -2,7 +2,7 @@
 
 AirGuard può trovare solo tracker basati su Bluetooth. I tracker che funzionano con il GPS e condividono la posizione con il proprietario tramite una connessione cellulare non possono essere trovati.
 
-Di seguito, imparerai quali tracker AirGuard può rilevare automaticamente in background e quali tracker sono visibili utilizzando la scansione manuale.
+Di seguito imparerai quali tracker AirGuard può rilevare automaticamente in background e quali tracker sono visibili utilizzando la scansione manuale.
 
 **Samsung SmartTag**
 Questi tag sono prodotti da Samsung e funzionano quasi come gli AirTag.
@@ -25,7 +25,7 @@ Qui trattiamo i tracker compatibili anche con i telefoni Android.
 
 **AirTag**
 Gli AirTag sono i tracker di Apple. Di conseguenza, sono rilevabili solo in misura limitata, poiché molti segnali vengono filtrati dal sistema.
-Nella scansione manuale possiamo trovare gli AirTag e puoi localizzarli.
+Con la scansione manuale possiamo trovare gli AirTag e puoi localizzarli.
 Il rilevamento del tracciamento in background è già fornito dall'app Dov'è (Find My) di Apple.
 
 *Avviso di tracciamento automatico* ❌
