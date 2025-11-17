@@ -456,4 +456,18 @@
     <string name="old_device_deactivate_text">Вы уверены, что хотите отключить автоматическое удаление старых меток? Если вы подтвердите это, приложение со временем будет работать медленнее. Изменение этой настройки позже, может занять до 24 часов</string>
     <string name="old_device_deactivate_yes">Да, отключить</string>
     <string name="old_device_deactivate_no">Нет, оставить включенной</string>
+
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">Отслеживаемый трекер преследует вас как минимум %d час.</item>
+        <item quantity="few">Отслеживаемый трекер преследует вас как минимум %d часа.</item>
+        <item quantity="many">Отслеживаемый трекер преследует вас как минимум %d часов.</item>
+        <item quantity="other">Отслеживаемый трекер преследует вас как минимум %d часов.</item>
+    </plurals>
+
+    <plurals name="notification_text_base">
+        <item quantity="one">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минуту.</item>
+        <item quantity="few">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минуты.</item>
+        <item quantity="many">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минут.</item>
+        <item quantity="other">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минут.</item>
+    </plurals>
 </resources>
