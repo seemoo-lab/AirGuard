@@ -139,7 +139,6 @@
     <string name="onboarding_share_data_no">Nie</string>
     <string name="onboarding_share_data_yes">Áno</string>
     <string name="onboarding_share_data_dialog">Prosím, rozhodnite sa, či sa chcete zúčastniť alebo nie. Všetky zdieľané údaje sú úplne anonymné.</string>
-    <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device_apple">Apple "FindMy" %s</string>
     <string name="device_name_find_my_device_google">Google "Find My Device" %s</string>
 
@@ -262,11 +261,7 @@
     <string name="beacon_locations">Polohy beaconov</string>
     <string name="other_devices_found">Nájdené ďalšie zariadenia</string>
     <string name="all_devices_found">Všetky nájdené zariadenia</string>
-    <string name="device_name_tile" translatable="false">Tile %s</string>
-    <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device">Samsung Device %s</string>
-    <string name="device_name_samsung_tracker" translatable="false">Samsung Tracker %s</string>
-    <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Apple Device %s</string>
     <string name="device_name_unknown_device">Neznáme zariadenie %s</string>
     <string name="play_sound_error_fail">Nepodarilo sa prehrať zvuk! Prosím skúste znova!</string>
@@ -304,7 +299,6 @@
     <string name="survey_settings_title">Prieskum o prenasledovaní a sledovaní polohy</string>
     <string name="onboarding_setting_summary">Zobraziť úvodný postup aplikácie pri ďalšom spustení aplikácie</string>
     <string name="onboarding_setting_title">Zobraziť Úvod</string>
-    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetooth je vypnutý. Táto aplikácia vyžaduje Bluetooth na skenovanie blízkych trackerov.</string>
     <string name="location_off_explanation">Poloha je vypnutá. Táto aplikácia vyžaduje povolenie polohy na skenovanie blízkych trackerov. Zapnite prosím polohu v systémových nastaveniach.\n\nAby sa to prejavilo, je možné, že budete musieť aplikáciu reštartovať.</string>
     <string name="open_bluetooth_settings">Otvoriť nastavenia Bluetooth</string>
@@ -348,16 +342,13 @@
     <string name="searching_for_device">Vyhľadáva sa zariadenie</string>
     <string name="battery_status_text">Batéria: </string>
 
-    <string name="airtag" translatable="false">Airtag</string>
-    <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Zariadenia Apple</string>
-    <string name="chipolo" translatable="false">Chipolo</string>
-    <string name="pebblebee" translatable="false">Pebblebee</string>
+    <string name="chipolo">Chipolo</string>
+    <string name="pebblebee">Pebblebee</string>
     <string name="find_my_device">Zariadenia Apple FindMy</string>
     <string name="samsung_tracker">Samsung Trackery</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
-    <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
-    <string name="tile" translatable="false">Tile</string>
+    <string name="tile">Tile</string>
     <string name="google_find_my">Zariadenia Google "Find My Device"</string>
     <string name="airguard_for_android">AirGuard pre Android</string>
     <string name="version_number">Verzia %s</string>
@@ -368,11 +359,6 @@
     <string name="google_find_my_phone_name">Android Smartfón</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Zariadenie Apple</string>
-    <string name="airtag_default_name" translatable="false">AirTag</string>
-    <string name="airpods_default_name" translatable="false">AirPods</string>
-    <string name="chipolo_default_name" translatable="false">Chipolo</string>
-    <string name="tile_default_name" translatable="false">Tile</string>
-    <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
 
     <string name="article_image_description">Náhľadový obrázok pre tento článok</string>
     <string name="info_button_description">Zobraziť text s vysvetlením</string>
@@ -393,7 +379,6 @@
     <string name="observe_tracker_failure">Už sledujete tento tracker</string>
     <string name="credits">Poďakovanie</string>
 
-    <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
     <string name="smarttag_uwb">SmartTag (s UWB)</string>
 
     <string name="website_manufacturer">Webová stránka výrobcu</string>
@@ -407,7 +392,6 @@
     <string name="delete_data_server_error">Server nie je dostupný. Skúste znova neskôr.</string>
     <string name="delete_data_no_data">Žiadne údaje na vymazanie</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_sk.json</string>
     <string name="article_reading_time">Čas čítania: %d min</string>
     <string name="article_offline_header">Žiadne pripojenie k internetu</string>
     <string name="article_offline_text">Momentálne nie ste pripojení k internetu. Články, ktoré vám pomôžu orientovať sa v aplikácii, nájdete tu, keď budete pripojení k internetu.</string>

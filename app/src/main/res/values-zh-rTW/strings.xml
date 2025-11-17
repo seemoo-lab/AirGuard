@@ -121,7 +121,6 @@
     <string name="onboarding_share_data_no">否</string>
     <string name="onboarding_share_data_yes">是</string>
     <string name="onboarding_share_data_dialog">請決定是否要參與。所有分享的資料都是完全匿名的。</string>
-    <string name="device_name_airtag" translatable="false">AirTag %s</string>
 
     <string name="notification_observe_tracker_title_base">您觀察的追蹤器</string>
     <plurals name="notification_observe_tracker_positive">
@@ -228,9 +227,7 @@
     <string name="empty_image_content_description">顯示一個空的清單</string>
     <string name="beacon_locations">指標位置</string>
     <string name="other_devices_found">找到的其他裝置</string>
-    <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_samsung_device" translatable="true">Samsung 的裝置 %s</string>
-    <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Apple 的裝置 %s</string>
     <string name="device_name_unknown_device">未知裝置 %s</string>
     <string name="play_sound_error_fail">播放音效失敗！請再試一次！</string>
@@ -265,7 +262,6 @@
     <string name="survey_settings_title">跟蹤和位置追蹤調查</string>
     <string name="onboarding_setting_summary">將始終顯示應用程式的初始化流程</string>
     <string name="onboarding_setting_title">顯示初始化流程</string>
-    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">藍牙已關閉。此應用程式需要藍牙來掃描附近的追蹤器。</string>
     <string name="open_bluetooth_settings">開啟藍牙設定</string>
 
@@ -305,12 +301,11 @@
     <string name="battery_status_text">電池：</string>
     <string name="connection_state_unknown_explanation">無法確定連線狀態</string>
 
-    <string name="airtag" translatable="false">AirTag</string>
-    <string name="airpods" translatable="false">AirPods</string>
     <string name="apple_device">Apple 的裝置</string>
-    <string name="chipolo" translatable="false">Chipolo</string>
+    <string name="chipolo">Chipolo</string>
+    <string name="pebblebee">Pebblebee</string>
     <string name="find_my_device">Find My 裝置</string>
-    <string name="tile" translatable="false">Tile</string>
+    <string name="tile">Tile</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">版本 %s</string>
     <string name="contact_us">聯絡我們</string>

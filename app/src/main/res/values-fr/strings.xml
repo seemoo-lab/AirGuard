@@ -128,7 +128,6 @@
     <string name="onboarding_share_data_no">Non</string>
     <string name="onboarding_share_data_yes">Oui</string>
     <string name="onboarding_share_data_dialog">Choisissez si vous voulez participer ou non. Toutes les données sont partagées de manière totalement anonymes.</string>
-    <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device_apple">Apple "FindMy" %s</string>
     <string name="device_name_find_my_device_google">Google "Find My Device" %s</string>
 
@@ -244,10 +243,7 @@
     <string name="empty_image_content_description">Image montrant une liste vide</string>
     <string name="beacon_locations">Localisations des émissions</string>
     <string name="other_devices_found">Autres appareils trouvés</string>
-    <string name="device_name_tile" translatable="false">Tile %s</string>
-    <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device" translatable="true">Appareil Samsung %s</string>
-    <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Appareil Apple %s</string>
     <string name="device_name_unknown_device">Appareil inconnu %s</string>
     <string name="play_sound_error_fail">Impossible de faire sonner\u202f! Veuillez réessayer.</string>
@@ -284,7 +280,6 @@
     <string name="survey_settings_title">Enquête sur le harcèlement et le pistage de localisation</string>
     <string name="onboarding_setting_summary">Toujours montrer les procédures d\u02bcaccueil</string>
     <string name="onboarding_setting_title">Montrer les procédures d\u02bcaccueil</string>
-    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Le Bluetooth est désactivé. Cette application a besoin d\u02bcutiliser le Bluetooth pour scanner les alentours à la recherche de traceurs.</string>
     <string name="location_off_explanation">La localisation est désactivée. Cette application a besoin de la permission d\u02bcutiliser la localisation pour identifier les traceurs autour de vous. Merci d\u02bcactiver la localisation dans les paramètres système.\n\nIl est possible qu\u02bcil faille redémarrer l\u02bcapplication pour que ce changement soit pris en compte.</string>
     <string name="open_bluetooth_settings">Ouvrir les paramètres Bluetooth</string>
@@ -293,7 +288,7 @@
     <string name="battery_text">Batterie\u00a0: </string>
     <string name="battery_full">Pleine</string>
     <string name="battery_medium">Moyenne</string>
-    <string name="battery_low" translatable="false">Basse</string>
+    <string name="battery_low">Basse</string>
     <string name="battery_very_low">Très basse</string>
     <string name="battery_unknown">Inconnu</string>
 
@@ -328,13 +323,11 @@
     <string name="searching_for_device">Chercher un appareil</string>
     <string name="battery_status_text">Batterie\u00a0: </string>
 
-    <string name="airtag" translatable="false">Airtag</string>
-    <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Appareils Apple</string>
-    <string name="chipolo" translatable="false">Chipolos</string>
-    <string name="pebblebee" translatable="false">Pebblebees</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
     <string name="find_my_device">Appareils Apple FindMy</string>
-    <string name="tile" translatable="false">Tiles</string>
+    <string name="tile">Tiles</string>
     <string name="google_find_my">Appareils Google "Find My Device"</string>
     <string name="airguard_for_android">AirGuard pour Android</string>
     <string name="version_number">Version %s</string>
@@ -343,11 +336,6 @@
     <string name="google_find_my_default_name">Google "Find My Device"</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Appareil Apple</string>
-    <string name="airtag_default_name" translatable="false">AirTag</string>
-    <string name="airpods_default_name" translatable="false">AirPods</string>
-    <string name="chipolo_default_name" translatable="false">Chipolo</string>
-    <string name="tile_default_name" translatable="false">Tile</string>
-    <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
 
 
     <string name="article_image_description">Aperçu de l\u02bcimage de cet article</string>
@@ -366,7 +354,6 @@
     <string name="observe_tracker_failure">Vous observez déjà ce traceur</string>
     <string name="credits">Crédits</string>
 
-    <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
     <string name="smarttag_uwb">SmartTag (avec UWB)</string>
 
     <string name="website_manufacturer">Site web du fabriquant</string>
@@ -380,7 +367,6 @@
     <string name="delete_data_server_error">Le serveur n\u02bcest pas accessible, veuillez réessayer dans un moment.</string>
     <string name="delete_data_no_data">Aucune donnée à supprimer</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_fr.json</string>
     <string name="article_reading_time">Temps de lecture\u00a0: %d minutes</string>
     <string name="article_offline_header">Pas de connexion Internet</string>
     <string name="article_offline_text">Vous n\u02bcêtes pas connecté à Internet. Vous pourrez accéder à des articles vous aidant à utiliser cette application quand vous aurez un accès à Internet.</string>

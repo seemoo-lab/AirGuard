@@ -303,7 +303,10 @@
     <string name="searching_for_device">Поиск устройства</string>
     <string name="battery_status_text">"Батарея: "</string>
     <string name="apple_device">Устройства Apple</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
     <string name="find_my_device">Устройства Apple FindMy</string>
+    <string name="tile">Tiles</string>
     <string name="google_find_my">Устройства Google Find My</string>
     <string name="contact_us">Связаться с нами</string>
     <string name="google_find_my_default_name">Google Find My</string>
@@ -337,7 +340,6 @@
     <string name="delete_data_error">Что-то пошло не так</string>
     <string name="delete_data_server_error">Сервер недоступен. Попробуйте позже</string>
     <string name="delete_data_no_data">Нет данных для удаления</string>
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_ru.json</string>
     <string name="article_reading_time">Время чтения: %d мин</string>
     <string name="article_offline_header">Нет подключения к Интернету</string>
     <string name="article_offline_text">Сейчас вы не подключены к Интернету. Статьи помощи появятся в приложении позже, когда Интернет будет доступен</string>

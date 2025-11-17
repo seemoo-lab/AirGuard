@@ -347,13 +347,13 @@
     <string name="airtag" translatable="false">Airtag</string>
     <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Apple Devices</string>
-    <string name="chipolo" translatable="false">Chipolos</string>
-    <string name="pebblebee" translatable="false">Pebblebees</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
     <string name="find_my_device">Apple FindMy Devices</string>
     <string name="samsung_tracker">Samsung Trackers</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
     <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
-    <string name="tile" translatable="false">Tiles</string>
+    <string name="tile">Tiles</string>
     <string name="google_find_my">Google "Find My Device" Devices</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">Version %s</string>
@@ -403,7 +403,6 @@
     <string name="delete_data_server_error">Server is not reachable. Try again later.</string>
     <string name="delete_data_no_data">No data to delete</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
     <string name="article_reading_time">Reading time: %d min</string>
     <string name="article_offline_header">No internet connection</string>
     <string name="article_offline_text">You are currently not connected to the internet. You will find articles that will help you navigate the app here when you are connected to the internet.</string>
