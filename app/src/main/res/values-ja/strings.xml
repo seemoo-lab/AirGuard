@@ -227,7 +227,6 @@
     <string name="settings_permanent_scanning_title">常時スキャン</string>
     <string name="settings_permanent_scanning_summary">常時バックグラウンドスキャナーを使用します。精度が向上しますが、稀にアプリの安定性に影響する場合があります。</string>
     <string name="times_seen">検知回数</string>
-    <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device_google">Google「Find My Device」%s</string>
     <string name="settings_show_connected_devices_title">接続済みデバイスを表示</string>
     <string name="settings_show_connected_devices">スキャンタブで所有者デバイスに接続されているデバイスを表示する</string>
@@ -242,12 +241,7 @@
     <string name="settings_device_filter_title">デバイスタイプを除外</string>
     <string name="settings_device_filter_dialog_title">除外するデバイスタイプ</string>
     <string name="settings_device_filter_summary">AirGuardが無視するデバイスタイプを選択します。選択したタイプは手動スキャンに表示されず、追跡通知もされません。</string>
-    <string name="device_name_tile" translatable="false">Tile %s</string>
-    <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device">Samsungデバイス %s</string>
-    <string name="device_name_samsung_tracker" translatable="false">Samsung Tracker %s</string>
-    <string name="device_name_airpods" translatable="false">AirPods %s</string>
-    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetoothがオフになっています。このアプリは近くのタグを検出するためにBluetoothが必要です。</string>
     <string name="location_off_explanation">位置情報がオフになっています。このアプリは近くのタグを検出するために位置情報の許可が必要です。システム設定で位置情報をオンにしてください。\n\n効果を反映するにはアプリの再起動が必要な場合があります。</string>
     <string name="open_bluetooth_settings">Bluetooth設定を開く</string>
@@ -255,7 +249,7 @@
     <string name="battery_text">バッテリー残量: </string>
     <string name="battery_full">満タン</string>
     <string name="battery_medium">中</string>
-    <string name="battery_low" translatable="false">低</string>
+    <string name="battery_low">低</string>
     <string name="battery_very_low">非常に低い</string>
     <string name="battery_unknown">不明</string>
     <string name="connection_state_offline">オフライン</string>
@@ -285,16 +279,13 @@
     <string name="bell_icon_description">このデバイスはトラッカーとして識別されました</string>
     <string name="searching_for_device">デバイスを検索中</string>
     <string name="battery_status_text">バッテリー: </string>
-    <string name="airtag" translatable="false">Airtag</string>
-    <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Appleデバイス</string>
-    <string name="chipolo" translatable="false">Chipolo</string>
-    <string name="pebblebee" translatable="false">Pebblebee</string>
+    <string name="chipolo">Chipolo</string>
+    <string name="pebblebee">Pebblebee</string>
     <string name="find_my_device">Apple FindMyデバイス</string>
     <string name="samsung_tracker">Samsungトラッカー</string>
     <string name="samsung_tracker_name">Samsungトラッカー</string>
-    <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
-    <string name="tile" translatable="false">Tile</string>
+    <string name="tile">Tile</string>
     <string name="google_find_my">Google「Find My Device」デバイス</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">バージョン %s</string>
@@ -304,11 +295,6 @@
     <string name="google_find_my_phone_name">Androidスマートフォン</string>
     <string name="apple_find_my_default_name">Apple「FindMy」</string>
     <string name="apple_device_default_name">Appleデバイス</string>
-    <string name="airtag_default_name" translatable="false">AirTag</string>
-    <string name="airpods_default_name" translatable="false">AirPods</string>
-    <string name="chipolo_default_name" translatable="false">Chipolo</string>
-    <string name="tile_default_name" translatable="false">Tile</string>
-    <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
     <string name="article_image_description">記事のプレビュー画像</string>
     <string name="info_button_description">説明文を表示</string>
     <string name="export_device_title">PDFにエクスポート</string>
@@ -325,10 +311,12 @@
     <string name="observe_tracker_stopped">監視停止しました</string>
     <string name="observe_tracker_failure">すでにこのトラッカーを監視しています</string>
     <string name="credits">クレジット</string>
-    <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
+
     <string name="smarttag_uwb">SmartTag（UWB付き）</string>
+
     <string name="website_manufacturer">メーカーのウェブサイト</string>
-    <string name="website_manufacturer_detail">トラッカーのメーカーのウェブサイトを開く</string>
+    <string name="website_manufacturer_detail">トラッカーの製造元のウェブサイトを開く</string>
+
     <string name="no_browser">ブラウザが見つかりません</string>
     <string name="delete_data_button">データ削除をリクエストする</string>
     <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止されます。再度参加したい場合は、オンボーディングを再度有効化し「はい」を選択してください。</string>
@@ -336,7 +324,6 @@
     <string name="delete_data_error">エラーが発生しました</string>
     <string name="delete_data_server_error">サーバーに接続できません。後でもう一度お試しください。</string>
     <string name="delete_data_no_data">削除するデータがありません</string>
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
     <string name="article_reading_time">読了時間: %d分</string>
     <string name="article_offline_header">インターネット接続なし</string>
     <string name="article_offline_text">現在インターネットに接続されていません。接続時にアプリの使い方を説明する記事が表示されます。</string>
@@ -453,6 +440,11 @@
     <string name="language_german">ドイツ語</string>
     <string name="language_japanese">日本語</string>
     <string name="language_italian">イタリア語</string>
+    <string name="language_czech">チェコ語</string>
+    <string name="language_slovak">スロバキア語</string>
+    <string name="language_russian">ロシア語</string>
+    <string name="language_french">フランス語</string>
+    <string name="language_traditional_chinese">繁体字中国語</string>
 
     <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
     <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>
