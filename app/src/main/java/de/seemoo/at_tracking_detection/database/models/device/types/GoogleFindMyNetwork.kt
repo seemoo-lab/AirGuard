@@ -401,7 +401,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         fun nameReplacementLayer(name: String): String {
             return when {
-                name.contains("motorola", ignoreCase = true) -> "Motorola Moto Tag"
+                name.contains("motorola", ignoreCase = true) -> "Moto Tag"
+                name.contains("TBD-Gray", ignoreCase = false) -> "Moto Tag"
                 else -> name
             }
         }
@@ -412,10 +413,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
                 name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
                 name.contains("motorola", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
-                name.contains("moto", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("moto tag", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("TBD-Gray", ignoreCase = false) -> GoogleFindMyNetworkManufacturer.MOTOROLA
                 name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
                 name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
                 name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
+                name.contains("hama", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.HAMA
                 else -> GoogleFindMyNetworkManufacturer.UNKNOWN
             }
         }
@@ -424,6 +427,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return when {
                 name.contains("pebblebee clip", ignoreCase = true) -> R.drawable.ic_pebblebee_clip
                 name.contains("chipolo one", ignoreCase = true) -> R.drawable.ic_chipolo
+                name.contains("motorola", ignoreCase = true) -> R.drawable.ic_moto_tag
+                name.contains("moto tag", ignoreCase = true) -> R.drawable.ic_moto_tag
+                name.contains("TBD-Gray", ignoreCase = false) -> R.drawable.ic_moto_tag
                 else -> R.drawable.ic_chipolo
             }
         }
@@ -434,6 +440,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
                 GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
                 GoogleFindMyNetworkManufacturer.MOTOROLA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_motorola)
+                GoogleFindMyNetworkManufacturer.HAMA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_hama)
                 else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
             }
         }
