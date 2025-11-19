@@ -226,24 +226,20 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
         // Check if there are at least x notifications in total
         val totalNotifications = recentNotifications.size
-        if (totalNotifications >= notificationsLastDay) {
+        if (totalNotifications == notificationsLastDay) {
             SharedPrefs.showTooManyNotificationsHint = true
             // TODO: Throw Notification
-            Timber.d("Too many notifications hint set: $totalNotifications notifications in last 24 hours")
             return
         }
 
         // Check if there are at least y notifications for the same device
         val notificationsByDevice = recentNotifications.groupBy { it.deviceAddress }
         val maxNotificationsForDevice = notificationsByDevice.values.maxOfOrNull { it.size } ?: 0
-        if (maxNotificationsForDevice >= notificationsPerDeviceLastDay) {
+        if (maxNotificationsForDevice == notificationsPerDeviceLastDay) {
             SharedPrefs.showTooManyNotificationsHint = true
             // TODO: Throw Notification
-            Timber.d("Too many notifications hint set: $maxNotificationsForDevice notifications for same device in last 24 hours")
             return
         }
-
-        Timber.d("No excessive notifications detected: $totalNotifications total, max $maxNotificationsForDevice per device")
     }
 
     companion object {
