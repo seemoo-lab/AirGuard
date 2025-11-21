@@ -3,7 +3,7 @@ buildscript {
     ext.kotlin_version = '2.2.21'
     ext.hilt_compiler_version = '2.57.2'
     ext.hilt_version = '1.3.0'
-    ext.room_version = '2.8.3'
+    ext.room_version = '2.8.4'
     ext.compose_version = '1.7.3'
     ext.about_libraries_version = '13.1.0'
     ext.work_version = '2.11.0'
