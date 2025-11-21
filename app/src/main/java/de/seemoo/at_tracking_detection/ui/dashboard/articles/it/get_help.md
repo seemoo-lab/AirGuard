@@ -3,7 +3,7 @@
 
 Se AirGuard rileva un tracker in background che ti sta seguendo, riceverai una notifica. Puoi toccare la notifica per saperne di più su questo tracker. Per i tracker supportati, puoi riprodurre un suono per localizzare il tracker. Per tutti gli altri tracker, puoi usare "Localizza Tracker" per trovarlo.
 
-Se hai trovato il tracker e sei certo che sia dannoso, prova a rimuovere la batteria. Assicurati anche di non spostarti in un'altra posizione finché non lo hai disabilitato.
+Se hai trovato il tracker e sei certa che sia dannoso, prova a rimuovere la batteria. Assicurati anche di non spostarti in un'altra posizione finché non lo hai disabilitato.
 
 Nel malaugurato caso in cui tu abbia trovato un tracker che è stato usato contro di te, è importante sapere dove trovare aiuto.
 Ci sono diverse reti e associazioni che possono aiutarti. Forniamo un breve elenco per Paese.
