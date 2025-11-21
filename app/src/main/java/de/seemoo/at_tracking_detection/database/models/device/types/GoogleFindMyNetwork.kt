@@ -430,6 +430,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 name.contains("motorola", ignoreCase = true) -> R.drawable.ic_moto_tag
                 name.contains("moto tag", ignoreCase = true) -> R.drawable.ic_moto_tag
                 name.contains("TBD-Gray", ignoreCase = false) -> R.drawable.ic_moto_tag
+                name.contains("hama", ignoreCase = true) -> R.drawable.ic_hama_tracker
                 else -> R.drawable.ic_chipolo
             }
         }
