@@ -76,6 +76,7 @@ class ExportDeviceFragment: Fragment() {
     private lateinit var noInternetTextView: TextView
     private lateinit var mapView: MapView
     private var isMapReady = false
+    private var lastHasInternet: Boolean = false
 
     private lateinit var binding: FragmentExportDeviceBinding
 
@@ -138,10 +139,11 @@ class ExportDeviceFragment: Fragment() {
         progressBar = view.findViewById(R.id.progress_bar)
 
         exportDocumentButton.setOnClickListener {
-            if (isMapReady) {
-                checkPermissionsAndGeneratePdf()
-            } else {
+            val hasInternet = Utility.isInternetAvailable(requireContext())
+            if (hasInternet && !isMapReady) {
                 Toast.makeText(context, getString(R.string.export_trackers_map_still_loading), Toast.LENGTH_SHORT).show()
+            } else {
+                checkPermissionsAndGeneratePdf()
             }
         }
     }
@@ -149,7 +151,7 @@ class ExportDeviceFragment: Fragment() {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        if (!isMapReady) setupMapContent()
+        if (!isMapReady && lastHasInternet) setupMapContent()
     }
 
     override fun onPause() {
@@ -206,7 +208,8 @@ class ExportDeviceFragment: Fragment() {
 
     private fun checkInternetAndLoadMap() {
         Timber.d("Checking internet connection for map loading")
-        if (Utility.isInternetAvailable(requireContext())) {
+        lastHasInternet = Utility.isInternetAvailable(requireContext())
+        if (lastHasInternet) {
             mapView.visibility = View.VISIBLE
             noInternetTextView.visibility = View.GONE
             view?.post {
@@ -214,9 +217,10 @@ class ExportDeviceFragment: Fragment() {
                 setupMapContent()
             }
         } else {
-            Timber.d("No internet connection, showing no internet message")
+            Timber.d("No internet connection, showing no internet message and skipping map setup")
             mapView.visibility = View.GONE
             noInternetTextView.visibility = View.VISIBLE
+            isMapReady = false // Allow export without map
         }
     }
 
@@ -376,6 +380,7 @@ class ExportDeviceFragment: Fragment() {
             val linkPaint = Paint(textPaint).apply { color = Color.BLUE; isUnderlineText = true }
             val headerPaint = Paint().apply { textSize = TEXT_SIZE_HEADER; isAntiAlias = true; typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) }
             val centerTextPaint = Paint(textPaint).apply { textAlign = Paint.Align.CENTER }
+            val warningPaint = Paint(textPaint).apply { color = Color.RED }
 
             val drawablePageHeight = PAGE_HEIGHT - MARGIN - FOOTER_HEIGHT - LINE_SPACING // Usable height for content
 
@@ -408,9 +413,26 @@ class ExportDeviceFragment: Fragment() {
             canvas.drawText(getString(R.string.export_trackers_detections, detectionCount), MARGIN, yPos, textPaint)
             yPos += NORMAL_LINE_HEIGHT
             canvas.drawText(getString(R.string.export_trackers_unique_locations, uniqueLocationCount), MARGIN, yPos, textPaint)
+            yPos += NORMAL_LINE_HEIGHT
+
+            if (device.matchedUsing15MinAlgo) {
+                if (yPos + NORMAL_LINE_HEIGHT + SECTION_SPACING > drawablePageHeight) {
+                    drawPageFooter(canvas, currentPageNumber, totalPages, textPaint)
+                    pdfDocument.finishPage(currentPage)
+                    currentPageNumber++
+                    pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, currentPageNumber).create()
+                    currentPage = pdfDocument.startPage(pageInfo)
+                    canvas = currentPage.canvas
+                    yPos = MARGIN
+                }
+                canvas.drawText(getString(R.string.export_trackers_algo_warning_text), MARGIN, yPos, warningPaint)
+                yPos += NORMAL_LINE_HEIGHT
+            }
             yPos += SECTION_SPACING
 
             // --- Map Section ---
+            canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
+            yPos += NORMAL_LINE_HEIGHT
             if (hasInternet) {
                 val mapBitmap = createMapBitmap()
                 val mapHeight = (mapBitmap.height * (PAGE_WIDTH - 2 * MARGIN) / mapBitmap.width)
@@ -424,24 +446,23 @@ class ExportDeviceFragment: Fragment() {
                     currentPage = pdfDocument.startPage(pageInfo)
                     canvas = currentPage.canvas
                     yPos = MARGIN // Reset yPos for new page
+                    // Re-draw section title on new page
+                    canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
+                    yPos += NORMAL_LINE_HEIGHT
                 }
 
-                canvas.drawText(getString(R.string.export_trackers_map_title), MARGIN, yPos, boldTextPaint)
-                yPos += NORMAL_LINE_HEIGHT
                 canvas.drawBitmap(mapBitmap, null, mapRect, null) // Draw map scaled into rect
                 yPos += mapHeight + SECTION_SPACING
                 mapBitmap.recycle()
             } else {
-                val noInternetText = getString(R.string.export_trackers_no_internet)
+                val noInternetText = getString(R.string.export_trackers_no_internet_during_generation)
                 val placeholderHeight = 300f // Same height as MapView in layout
                 // Center the text within this placeholder area
                 val textBounds = Rect()
                 centerTextPaint.getTextBounds(noInternetText, 0, noInternetText.length, textBounds)
                 canvas.drawText(noInternetText, PAGE_WIDTH / 2f, yPos + (placeholderHeight / 2) , centerTextPaint)
-                yPos += placeholderHeight // Advance yPos by the placeholder height
+                yPos += placeholderHeight + SECTION_SPACING // Advance yPos by the placeholder height and spacing
             }
-
-            yPos += SECTION_SPACING
 
             // --- Beacon Details Section ---
             canvas.drawText(getString(R.string.export_trackers_detections_title), MARGIN, yPos, boldTextPaint)
@@ -582,7 +603,14 @@ class ExportDeviceFragment: Fragment() {
         // Approximate height: Title line + 5 lines of info + section spacing
         var basicInfoHeight = NORMAL_LINE_HEIGHT // Title
         basicInfoHeight += if (device.deviceType != DeviceType.SAMSUNG_TRACKER && device.deviceType != DeviceType.SAMSUNG_FIND_MY_MOBILE) 5 * NORMAL_LINE_HEIGHT else 4 * NORMAL_LINE_HEIGHT
+        if (device.matchedUsing15MinAlgo) {
+            basicInfoHeight += NORMAL_LINE_HEIGHT
+        }
         basicInfoHeight += SECTION_SPACING
+        if (yPos + basicInfoHeight > drawablePageHeight) {
+            pageCount++
+            yPos = MARGIN
+        }
         yPos += basicInfoHeight
 
         // --- Simulate Map ---
@@ -600,7 +628,12 @@ class ExportDeviceFragment: Fragment() {
             }
             yPos += mapSectionHeight
         } else {
-            yPos += 300f
+            val offlineSectionHeight = NORMAL_LINE_HEIGHT + 300f + SECTION_SPACING
+            if (yPos + offlineSectionHeight > drawablePageHeight) {
+                pageCount++
+                yPos = MARGIN
+            }
+            yPos += offlineSectionHeight
         }
 
         // --- Simulate Beacon Details ---

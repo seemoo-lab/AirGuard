@@ -52,6 +52,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         super.onCreate(savedInstanceState)
+
+        // Prevent Screenshots, if set in settings
+        updateSecureFlag()
+
         setContentView(R.layout.activity_main)
 
         configureSystemBars(this, edgeToEdge = true, applyRootPadding = false)
@@ -110,6 +114,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, args=null, navOptions = navOptions)
             }
             return@setOnItemSelectedListener true
+        }
+    }
+
+    private fun updateSecureFlag() {
+        if (SharedPrefs.preventScreenshots) {
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                android.view.WindowManager.LayoutParams.FLAG_SECURE
+            )
+        } else {
+            window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
 
@@ -212,6 +227,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             val menu = navView.menu
             val item = menu.findItem(R.id.navigation_allDevicesFragment)
             item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
+        } else if (key == "prevent_screenshots") {
+            // Update the FLAG_SECURE when the setting changes
+            updateSecureFlag()
         }
     }
 }

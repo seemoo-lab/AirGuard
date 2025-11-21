@@ -1,0 +1,38 @@
+{
+  "limitations": {
+    "title": "Omezení této aplikace",
+    "author": "Leon Böttger",
+    "readingTime": 5,
+    "previewText": "Jaká omezení má tato aplikace?",
+    "cardColor": "blue_card_background",
+    "preview_image": "Investigating.png",
+    "filename": "cs/limitations_of_the_app.md"
+  },
+  "how": {
+    "title": "Jak AirGuard funguje?",
+    "author": "Dennis Arndt, Leon Böttger",
+    "readingTime": 2,
+    "previewText": "Zjistěte více o tom, jak vás AirGuard chrání před škodlivými sledovači",
+    "cardColor": "gray_card_background",
+    "preview_image": "Map.png",
+    "filename": "cs/how_does_airguard_work.md"
+  },
+  "get_help": {
+    "title": "Najděte pomoc a podporu",
+    "author": "Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "Koho kontaktovat, když najdete sledovač",
+    "cardColor": "gray_card_background",
+    "preview_image": "Stopsign.png",
+    "filename": "cs/get_help.md"
+  },
+  "faq": {
+    "title": "FAQ",
+    "author": "Dennis Arndt, Leon Böttger, Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "Často kladené otázky o AirGuard",
+    "cardColor": "gray_card_background",
+    "preview_image": "FAQ.png",
+    "filename": "cs/faq.md"
+  }
+}

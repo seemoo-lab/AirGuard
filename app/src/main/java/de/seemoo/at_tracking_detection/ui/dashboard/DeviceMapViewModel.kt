@@ -21,5 +21,7 @@ class DeviceMapViewModel @Inject constructor(
 
     val isMapLoading = MutableLiveData<Boolean>(false)
 
-    val hideMap = MutableLiveData<Boolean>(false)
+    val hideMapShowNoDevicesFoundInstead = MutableLiveData<Boolean>(false)
+
+    val hideMapShowNoInternetInstead = MutableLiveData<Boolean>(false)
 }

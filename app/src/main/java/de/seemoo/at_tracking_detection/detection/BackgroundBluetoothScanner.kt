@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
@@ -503,7 +504,7 @@ object BackgroundBluetoothScanner {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    public suspend fun saveDevice(
+    suspend fun saveDevice(
         wrappedScanResult: ScanResultWrapper,
         discoveryDate: LocalDateTime
     ): BaseDevice? {
@@ -576,7 +577,7 @@ object BackgroundBluetoothScanner {
                             return@withLock null
                         }
 
-                        val baseInterval = 15
+                        val baseInterval = 15 // in minutes
 
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
@@ -650,7 +651,7 @@ object BackgroundBluetoothScanner {
                         )
 
                         if (correspondingDevice == null) {
-                            Timber.d("Add new Device to the database using the 15 Minute Algorithm!")
+                            Timber.d("Add new Device to the database!")
                             device.additionalData = additionalDataString
                             deviceRepository.insert(device)
                         } else {
@@ -658,6 +659,7 @@ object BackgroundBluetoothScanner {
                             device = correspondingDevice
                             device.lastSeen = discoveryDate
                             device.additionalData = additionalDataString
+                            device.matchedUsing15MinAlgo = true
                             deviceRepository.update(device)
                         }
                     } else {
@@ -675,6 +677,17 @@ object BackgroundBluetoothScanner {
                     val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
                     device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
+                }
+
+                if (device.deviceType == DeviceType.SAMSUNG_TRACKER) {
+                    try {
+                        if (wrappedScanResult.advertisedName == "Smart Tag2") {
+                            device.subDeviceType = SamsungTrackerType.subTypeToString(SamsungTrackerType.SMART_TAG_2)
+                            deviceRepository.update(device)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Error while detecting Samsung Tracker subtype")
+                    }
                 }
 
                 Timber.d("Device: $device")

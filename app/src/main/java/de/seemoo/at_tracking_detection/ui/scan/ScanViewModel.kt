@@ -12,6 +12,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
@@ -115,6 +116,9 @@ class ScanViewModel @Inject constructor(
             // If a Google Tracker is a phone or a tracker can be determined while the scan is happening without the need to connect to said tracker
             val googleSubType = GoogleFindMyNetwork.getSubType(wrappedScanResult)
             ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = googleSubType
+        } else if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.advertisedName == "Smart Tag2") {
+            // The SmartTag 2 sometimes advertises its Name, so we can set the subtype directly here
+            ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = SamsungTrackerType.SMART_TAG_2
         }
 
         val currentDate = LocalDateTime.now()

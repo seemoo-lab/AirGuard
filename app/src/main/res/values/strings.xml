@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AirGuard</string>
 
@@ -239,6 +240,8 @@
     <string name="settings_risk_sensitivity_low">Low</string>
     <string name="settings_risk_sensitivity_medium">Medium</string>
     <string name="settings_risk_sensitivity_high">High</string>
+    <string name="settings_prevent_screenshots_title">Prevent Screenshots</string>
+    <string name="settings_prevent_screenshots_summary">Prevents screenshots, screen recordings, and previews in recent apps for enhanced privacy</string>
     <string name="settings_risk_sensitivity_title">Detection Sensitivity</string>
     <string name="settings_risk_sensitivity_summary">This setting controls how sensitive the tracking detection is. A higher setting results in a faster but possibly more inaccurate detection.</string>
     <string name="settings_app_theme_title">App Theme</string>
@@ -246,7 +249,7 @@
     <string name="settings_metric_title">Metric System</string>
     <string name="settings_metric_summary">Use the metric system to display distances</string>
     <string name="info_text_only_trackers">This list only shows trackers that have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
-    <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard in the last 14 days. This includes devices that are not tracking you.Identified trackers are marked with a exclamation mark. You can filter the devices by using the button in the bottom-right corner</string>
+    <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard in the last 14 days. This includes devices that are not tracking you. Identified trackers are marked with a exclamation mark. You can filter the devices by using the button in the bottom-right corner</string>
     <string name="info_text_all_locations">This view shows all locations at which a device has been found. This does include devices, which are not tracking your location.</string>
     <string name="empty_list_devices">This list shows all devices that have been found with AirGuard in the past 14 days. Since it is empty no devices have been found. Remember to keep Bluetooth activated, because the app can only find potential tracking devices by using Bluetooth</string>
     <string name="empty_list_trackers">This list shows only devices that were tracking your location in the past 14 days. Since it is empty no device has attempted to follow you and track your location. Whenever a device is tracking your location, you will receive a notification. Remember to keep Bluetooth activated to find tracking devices. With the button below you can view all devices, even those which have not been identified as a tracker.</string>
@@ -254,9 +257,10 @@
     <string name="empty_image_content_description">Image showing an empty list</string>
     <string name="beacon_locations">Beacon locations</string>
     <string name="other_devices_found">Other devices found</string>
+    <string name="all_devices_found">All devices found</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
-    <string name="device_name_samsung_device" translatable="true">Samsung Device %s</string>
+    <string name="device_name_samsung_device">Samsung Device %s</string>
     <string name="device_name_samsung_tracker" translatable="false">Samsung Tracker %s</string>
     <string name="device_name_airpods" translatable="false">AirPods %s</string>
     <string name="device_name_apple_device">Apple Device %s</string>
@@ -305,7 +309,7 @@
     <string name="battery_text">Battery Level: </string>
     <string name="battery_full">Full</string>
     <string name="battery_medium">Medium</string>
-    <string name="battery_low" translatable="false">Low</string>
+    <string name="battery_low">Low</string>
     <string name="battery_very_low">Very Low</string>
     <string name="battery_unknown">Unknown</string>
 
@@ -343,13 +347,13 @@
     <string name="airtag" translatable="false">Airtag</string>
     <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Apple Devices</string>
-    <string name="chipolo" translatable="false">Chipolos</string>
-    <string name="pebblebee" translatable="false">Pebblebees</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
     <string name="find_my_device">Apple FindMy Devices</string>
     <string name="samsung_tracker">Samsung Trackers</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
     <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
-    <string name="tile" translatable="false">Tiles</string>
+    <string name="tile">Tiles</string>
     <string name="google_find_my">Google "Find My Device" Devices</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">Version %s</string>
@@ -399,7 +403,6 @@
     <string name="delete_data_server_error">Server is not reachable. Try again later.</string>
     <string name="delete_data_no_data">No data to delete</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
     <string name="article_reading_time">Reading time: %d min</string>
     <string name="article_offline_header">No internet connection</string>
     <string name="article_offline_text">You are currently not connected to the internet. You will find articles that will help you navigate the app here when you are connected to the internet.</string>
@@ -414,6 +417,16 @@
     <string name="explanation_safe_trackers">Safe Trackers are trackers around you that are currently connected or have been connected to their owner devices in the last minutes. They most likely do not pose a threat to you.\nAdditionally all tracker marked as ignored will be considered to be safe.</string>
     <string name="device_name_cannot_be_empty">The device name cannot be empty</string>
 
+    <string name="translation_supporters">Translation supporters</string>
+    <string name="language_english">English</string>
+    <string name="language_german">German</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_czech">Czech</string>
+    <string name="language_slovak">Slovak</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_french">French</string>
+    <string name="language_traditional_chinese">Traditional Chinese</string>
     <string name="copyright">Copyright</string>
     <string name="developer">Developer: %s</string>
     <string name="maintainer">Maintainer: %s</string>
@@ -421,6 +434,7 @@
     <string name="low_risk_trackers">Safe Trackers</string>
     <string name="marker_legend">Legend</string>
     <string name="device_marker">Location where a potential tracker was found</string>
+    <string name="location_radius_circle">Radius within each location was found</string>
     <string name="connection_state_premature_offline_explanation_chipolo">Connection to owner in the last 30 minutes</string>
 
     <string name="samsung_determine_button">Determine specific Tracker Type</string>
@@ -476,6 +490,9 @@
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
 
+    <string name="export_trackers_algo_warning_text">This device was detected using an algorithm that can produce errors in some rare cases. Use this document with caution.</string>
+    <string name="export_trackers_no_internet_during_generation">Map could not be loaded, because there was no internet available during generation of this document.</string>
+
     <string name="samsung_bug_notification_title">Bluetooth Error detected</string>
     <string name="samsung_bug_notification_text">Your device is affected by an error that occurs on some devices running Android 15 or higher. All apps are currently unable to use Bluetooth Low Energy scanning. Please restart your phone to fix this.</string>
     <string name="generic_bluetooth_bug_notification_text">There have been issues while scanning bluetooth. Make sure that AirGuard has all required permissions and that Bluetooth is turned on. If this error still persists, try to restart your phone.</string>
@@ -485,4 +502,29 @@
     <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you. To change this enable notifications for this app in your system settings.</string>
     <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
     <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
+
+    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
+    <string name="map_footer_device">This map shows all locations where this device was found.</string>
+
+    <string name="title_old_device_cleanup">Auto delete old devices</string>
+    <string name="settings_old_device_cleanup_title">Auto delete old devices</string>
+    <string name="settings_old_device_cleanup_summary">Configure automatic deletion of old devices from database</string>
+    <string name="old_device_cleanup_description">Configure whether old devices that have not been seen for a longer time should be automatically deleted from the database.</string>
+    <string name="delete_old_devices_title">Delete old devices</string>
+    <string name="delete_old_devices_summary">Automatically delete devices that are not considered a potential threat and are older than the specified timeframe.</string>
+    <string name="delete_unsafe_old_devices_title">Also delete unsafe old devices</string>
+    <string name="delete_unsafe_old_devices_summary">Include devices that are considered a potential threat.</string>
+    <string name="old_device_timeframe_label">Deletion timeframe</string>
+    <string name="old_device_timeframe_hint">Select timeframe</string>
+    <string name="old_device_timeframe_7_days">7 days</string>
+    <string name="old_device_timeframe_14_days">14 days</string>
+    <string name="old_device_timeframe_1_month">1 month</string>
+    <string name="old_device_timeframe_2_months">2 months</string>
+    <string name="old_device_timeframe_3_months">3 months</string>
+    <string name="old_device_deactivate_title">Confirm deactivating automatic deletion</string>
+    <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time. Reverting this setting at a later point may take up to 24 hours.</string>
+    <string name="old_device_deactivate_yes">Yes, deactivate</string>
+    <string name="old_device_deactivate_no">No, keep activated</string>
+
+    <string name="article_load_error" translatable="false">Article Load Error</string>
 </resources>

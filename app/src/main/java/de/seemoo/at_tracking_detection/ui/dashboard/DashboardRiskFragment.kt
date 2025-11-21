@@ -80,7 +80,7 @@ class DashboardRiskFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             progressBar.visibility = View.VISIBLE
 
-            val articlesJSON = downloadJson()
+            val articlesJSON = loadArticlesJson(requireContext())
             Timber.d("Articles JSON: %s", articlesJSON)
 
             withContext(Dispatchers.Main) {
@@ -173,11 +173,11 @@ class DashboardRiskFragment : Fragment() {
                         topMargin = 22
                     }
 
-                    if (!article.preview_image.isNullOrEmpty()) {
-                        val imageURL = getURL(article.preview_image)
+                    if (article.preview_image.isNotEmpty()) {
+                        val imageUri = getLocalImageUri(article.preview_image)
                         context?.let {
                             Glide.with(it)
-                                .load(imageURL)
+                                .load(imageUri)
                                 .fitCenter()
                                 .into(imageViewPreview)
                         }
@@ -185,7 +185,7 @@ class DashboardRiskFragment : Fragment() {
                         imageViewPreview.visibility = View.GONE
                     }
 
-                    if (!article.filename.isNullOrEmpty()) {
+                    if (article.filename.isNotEmpty()) {
                         articleCard.setOnClickListener {
                             val directions: NavDirections =
                                 DashboardRiskFragmentDirections.actionNavigationDashboardToArticleFragment(

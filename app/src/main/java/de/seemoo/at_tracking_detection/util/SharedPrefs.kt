@@ -113,6 +113,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("advanced_mode", value) }
         }
 
+    var preventScreenshots: Boolean
+        get() {
+            return sharedPreferences.getBoolean("prevent_screenshots", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("prevent_screenshots", value) }
+        }
+
     var token: String?
         get() {
             return sharedPreferences.getString("token", null)
@@ -324,6 +332,30 @@ object SharedPrefs {
         }
         set(value) {
             sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
+        }
+
+    var deleteOldDevices: Boolean
+        get() {
+            return sharedPreferences.getBoolean("delete_old_devices", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("delete_old_devices", value) }
+        }
+
+    var deleteUnsafeOldDevices: Boolean
+        get() {
+            return sharedPreferences.getBoolean("delete_unsafe_old_devices", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("delete_unsafe_old_devices", value) }
+        }
+
+    var oldDeviceTimeframeDays: Long
+        get() {
+            return sharedPreferences.getLong("old_device_timeframe_days", 30L)
+        }
+        set(value) {
+            sharedPreferences.edit { putLong("old_device_timeframe_days", value) }
         }
 
     private fun getAllDevicesFilterOptions(): Set<String> {

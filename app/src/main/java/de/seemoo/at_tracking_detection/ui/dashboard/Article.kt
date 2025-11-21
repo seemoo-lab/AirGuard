@@ -1,14 +1,12 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import java.util.Locale
 
 data class Article(
     val title: String,
@@ -16,7 +14,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
-    val preview_image: String, // TODO: Rename when in production to PreviewImage, also in JSON
+    val preview_image: String, // This has to be named like this because of the file format
     val filename: String
 )
 
@@ -27,70 +25,65 @@ fun parseArticles(jsonString: String): List<Article> {
     return articleMap.values.toList()
 }
 
-fun getURL(filename: String): String {
-    return "https://tpe.seemoo.tu-darmstadt.de/articles/$filename"
+// Returns the best matching language code for which an articles file exists.
+// Dynamically discovers available languages from assets/articles/airguard_articles_*.json
+private fun resolveLanguageCode(context: Context): String {
+    val assetPath = "articles"
+    val availableCodes: Set<String> = try {
+        val entries = context.assets.list(assetPath)?.toList().orEmpty()
+        val regex = Regex("^airguard_articles_(.+)\\.json$", RegexOption.IGNORE_CASE)
+        entries.mapNotNull { name ->
+            regex.matchEntire(name)?.groupValues?.getOrNull(1)
+        }.toSet()
+    } catch (e: Exception) {
+        Timber.w(e, "Could not list assets in %s; falling back to defaults", assetPath)
+        emptySet()
+    }
+
+    val locale = context.resources.configuration.locales[0]
+    val lang = locale.language // e.g. "en"
+    val country = locale.country // e.g. "US"
+
+    // Build candidates in preference order.
+    val candidates = buildList {
+        if (country.isNotEmpty()) {
+            add("$lang-r$country") // e.g. zh-rTW
+            add("$lang-$country")  // e.g. zh-TW
+        }
+        add(lang) // e.g. zh
+    }
+
+    fun findMatch(c: String): String? = availableCodes.firstOrNull { it.equals(c, ignoreCase = true) }
+
+    for (cand in candidates) {
+        findMatch(cand)?.let { return it }
+    }
+
+    // Fallback preference: English if present; otherwise any available; otherwise "en"
+    findMatch("en")?.let { return it }
+    return availableCodes.firstOrNull() ?: "en"
 }
 
-fun downloadJson(): String {
-    val url = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_download_url)
-
-    val articleOfflineTitle = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_offline_header)
-    val articleOfflineText = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.article_offline_text)
-    val iveGotANotification = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.i_got_a_notification_what_should_i_do)
-    val searchManually = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.notification_help)
-    val iCanNotFindTracker = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.i_cannot_find_the_tracker)
-    val findTackerHelp = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.find_tracker_help)
-
-    val errorReturnValue = """{
-            "article0": {
-                "title": "$articleOfflineTitle",
-                "author": "Dennis Arndt",
-                "readingTime": 0,
-                "previewText": "$articleOfflineText",
-                "cardColor": "blue_card_background",
-                "filename": ""
-            },
-            "article1": {
-                "title": "$iveGotANotification",
-                "author": "Alexander Matern",
-                "readingTime": 0,
-                "previewText": "$searchManually",
-                "cardColor": "gray_card_background",
-                "filename": ""
-            },
-            "article2": {
-                "title": "$iCanNotFindTracker",
-                "author": "Alexander Matern",
-                "readingTime": 0,
-                "previewText": "$findTackerHelp",
-                "cardColor": "gray_card_background",
-                "filename": ""
-            }
-        }
-        """.trimIndent()
-
-    val connection = URL(url).openConnection() as HttpURLConnection
+fun loadArticlesJson(context: Context = ATTrackingDetectionApplication.getAppContext()): String {
+    val languageCode = resolveLanguageCode(context)
+    val assetFileName = "articles/airguard_articles_${languageCode}.json"
 
     return try {
-        connection.requestMethod = "GET"
-        val responseCode = connection.responseCode
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
-            val response = StringBuilder()
-            var inputLine: String?
-            while (reader.readLine().also { inputLine = it } != null) {
-                response.append(inputLine)
-            }
-            reader.close()
-            response.toString()
-        } else {
-            errorReturnValue
-        }
+        context.assets.open(assetFileName).bufferedReader().use { it.readText() }
     } catch (e: Exception) {
-        Timber.e(e)
-        errorReturnValue
-    } finally {
-        connection.disconnect()
+        Timber.e(e, "Failed to load articles for %s, falling back to en", languageCode)
+        try {
+            context.assets.open("articles/airguard_articles_en.json").bufferedReader().use { it.readText() }
+        } catch (inner: Exception) {
+            Timber.e(inner, "Failed to load fallback english articles")
+            // Build a minimal fallback inline so UI still shows something.
+            val offlineTitle = context.getString(R.string.article_offline_header)
+            val offlineText = context.getString(R.string.article_offline_text)
+            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"blue_card_background","preview_image":"","filename":""}}"""
+        }
     }
+}
+
+fun getLocalImageUri(imageFilename: String): String {
+    return "file:///android_asset/articles/$imageFilename"
 }

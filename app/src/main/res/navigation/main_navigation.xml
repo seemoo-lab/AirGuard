@@ -81,6 +81,18 @@
             android:id="@+id/action_settings_to_export_found_trackers"
             app:destination="@id/found_trackers_export"
             />
+        <action
+            android:id="@+id/action_settings_to_old_device_cleanup"
+            app:destination="@id/old_device_cleanup"
+            />
+    </fragment>
+
+    <!-- Old Device Cleanup -->
+    <fragment
+        android:id="@+id/old_device_cleanup"
+        android:name="de.seemoo.at_tracking_detection.ui.settings.OldDeviceCleanupFragment"
+        android:label="@string/title_old_device_cleanup"
+        tools:layout="@layout/fragment_old_device_cleanup">
     </fragment>
 
     <!-- Data Deletion -->

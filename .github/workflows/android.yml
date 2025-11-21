@@ -12,32 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 17 and enable Gradle cache
+      - name: Set up JDK 17 with Gradle cache
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-          cache-dependency-path: |
-            **/gradle.lockfile
-            **/gradle-wrapper.properties
-            **/build.gradle
-            **/build.gradle.kts
-            **/settings.gradle
-            **/settings.gradle.kts
-
-      - name: Cache Gradle directories
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle', '**/build.gradle.kts', '**/settings.gradle', '**/settings.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          distribution: temurin
+          java-version: 17
+          cache: gradle
 
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Build app
+      - name: Build (assemble & test)
         run: ./gradlew build --no-daemon

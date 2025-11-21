@@ -13,6 +13,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,10 +29,19 @@ class TrackingNotificationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracking)
+
+        // Prevent Screenshots, if set in settings
+        if (SharedPrefs.preventScreenshots) {
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                android.view.WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
 
         // For notification entry: disable edge-to-edge so content area automatically respects system bars
         MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
+
+        setContentView(R.layout.activity_tracking)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment) as NavHostFragment
         navController = navHostFragment.navController

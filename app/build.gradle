@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -5,7 +7,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
-    id 'com.mikepenz.aboutlibraries.plugin'
+    id 'com.mikepenz.aboutlibraries.plugin.android'
     id 'org.jetbrains.compose'
     id 'org.jetbrains.kotlin.plugin.compose' version "$kotlin_version"
 }
@@ -28,8 +30,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 36
-        versionCode 56
-        versionName "2.6.2"
+        versionCode 58
+        versionName "2.7.0"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -67,6 +69,8 @@ android {
         // Adds exported schema location as test app assets.
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
 //        androidTest.assets.srcDirs += files("/Users/seemoo/Work/Research/AirGuard/airguard-app/app/schemas/de.seemoo.at_tracking_detection.database.AppDatabase".toString())
+        // Include in-app bundled articles (JSON, markdown, images) as assets (preserve 'articles/' path)
+        main.assets.srcDirs += ["src/main/java/de/seemoo/at_tracking_detection/ui/dashboard"]
     }
     packagingOptions {
         resources {
@@ -74,11 +78,18 @@ android {
         }
     }
     namespace 'de.seemoo.at_tracking_detection'
-
 }
 
 aboutLibraries {
-    exclusionPatterns = [~"androidx.*", ~"com_android.*", ~/de_seemoo.*/, ~"com_google.*", ~"org_jetbrains.*"]
+    library {
+        exclusionPatterns.addAll(
+                Pattern.compile("androidx\\..*"),
+                Pattern.compile("com\\.android\\..*"),
+                Pattern.compile("de\\.seemoo\\..*"),
+                Pattern.compile("com\\.google\\..*"),
+                Pattern.compile("org\\.jetbrains\\..*")
+        )
+    }
 }
 
 dependencies {
@@ -92,10 +103,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.9.5'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.6'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.9.6'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -103,15 +114,15 @@ dependencies {
     implementation "androidx.profileinstaller:profileinstaller:1.4.1"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation "androidx.activity:activity-ktx:1.11.0"
+    implementation "androidx.activity:activity-ktx:1.12.0"
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.3.2'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation "androidx.work:work-testing:$work_version"
     implementation 'androidx.core:core-ktx:1.17.0'
-    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.1.0'
+    debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.3.2'
 
     implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
     implementation "androidx.hilt:hilt-work:$hilt_version"
@@ -126,7 +137,7 @@ dependencies {
 
     implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
 
-    implementation 'com.github.mukeshsolanki:MarkdownView-Android:2.0.0'
+    implementation 'io.noties.markwon:core:4.6.2'
 
     implementation 'com.github.bumptech.glide:glide:5.0.5'
 
@@ -157,18 +168,18 @@ dependencies {
 
     //Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.11.0'
+    implementation 'androidx.activity:activity-compose:1.12.0'
     // Compose Material3 Design
     implementation 'androidx.compose.material3:material3:1.4.0'
     implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.9.2'
+    implementation 'androidx.compose.animation:animation:1.9.5'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.9.2'
+    implementation 'androidx.compose.ui:ui-tooling:1.9.5'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.2'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.9.5'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 
