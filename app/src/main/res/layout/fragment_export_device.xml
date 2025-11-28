@@ -55,11 +55,23 @@
                     android:id="@+id/basic_info_content_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="12dp"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                     android:lineSpacingExtra="4dp"
                     android:text="@{vm.basicInfoText}"
                     tools:text="Type: Unknown\nMAC: AA:BB:CC:DD:EE:FF\nFirst Seen: Jan 1, 2024\nLast Seen: Jan 10, 2024\nDetections: 50\nUnique Locations: 10" />
+
+                <!-- 15-minute algorithm caution label -->
+                <TextView
+                    android:id="@+id/fifteen_minute_caution_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:text="@string/export_trackers_algo_warning_text"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="@color/tracker_following_red"
+                    android:visibility="@{vm.warning15MinAlgoVisible ? View.VISIBLE : View.GONE}"
+                    tools:visibility="visible"/>
 
                 <!-- 3. Map -->
                 <TextView
@@ -75,7 +87,7 @@
                     android:id="@+id/map_preview"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:layout_marginBottom="24dp"/> <!-- Removed layout_margin, kept bottom margin -->
+                    android:layout_marginBottom="24dp"/>
 
                 <!-- "No Internet" Message (if map cannot load) -->
                 <TextView
@@ -83,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:gravity="center"
-                    android:text="@string/export_trackers_no_internet"
+                    android:text="@string/export_trackers_no_internet_during_generation"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:visibility="gone"
                     tools:visibility="visible" />

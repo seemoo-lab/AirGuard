@@ -23,6 +23,8 @@ class ExportDeviceViewModel : ViewModel() {
     val basicInfoText = MutableLiveData("Loading")
     val beaconPreviewList = MutableLiveData<List<BeaconPreviewItem>>()
 
+    val warning15MinAlgoVisible = MutableLiveData(false)
+
     // Cached Data for the Fragment
     val retrievedDevice = MutableLiveData<BaseDevice?>()
     val retrievedBeacons = MutableLiveData<List<Beacon>>()
@@ -46,6 +48,8 @@ class ExportDeviceViewModel : ViewModel() {
         retrievedLocations.postValue(locations)
 
         if (device != null) {
+            warning15MinAlgoVisible.postValue(device.matchedUsing15MinAlgo)
+
             val trackerFollowing = isTrackerFollowing(device)
             if (trackerFollowing) {
                 followingStatusText.postValue(context.getString(R.string.export_trackers_following))

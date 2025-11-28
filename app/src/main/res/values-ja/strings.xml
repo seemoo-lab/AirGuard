@@ -182,6 +182,7 @@
     <string name="empty_image_content_description">空のリストを示す画像</string>
     <string name="beacon_locations">ビーコンの場所</string>
     <string name="other_devices_found">見つかった他のデバイス</string>
+    <string name="all_devices_found">すべてのデバイスが見つかりました</string>
     <string name="device_name_apple_device">Appleデバイス %s</string>
     <string name="device_name_unknown_device">不明なデバイス %s</string>
     <string name="play_sound_error_fail">音を出すことに失敗しました。やり直してください！</string>
@@ -226,7 +227,6 @@
     <string name="settings_permanent_scanning_title">常時スキャン</string>
     <string name="settings_permanent_scanning_summary">常時バックグラウンドスキャナーを使用します。精度が向上しますが、稀にアプリの安定性に影響する場合があります。</string>
     <string name="times_seen">検知回数</string>
-    <string name="device_name_airtag" translatable="false">AirTag %s</string>
     <string name="device_name_find_my_device_google">Google「Find My Device」%s</string>
     <string name="settings_show_connected_devices_title">接続済みデバイスを表示</string>
     <string name="settings_show_connected_devices">スキャンタブで所有者デバイスに接続されているデバイスを表示する</string>
@@ -241,12 +241,7 @@
     <string name="settings_device_filter_title">デバイスタイプを除外</string>
     <string name="settings_device_filter_dialog_title">除外するデバイスタイプ</string>
     <string name="settings_device_filter_summary">AirGuardが無視するデバイスタイプを選択します。選択したタイプは手動スキャンに表示されず、追跡通知もされません。</string>
-    <string name="device_name_tile" translatable="false">Tile %s</string>
-    <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device">Samsungデバイス %s</string>
-    <string name="device_name_samsung_tracker" translatable="false">Samsung Tracker %s</string>
-    <string name="device_name_airpods" translatable="false">AirPods %s</string>
-    <string name="device_name_chipolo" translatable="false">Chipolo %s</string>
     <string name="bluetooth_off_explanation">Bluetoothがオフになっています。このアプリは近くのタグを検出するためにBluetoothが必要です。</string>
     <string name="location_off_explanation">位置情報がオフになっています。このアプリは近くのタグを検出するために位置情報の許可が必要です。システム設定で位置情報をオンにしてください。\n\n効果を反映するにはアプリの再起動が必要な場合があります。</string>
     <string name="open_bluetooth_settings">Bluetooth設定を開く</string>
@@ -254,7 +249,7 @@
     <string name="battery_text">バッテリー残量: </string>
     <string name="battery_full">満タン</string>
     <string name="battery_medium">中</string>
-    <string name="battery_low" translatable="false">低</string>
+    <string name="battery_low">低</string>
     <string name="battery_very_low">非常に低い</string>
     <string name="battery_unknown">不明</string>
     <string name="connection_state_offline">オフライン</string>
@@ -284,16 +279,13 @@
     <string name="bell_icon_description">このデバイスはトラッカーとして識別されました</string>
     <string name="searching_for_device">デバイスを検索中</string>
     <string name="battery_status_text">バッテリー: </string>
-    <string name="airtag" translatable="false">Airtag</string>
-    <string name="airpods" translatable="false">Airpods</string>
     <string name="apple_device">Appleデバイス</string>
-    <string name="chipolo" translatable="false">Chipolo</string>
-    <string name="pebblebee" translatable="false">Pebblebee</string>
+    <string name="chipolo">Chipolo</string>
+    <string name="pebblebee">Pebblebee</string>
     <string name="find_my_device">Apple FindMyデバイス</string>
     <string name="samsung_tracker">Samsungトラッカー</string>
     <string name="samsung_tracker_name">Samsungトラッカー</string>
-    <string name="samsung_find_my_mobile_name" translatable="false">Samsung Find My Mobile</string>
-    <string name="tile" translatable="false">Tile</string>
+    <string name="tile">Tile</string>
     <string name="google_find_my">Google「Find My Device」デバイス</string>
     <string name="airguard_for_android">AirGuard for Android</string>
     <string name="version_number">バージョン %s</string>
@@ -303,11 +295,6 @@
     <string name="google_find_my_phone_name">Androidスマートフォン</string>
     <string name="apple_find_my_default_name">Apple「FindMy」</string>
     <string name="apple_device_default_name">Appleデバイス</string>
-    <string name="airtag_default_name" translatable="false">AirTag</string>
-    <string name="airpods_default_name" translatable="false">AirPods</string>
-    <string name="chipolo_default_name" translatable="false">Chipolo</string>
-    <string name="tile_default_name" translatable="false">Tile</string>
-    <string name="pebblebee_default_name" translatable="false">Pebblebee</string>
     <string name="article_image_description">記事のプレビュー画像</string>
     <string name="info_button_description">説明文を表示</string>
     <string name="export_device_title">PDFにエクスポート</string>
@@ -324,10 +311,12 @@
     <string name="observe_tracker_stopped">監視停止しました</string>
     <string name="observe_tracker_failure">すでにこのトラッカーを監視しています</string>
     <string name="credits">クレジット</string>
-    <string name="smarttag_no_uwb" translatable="false">SmartTag</string>
+
     <string name="smarttag_uwb">SmartTag（UWB付き）</string>
+
     <string name="website_manufacturer">メーカーのウェブサイト</string>
-    <string name="website_manufacturer_detail">トラッカーのメーカーのウェブサイトを開く</string>
+    <string name="website_manufacturer_detail">トラッカーの製造元のウェブサイトを開く</string>
+
     <string name="no_browser">ブラウザが見つかりません</string>
     <string name="delete_data_button">データ削除をリクエストする</string>
     <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止されます。再度参加したい場合は、オンボーディングを再度有効化し「はい」を選択してください。</string>
@@ -335,7 +324,6 @@
     <string name="delete_data_error">エラーが発生しました</string>
     <string name="delete_data_server_error">サーバーに接続できません。後でもう一度お試しください。</string>
     <string name="delete_data_no_data">削除するデータがありません</string>
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_en.json</string>
     <string name="article_reading_time">読了時間: %d分</string>
     <string name="article_offline_header">インターネット接続なし</string>
     <string name="article_offline_text">現在インターネットに接続されていません。接続時にアプリの使い方を説明する記事が表示されます。</string>
@@ -354,6 +342,9 @@
     <string name="low_risk_trackers">安全なトラッカー</string>
     <string name="marker_legend">凡例</string>
     <string name="device_marker">潜在的なトラッカーが見つかった場所</string>
+    <string name="location_radius_circle">場所が同一とみなされる半径</string>
+    <string name="map_footer_device">この地図は、このデバイスが検出されたすべての場所を表示します。</string>
+    <string name="map_footer_all_devices">この地図は過去 %d 日間のすべての検出場所を表示します。</string>
     <string name="connection_state_premature_offline_explanation_chipolo">過去30分以内に所有者と接続されていました</string>
     <string name="samsung_determine_button">特定のトラッカータイプを判定する</string>
     <string name="device_determine_failed">正確なデバイスタイプを判定できませんでした</string>
@@ -401,6 +392,8 @@
     <string name="export_page_number">ページ %d/%d</string>
     <string name="export_trackers_15_minute_warning">警告: このエントリは推定値に基づいています。誤検知の可能性があります。</string>
     <string name="export_trackers_no_internet">マップを読み込めません。インターネット接続を確認してください。</string>
+    <string name="export_trackers_algo_warning_text">このデバイスは、まれに誤りを生じる可能性のあるアルゴリズムで検出されました。本書類の取り扱いにはご注意ください。</string>
+    <string name="export_trackers_no_internet_during_generation">この書類の生成時にインターネット接続がなかったため、マップを読み込めませんでした。</string>
     <string name="samsung_bug_notification_title">Bluetoothエラー検知</string>
     <string name="samsung_bug_notification_text">このデバイスはAndroid 15以上で発生するBluetooth Low Energyスキャンの不具合の影響を受けています。すべてのアプリがBluetoothスキャンを利用できません。スマートフォンを再起動してください。</string>
     <string name="generic_bluetooth_bug_notification_text">Bluetoothスキャン中に問題が発生しました。AirGuardに必要な権限があり、Bluetoothがオンになっていることを確認してください。問題が解決しない場合はスマートフォンを再起動してください。</string>
@@ -409,4 +402,67 @@
     <string name="notification_permission_missing_text">このアプリでは通知が無効になっています。トラッカーがあなたを追跡している場合、警告は表示されません。通知を有効にするには、システム設定でこのアプリの通知を有効にしてください。</string>
     <string name="background_location_permission_missing_title">バックグラウンドでの位置情報取得が無効です</string>
     <string name="background_location_permission_missing_text">このアプリにはバックグラウンドでの位置情報取得の許可がありません。アプリが閉じている間にトラッカーがあなたを追跡しても警告されません。システム設定でバックグラウンド位置情報を有効にしてください。</string>
+    <string name="chipolo_found">発見されたChipolo</string>
+    <string name="feedback_location_not_found">トラッカーは見つかりませんでした</string>
+    <string name="feedback_location_other">その他</string>
+    <string name="feedback_success">フィードバックが正常に送信されました</string>
+    <string name="google_found">発見されたGoogle Find Myデバイス</string>
+    <string name="notification_observe_tracker_error">トラッカーの監視中にエラーが発生しました。もう一度お試しください。</string>
+    <string name="notification_observe_tracker_negative">監視対象のトラッカーはあなたを追跡していません。</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="other">監視対象のトラッカーはあなたを追跡しています。</item>
+    </plurals>
+    <string name="notification_observe_tracker_title_base">監視中のトラッカー</string>
+    <string name="onboarding_notification_description">トラッカーがあなたを追跡していると判断した際に通知を送るために、通知の許可が必要です。</string>
+    <string name="onboarding_notification_title">通知の送信</string>
+    <string name="onboarding_setting_summary">次回起動時にアプリのオンボーディング手順を表示します</string>
+    <string name="onboarding_setting_title">オンボーディングを表示</string>
+    <string name="pebblebee_found">発見されたPebblebee</string>
+    <string name="settings_information_contact_summary">私たちについての情報を表示します</string>
+    <string name="settings_information_contact_title">情報と連絡先</string>
+    <string name="settings_risk_sensitivity_high">高</string>
+    <string name="settings_risk_sensitivity_low">低</string>
+    <string name="settings_risk_sensitivity_medium">中</string>
+    <string name="settings_prevent_screenshots_title">スクリーンショットを防止</string>
+    <string name="settings_prevent_screenshots_summary">プライバシー保護のため、スクリーンショット、画面録画、および最近使用したアプリでのプレビューを防止します</string>
+    <string name="settings_risk_sensitivity_summary">この設定は追跡検出の感度を制御します。高い設定はより速い検出を行いますが、誤検出が増える可能性があります。</string>
+    <string name="settings_risk_sensitivity_title">検出感度</string>
+    <string name="settings_send_bluetooth_error_messages">Bluetoothエラーメッセージを送信する</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Bluetoothエラーメッセージの送信を有効または無効にします</string>
+    <string name="smarttag_found">発見されたSmartTag</string>
+    <string name="tracking_detail_scan_subtitle">このトラッカーのライブ情報を表示します</string>
+    <string name="tracking_detail_scan_title">トラッカーを探す</string>
+    <string name="website">ウェブサイト</string>
+    <string name="website_description">ウェブサイトをご覧ください</string>
+
+    <string name="translation_supporters">翻訳協力者</string>
+    <string name="language_english">英語</string>
+    <string name="language_german">ドイツ語</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_italian">イタリア語</string>
+    <string name="language_czech">チェコ語</string>
+    <string name="language_slovak">スロバキア語</string>
+    <string name="language_russian">ロシア語</string>
+    <string name="language_french">フランス語</string>
+    <string name="language_traditional_chinese">繁体字中国語</string>
+
+    <string name="title_old_device_cleanup">古いデバイスを自動削除</string>
+    <string name="settings_old_device_cleanup_title">古いデバイスを自動削除</string>
+    <string name="settings_old_device_cleanup_summary">データベースから古いデバイスの自動削除を設定します</string>
+    <string name="old_device_cleanup_description">長期間検出されていない古いデバイスをデータベースから自動的に削除するかどうかを設定します。</string>
+    <string name="delete_old_devices_title">古いデバイスを削除</string>
+    <string name="delete_old_devices_summary">潜在的な脅威と見なされない指定期間より古いデバイスを自動的に削除します。</string>
+    <string name="delete_unsafe_old_devices_title">安全でない古いデバイスも削除</string>
+    <string name="delete_unsafe_old_devices_summary">潜在的な脅威と見なされるデバイスも含めます。</string>
+    <string name="old_device_timeframe_label">削除期間</string>
+    <string name="old_device_timeframe_hint">期間を選択</string>
+    <string name="old_device_timeframe_7_days">7日間</string>
+    <string name="old_device_timeframe_14_days">14日間</string>
+    <string name="old_device_timeframe_1_month">1ヶ月</string>
+    <string name="old_device_timeframe_2_months">2ヶ月</string>
+    <string name="old_device_timeframe_3_months">3ヶ月</string>
+    <string name="old_device_deactivate_title">自動削除の無効化の確認</string>
+    <string name="old_device_deactivate_text">古いトラッカーデータの自動削除を無効にしてもよろしいですか？無効化すると、時間の経過とともにアプリの動作が遅くなります。後でこの設定を元に戻す場合、最大24時間かかる場合があります。</string>
+    <string name="old_device_deactivate_yes">はい、無効にする</string>
+    <string name="old_device_deactivate_no">いいえ、有効のままにする</string>
 </resources>

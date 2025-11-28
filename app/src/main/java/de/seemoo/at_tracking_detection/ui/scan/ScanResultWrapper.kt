@@ -28,7 +28,6 @@ data class ScanResultWrapper(val scanResult: ScanResult){
     val advertisementFlags = scanResult.scanRecord?.advertiseFlags
 
     // Information for Sub categorization
-    @SuppressLint("MissingPermission")
     val advertisedName: String? = scanResult.device.name
     val uwbCapable = when (deviceType) {
         DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getUwbAvailability(scanResult)

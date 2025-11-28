@@ -103,7 +103,8 @@
     <string name="settings_device_filter_summary">Auswählen welche Gerätentypen AirGuard nicht scannen soll. Markierte Gerätetypen tauchen weder im Scan-Tab auf, noch wird im Hintergrund nach ihnen gescannt.</string>
 
 
-
+    <string name="settings_prevent_screenshots_title">Screenshots verhindern</string>
+    <string name="settings_prevent_screenshots_summary">Verhindert Screenshots, Bildschirmaufnahmen und Vorschaubilder in kürzlich verwendeten Apps für mehr Privatsphäre</string>
     <string name="settings_risk_sensitivity_title">Empfindlichkeit der Erkennung</string>
     <string name="settings_risk_sensitivity_summary">Je höher diese Einstellung, desto schneller ist die Tracking Erkennung. Eine hohe Empfindlichkeit führt möglicherweise zu mehr Fehlalarmen.</string>
     <string name="settings_app_theme_title">App-Design</string>
@@ -214,6 +215,7 @@
     <string name="notification_title_ble_error">BLE Scan fehlgeschlagen</string>
     <string name="beacon_locations">Beacon Standorte</string>
     <string name="other_devices_found">Andere Geräte</string>
+    <string name="all_devices_found">Alle Geräte gefunden</string>
     <string name="info_text_all_locations">Diese Ansicht zeigt alle Standorte an denen Geräte gefunden wurden. Das beinhaltet Geräte, die deinen Standort nicht geteilt haben.</string>
     <string name="play_sound_error_fail">Ton konnte nicht abgespielt werden! Versuche es erneut!</string>
     <string name="play_sound_error_init">Es konnte keine Verbindung zum Bluetooth-Dienst hergestellt werden!</string>
@@ -269,6 +271,11 @@
     <string name="location_off_explanation">Standort ist ausgeschaltet. Diese App benötigt die Standort-Berechtigung, um nach Trackern in der Nähe zu scannen. Bitte aktivieren sie Standorte in ihren System-Einstellungen.\n\nEs kann sein, dass die App neu gestartet werden muss, dass der Scan funktioniert.</string>
     <string name="open_bluetooth_settings">Bluetooth Einstellungen öffnen</string>
     <string name="open_location_settings">Standort Einstellungen öffnen</string>
+
+    <!-- Footer explanatory texts for the device map legend -->
+    <string name="map_footer_all_devices">Diese Karte zeigt alle Standorte der letzten %d Tage.</string>
+    <string name="map_footer_device">Diese Karte zeigt alle Standorte, an denen dieses Gerät gefunden wurde.</string>
+
     <string name="battery_text">"Batterie Status: "</string>
     <string name="battery_full">Voll</string>
     <string name="battery_medium">Mittel</string>
@@ -306,9 +313,12 @@
     <string name="scan_explanation">Bewege dich langsam und versuche die Signalstäre zu maximieren um den Tracker zu finden.</string>
 
     <string name="apple_device">Apple Geräte</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
     <string name="find_my_device">FindMy Geräte</string>
     <string name="samsung_tracker">Samsung Tracker</string>
     <string name="samsung_tracker_name">Samsung Tracker</string>
+    <string name="tile">Tiles</string>
     <string name="google_find_my">Google \"Mein Gerät finden\"</string>
 
     <string name="google_find_my_default_name">Google \"Mein Gerät finden\"</string>
@@ -334,6 +344,18 @@
     <string name="observe_tracker_failure">Dieser Tracker wird bereits beobachtet</string>
     <string name="settings_attributions_title">Attributionen</string>
     <string name="settings_attributions_summary">Zeigt eine Liste aller Attributionen an</string>
+
+    <string name="translation_supporters">Übersetzungsunterstützer</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_japanese">Japanisch</string>
+    <string name="language_italian">Italienisch</string>
+    <string name="language_czech">Tschechisch</string>
+    <string name="language_slovak">Slowakisch</string>
+    <string name="language_russian">Russisch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_traditional_chinese">Traditionelles Chinesisch</string>
+
     <string name="airguard_for_android">AirGuard für Android</string>
     <string name="version_number">Version %s</string>
     <string name="contact_us">Kontaktiere uns</string>
@@ -355,7 +377,6 @@
     <string name="settings_advanced_mode_summary">Fügt erweiterte Funktionen zu AirGuard hinzu. Diese Optionen sind für fortgeschrittene Nutzer gedacht.</string>
     <string name="settings_advanced_mode_title">Experten Modus</string>
 
-    <string name="article_download_url">https://tpe.seemoo.tu-darmstadt.de/articles/airguard_articles_de.json</string>
     <string name="article_reading_time">Lesedauer: %d min</string>
     <string name="article_offline_header">Keine Internetverbindung</string>
     <string name="article_offline_text">Es besteht aktuell keine Internetverbindung. Hier werden Artikel angezeigt, die dir helfen die App zu bedienen, sobald du wieder mit dem Internet verbunden bist.</string>
@@ -379,6 +400,7 @@
     <string name="low_risk_trackers">Sichere Tracker</string>
     <string name="marker_legend">Legende</string>
     <string name="device_marker">Standort an dem potenzieller Tracker gefunden wurde</string>
+    <string name="location_radius_circle">Radius innerhalb dessen Standorte liegen</string>
     <string name="times_seen">Anzahl gesehen</string>
 
     <string name="samsung_determine_button">Bestimme den genauen Tracker Typ</string>
@@ -434,6 +456,9 @@
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
 
     <string name="export_trackers_no_internet">Die Karte konnte nicht laden. überprüfe ob du eine aktive Internetverbindung hast.</string>
+    <string name="export_trackers_algo_warning_text">Dieses Gerät wurde mithilfe eines Algorithmus erkannt, der in seltenen Fällen Fehler verursachen kann. Verwenden Sie dieses Dokument mit Vorsicht.</string>
+    <string name="export_trackers_no_internet_during_generation">Die Karte konnte nicht geladen werden, weil während der Erstellung dieses Dokuments keine Internetverbindung verfügbar war.</string>
+
     <string name="samsung_bug_notification_title">Bluetooth Fehler erkannt</string>
     <string name="samsung_bug_notification_text">Ihr Gerät ist von einem Fehler betroffen, der bei einigen Geräten mit Android 15 oder höher auftritt. Alle Apps können derzeit kein Bluetooth Low Energy-Scanning verwenden. Bitte starten Sie Ihr Telefon neu, um das Problem zu beheben.</string>
     <string name="generic_bluetooth_bug_notification_text">Es gab Probleme beim Scannen von Bluetooth. Stelle sicher, dass AirGuard alle erforderlichen Berechtigungen hat und dass Bluetooth eingeschaltet ist. Falls dieser Fehler weiterhin auftritt, versuche, dein Smartphone neu zu starten.</string>
@@ -443,4 +468,24 @@
     <string name="notification_permission_missing_text">Benachrichtigungen sind für diese App deaktiviert. Du wirst nicht gewarnt, wenn dir ein Tracker folgen sollte. Um dies zu ändern, aktiviere Benachrichtigungen für diese App in deinen Systemeinstellungen.</string>
     <string name="background_location_permission_missing_title">Hintergrund-Standortberechtigung deaktiviert</string>
     <string name="background_location_permission_missing_text">Die Berechtigung für den Standort im Hintergrund wurde dieser App nicht erteilt. Du wirst nicht gewarnt, wenn dir ein Tracker folgt, während die App geschlossen ist. Um dies zu ändern, aktiviere die Hintergrund-Standortberechtigung für diese App in deinen Systemeinstellungen.</string>
+
+    <string name="title_old_device_cleanup">Alte Geräte automatisch löschen</string>
+    <string name="settings_old_device_cleanup_title">Alte Geräte automatisch löschen</string>
+    <string name="settings_old_device_cleanup_summary">Automatisches Löschen alter Geräte aus der Datenbank konfigurieren</string>
+    <string name="old_device_cleanup_description">Konfigurieren Sie, ob alte Geräte, die längere Zeit nicht gesehen wurden, automatisch aus der Datenbank gelöscht werden sollen.</string>
+    <string name="delete_old_devices_title">Alte Geräte löschen</string>
+    <string name="delete_old_devices_summary">Löscht automatisch Geräte, die keine potenzielle Bedrohung darstellen und älter als der angegebene Zeitraum sind.</string>
+    <string name="delete_unsafe_old_devices_title">Unsichere alte Geräte ebenfalls löschen</string>
+    <string name="delete_unsafe_old_devices_summary">Geräte einbeziehen, die als potenzielle Bedrohung gelten.</string>
+    <string name="old_device_timeframe_label">Löschzeitraum</string>
+    <string name="old_device_timeframe_hint">Zeitraum auswählen</string>
+    <string name="old_device_timeframe_7_days">7 Tage</string>
+    <string name="old_device_timeframe_14_days">14 Tage</string>
+    <string name="old_device_timeframe_1_month">1 Monat</string>
+    <string name="old_device_timeframe_2_months">2 Monate</string>
+    <string name="old_device_timeframe_3_months">3 Monate</string>
+    <string name="old_device_deactivate_title">Deaktivierung der automatischen Löschung</string>
+    <string name="old_device_deactivate_text">Möchten Sie wirklich das automatische Löschen alter Tracker-Daten deaktivieren? Wenn Sie dies bestätigen, wird diese App mit der Zeit langsamer werden. Eine spätere Aktivierung dieser Einstellung kann bis zu 24 Stunden dauern.</string>
+    <string name="old_device_deactivate_yes">Ja, deaktivieren</string>
+    <string name="old_device_deactivate_no">Nein, aktiviert lassen</string>
 </resources>

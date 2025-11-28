@@ -1,0 +1,38 @@
+{
+  "limitations": {
+    "title": "本應用程式的限制",
+    "author": "Leon Böttger",
+    "readingTime": 5,
+    "previewText": "這個應用程式有哪些限制？",
+    "cardColor": "blue_card_background",
+    "preview_image": "Investigating.png",
+    "filename": "zh-rTW/limitations_of_the_app.md"
+  },
+  "how": {
+    "title": "AirGuard 如何運作？",
+    "author": "Dennis Arndt, Leon Böttger",
+    "readingTime": 2,
+    "previewText": "深入瞭解 AirGuard 如何保護您免受惡意追蹤器侵害",
+    "cardColor": "gray_card_background",
+    "preview_image": "Map.png",
+    "filename": "zh-rTW/how_does_airguard_work.md"
+  },
+  "get_help": {
+    "title": "尋求幫助與支持",
+    "author": "Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "當您發現追蹤器時該聯繫誰",
+    "cardColor": "gray_card_background",
+    "preview_image": "Stopsign.png",
+    "filename": "zh-rTW/get_help.md"
+  },
+  "faq": {
+    "title": "常見問題 (FAQ)",
+    "author": "Dennis Arndt, Leon Böttger, Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "有關 AirGuard 的常見問題",
+    "cardColor": "gray_card_background",
+    "preview_image": "FAQ.png",
+    "filename": "zh-rTW/faq.md"
+  }
+}

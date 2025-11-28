@@ -40,6 +40,14 @@ class OnboardingActivity : AppIntro() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Prevent Screenshots, if set in settings
+        if (SharedPrefs.preventScreenshots) {
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                android.view.WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
+
         MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
 
         try {

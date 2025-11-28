@@ -10,6 +10,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material3.TimeInput
 import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -227,15 +228,27 @@ class ScanDistanceFragment : Fragment() {
             ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType
 
             if (subType == GoogleFindMyNetworkType.TAG) {
+                // Check if this is a safe Google tracker (PREMATURE_OFFLINE connection state)
+                val connectionState = latestWrappedScanResult!!.connectionState
+                val isSafeGoogleTracker = connectionState == ConnectionState.PREMATURE_OFFLINE
+
                 val savedGoogleExactTag = ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier]
                 val deviceNameEmpty = deviceName == null || deviceName == ""
-                val showPerformActionButton = deviceNameEmpty || savedGoogleExactTag == null || savedGoogleExactTag == false
-                if (showPerformActionButton) {
+
+                // For safe Google trackers (PREMATURE_OFFLINE), hide both buttons
+                if (isSafeGoogleTracker) {
                     binding.retrieveOwnerInformationButton.visibility = View.GONE
-                    View.VISIBLE
-                } else {
-                    binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
                     View.GONE
+                } else {
+                    // For unsafe trackers, determine which of the buttons should be shown
+                    val showPerformActionButton = deviceNameEmpty || savedGoogleExactTag == null || !savedGoogleExactTag
+                    if (showPerformActionButton) {
+                        binding.retrieveOwnerInformationButton.visibility = View.GONE
+                        View.VISIBLE
+                    } else {
+                        binding.retrieveOwnerInformationButton.visibility = View.VISIBLE
+                        View.GONE
+                    }
                 }
             } else {
                 binding.retrieveOwnerInformationButton.visibility = View.GONE

@@ -1,0 +1,38 @@
+{
+  "limitations": {
+    "title": "Limites de cette application",
+    "author": "Leon Böttger",
+    "readingTime": 5,
+    "previewText": "Quelles sont les limites de cette application ?",
+    "cardColor": "blue_card_background",
+    "preview_image": "Investigating.png",
+    "filename": "fr/limitations_of_the_app.md"
+  },
+  "how": {
+    "title": "Comment fonctionne AirGuard ?",
+    "author": "Dennis Arndt, Leon Böttger",
+    "readingTime": 2,
+    "previewText": "En savoir plus sur la façon dont AirGuard vous protège des trackers malveillants",
+    "cardColor": "gray_card_background",
+    "preview_image": "Map.png",
+    "filename": "fr/how_does_airguard_work.md"
+  },
+  "get_help": {
+    "title": "Trouver de l'aide et du soutien",
+    "author": "Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "Qui contacter si vous avez trouvé un tracker",
+    "cardColor": "gray_card_background",
+    "preview_image": "Stopsign.png",
+    "filename": "fr/get_help.md"
+  },
+  "faq": {
+    "title": "FAQ",
+    "author": "Dennis Arndt, Leon Böttger, Alexander Heinrich",
+    "readingTime": 4,
+    "previewText": "Questions fréquentes sur AirGuard",
+    "cardColor": "gray_card_background",
+    "preview_image": "FAQ.png",
+    "filename": "fr/faq.md"
+  }
+}

@@ -8,7 +8,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 
 @Database(
-    version = 24,
+    version = 25,
     entities = [
         BaseDevice::class,
         Notification::class,
@@ -36,7 +36,8 @@ import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
         AutoMigration(from=20, to=21),
         AutoMigration(from=21, to=22),
         AutoMigration(from=22, to=23),
-        AutoMigration(from=23, to=24)
+        AutoMigration(from=23, to=24),
+        AutoMigration(from=24, to=25)
     ],
     exportSchema = true
 )

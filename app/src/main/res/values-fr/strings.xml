@@ -1,0 +1,503 @@
+<resources>
+    <string name="app_name">AirGuard</string>
+
+    <string name="title_ignored_devices">Ignorés</string>
+    <string name="title_dashboard">Tableau de bord</string>
+    <string name="title_settings">Paramètres</string>
+    <string name="title_debug">Débug</string>
+    <string name="title_feedback">Retours</string>
+    <string name="title_tracking">Un appareil avec cet identifiant\u00a0: {deviceAddress} vous suit</string>
+    <string name="title_devices_tracking">Identifiant de l\u02bcappareil\u00a0: {deviceAddress}</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_scan_detail">Localiser\u00a0: {deviceAddress}</string>
+    <string name="title_observe_tracker">Observer le traceur\u00a0: {deviceAddress}</string>
+    <string name="title_device_map">Tous les appareils</string>
+    <string name="title_devices">Appareil</string>
+    <string name="title_data_deletion">Demande de suppression de données</string>
+    <string name="title_article">Article</string>
+
+    <string name="map_empty_text">Aucun traceur n\u02bca été trouvé pour le moment. Chaque fois qu\u02bcun traceur est découvert, la position de cette détection vous sera montrée sur une carte. Cela ne veut pas dire que quelqu\u02bcun vous a suivi à chaque localisation. Dans la plupart des case, vous trouverez des traceurs sur d\u02bcautres personnes dans les transports publics ou sur un de vos voisins.</string>
+
+    <string name="mark_false_alarm">FAUSSE ALERTE</string>
+    <string name="channel_name">Détection de traceurs</string>
+    <string name="channel_description">Vous alerte sur des traceurs potentiels</string>
+    <string name="statistics_beacons">Appareils trouvés</string>
+    <string name="statistics_devices">Localisations</string>
+    <string name="statistics_alerts">Alerte de pistage envoyée</string>
+    <string name="statistics_false_alarms">Fausse alerte</string>
+    <string name="statistics_devices_monitored">Appareils suivis en ce moment</string>
+    <string name="settings_share_data_summary">Soutenez le projet en partageant des données anonymes</string>
+    <string name="settings_share_data_title">Participer à l\u02bcétude</string>
+    <string name="settings_advanced_mode_summary">Ajoute plus d\u02bcoptions à Aiguard. Ces options sont destinées à des utilisateurs·tricesavancé·es.</string>
+    <string name="settings_advanced_mode_title">Mode expert</string>
+    <string name="device_item_first_discovery">Découverts\u00a0:</string>
+    <string name="beacons">Balises</string>
+    <string name="times_seen">Nombre de vues</string>
+    <string name="devices_swipe">Faire glisser pour supprimer</string>
+    <string name="devices_list_empty">Quand l\u02bcapplication détectera un AirTag ou une autre balise, elles seront listées ici. Cette liste contiendra probablement des appareils qui ne vous suivent pas. Pour les appareils qui vous suivent, vous recevrez une notification.</string>
+    <string name="ignored_device_list_empty">Quand vous recevez une notification à propos d\u02bcun appareil que vous connaissez (par exemple un AirTag que vous possédez), vous pouvez le marquer comme une fausse alerte. Les appareils qui ne changent pas leur adresse Bluetooth (e.g. Tile, Chipolo, Pebblebee) peuvent aussi être ignorés. Ces appareils seront listés ici. Rappel\u00a0: un AirTag change son adresse Bluetooth tous les jours, donc même si vous le marquez comme une fausse alerte, il créera une nouvelle entrée chaque jour.</string>
+    <string name="settings_use_location_summary">Si activé, des informations plus détaillées sur le suivi pourront vous être fournies lorsqu\u02bcune balise sera identifiée.</string>
+    <string name="settings_use_location_title">Utiliser la localisation</string>
+    <string name="error_requesting_location_permission">Erreur lors de la demande de permission de géolocalisation</string>
+    <string name="tracking_locate_at_title">Faire sonner</string>
+    <string name="tracking_locate_at_subtitle">Localiser l\u02bcAirTag</string>
+    <string name="permissions_background_location_title">Localisation en arrière-plan</string>
+    <string name="permission_background_location_message">En autorisant cette permission, des informations plus détaillées seront identifiées si vous êtes suivi·e. Cette fonctionnalité est optionnelle.</string>
+    <string name="ok_button">OK</string>
+    <string name="tracking_feedback_title">Retours</string>
+    <string name="tracking_feedback_subtitle">Fournir des informations</string>
+    <string name="tracking_detail_scan_title">Localiser un traceur</string>
+    <string name="tracking_detail_scan_subtitle">Voir des informations en temps réel sur ce traceur</string>
+    <string name="tracking_ignore_device_title">Ignorer cet appareil</string>
+    <string name="tracking_ignore_device_subtitle">Désactiver les notifications pour cet appareil</string>
+    <string name="tracking_false_alarm_title">Fausse alerte</string>
+    <string name="tracking_false_alarm_subtitle">Marquer cette notification comme fausse alerte</string>
+    <string name="tracking_missing_beacons_info">Des émissions ont été enregistrées sans données de localisation et ne sont donc pas affichées.</string>
+    <string name="feedback_question1">Ou était caché le traceur que vous avez trouvé\u202f?</string>
+    <string name="feedback_location_backpack">Sac à dos</string>
+    <string name="feedback_location_clothes">Habits</string>
+    <string name="feedback_location_car">Voiture</string>
+    <string name="feedback_location_bike">Vélo</string>
+    <string name="feedback_location_other">Autre</string>
+    <string name="feedback_location_not_found">Le traceur n\u02bca pas été trouvé</string>
+    <string name="feedback_success">Retours envoyés avec succès</string>
+    <string name="feedback_close">Fermer</string>
+    <string name="tracking_locate_at_playing_sound">Fais sonner…</string>
+    <string name="permission_required">Permission nécessaire</string>
+    <string name="permission_required_message">Vous devez autoriser cette permission pour utiliser cette application.</string>
+    <string name="rssi">RSSI</string>
+    <string name="device_item_last_seen">Vu pour la dernière fois\u00a0:</string>
+    <string name="dashboard_tile_change">+%d</string>
+    <string name="onboarding_share_data_title">Participer à notre étude\u202f?</string>
+    <string name="onboarding_share_data_switch">Participer à notre étude</string>
+    <string name="onboarding_share_data_description">
+        Cette application est développée par des chercheur·euses de l\u02bcUniversité Technique de Darmstadt, en Allemagne. Avec notre étude, nous souhaitons estimer combien de personnes sont affectées par des tentatives de suivi malveillantes.
+        Si les appareils utilisant le réseau Find My d\u02bcApple sont réellement utilisés pour suivre des personnes. Et enfin, comment on peut protéger les gens avec notre application.\n
+        <b>Pour participer, vous devez avoir 18 ans ou plus.</b>
+        \n\n
+
+        • Nous collecterons des informations sur les appareils découverts comme le <b>type d\u02bcappareil</b>, <b>la valeur de RSSI</b> (la force du signal reçu) et la <b>date et l\u02bcheure</b> de l\u02bcidentification \n\n
+        • Combien de <b>notifications</b> vous ont été envoyées, la <b>date et l\u02bcheure</b> de l\u02bcalerte ainsi que les <b>commentaires</b> que vous voulez nous donner\n\n
+
+        Nous ne partagerons <b>PAS</b> de données de localisation ou de données qui pourraient vous identifier\u202f! Cette participation est totalement anonymre.</string>
+
+    <string name="onboarding_1_description">Cette application vous notifiera quand il semblera qu\u02bcun AirTag, un appareil supportant Find My, un appareil supportant Google "Find My Device", un SmartTag, un Pebblebee, un Chipolo ou un Tile est en train de vous suivre.</string>
+    <string name="location_permission_title">Permission de localisation</string>
+    <string name="location_permission_message">Cette application a besoin de la permission de localisation pour utiliser le Bluetooth afin de chercher des AirTags ou d\u02bcantres balises Bluetooth quand l\u02bcapplication n\u02bcest pas utilisée. Vous pouvez également autoriser l\u02bcapplication à enregister la localisation quand vous êtes suivi.</string>
+
+    <string name="onboarding_ignore_battery_optimization_title">Optimisation de la batterie</string>
+    <string name="onboarding_ignore_battery_optimization_description">Pour empêcher l\u02bcapplication d\u02bcêtre arrêtée par Android en arrière-plan, nous devons désactiver l\u02bcoptimisation de la batterie.</string>
+    <string name="onboarding_ignore_battery_optimization">Ignorer l\u02bcoptimisation de la batteri</string>
+    <string name="onboarding_4_title">Permission d\u02bcaccéder à la localisation en arrière-plan</string>
+    <string name="onboarding_4_description">Pour avoir accès à un historique détaillé de votre localisation lorsque vous êtes suivi, autorisez cette application à utiliser la localisation tout le temps. Cette application collecte les données de localisation pour nous permettre d\u02bcenregistrer la localisation d\u02bcun AirTag ou d\u02bcune autre balise Bluetooth même quand l\u02bcapplication est fermée ou pas utilisée. Cette fonctionnalité est optionnelle et aucune donnée de localisation ne quittera votre téléphone.</string>
+    <string name="onboarding_5_title">Tout est prêt</string>
+    <string name="settings_theme_system_default">Paramètres du système par défaut</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_use_low_power_ble_summary">Cette configuration utilisera moins d\u02bcénergie mais entraînera également une moins bonne détection des traceurs</string>
+    <string name="tracking_device_not_connectable">Cette appareil n\u02bcest pas capable de jouer un son.</string>
+    <string name="tracking_info">Scannez cet AirTag avec votre téléphone en utilisant le NFC pour avoir plus d\u02bcinformations.</string>
+    <string name="info">Informations</string>
+
+    <string name="settings_show_connected_devices_title">Voir les appareils connectés</string>
+    <string name="settings_show_connected_devices">Voir les appareils qui sont connectés aux appareils de leur propriétaires dans l\u02bconglet scan</string>
+
+    <string name="settings_notification_priority_high_title">Notifications de haute priorité</string>
+    <string name="settings_notification_priority_high">Si ce paramètre est activé, les notifications seront envoyées comme une alerte de haute priorité</string>
+
+    <string name="settings_third_party_libraries_title">Bibliothèques tierces</string>
+    <string name="settings_third_party_libraries_summary">Voir une liste de toutes les bibliothèques tierces utilisées ainsi que leurs licences</string>
+
+    <string name="settings_attributions_title">Attributions</string>
+    <string name="settings_attributions_summary">Voir une liste des attributions</string>
+
+    <string name="settings_privacy_policy_title">Politique de confidentialité</string>
+    <string name="settings_privacy_policy_summary">Voir notre politique de confidentialité courte et simple</string>
+
+    <string name="settings_information_contact_title">Information &amp; Contact</string>
+    <string name="settings_information_contact_summary">Des informations sur nous</string>
+
+    <string name="settings_delete_study_data_title">Supprimer les données de l\u02bcétude</string>
+    <string name="settings_delete_study_data_summary">Demander la suppression des données de l\u02bcétude</string>
+
+    <string name="settings_device_filter_title">Enlever des types d\u02bcappareils</string>
+    <string name="settings_device_filter_dialog_title">Ignorer des types d\u02bcappareils</string>
+    <string name="settings_device_filter_summary">Choisissez quels types d\u02bcappareils AirGuard doit ignorer. Choisissez les types d\u02bcappareils qui n\u02bcappaîtront pas dans les scans manuels et vous ne serez pas alerté si un tel appareil vous suit.</string>
+
+
+    <string name="onboarding_share_data_no">Non</string>
+    <string name="onboarding_share_data_yes">Oui</string>
+    <string name="onboarding_share_data_dialog">Choisissez si vous voulez participer ou non. Toutes les données sont partagées de manière totalement anonymes.</string>
+    <string name="device_name_find_my_device_apple">Apple "FindMy" %s</string>
+    <string name="device_name_find_my_device_google">Google "Find My Device" %s</string>
+
+    <string name="notification_observe_tracker_title_base">Vos traceurs observés</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">Un traceur que vous observez vous suit depuis au moins %d heure.</item>
+        <item quantity="many">Un traceur que vous observez vous suit depuis au moins %d heures.</item>
+        <item quantity="other">Un traceur que vous observez vous suit depuis au moins %d heures.</item>
+    </plurals>
+    <string name="notification_observe_tracker_negative">Un traceur que vous observez ne vous suit pas.</string>
+    <string name="notification_observe_tracker_error">Une erreur s\u02bcest produite lors de l\u02bcobservation de ce traceur. Merci de réessayer.</string>
+
+    <plurals name="notification_text_base">
+        <item quantity="one">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minute.</item>
+        <item quantity="many">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minutes.</item>
+        <item quantity="other">Ouvrez la notification pour avoir plus d\u02bcinformations. Un traceur vous suit depuis au moins %d minutes.</item>
+    </plurals>
+    <string name="notification_title_base">Un traceur vous suit</string>
+    <string name="notification_text_single">Ouvrez la notification pour avoir plus d\u02bcinformations. Le %s vous suit depuis au moins %d minutes.</string>
+    <string name="notification_text_multiple">Ouvrez la notification pour avoir plus d\u02bcinformations. Les %s vous suivent depuis au moins %d minutes.</string>
+    <string name="notification_title_vocal">Un %s vous suit</string>
+    <string name="notification_title_consonant">Un %s vous suit</string>
+    <string name="notification_title_multiple">Des %s vous suivent</string>
+    <string name="notification_title_ble_error">Le scan BLE a échoué</string>
+    <string name="alert_sent_icon">Icône d\u02bcenvoi d\u02bcalerte</string>
+    <string name="device_icon">Icône de l\u02bcappareil</string>
+    <string name="location_sample_image">Image d\u02bcexemple de localisation</string>
+    <string name="permissions_location_title">Localisation en arrière-plan</string>
+    <string name="permission_location_message">Cette permission est nécessaire pour vous fournir des informations plus détaillées si un AirTag, un appareil Find My device, un Samsung SmartTag, un appareil Google Find My Device, un Pebblebee, un Chipolo ou un Tile vous suivent. Cette permission est optionnelle.</string>
+    <string name="onboarding_2_title">Permission de localisation</string>
+    <string name="onboarding_2_description">Cette application nécessite l\u02bcaccès à la localisation pour fouiller vos alentours avec du Bluetooth Low Energy. Sans cette permission, l\u02bcapplication ne fonctionnera pas et ne trouvera aucun traceur. Vos informations de localisaiton ne quittent jamais votre appareil. </string>
+    <string name="devices_edit_title">Modifier le nom de l\u02bcappareil</string>
+    <string name="cancel_button">Annuler</string>
+    <string name="devices_alter_removed">"%s" enlevé\u202f!</string>
+    <string name="undo_button">Annuler</string>
+    <string name="grant_location_permission">Autoriser l\u02bcaccès à la localisation</string>
+    <string name="grant_permission">Autoriser</string>
+    <string name="cancel">Annuler</string>
+    <string name="no_button">Non merci</string>
+    <string name="dashboard_scan_fab_description">Scanner à la recherche de traceurs\u202f!</string>
+    <string name="dashboard_scan_fab">Scan manuel</string>
+    <string name="onboarding_scan_title">Scan Bluetooth</string>
+    <string name="onboarding_scan_description">Pour scanner vos alentours à la recherche de traceurs, nous avons besoin de la permission de scanner les appareils Bluetooth\u202f!</string>
+    <string name="onboarding_connect_title">Se connecter en Bluetooth</string>
+    <string name="onboarding_connect_description">Si un appareil est trouvé, AirGuard vous donne la possibilité de le faire sonner. Pour cela, nous avons besoin de la permission de se connecter à cet appareil.</string>
+    <string name="onboarding_notification_title">Envoyer des notifications</string>
+    <string name="onboarding_notification_description">Pour vous envoyer une notification lorsque nous identifions un traceur en train de vous suivre, nous avons besoin de la permission d\u02bcenvoyer des notifications.</string>
+    <string name="scan_result_item_image_description">Résultat d\u02bcanalyse</string>
+    <string name="scan_result_no_devices">Aucun traceur n\u02bca été identifié.\nNous détectons seulement les appareils Find My (AirTags), Google "Find My Device" Devices, Galaxy SmartTags, Pebblebees, Chipolos et Tiles.</string>
+    <string name="ble_service_connection_error">La connection à l\u02bcappareil a échoué</string>
+    <string name="yes_button">Oui</string>
+    <string name="scan_enable_bluetooth_message">Le Bluetooth doit être activé pour chercher des appareils Bluetooth.</string>
+    <string name="scan_enable_bluetooth_title">Scan Bluetooth</string>
+    <string name="risk_level_low">Pas de risque</string>
+    <string name="risk_level_medium">Risque moyen</string>
+    <string name="risk_level_high">Risque élevé</string>
+    <string name="no_trackers_found">Pas de traceur identifié depuis\u00a0: %s</string>
+    <string name="found_x_trackers">%d traceur(s) identifié(s) durant les %d derniers jours</string>
+    <string name="last_scan_info">Dernier scan\u00a0: %s</string>
+    <string name="last_discovery">Dernier traceur découvert à %s</string>
+    <string name="how_does_airguard_work">Comment fonctionne AirGuard\u202f?</string>
+    <string name="notification_help">
+        • Cherchez des traceurs manuellement et faites les sonner.\n<br />
+        • Désactiver le traceur en enlevant sa batterie.\n<br />
+        • Rendez vous au commissariat avec le traceur.\n<br />
+        • Assurez vous que vous n\u02bcallez pas dans un endroit sûr et confidential avant d\u02bcavoir désactivé le traceur.\n<br />
+    </string>
+    <string name="i_got_a_notification_what_should_i_do">J\u02bcai reçu une notification, que dois-je faire\u202f?</string>
+
+    <string name="find_tracker_help">
+        • De fausses alertes sont possibles, par exemple parce que quelqu\u02bcun près de vous utilise une balise (comme une personne dans les transports publics)\n<br />
+        • Si vous recevez plusieurs notifications au cours de plusieurs jours, essayez de faire sonner cet appareil\u202f!
+    </string>
+    <string name="i_cannot_find_the_tracker">Je ne peux pas trouver le traceur</string>
+    <string name="airguard_scan_explanation">AirGuard utilises le Bluetooth pour chercher des appareils qui vous suivent.</string>
+    <string name="airguard_detection_explanation">Avec l\u02bcaide de la géolocalisation, Aiguard peut détecter si un traceur vous suit à plusieurs endroits !</string>
+    <string name="airguard_notification_explanation">Vous recevrez une notification can un traceur potentiel vous suit\u202f! L\u02bcencart au dessus changera alors sa couleur à orange ou rouge.</string>
+
+    <string name="find_sound">Faires le sonner et trouvez le</string>
+    <string name="find_manual_scan">Faire un scan manuel et localisez le</string>
+    <string name="find_battery">Enlever la batterie</string>
+    <string name="find_headline">Trouver et désactiver un AirTag</string>
+    <string name="title_risk_detail">Évaluation des risques</string>
+    <string name="show_all">Tout afficher</string>
+    <string name="tracker_detected">Traceur détecté</string>
+    <string name="locations_tracked">Tous les emplacements</string>
+    <string name="dates_detected">Dates détectées</string>
+    <string name="filter">Ouvrir les filtres</string>
+    <string name="filter_ignored">ignorés</string>
+    <string name="filter_notified">traceurs identifiés</string>
+    <string name="filter_title_device_attributes">Caractéristiques de l\u02bcappareil</string>
+    <string name="filter_apply">Appliquer</string>
+    <string name="filter_from_until_text">%s jusqu\u02bcà %s</string>
+    <string name="filter_date_range_picker_title">Vu pour la dernière fois</string>
+    <string name="app_theme_dark">Sombre</string>
+    <string name="app_theme_light">Clair</string>
+    <string name="app_theme_system_default">Paramètres systèmes par défaut</string>
+    <string name="settings_risk_sensitivity_low">Bas</string>
+    <string name="settings_risk_sensitivity_medium">Moyen</string>
+    <string name="settings_risk_sensitivity_high">Haut</string>
+    <string name="settings_risk_sensitivity_title">Sensibilité de la détection</string>
+    <string name="settings_risk_sensitivity_summary">Ce paramètre contrôle la sensibilité de la détection de traceurs. Un niveau haut sera plus rapide mais potentiellement moins précis.</string>
+    <string name="settings_app_theme_title">Thème de l\u02bcapplication</string>
+    <string name="settings_app_theme_summary">Choisissez un thème\u202f!</string>
+    <string name="settings_metric_title">Système métrique</string>
+    <string name="settings_metric_summary">Utiliser le système métrique pour afficher les distances</string>
+    <string name="info_text_only_trackers">Cette liste vous montre les traceurs qui vous ont suivi au cours des 14 derniers jours. Pour voir tous les appareils, vous pouvez modifier le filtre en utilisant le boutton en bas à droite de l\u02bcécran</string>
+    <string name="info_text_all_devices">Cette liste vous montre tous les appareils que vous avez identifié avec AirGuard au cours des 14 derniers jours. Cela inclut des appareils qui ne vous suivent pas. Les traceurs identifiés sont marqués avec un point d\u02bcexclamation. Vous pouvez filtrer ces appareils en utilisant le bouton en bas à droite de l\u02bcécran</string>
+    <string name="info_text_all_locations">Cette vue vous montre tous les emplacements auxquels un appareil a été identifié. Cela inclut des appareils qui n\u02bcétaient pas en train de vous suivre.</string>
+    <string name="empty_list_devices">Cette liste vous montre tous les appareils identifiés par AirGuard au cours des 14 derniers jours. Si elle est vide, aucun appareil n\u02bca été identifié. Pensez à garder le Bluetooth activé car l\u02bcapplication ne peut identifier des traceurs qu\u02bcà l\u02bcaide du Bluetooth</string>
+    <string name="empty_list_trackers">Cette liste vous montre les appareils qui vous ont suivi au cours des 14 derniers jours. Si elle est vide, aucun appareil n\u02bca essayé de vous suivre. Quand un appareil sera identifié comme vous suivant, vous recevrez une notification. Pensez à garder le Bluetooth activé pour identifier des traceurs. Avec le bouton ci-dessous, vous pouvez voir tous les appareils, même ce qui n\u02bcont pas été identifiés comme des traceurs.</string>
+    <string name="show_all_button">Voir tous les appareils</string>
+    <string name="empty_image_content_description">Image montrant une liste vide</string>
+    <string name="beacon_locations">Localisations des émissions</string>
+    <string name="other_devices_found">Autres appareils trouvés</string>
+    <string name="device_name_samsung_device" translatable="true">Appareil Samsung %s</string>
+    <string name="device_name_apple_device">Appareil Apple %s</string>
+    <string name="device_name_unknown_device">Appareil inconnu %s</string>
+    <string name="play_sound_error_fail">Impossible de faire sonner\u202f! Veuillez réessayer.</string>
+    <string name="play_sound_error_init">Impossible de se connecter au Service Bluetooth\u202f!</string>
+    <string name="play_sound_error_connect">Impossible de se connecter à l\u02bcappareil\u202f!</string>
+    <string name="filter_title_device_types">Types d\u02bcappareils</string>
+    <string name="notification_ignore_device">IGNORER L\u02bcAPPAREIL</string>
+    <string name="notification_false_alarm">FAUSSE ALERTE</string>
+    <string name="last_scans">Derniers scans</string>
+    <string name="tip_airtag_testing"><b>En train de tester l\u02bcapplication\u202f?</b> Les AirTags ne peuvent être identifiés que lorsqu\u02bcils sont connecté à un iPhone ou iPad proche, si c\u02bcest activé dans leurs paramètres. Autrement, les AirTags / SmartTags ont besoin d\u02bcêtre déconnecté du Bluetooth depuis 15min pour être découverts par l\u02bcapplication. AirGuard n\u02bcenregistre pas les traceurs connectés. </string>
+    <string name="none">Aucun</string>
+    <string name="already_scanning_warning">L\u02bcapplication est déjà en train de scanner en tâche de fond. Merci d\u02bcattendre 10 secondes et de relancer un scan manuel</string>
+    <string name="settings_use_low_power_ble_title">Scan en mode basse consommation</string>
+    <string name="ignored_devices">Appareils ignorés</string>
+    <string name="airtags_found">AirTags trouvés</string>
+    <string name="findmy_found">Apple Find My Devices trouvés</string>
+    <string name="tile_found">Tiles trouvés</string>
+    <string name="chipolo_found">Chipolos trouvés</string>
+    <string name="pebblebee_found">Pebblebees trouvés</string>
+    <string name="smarttag_found">SmartTags trouvés</string>
+    <string name="google_found">Google Find My Devices trouvéd</string>
+    <string name="survey_card_title">Nous faisons une enquête</string>
+    <string name="survey_card_info_text">Nous essayons de savoir combien de personnes subissent du harcèlement et du pistage de leurs localisation. Nous invitions tou·tes les utilisateur·trices à participer à cette enquête, même si vous n\u02bcêtes pas vous-même victime de ces attaques. Cette enquête fait parti de notre projet de recherche à l\u02bcUniversité Technique de Darmstadt.</string>
+    <string name="participate">Participer</string>
+    <string name="survey_info_1">Combien de personnes subissent du harcèlement et un pistage de leur localisation\u202f?</string>
+    <string name="survey_info_2">Comment peut-on les protéger\u202f?</string>
+    <string name="survey_info_3">Vous pouvez participer même si vous n\u02bcavez pas subi de telles attaques</string>
+    <string name="survey_info_4">Menée par l\u02bcUniversité Technique de Darmstadt, en Allemagne</string>
+    <string name="remind_later">Me le rappeler plus tard</string>
+    <string name="show_not_again">Ne plus me montrer ce message</string>
+    <string name="survey_alert_title">Informations sur l\u02bcenquête</string>
+    <string name="survey_alert_message">Souhaitez vous avoir un rappel à propos de cette enquête plus tard\u202f?</string>
+    <string name="survery_settings_summary">L\u02bcUniversité Technique de Darmstadt mène une enquête pour trouver combien de personnes sont affectées par du harcèlement</string>
+    <string name="survey_settings_title">Enquête sur le harcèlement et le pistage de localisation</string>
+    <string name="onboarding_setting_summary">Toujours montrer les procédures d\u02bcaccueil</string>
+    <string name="onboarding_setting_title">Montrer les procédures d\u02bcaccueil</string>
+    <string name="bluetooth_off_explanation">Le Bluetooth est désactivé. Cette application a besoin d\u02bcutiliser le Bluetooth pour scanner les alentours à la recherche de traceurs.</string>
+    <string name="location_off_explanation">La localisation est désactivée. Cette application a besoin de la permission d\u02bcutiliser la localisation pour identifier les traceurs autour de vous. Merci d\u02bcactiver la localisation dans les paramètres système.\n\nIl est possible qu\u02bcil faille redémarrer l\u02bcapplication pour que ce changement soit pris en compte.</string>
+    <string name="open_bluetooth_settings">Ouvrir les paramètres Bluetooth</string>
+    <string name="open_location_settings">Ouvrir les paramètres de localisation</string>
+
+    <string name="battery_text">Batterie\u00a0: </string>
+    <string name="battery_full">Pleine</string>
+    <string name="battery_medium">Moyenne</string>
+    <string name="battery_low">Basse</string>
+    <string name="battery_very_low">Très basse</string>
+    <string name="battery_unknown">Inconnu</string>
+
+    <string name="connection_state_offline">Hors ligne</string>
+    <string name="connection_state_offline_explanation">Appareil séparé de son propriétaire</string>
+    <string name="connection_state_overmature_offline">Hors Ligne tardif</string>
+    <string name="connection_state_overmature_offline_explanation">L\u02bcappareil a été séparé de son propriétaire depuis au moins 15 minutes</string>
+    <string name="connection_state_overmature_offline_explanation_samsung">L\u02bcappareil a été séparé de son propriétaire depuis au moins 8 heures</string>
+    <string name="connection_state_overmature_offline_explanation_chipolo">L\u02bcappareil a été séparé de son propriétaire depuis au moins 30 minutes</string>
+    <string name="connection_state_premature_offline">Hors ligne prématuré</string>
+    <string name="connection_state_premature_offline_explanation">Connexion à son propriétaire au cours des dernières 15 minutes</string>
+    <string name="connection_state_connected">Connecté</string>
+    <string name="connection_state_connected_explanation">L\u02bcappareil est connecté à son propriétaire</string>
+    <string name="connection_state_unknown">Inconnu</string>
+    <string name="connection_state_content_description">Informations sur l\u02bcétat de connexion de l\u02bcappareil</string>
+    <string name="connection_state_unknown_explanation">L\u02bcétat de connexion de l\u02bcappareil ne peut pas être déterminé</string>
+
+    <string name="scan_accessibility">Commencer ou arrêter le scan</string>
+    <string name="scan_sorting_by_rssi">par intensité du signal</string>
+    <string name="scan_sorting_by_recently">par date de détection</string>
+    <string name="scan_sorting_by_address">par adresse MAC</string>
+    <string name="scan_sorting_by_name">par nom</string>
+    <string name="scan_sorting_by_type">par type</string>
+    <string name="scan_not_in_range">L\u02bcappareil est hors de portée</string>
+    <string name="scan_battery_icon_description">Cet icône montre l\u02bcétat de batterie du traceur</string>
+    <string name="scan_state_info_icon_description">Cliquer sur cet icône montre une explication de l\u02bcétat de connexion</string>
+    <string name="scan_explanation">Bougez lentement et essayez de maximizer l\u02bcintensité du signal pour trouver le traceur.</string>
+
+    <string name="play_sound_description">Jouer un son sur le traceur</string>
+    <string name="bell_icon_description">Cet appareil a été identifié comme un traceur</string>
+
+    <string name="searching_for_device">Chercher un appareil</string>
+    <string name="battery_status_text">Batterie\u00a0: </string>
+
+    <string name="apple_device">Appareils Apple</string>
+    <string name="chipolo">Chipolos</string>
+    <string name="pebblebee">Pebblebees</string>
+    <string name="find_my_device">Appareils Apple FindMy</string>
+    <string name="tile">Tiles</string>
+    <string name="google_find_my">Appareils Google "Find My Device"</string>
+    <string name="airguard_for_android">AirGuard pour Android</string>
+    <string name="version_number">Version %s</string>
+    <string name="contact_us">Nous contacter</string>
+
+    <string name="google_find_my_default_name">Google "Find My Device"</string>
+    <string name="apple_find_my_default_name">Apple "FindMy"</string>
+    <string name="apple_device_default_name">Appareil Apple</string>
+
+
+    <string name="article_image_description">Aperçu de l\u02bcimage de cet article</string>
+    <string name="info_button_description">Montrer le texte explicatif</string>
+
+    <string name="observe_tracker_title">Observer le traceur</string>
+    <string name="observe_tracker_clock_description">Image d\u02bcune pendule</string>
+    <string name="observe_tracker_start_observation">Commencer l\u02bcobservation</string>
+    <string name="observe_tracker_stop_observation">Arrêter l\u02bcobservation</string>
+    <string name="observe_tracker_stop_observation_explanation">Ce traceur est en train d\u02bcêtre observé.</string>
+    <string name="observe_tracker_explanation">Si vous n\u02bcêtes pas sûr que ce traceur vous suive, vous pouvez l\u02bcobserver manuellement. \n\nDans une heure, AirGuard cherchera ce traceur autour de vous et vous enverra une notification immédiatement, même si vous ne vous êtes pas déplacé avec ce traceur. Si le traceur n\u02bcest plus autour de vous, vous recevrez également une notification vous l\u02bcindiquant.</string>
+    <string name="observe_tracker_changing_id">Gardez en tête que ce traceur pourrait changer d\u02bcidentifiant. Il pourrait donc encore vous suivre sans que nous puissions le détecter.</string>
+    <string name="tracking_observe_tracker_subtitle">Vérifiez si ce traceur vous suit</string>
+    <string name="observe_tracker_success">Observation commencée</string>
+    <string name="observe_tracker_stopped">Observation arrêtée</string>
+    <string name="observe_tracker_failure">Vous observez déjà ce traceur</string>
+    <string name="credits">Crédits</string>
+
+    <string name="smarttag_uwb">SmartTag (avec UWB)</string>
+
+    <string name="website_manufacturer">Site web du fabriquant</string>
+    <string name="website_manufacturer_detail">Ouvrir le site web du fabriquant du traceur</string>
+    <string name="no_browser">Pas de navigateur trouvé</string>
+
+    <string name="delete_data_button">Demander la suppression des données</string>
+    <string name="delete_data_explanation">Si vous souhaitez que nous supprimions toutes les données que nous avons collectées sur vous dans le cadre de notre étude, merci de cliquer sur le bouton ci-dessous. Cela vous exclura également de toute participation future à cette étude. Si vous voulez continuer à soutenir nos recherches, vous pouvez simplement relancer les procédures d\u02bcaccueil et cliquer sur oui à la participation à l\u02bcétude.</string>
+    <string name="delete_data_success">Données supprimées avec succès</string>
+    <string name="delete_data_error">Une erreur s\u02bcest produite</string>
+    <string name="delete_data_server_error">Le serveur n\u02bcest pas accessible, veuillez réessayer dans un moment.</string>
+    <string name="delete_data_no_data">Aucune donnée à supprimer</string>
+
+    <string name="article_reading_time">Temps de lecture\u00a0: %d minutes</string>
+    <string name="article_offline_header">Pas de connexion Internet</string>
+    <string name="article_offline_text">Vous n\u02bcêtes pas connecté à Internet. Vous pourrez accéder à des articles vous aidant à utiliser cette application quand vous aurez un accès à Internet.</string>
+
+    <string name="explanation_apple">Veuillez noter\u00a0:\nLes appareils Apple changent d\u02bcidentifiant au cours du temps.\nLes AirTags, AirPods, FindMy et autres appareils Apple sont identifiés régulièrement comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>
+    <string name="explanation_samsung">Veuillez noter\u00a0:\nLes appareils Samsung changent d\u02bcidentifiant au cours du temps.\nLes SmartTags et autres appareils Samsung SmartThings devices sont identifiés de temps en temps comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>
+    <string name="explanation_tile">Veuillez noter\u00a0:\nLes appareils Tile ne changement pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.).</string>
+    <string name="explanation_chipolo">Veuillez noter\u00a0:\nLes appareils Chipolo ne changent pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.).</string>
+    <string name="explanation_pebblebee">Veuillez noter\u00a0:\nLes appareils Pebblebee ne changent pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.)..</string>
+    <string name="explanation_unknown">Veuillez noter\u00a0:\nCertains appareils changent d\u02bcidentifiants au cours du temps.\nCes appareils sont identifiés de temps en temps comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>
+
+    <string name="explanation_safe_trackers">Les traceurs de confiance sont des traceurs autour de vous qui sont connectés aux appareils de leurs propriétaires ou l\u02bcont été au cours des minutes passées. Ils ne posent probablement aucun risque pour vous.\nDe plus, tous les traceurs marqués comme ignorés seront considérés comme de confiance.</string>
+    <string name="device_name_cannot_be_empty">Le nom de cet appareil ne peut être vide</string>
+
+    <string name="copyright">Copyright</string>
+    <string name="developer">Développeur\u00a0: %s</string>
+    <string name="maintainer">Mainteneur\u00a0: %s</string>
+    <string name="high_risk_trackers">Traceurs potentiels</string>
+    <string name="low_risk_trackers">Traceurs de confiance</string>
+    <string name="marker_legend">Légende</string>
+    <string name="device_marker">Localisation où un traceur potentiel a été identifié</string>
+    <string name="connection_state_premature_offline_explanation_chipolo">Connecté à son propriétaire au cours des 30 minutes passées</string>
+
+    <string name="language_english">Anglais</string>
+    <string name="language_german">Allemand</string>
+    <string name="language_japanese">Japonais</string>
+    <string name="language_italian">Italien</string>
+    <string name="language_czech">Tchèque</string>
+    <string name="language_slovak">Slovaque</string>
+    <string name="language_russian">Russe</string>
+    <string name="language_french">Français</string>
+    <string name="language_traditional_chinese">Chinois traditionnel</string>
+
+    <string name="title_export_device">Exporter les données de l\'appareil : {deviceAddress}</string>
+    <string name="title_devices_map_device">Carte : %1$s</string>
+    <string name="settings_send_bluetooth_error_messages_summary">Activer ou désactiver les messages d\'erreur Bluetooth</string>
+    <string name="settings_export_found_trackers_summary">Créer un document avec tous les traceurs identifiés</string>
+    <string name="settings_prevent_screenshots_summary">Empêche les captures d\'écran, les enregistrements d\'écran et les aperçus dans les applications récentes pour une meilleure confidentialité</string>
+    <string name="settings_permanent_scanning_summary">Utiliser un scan permanent en arrière-plan. Activer cette fonctionnalité permet d\'obtenir des résultats plus précis, mais peut affecter la stabilité de l\'application. En cas de doute : laissez cette option désactivée.</string>
+    <string name="website">Site Web</string>
+    <string name="settings_send_bluetooth_error_messages">Envoyer les messages d\'erreur Bluetooth</string>
+    <string name="location_radius_circle">Rayon de la zone où chaque emplacement a été trouvé</string>
+    <string name="google_find_my_phone_name">Smartphone Android</string>
+    <string name="export_device_subtitle">Créer un résumé PDF concernant ce traceur</string>
+    <string name="translation_supporters">Contributeurs à la traduction</string>
+    <string name="settings_deactivate_scanning_title">Désactiver le scan en arrière-plan</string>
+    <string name="settings_deactivate_scanning_summary">Ceci désactive l\'exécution d\'AirGuard en arrière-plan. Attention : vous ne serez plus averti si un traceur vous suit.</string>
+    <string name="settings_permanent_scanning_title">Scan permanent</string>
+    <string name="settings_export_found_trackers_title">Exporter les traceurs trouvés</string>
+    <string name="website_description">Consultez notre site Web</string>
+    <string name="settings_prevent_screenshots_title">Empêcher les captures d\'écran</string>
+    <string name="all_devices_found">Tous les appareils trouvés</string>
+    <string name="samsung_tracker">Traceurs Samsung</string>
+    <string name="samsung_tracker_name">Traceur Samsung</string>
+    <string name="google_find_my_tag_name">Traceur "Localiser mon appareil"</string>
+    <string name="export_device_title">Exporter l\'appareil en PDF</string>
+    <string name="samsung_determine_button">Déterminer le type spécifique de traceur</string>
+    <string name="device_determine_failed">Le type exact de l\'appareil n\'a pas pu être déterminé</string>
+    <string name="retrieve_owner_information">Afficher les informations sur le propriétaire</string>
+    <string name="retrieve_owner_information_failed">Les informations sur le propriétaire n\'ont pas pu être récupérées</string>
+    <string name="retrieve_owner_information_alert_title">Récupérer les infos du propriétaire</string>
+    <string name="retrieve_owner_information_explanation_unknown">Pour obtenir des informations sur le propriétaire, vous devez avoir trouvé physiquement le traceur. Une fois trouvé, vous devez le mettre dans un mode spécial. Cela peut consister à appuyer trois fois sur le bouton ou à le maintenir enfoncé pendant 30 secondes. En cas de succès, un son sera émis. Ensuite, appuyez sur "Suivant".</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">Pour obtenir des informations sur le propriétaire, vous devez avoir trouvé physiquement le traceur. Une fois trouvé, appuyez trois fois sur le bouton du traceur. Cela sera confirmé par un son. Ensuite, appuyez sur "Suivant".</string>
+    <string name="retrieve_owner_information_explanation_chipolo">Pour obtenir des informations sur le propriétaire, vous devez avoir trouvé physiquement le traceur. Une fois trouvé, appuyez sur le bouton du traceur pendant 30 secondes et relâchez-le exactement après le deuxième bip. Un son confirmant le succès sera émis. Ensuite, appuyez sur "Suivant".</string>
+    <string name="retrieve_owner_information_explanation_motorola">Pour obtenir des informations sur le propriétaire, vous devez avoir trouvé physiquement le traceur. Une fois trouvé, maintenez le bouton enfoncé pendant 10 secondes jusqu\'à ce que vous entendiez un bip. Ensuite, relâchez le bouton et appuyez à nouveau immédiatement. Enfin, appuyez sur "Suivant".</string>
+    <string name="retrieve_owner_information_alert_next">Suivant</string>
+    <string name="retrieve_owner_information_alert_close">Fermer</string>
+    <string name="confirm_deactivating_background_scan_title">Confirmer la désactivation du scan en arrière-plan</string>
+    <string name="confirm_deactivating_background_scan_text">Êtes-vous sûr de vouloir désactiver le scan en arrière-plan ? Si vous confirmez, vous ne serez plus averti des traceurs potentiels qui vous suivent.</string>
+    <string name="confirm_deactivating_background_scan_yes">Oui, désactiver</string>
+    <string name="confirm_deactivating_background_scan_no">Non, rester protégé</string>
+    <string name="last_seen_times_title">Traceur vu pour la dernière fois à :</string>
+    <string name="no_last_seen_times">Aucune heure de dernière vue disponible</string>
+    <string name="tracker_or_phone">Déterminer s\'il s\'agit d\'un traceur ou d\'un smartphone</string>
+    <string name="left">Gauche</string>
+    <string name="right">Droite</string>
+    <string name="export_trackers_label">Exporter les traceurs</string>
+    <string name="export_trackers_explanation">En cliquant sur le bouton ci-dessous, vous pourrez créer un document PDF contenant tous les traceurs identifiés comme vous ayant suivi pendant une période prolongée.</string>
+    <string name="export_trackers_create_document">Créer le document</string>
+    <string name="export_trackers_following">Le traceur vous a suivi</string>
+    <string name="export_trackers_not_following">Le traceur ne vous a pas suivi</string>
+    <string name="export_trackers_ignored">Le traceur a été ignoré</string>
+    <string name="export_trackers_location_unknown">Localisation : Inconnue</string>
+    <string name="export_trackers_tracker_type">Type de traceur : %s</string>
+    <string name="export_trackers_mac">Adresse MAC : %s</string>
+    <string name="export_trackers_last_seen">Vu pour la dernière fois : %s</string>
+    <string name="export_trackers_first_seen">Vu pour la première fois : %s</string>
+    <string name="export_trackers_detections">Détections : %d</string>
+    <string name="export_trackers_unique_locations">Emplacements uniques : %d</string>
+    <string name="export_trackers_time">Heure : %s"</string>
+    <string name="export_trackers_location">Localisation : Latitude : %s, Longitude : %s"</string>
+    <string name="export_trackers_map">Carte : %s</string>
+    <string name="export_trackers_map_still_loading">Carte en cours de chargement…</string>
+    <string name="export_trackers_signal_strength">Force du signal : %d"</string>
+    <string name="export_trackers_created_by">Créé par AirGuard %s pour Android</string>
+    <string name="export_trackers_basic_info_title">Informations :</string>
+    <string name="export_trackers_map_title">Carte :</string>
+    <string name="export_trackers_detections_title">Ce traceur a été trouvé à :</string>
+    <string name="export_trackers_detections_title_continued">Ce traceur a été trouvé à (suite) :</string>
+    <string name="export_page_number">Page %d/%d</string>
+    <string name="export_trackers_15_minute_warning">Attention : cette entrée a été associée sur la base de probabilités. Il pourrait s\'agir d\'un faux positif.</string>
+    <string name="export_trackers_no_internet">Impossible de charger la carte. Veuillez vous assurer d\'avoir une connexion Internet active.</string>
+    <string name="export_trackers_algo_warning_text">Cet appareil a été détecté à l\'aide d\'un algorithme pouvant produire des erreurs dans de rares cas. Utilisez ce document avec prudence.</string>
+    <string name="export_trackers_no_internet_during_generation">La carte n\'a pas pu être chargée car Internet n\'était pas disponible lors de la génération de ce document.</string>
+    <string name="samsung_bug_notification_title">Erreur Bluetooth détectée</string>
+    <string name="samsung_bug_notification_text">Votre appareil est affecté par une erreur survenant sur certains appareils sous Android 15 ou supérieur. Actuellement, aucune application ne peut utiliser le scan Bluetooth Low Energy. Veuillez redémarrer votre téléphone pour corriger ce problème.</string>
+    <string name="generic_bluetooth_bug_notification_text">Des problèmes sont survenus lors du scan Bluetooth. Assurez-vous qu\'AirGuard dispose de toutes les autorisations requises et que le Bluetooth est activé. Si cette erreur persiste, essayez de redémarrer votre téléphone.</string>
+    <string name="device_comment_hint">Ajouter un commentaire</string>
+    <string name="notification_permission_missing_title">Autorisation de notification désactivée</string>
+    <string name="notification_permission_missing_text">Les notifications sont désactivées pour cette application. Vous ne serez pas averti si un traceur vous suit. Pour modifier cela, activez les notifications pour cette application dans les paramètres système.</string>
+    <string name="background_location_permission_missing_title">Autorisation de localisation en arrière-plan désactivée</string>
+    <string name="background_location_permission_missing_text">L\'autorisation de localisation en arrière-plan n\'a pas été accordée à cette application. Vous ne serez pas averti si un traceur vous suit lorsque l\'application est fermée. Pour modifier cela, activez la localisation en arrière-plan pour cette application dans les paramètres système.</string>
+    <string name="map_footer_all_devices">Cette carte montre tous les emplacements des %d derniers jours.</string>
+    <string name="map_footer_device">Cette carte montre tous les endroits où cet appareil a été trouvé.</string>
+    <string name="title_old_device_cleanup">Suppression auto. des anciens appareils</string>
+    <string name="settings_old_device_cleanup_title">Suppression automatique des anciens appareils</string>
+    <string name="settings_old_device_cleanup_summary">Configurer la suppression automatique des anciens appareils de la base de données</string>
+    <string name="old_device_cleanup_description">Configurez si les anciens appareils qui n\'ont pas été vus depuis longtemps doivent être automatiquement supprimés de la base de données.</string>
+    <string name="delete_old_devices_title">Supprimer les anciens appareils</string>
+    <string name="delete_old_devices_summary">Supprimer automatiquement les appareils qui ne sont pas considérés comme une menace potentielle et qui dépassent le délai spécifié.</string>
+    <string name="delete_unsafe_old_devices_title">Supprimer aussi les anciens appareils non sûrs</string>
+    <string name="delete_unsafe_old_devices_summary">Inclure les appareils considérés comme une menace potentielle.</string>
+    <string name="old_device_timeframe_label">Délai de suppression</string>
+    <string name="old_device_timeframe_hint">Sélectionner le délai</string>
+    <string name="old_device_timeframe_7_days">7 jours</string>
+    <string name="old_device_timeframe_14_days">14 jours</string>
+    <string name="old_device_timeframe_1_month">1 mois</string>
+    <string name="old_device_timeframe_2_months">2 mois</string>
+    <string name="old_device_timeframe_3_months">3 mois</string>
+    <string name="old_device_deactivate_title">Confirmer la désactivation de la suppression auto.</string>
+    <string name="old_device_deactivate_text">Êtes-vous sûr de vouloir désactiver la suppression automatique des données des anciens traceurs ? Si vous confirmez, l\'application ralentira avec le temps. Le rétablissement de ce paramètre ultérieurement peut prendre jusqu\'à 24 heures.</string>
+    <string name="old_device_deactivate_yes">Oui, désactiver</string>
+    <string name="old_device_deactivate_no">Non, garder activé</string>
+</resources>

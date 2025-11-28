@@ -114,6 +114,9 @@ interface DeviceDao {
     @Delete
     suspend fun deleteDevices(baseDevices: List<BaseDevice>)
 
+    @Query("SELECT * FROM device WHERE lastSeen < :since")
+    fun getDevicesOlderThan(since: LocalDateTime): List<BaseDevice>
+
     @Query("SELECT * FROM device WHERE lastSeen < :since AND notificationSent == 0")
     fun getDevicesOlderThanWithoutNotifications(since: LocalDateTime): List<BaseDevice>
 

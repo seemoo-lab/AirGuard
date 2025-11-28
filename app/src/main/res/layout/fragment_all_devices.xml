@@ -208,7 +208,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:cardBackgroundColorInt="@{@color/blue_card_background}"
-                    app:cardName="@{@string/other_devices_found}"
+                    app:cardName="@{@string/all_devices_found}"
                     app:cardNumber="@{viewModel.countNotTracking}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
