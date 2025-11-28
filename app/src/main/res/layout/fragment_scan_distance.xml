@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -20,7 +21,8 @@
             android:indeterminate="true"
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <View
             android:id="@+id/background_bar"
@@ -31,7 +33,8 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:translationY="360dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/device_type_layout"
@@ -40,7 +43,8 @@
             bind:layout_constraintTop_toTopOf="parent"
             bind:layout_constraintBottom_toTopOf="@id/connection_quality"
             bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent">
+            bind:layout_constraintRight_toRightOf="parent"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/device_type_text"
@@ -58,7 +62,8 @@
                 bind:layout_constraintLeft_toLeftOf="parent"
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"/>
+                bind:layout_constraintTop_toTopOf="parent"
+                tools:text="Sample Tracker" />
 
             <ProgressBar
                 android:id="@+id/progress_circular"
@@ -70,7 +75,8 @@
                 bind:layout_constraintLeft_toLeftOf="parent"
                 bind:layout_constraintRight_toRightOf="parent"
                 bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent" />
+                bind:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -82,7 +88,9 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:text="60 %"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scan_explanation_layout"
@@ -93,7 +101,8 @@
             bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"
             bind:layout_constraintTop_toBottomOf="@id/connection_quality"
             bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent">
+            bind:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/scan_explanation"
@@ -163,7 +172,8 @@
                 bind:layout_constraintBottom_toTopOf="@id/retrieve_owner_information_button"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="parent" />
+                bind:layout_constraintTop_toBottomOf="parent"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/retrieve_owner_information_button"
@@ -174,7 +184,8 @@
                 bind:layout_constraintBottom_toTopOf="@id/connection_state"
                 bind:layout_constraintEnd_toEndOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@id/perform_action_button" />
+                bind:layout_constraintTop_toBottomOf="@id/perform_action_button"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/connection_state"
@@ -188,7 +199,8 @@
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constrainedWidth="true"
                 bind:layout_constraintHorizontal_bias="0.5"
-                bind:layout_constraintHorizontal_chainStyle="packed"/>
+                bind:layout_constraintHorizontal_chainStyle="packed"
+                tools:text="@string/connection_state_offline_explanation" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -200,7 +212,8 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/device_not_found"
@@ -213,7 +226,8 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <include
             android:id="@+id/include_bluetooth_disabled"
@@ -224,7 +238,8 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}" />
+            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            tools:visibility="gone" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
