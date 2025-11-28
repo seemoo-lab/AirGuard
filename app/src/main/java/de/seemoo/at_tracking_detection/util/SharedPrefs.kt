@@ -276,6 +276,7 @@ object SharedPrefs {
         }
 
     var appOpenCount: Int
+        // DO NOT DELETE: This will be used in the Google Play Release Branch
         // How often the app has been opened
         get() {
             return sharedPreferences.getInt("app_open_count", 0)
@@ -285,6 +286,7 @@ object SharedPrefs {
         }
 
     var reviewShown: Boolean
+        // DO NOT DELETE: This will be used in the Google Play Release Branch
         // If the review dialog has been shown
         get() {
             return sharedPreferences.getBoolean("review_shown", false)

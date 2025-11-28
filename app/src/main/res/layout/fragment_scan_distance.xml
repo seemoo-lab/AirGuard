@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             bind:layout_constraintTop_toTopOf="parent"
-            bind:layout_constraintBottom_toTopOf="@id/connection_quality"
+            bind:layout_constraintBottom_toTopOf="@id/device_icon"
             bind:layout_constraintLeft_toLeftOf="parent"
             bind:layout_constraintRight_toRightOf="parent"
             tools:visibility="visible">
@@ -78,6 +78,19 @@
                 bind:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/device_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/scan_result_item_image_description"
+            bind:tint="?android:attr/textColorTertiary"
+            bind:layout_constraintBottom_toTopOf="@id/connection_quality"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toBottomOf="@id/device_type_layout"
+            tools:src="@drawable/ic_airtag"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/connection_quality"
@@ -119,38 +132,40 @@
                 bind:layout_constraintHorizontal_chainStyle="packed"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:id="@+id/battery_layout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"-->
-<!--            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"-->
-<!--            bind:layout_constraintLeft_toLeftOf="parent"-->
-<!--            bind:layout_constraintRight_toRightOf="parent">-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/battery_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"
+            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"
+            bind:layout_constraintLeft_toLeftOf="parent"
+            bind:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-<!--            <TextView-->
-<!--                android:id="@+id/battery_text"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/battery_status_text"-->
-<!--                android:textSize="16sp"-->
-<!--                bind:layout_constraintLeft_toLeftOf="parent"-->
-<!--                bind:layout_constraintRight_toLeftOf="@id/battery_symbol"-->
-<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--                bind:layout_constraintTop_toTopOf="parent"/>-->
+            <TextView
+                android:id="@+id/battery_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/battery_status_text"
+                android:textSize="16sp"
+                bind:layout_constraintLeft_toLeftOf="parent"
+                bind:layout_constraintRight_toLeftOf="@id/battery_symbol"
+                bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"/>
 
-<!--            <ImageView-->
-<!--                android:id="@+id/battery_symbol"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                bind:srcCompat="@drawable/ic_battery_unknown_24"-->
-<!--                bind:layout_constraintRight_toRightOf="parent"-->
-<!--                bind:layout_constraintLeft_toRightOf="@id/battery_text"-->
-<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--                bind:layout_constraintTop_toTopOf="parent"-->
-<!--                android:contentDescription="@string/scan_battery_icon_description"-->
-<!--                bind:tint="?attr/colorControlNormal" />-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+            <ImageView
+                android:id="@+id/battery_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                bind:srcCompat="@drawable/ic_battery_unknown_24"
+                bind:layout_constraintRight_toRightOf="parent"
+                bind:layout_constraintLeft_toRightOf="@id/battery_text"
+                bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/scan_battery_icon_description"
+                bind:tint="?attr/colorControlNormal" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/connection_state_layout"
