@@ -38,6 +38,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
@@ -212,7 +213,7 @@ class TrackingFragment : Fragment() {
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
                 val locationList = Utility.fetchLocationListFromBeaconList(beacons)
-                Utility.setGeoPointsFromListOfLocations(locationList, mapView)
+                MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
                 trackingViewModel.isMapLoading.postValue(false)
             }
         }
@@ -295,7 +296,7 @@ class TrackingFragment : Fragment() {
         lifecycleScope.launch {
             trackingViewModel.isMapLoading.postValue(true)
             val locationList = Utility.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
-            Utility.setGeoPointsFromListOfLocations(locationList, mapView)
+            MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
             trackingViewModel.isMapLoading.postValue(false)
         }
     }

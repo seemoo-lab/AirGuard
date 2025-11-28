@@ -67,4 +67,6 @@ class BeaconRepository @Inject constructor(
     }
 
     fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon> = beaconDao.getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore)
+
+    fun getMostRecentBeaconAtLocation(locationId: Int): Beacon? = beaconDao.getMostRecentBeaconAtLocation(locationId)
 }

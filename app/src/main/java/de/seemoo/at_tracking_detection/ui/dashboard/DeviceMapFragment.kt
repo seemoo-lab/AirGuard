@@ -16,11 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
@@ -118,7 +120,17 @@ class DeviceMapFragment : Fragment() {
             }
 
             try {
-                Utility.setGeoPointsFromListOfLocations(locationList, map)
+                // Only show device info popup when viewing all devices (aka deviceAddress is null or empty)
+                val showDeviceInfoOnClick = deviceAddress.isNullOrEmpty()
+                MapUtils.setGeoPointsFromListOfLocations(
+                    locationList,
+                    map, 
+                    showDeviceInfoOnClick
+                ) { deviceAddress ->
+                    // Navigate to tracking fragment when marker info window is clicked
+                    val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(deviceAddress)
+                    findNavController().navigate(action)
+                }
             } finally {
                 viewModel.isMapLoading.postValue(false)
             }
