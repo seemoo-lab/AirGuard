@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="?attr/colorSurface"
     android:padding="12dp"
-    android:minWidth="240dp"
+    android:minWidth="280dp"
     android:elevation="4dp">
 
     <ImageView
@@ -17,7 +17,6 @@
         app:tint="?android:attr/textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:src="@drawable/ic_airtag" />
 
     <TextView
@@ -31,7 +30,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@id/marker_device_icon"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/marker_arrow_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="AirTag" />
 
@@ -46,10 +45,49 @@
         android:maxLines="1"
         android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@id/marker_device_icon"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/marker_arrow_icon"
         app:layout_constraintTop_toBottomOf="@id/marker_device_name"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Last seen: 12/01/2023 10:30" />
+
+    <ImageView
+        android:id="@+id/marker_arrow_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/navigate_to_details"
+        android:src="@drawable/ic_baseline_chevron_right_24"
+        app:tint="?android:attr/textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/marker_last_seen" />
+
+    <View
+        android:id="@+id/marker_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/marker_last_seen" />
+
+    <TextView
+        android:id="@+id/marker_more_trackers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="13sp"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/marker_divider"
+        tools:text="+2 more trackers found"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -135,4 +135,10 @@ interface DeviceDao {
 
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
     fun observeByAddress(address: String): Flow<BaseDevice?>
+
+    @Query("SELECT COUNT(DISTINCT device.address) FROM device INNER JOIN beacon ON device.address = beacon.deviceAddress WHERE beacon.locationId = :locationId AND beacon.receivedAt >= :since")
+    fun getDeviceCountAtLocation(locationId: Int, since: LocalDateTime): Int
+
+    @Query("SELECT * FROM device INNER JOIN beacon ON device.address = beacon.deviceAddress WHERE beacon.locationId = :locationId AND beacon.receivedAt >= :since GROUP BY device.address ORDER BY MAX(beacon.receivedAt) DESC")
+    fun getDevicesAtLocation(locationId: Int, since: LocalDateTime): List<BaseDevice>
 }

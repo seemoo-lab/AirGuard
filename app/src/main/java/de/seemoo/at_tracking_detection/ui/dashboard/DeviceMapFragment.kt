@@ -125,12 +125,22 @@ class DeviceMapFragment : Fragment() {
                 MapUtils.setGeoPointsFromListOfLocations(
                     locationList,
                     map, 
-                    showDeviceInfoOnClick
-                ) { deviceAddress ->
-                    // Navigate to tracking fragment when marker info window is clicked
-                    val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(deviceAddress)
-                    findNavController().navigate(action)
-                }
+                    showDeviceInfoOnClick,
+                    onMarkerClick = { deviceAddress ->
+                        // Navigate to tracking fragment when marker info window is clicked
+                        val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(deviceAddress)
+                        findNavController().navigate(action)
+                    },
+                    onMoreTrackersClick = { locationId ->
+                        // Navigate to devices fragment with location filter
+                        val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToDevicesFound(
+                            showDevicesFound = true,
+                            showAllDevices = true,
+                            locationId = locationId
+                        )
+                        findNavController().navigate(action)
+                    }
+                )
             } finally {
                 viewModel.isMapLoading.postValue(false)
             }

@@ -47,8 +47,8 @@ abstract class DevicesFragment(
     var deviceType: DeviceType?=null,
     var deviceType2: DeviceType?=null,
 ) : Fragment() {
-
-    private val devicesViewModel: DevicesViewModel by viewModels()
+    // This is protected and not private so we can use it in FoundDevicesFragment
+    protected val devicesViewModel: DevicesViewModel by viewModels()
 
     private val dialogFragment = FilterDialogFragment()
 

@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.util.Utility
 
 class FoundDevicesFragment: DevicesFragment(
@@ -20,6 +21,13 @@ class FoundDevicesFragment: DevicesFragment(
         this.deviceType = safeArgs.deviceType
         this.deviceType2 = safeArgs.deviceType2
         super.onCreate(savedInstanceState)
+
+        // Apply location filter if locationId is provided
+        // This is only available when accessing the Fragment through the map
+        val locationId = safeArgs.locationId
+        if (locationId > 0) {
+            devicesViewModel.addOrRemoveFilter(LocationFilter.build(locationId))
+        }
     }
 
     override val deviceItemListener: DeviceAdapter.OnClickListener

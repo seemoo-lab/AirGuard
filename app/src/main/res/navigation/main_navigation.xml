@@ -198,6 +198,10 @@
             android:name="deviceType2"
             app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType"
             android:defaultValue="UNKNOWN" />
+        <argument
+            android:name="locationId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 
     <fragment
@@ -232,6 +236,10 @@
             android:name="deviceType2"
             android:defaultValue="UNKNOWN"
             app:argType="de.seemoo.at_tracking_detection.database.models.device.DeviceType" />
+        <argument
+            android:name="locationId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 
     <!-- All Devices Map -->
@@ -245,6 +253,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_deviceMapFragment_to_devicesFound"
+            app:destination="@id/devices_found"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="showAllDevices"
             android:defaultValue="false"

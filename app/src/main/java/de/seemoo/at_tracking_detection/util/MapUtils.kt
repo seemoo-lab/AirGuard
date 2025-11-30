@@ -93,7 +93,8 @@ object MapUtils {
         locationList: List<Location>,
         map: MapView,
         showDeviceInfoOnClick: Boolean = false,
-        onMarkerClick: ((String) -> Unit)? = null
+        onMarkerClick: ((String) -> Unit)? = null,
+        onMoreTrackersClick: ((Int) -> Unit)? = null
     ): Boolean {
         val context = ATTrackingDetectionApplication.getAppContext()
         val mapController = map.controller
@@ -172,9 +173,14 @@ object MapUtils {
                 geoPointList.add(geoPoint)
 
                 if (showDeviceInfoOnClick) {
-                    val infoWindow = MarkerInfoPopUp(map, location.locationId) { deviceAddress ->
-                        onMarkerClick?.invoke(deviceAddress)
-                    }
+                    val infoWindow = MarkerInfoPopUp(map, location.locationId,
+                        onMarkerClick = { deviceAddress ->
+                            onMarkerClick?.invoke(deviceAddress)
+                        },
+                        onMoreTrackersClick = { locationId ->
+                            onMoreTrackersClick?.invoke(locationId)
+                        }
+                    )
                     marker.infoWindow = infoWindow
 
                     // Fix for Problem #1: Close others, open this one

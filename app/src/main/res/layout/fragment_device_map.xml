@@ -171,6 +171,17 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <View
+                    android:id="@+id/legendDivider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="?android:attr/listDivider"
+                    bind:layout_constraintTop_toBottomOf="@id/legendRowCircle"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent" />
+
                 <TextView
                     android:id="@+id/legendFooterText"
                     android:layout_width="0dp"
@@ -179,7 +190,7 @@
                     android:textSize="14sp"
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="12dp"
-                    bind:layout_constraintTop_toBottomOf="@id/legendRowCircle"
+                    bind:layout_constraintTop_toBottomOf="@id/legendDivider"
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintEnd_toEndOf="parent"
                     tools:text="This map shows locations"/>

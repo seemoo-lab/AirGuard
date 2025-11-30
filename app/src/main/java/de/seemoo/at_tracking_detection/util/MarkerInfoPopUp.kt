@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -15,7 +16,8 @@ import java.time.format.FormatStyle
 class MarkerInfoPopUp(
     mapView: MapView,
     private val locationId: Int,
-    private val onMarkerClick: (String) -> Unit
+    private val onMarkerClick: (String) -> Unit,
+    private val onMoreTrackersClick: (Int) -> Unit
 ) : InfoWindow(R.layout.marker_info_window, mapView) {
 
     override fun onOpen(item: Any?) {
@@ -38,6 +40,11 @@ class MarkerInfoPopUp(
             close()
             return
         }
+
+        // Get device count at this location
+        val relevantTrackingDate = de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
+        val deviceCount = deviceRepository.getDeviceCountAtLocation(locationId, relevantTrackingDate)
+        val additionalDevices = deviceCount - 1
 
         // Set device icon - clear any tint to show the original drawable
         val deviceIcon = mView.findViewById<ImageView>(R.id.marker_device_icon)
@@ -65,6 +72,28 @@ class MarkerInfoPopUp(
         val formattedDate = device.lastSeen.format(formatter)
         lastSeenText.text = context.getString(R.string.export_trackers_last_seen, formattedDate)
 
+        // Show additional trackers if more than one
+        val divider = mView.findViewById<View>(R.id.marker_divider)
+        val moreTrackersText = mView.findViewById<TextView>(R.id.marker_more_trackers)
+
+        if (additionalDevices > 0) {
+            divider.visibility = View.VISIBLE
+            moreTrackersText.visibility = View.VISIBLE
+            moreTrackersText.text = context.getString(
+                R.string.more_trackers_found,
+                additionalDevices
+            )
+
+            // Set click listener for the "+x more trackers" text
+            moreTrackersText.setOnClickListener {
+                onMoreTrackersClick(locationId)
+                close()
+            }
+        } else {
+            divider.visibility = View.GONE
+            moreTrackersText.visibility = View.GONE
+        }
+
         // Set click listener to navigate to tracking fragment
         mView.setOnClickListener {
             onMarkerClick(device.address)
@@ -73,8 +102,10 @@ class MarkerInfoPopUp(
     }
 
     override fun onClose() {
-        // Clear click listener
+        // Clear click listeners
         mView.setOnClickListener(null)
+        val moreTrackersText = mView.findViewById<TextView>(R.id.marker_more_trackers)
+        moreTrackersText?.setOnClickListener(null)
     }
 }
 

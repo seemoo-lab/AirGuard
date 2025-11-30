@@ -13,7 +13,6 @@
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
     <string name="title_export_device">Export device data: {deviceAddress}</string>
-    <string name="title_device_map">All Devices</string>
     <string name="title_devices_map_device">Map: %1$s</string>
     <string name="title_devices">Devices</string>
     <string name="title_data_deletion">Data deletion request</string>
@@ -225,7 +224,6 @@
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
-    <string name="locations_tracked">All locations</string>
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
@@ -504,9 +502,6 @@
     <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
     <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
 
-    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
-    <string name="map_footer_device">This map shows all locations where this device was found.</string>
-
     <string name="title_old_device_cleanup">Auto delete old devices</string>
     <string name="settings_old_device_cleanup_title">Auto delete old devices</string>
     <string name="settings_old_device_cleanup_summary">Configure automatic deletion of old devices from database</string>
@@ -528,6 +523,15 @@
     <string name="old_device_deactivate_no">No, keep activated</string>
 
     <string name="article_load_error" translatable="false">Article Load Error</string>
+    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
+    <string name="map_footer_device">This map shows all locations ever found for this device.</string>
 
+    <!-- TODO: Changed: Require Translation -->
+    <string name="locations_tracked">Recent locations</string>
+    <string name="title_device_map">Recently found locations</string> <!-- TODO: Requires new all devices string now, do when refactoring FoundDevicesFragment and DevicesFragment -->
+
+    <!-- TODO: New: Require Translation -->
     <string name="dismiss_article">Dismiss article</string>
+    <string name="navigate_to_details">Navigate to details</string>
+    <string name="more_trackers_found">+%d more trackers found</string>
 </resources>
