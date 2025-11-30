@@ -44,6 +44,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentExportDeviceBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -127,7 +128,7 @@ class ExportDeviceFragment: Fragment() {
 
         mapView = binding.mapPreview
         noInternetTextView = binding.noInternetTextView
-        Utility.basicMapSetup(mapView)
+        MapUtils.basicMapSetup(mapView)
 
         mapView.setMultiTouchControls(false)
         mapView.setBuiltInZoomControls(false)

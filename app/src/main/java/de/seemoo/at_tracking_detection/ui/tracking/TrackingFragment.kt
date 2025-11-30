@@ -131,7 +131,7 @@ class TrackingFragment : Fragment() {
     }
 
     private fun initializeMap() {
-        Utility.basicMapSetup(mapView)
+        MapUtils.basicMapSetup(mapView)
 
         mapView.addMapListener(object : MapListener {
             override fun onZoom(event: ZoomEvent?): Boolean {
@@ -207,12 +207,12 @@ class TrackingFragment : Fragment() {
             handlePlaySound()
         }
 
-        // Utility.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
+        // MapUtils.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
             lifecycleScope.launch {
                 trackingViewModel.isMapLoading.postValue(true)
-                val locationList = Utility.fetchLocationListFromBeaconList(beacons)
+                val locationList = MapUtils.fetchLocationListFromBeaconList(beacons)
                 MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
                 trackingViewModel.isMapLoading.postValue(false)
             }
@@ -295,7 +295,7 @@ class TrackingFragment : Fragment() {
     private fun zoomToMarkers() {
         lifecycleScope.launch {
             trackingViewModel.isMapLoading.postValue(true)
-            val locationList = Utility.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
+            val locationList = MapUtils.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
             MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
             trackingViewModel.isMapLoading.postValue(false)
         }

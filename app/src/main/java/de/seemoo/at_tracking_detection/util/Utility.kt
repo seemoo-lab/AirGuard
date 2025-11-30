@@ -12,14 +12,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -31,8 +29,6 @@ import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
@@ -42,10 +38,6 @@ import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.CopyrightOverlay
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 import java.net.HttpURLConnection
 import java.net.URL
@@ -55,10 +47,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.math.round
 
 object Utility {
-
-    private const val MAX_ZOOM_LEVEL = 18.0
-    private const val ZOOMED_OUT_LEVEL = 15.0
-
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity() ?: return false
         when {
@@ -106,67 +94,7 @@ object Utility {
         return ((value.toInt() shr position) and 1) == 1
     }
 
-    fun enableMyLocationOverlay(
-        map: MapView
-    ) {
-        val locationOverlay = MyLocationNewOverlay(map)
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val options = BitmapFactory.Options()
-        val bitmapPerson = BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-        locationOverlay.setPersonIcon(bitmapPerson)
-        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
-        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
-        locationOverlay.enableMyLocation()
-        locationOverlay.enableFollowLocation()
-        map.overlays.add(locationOverlay)
-        map.controller.setZoom(ZOOMED_OUT_LEVEL)
-    }
-
-    fun basicMapSetup(map: MapView) {
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val copyrightOverlay = CopyrightOverlay(context)
-
-        map.setTileSource(TileSourceFactory.MAPNIK)
-        map.setUseDataConnection(true)
-        map.setMultiTouchControls(true)
-        map.maxZoomLevel = MAX_ZOOM_LEVEL
-
-        map.overlays.add(copyrightOverlay)
-    }
-
-
-    // Helper to run actions only after the MapView is loaded (has non-zero size)
-    private fun runWhenMapReady(map: MapView, action: () -> Unit) {
-        if (map.width > 0 && map.height > 0) {
-            map.post { action() }
-            return
-        }
-        map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                if (map.width > 0 && map.height > 0) {
-                    map.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    map.post { action() }
-                }
-            }
-        })
-    }
-
-    fun fetchLocationListFromBeaconList(locations: List<Beacon>): List<Location> {
-        val uniqueLocations = locations
-            .distinctBy { it.locationId } // Filter out duplicates based on locationId
-            .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
-
-        val locationList = arrayListOf<Location>()
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
-
-        uniqueLocations.mapNotNullTo(locationList) {
-            locationRepository.getLocationWithId(it.locationId!!)
-        }
-
-        return locationList
-    }
-
-
+    // TODO: at some point, refactor application, so it uses proper color schemes everywhere instead of this function
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

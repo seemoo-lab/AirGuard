@@ -103,11 +103,11 @@ class DeviceMapFragment : Fragment() {
         ViewCompat.setTranslationZ(view, 100f)
         val map: MapView = view.findViewById(R.id.map)
 
-        Utility.basicMapSetup(map)
+        MapUtils.basicMapSetup(map)
 
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
-        // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
+        // MapUtils.enableMyLocationOverlay(map) // This enables the blue location dot on the map
 
         lifecycleScope.launch {
             val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
