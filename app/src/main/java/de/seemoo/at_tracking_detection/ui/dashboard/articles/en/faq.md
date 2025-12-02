@@ -3,7 +3,7 @@
 ## General & Core Function
 
 **What types of trackers can you detect?**
-We currently detect various trackers, including Apple AirTags, AirPods, FindMy devices, other Apple devices in Lost Mode, Samsung SmartTags, Chipolos, and Tiles.
+We currently detect various trackers, including Google Find My devices, Apple AirTags, AirPods, FindMy devices, other Apple devices in Lost Mode, Samsung SmartTags, Chipolos, and Tiles.
 
 **How much battery does AirGuard use?**
 AirGuard is designed to be power-efficient. With typical usage, you won't notice a significant difference in battery life; it usually uses less than 1% of your battery.
