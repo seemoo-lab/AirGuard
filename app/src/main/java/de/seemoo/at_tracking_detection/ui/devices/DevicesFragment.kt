@@ -1,5 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
+import android.Manifest
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -19,8 +20,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,23 +38,28 @@ import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
+import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDate
+import androidx.core.graphics.drawable.toDrawable
 
 
 @AndroidEntryPoint
-abstract class DevicesFragment(
-    var showDevicesFound: Boolean = true,
-    var showAllDevices: Boolean = false,
-    var deviceType: DeviceType?=null,
-    var deviceType2: DeviceType?=null,
-) : Fragment() {
-    // This is protected and not private so we can use it in FoundDevicesFragment
-    protected val devicesViewModel: DevicesViewModel by viewModels()
+class DevicesFragment : Fragment() {
+
+    private val safeArgs: DevicesFragmentArgs by navArgs()
+
+    private var showDevicesFound: Boolean = true
+    private var showAllDevices: Boolean = false
+    private var deviceType: DeviceType? = null
+    private var deviceType2: DeviceType? = null
+
+    val devicesViewModel: DevicesViewModel by viewModels()
 
     private val dialogFragment = FilterDialogFragment()
 
@@ -57,6 +68,12 @@ abstract class DevicesFragment(
     private var swipeDirs: Int = ItemTouchHelper.LEFT
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Initialize properties from SafeArgs
+        this.showDevicesFound = safeArgs.showDevicesFound
+        this.showAllDevices = safeArgs.showAllDevices
+        this.deviceType = safeArgs.deviceType
+        this.deviceType2 = safeArgs.deviceType2
+
         super.onCreate(savedInstanceState)
 
         // Set up the view model here since this is only called when the Fragment gets created
@@ -103,6 +120,13 @@ abstract class DevicesFragment(
             } else {
                 devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
             }
+        }
+
+        // Apply location filter if locationId is provided
+        // This is only available when accessing the Fragment through the map
+        val locationId = safeArgs.locationId
+        if (locationId > 0) {
+            devicesViewModel.addOrRemoveFilter(LocationFilter.build(locationId))
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)
@@ -159,7 +183,19 @@ abstract class DevicesFragment(
 
     }
 
-    abstract val deviceItemListener: DeviceAdapter.OnClickListener
+    private val deviceItemListener: DeviceAdapter.OnClickListener
+        get() = DeviceAdapter.OnClickListener { baseDevice: BaseDevice, materialCardView: MaterialCardView ->
+            if (!Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                return@OnClickListener
+            }
+            val directions: NavDirections =
+                DevicesFragmentDirections
+                    .actionNavigationDevicesToTrackingFragment(
+                        baseDevice.address
+                    )
+            val extras = FragmentNavigatorExtras(materialCardView to baseDevice.address)
+            findNavController().navigate(directions, extras)
+        }
 
 
     private fun updateTexts() {
@@ -181,7 +217,7 @@ abstract class DevicesFragment(
         object :
             ItemTouchHelper.SimpleCallback(0, swipeDirs) {
             private val deleteBackground = ColorDrawable(Color.RED)
-            private val editBackground = ColorDrawable(Color.GRAY)
+            private val editBackground = Color.GRAY.toDrawable()
 
             override fun onMove(
                 recyclerView: RecyclerView,
