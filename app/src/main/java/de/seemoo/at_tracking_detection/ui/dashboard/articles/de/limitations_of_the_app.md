@@ -2,37 +2,49 @@
 
 AirGuard kann nur Bluetooth-basierte Tracker finden. Tracker, die mit GPS funktionieren und den Standort über eine Mobilfunkverbindung mit dem:der Besitzer:in teilen, können nicht gefunden werden.
 
-Im Folgenden erfährst du, welche Tracker AirGuard automatisch im Hintergrund erkennen kann und welche Tracker über die manuelle Suche sichtbar sind.
+Während AirGuard eine große Vielzahl an Trackern erkennen kann, variieren erweiterte Funktionen wie das Abspielen eines Tons, das Identifizieren des:der Besitzer:in oder die Feststellung, ob das Gerät aktuell mit dem:der Besitzer:in verbunden ist, je nach Hersteller.
+
+**Google „Mein Gerät finden“-Geräte**
+Dies sind Tracker, die mit dem „Mein Gerät finden“-Netzwerk von Google kompatibel sind.
+* **Ist mit Besitzer:in verbunden:** ✅ (Bestimmt, ob der:die Besitzer:in in der Nähe ist)
+* **Ton abspielen:** ✅
+* **Besitzer:in identifizieren:** ✅
+
+**Apple AirTags & „Wo ist?“-Geräte**
+Dazu gehören AirTags, AirPods und Tracker von Drittanbietern (wie Chipolo oder Pebblebee), die das Apple „Wo ist?“-Netzwerk nutzen.
+* **Ist mit Besitzer:in verbunden:** ✅ (Bestimmt, ob der:die Besitzer:in in der Nähe ist)
+* **Ton abspielen:** ✅ (Verfügbarkeit hängt vom spezifischen Gerätemodus ab)
+* **Besitzer:in identifizieren:** ✅ (Via NFC für AirTags und unterstützte „Wo ist?“-Geräte)
 
 **Samsung SmartTags**
-Diese Tracker werden von Samsung hergestellt und funktionieren fast wie AirTags.
-
-*Automatische Warnung bei Verfolgung*  ✅
-*Manuelle Suche*  ✅
+Diese Tracker werden von Samsung hergestellt.
+* **Ist mit Besitzer:in verbunden:** ✅ (Bestimmt, ob der:die Besitzer:in in der Nähe ist)
+* **Ton abspielen:** ❌
+* **Besitzer:in identifizieren:** ❌
 
 **Tile-Tracker**
-Tile ist eine Firma, die ausschließlich Bluetooth-Tracker herstellt. Auch diese sind in den Funktionen ähnlich wie AirTags.
+Tile ist eine Firma, die ausschließlich Bluetooth-Tracker herstellt.
+* **Ist mit Besitzer:in verbunden:** ❌
+* **Ton abspielen:** ❌
+* **Besitzer:in identifizieren:** ❌
 
-*Automatische Warnung bei Verfolgung*  ✅
-*Manuelle Suche*  ✅
+**Chipolo Tracker (ohne „Wo ist?“-Funktion)**
+Dies sind die Standard-Bluetooth-Tracker von Chipolo, die nicht Teil des Apple „Wo ist?“-Netzwerks sind.
+* **Ist mit Besitzer:in verbunden:** ✅ (Bei einigen Modellen unterstützt)
+* **Ton abspielen:** ❌
+* **Besitzer:in identifizieren:** ❌
 
-**Chipolo Tracker (ohne „Wo ist?“)**
-Chipolo bietet „Wo ist?“ Tracker an, die nur mit dem iPhone funktionieren und Tracker, die auch mit Android-Geräten funktionieren. Hier geht es um die Version, welche auch mit Android kompatibel ist und „Wo ist?“ nicht unterstützt.
+**Pebblebee (ohne „Wo ist?“-Funktion)**
+Dies sind Standard-Bluetooth-Tracker von Pebblebee, die nicht Teil des Apple „Wo ist?“-Netzwerks sind.
+* **Ist mit Besitzer:in verbunden:** ❌
+* **Ton abspielen:** ✅
+* **Besitzer:in identifizieren:** ❌
 
-*Automatische Warnung bei Verfolgung*  ✅
-*Manuelle Suche*  ✅
+### Zusätzliche technische Einschränkungen
 
-**AirTags**
-AirTags sind die Tracker von Apple. Diese sind nur eingeschränkt erkennbar, da viele Apple-Signale vom System gefiltert werden. In der manuellen Suche können AirTags jedoch gefunden und per Ton lokalisiert werden. Für eine Tracking-Erkennung im Hintergrund ist durch die „Wo ist?“-App von Apple bereits gesorgt.
+**Verbindungsstatus**
+Beachte, dass es derzeit nicht für alle Tracker-Typen möglich ist, zu bestimmen, ob sie mit ihren Besitzer:innen verbunden sind. Wenn ein Tracker diese Funktion nicht unterstützt (z. B. Tile), kann AirGuard ihn nicht herausfiltern, selbst wenn der:die Besitzer:in in der Nähe ist. Du könntest also auch deine eigenen oder die Tracker von Freunden finden.
 
-*Automatische Warnung bei Verfolgung*  ❌
-*Manuelle Suche*  ✅
-
-**„Wo ist?“ Tracker**
-Dies sind Tracker, die mit Apples „Wo ist?“-App kompatibel sind, aber von anderen Herstellern gefertigt werden, beispielsweise Chipolo, Pebblebee und Atuvos. Wie bei AirTags gilt, dass die Tracker nicht im Hintergrund erkannt werden können. Auch hier warnt die „Wo ist?“-App automatisch.
-
-*Automatische Warnung bei Verfolgung*  ❌
-*Manuelle Suche*  ✅
-
-Beachte, dass es derzeit nicht für alle Tracker-Typen möglich ist, zu bestimmen, ob sie mit ihren Besitzer:innen verbunden sind. Du könntest also auch deine eigenen oder die Tracker von Freunden finden.
-Wichtig ist auch, dass manche Tracker ihre Identität (Bluetooth-MAC-Adresse) mehrmals täglich verändern. Daher können Tracker mehrfach in der App angezeigt werden. Es ist oft nicht möglich, diese verschiedenen, zufällig generierten Identitäten einem Tracker zuzuordnen.
+**Zufällige Identifikatoren**
+Wichtig ist auch, dass manche Tracker ihre Identität (Bluetooth-MAC-Adresse) mehrmals täglich verändern.
+AirGuard zeigt denselben Tracker im Laufe der Zeit möglicherweise als mehrere verschiedene Einträge an, da es oft nicht möglich ist, diese verschiedenen, zufällig generierten Identitäten einem Tracker zuzuordnen. Tracker, die ihre Identifikation nicht ändern (z. B. Tile), werden konsistenter erkannt, führen jedoch möglicherweise zu einer höheren Wahrscheinlichkeit von Fehlalarmen, wenn du dich oft in ihrer Nähe befindest.
