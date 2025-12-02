@@ -536,4 +536,5 @@
     <string name="more_trackers_found">+%d more trackers found</string>
     <string name="title_device_map">Recently found locations</string>
     <string name="found_at_location">Found at location</string>
+    <string name="selected_types_count">%d types</string>
 </resources>

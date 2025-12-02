@@ -13,6 +13,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -84,43 +85,54 @@ class DevicesViewModel @Inject constructor(
     var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
 
     private fun updateFilterSummaryText() {
-        val filterStringBuilder = StringBuilder()
         val context = ATTrackingDetectionApplication.getAppContext()
-        // No filters option
+        val summaryParts = mutableListOf<String>()
+
+        // Check Location Filter
+        val hasLocationFilter = activeFilter.containsKey(LocationFilter::class.toString())
+        if (hasLocationFilter) {
+            summaryParts.add(context.getString(R.string.found_at_location))
+        }
+
+        // Check Status Filters
         if (activeFilter.containsKey(IgnoredFilter::class.toString())) {
-            filterStringBuilder.append(context.getString(R.string.ignored_devices))
-            filterStringBuilder.append(", ")
+            summaryParts.add(context.getString(R.string.ignored_devices))
         }
 
         if (activeFilter.containsKey(NotifiedFilter::class.toString())) {
-            filterStringBuilder.append(context.getString(R.string.tracker_detected))
-            filterStringBuilder.append(", ")
+            summaryParts.add(context.getString(R.string.tracker_detected))
         }
 
+        // Check Device Type Filters
         if (activeFilter.containsKey(DeviceTypeFilter::class.toString())) {
             val deviceTypeFilter = activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
+            val totalAvailableTypes = DeviceManager.devices.count()
+            val selectedCount = deviceTypeFilter.deviceTypes.count()
 
-            if (deviceTypeFilter.deviceTypes.count() == DeviceManager.devices.count()) {
-                filterStringBuilder.append(context.getString(R.string.all_devices))
-            }else {
-
-                for (device in deviceTypeFilter.deviceTypes) {
-                    filterStringBuilder.append(DeviceType.userReadableNameDefault(device))
-                    filterStringBuilder.append(", ")
+            if (selectedCount == totalAvailableTypes) {
+                // If all are selected and no other status filters, show "All devices"
+                if (summaryParts.isEmpty()) {
+                    summaryParts.add(context.getString(R.string.all_devices))
                 }
-                if (deviceTypeFilter.deviceTypes.isNotEmpty()) {
-                    filterStringBuilder.delete(
-                        filterStringBuilder.length - 2,
-                        filterStringBuilder.length - 1
-                    )
+            } else {
+                // more than 2 types -> "X types", <= 2 -> list names
+                if (selectedCount > 2) {
+                    summaryParts.add(context.getString(R.string.selected_types_count, selectedCount))
+                } else if (selectedCount > 0) {
+                    val typeNames = deviceTypeFilter.deviceTypes.map {
+                        DeviceType.userReadableNameDefault(it)
+                    }
+                    summaryParts.addAll(typeNames)
                 }
             }
-        }else {
-            // All devices
-            filterStringBuilder.append(context.getString(R.string.all_devices))
+        } else {
+            if (summaryParts.isEmpty()) {
+                summaryParts.add(context.getString(R.string.all_devices))
+            }
         }
 
-        filterSummaryText.postValue(filterStringBuilder.toString())
+        // Join with commas
+        filterSummaryText.postValue(summaryParts.joinToString(", "))
     }
 
 }

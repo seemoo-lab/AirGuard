@@ -37,7 +37,7 @@ class FilterDialogFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogFilterBinding.inflate(LayoutInflater.from(context))
+        _binding = DialogFilterBinding.inflate(inflater, container, false)
         _binding?.viewModel = devicesViewModel
         _binding?.lifecycleOwner = viewLifecycleOwner
 
@@ -48,19 +48,24 @@ class FilterDialogFragment :
         super.onViewCreated(view, savedInstanceState)
         filterAdaptions()
 
-        view.findViewById<MaterialButton>(R.id.filter_button).setOnClickListener {
+        val expandButton = view.findViewById<MaterialButton>(R.id.filter_expand_button)
+        val headerContainer = view.findViewById<View>(R.id.filter_header_container)
+
+        val toggleListener = View.OnClickListener {
             val value = devicesViewModel.filterIsExpanded.value ?: false
             devicesViewModel.filterIsExpanded.postValue(!value)
+
+            // Rotate the arrow
+            val rotation = if (!value) 180f else 0f
+            expandButton.animate().rotation(rotation).setDuration(200).start()
         }
-//
-//        view.findViewById<MaterialButton>(R.id.filter_button_expanded).setOnClickListener {
-//            val value = devicesViewModel.filterIsExpanded.value ?: false
-//            devicesViewModel.filterIsExpanded.postValue(!value)
-//        }
+
+        expandButton.setOnClickListener(toggleListener)
+        headerContainer.setOnClickListener(toggleListener)
     }
 
     private fun filterAdaptions() {
-        val devicesViewModel = devicesViewModel // Assuming devicesViewModel is not frequently changing
+        val devicesViewModel = devicesViewModel
 
         // Initialize filter chips
         binding.filterIgnoreChip.isChecked =
@@ -78,6 +83,8 @@ class FilterDialogFragment :
             ) as DeviceTypeFilter
 
         // Create and add device type filter chips
+        binding.filterDeviceTypes.removeAllViews()
+
         DeviceManager.devices.forEach { device ->
             val chip = IncludeFilterChipBinding.inflate(LayoutInflater.from(context))
             chip.text = device.defaultDeviceName
@@ -111,33 +118,40 @@ class FilterDialogFragment :
 
         // Date range picker click listener
         binding.filterDateRangeInput.setOnClickListener {
-            var datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText(getString(R.string.filter_date_range_picker_title))
-                .setPositiveButtonText(getString(R.string.filter_apply))
-            getActiveTimeRange()?.let {
-                datePickerBuilder = datePickerBuilder.setSelection(it)
-            }
-            val datePicker = datePickerBuilder.build()
-            datePicker.show(activity?.supportFragmentManager!!, DATE_RANGE_PICKER_TAG)
-            datePicker.addOnPositiveButtonClickListener {
-                setDateRangeText(it)
-                devicesViewModel.addOrRemoveFilter(
-                    DateRangeFilter.build(
-                        toLocalDate(it.first),
-                        toLocalDate(it.second)
-                    )
-                )
-            }
+            openDateRangePicker()
         }
 
-        // Clear date range filter
+        // Also allow clicking the layout
+        binding.filterDateRange.setStartIconOnClickListener {
+            openDateRangePicker()
+        }
+
+        // Clear date range filter (End Icon is now X/Close)
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
             devicesViewModel.addOrRemoveFilter(DateRangeFilter.build(), true)
         }
     }
 
-
+    private fun openDateRangePicker() {
+        var datePickerBuilder = MaterialDatePicker.Builder.dateRangePicker()
+            .setTitleText(getString(R.string.filter_date_range_picker_title))
+            .setPositiveButtonText(getString(R.string.filter_apply))
+        getActiveTimeRange()?.let {
+            datePickerBuilder = datePickerBuilder.setSelection(it)
+        }
+        val datePicker = datePickerBuilder.build()
+        datePicker.show(childFragmentManager, DATE_RANGE_PICKER_TAG)
+        datePicker.addOnPositiveButtonClickListener {
+            setDateRangeText(it)
+            devicesViewModel.addOrRemoveFilter(
+                DateRangeFilter.build(
+                    toLocalDate(it.first),
+                    toLocalDate(it.second)
+                )
+            )
+        }
+    }
 
     private fun getActiveTimeRange(): Pair<Long, Long>? {
         val hasActiveTimeRangeFilter =

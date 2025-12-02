@@ -3,7 +3,6 @@ package de.seemoo.at_tracking_detection.ui.devices
 import android.Manifest
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.InputFilter
 import android.transition.TransitionInflater
@@ -15,6 +14,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -36,17 +36,16 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentDevicesBinding
 import de.seemoo.at_tracking_detection.ui.devices.filter.FilterDialogFragment
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDate
-import androidx.core.graphics.drawable.toDrawable
 
 
 @AndroidEntryPoint
@@ -76,13 +75,8 @@ class DevicesFragment : Fragment() {
 
         super.onCreate(savedInstanceState)
 
-        // Set up the view model here since this is only called when the Fragment gets created
-        // `onCreateView` is called every time the fragment is shown. Therefore it would not
-        // be good to handle the view model here. The View model should keep some state
-
         val emptyListText: Int
         var deviceInfoText = R.string.info_text_all_devices
-
 
         if (!showDevicesFound) {
             activity?.setTitle(R.string.title_ignored_devices)
@@ -123,7 +117,6 @@ class DevicesFragment : Fragment() {
         }
 
         // Apply location filter if locationId is provided
-        // This is only available when accessing the Fragment through the map
         val locationId = safeArgs.locationId
         if (locationId > 0) {
             devicesViewModel.addOrRemoveFilter(LocationFilter.build(locationId))
@@ -199,7 +192,10 @@ class DevicesFragment : Fragment() {
 
 
     private fun updateTexts() {
-        if (devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())) {
+        if (safeArgs.locationId > 0) {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.found_at_location)
+        } else if (devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())) {
             // Only shows trackers
             (requireActivity() as AppCompatActivity).supportActionBar?.title =
                 getString(R.string.tracker_detected)
@@ -216,7 +212,7 @@ class DevicesFragment : Fragment() {
     private fun swipeToDeleteCallback(swipeDirs: Int) =
         object :
             ItemTouchHelper.SimpleCallback(0, swipeDirs) {
-            private val deleteBackground = ColorDrawable(Color.RED)
+            private val deleteBackground = Color.RED.toDrawable()
             private val editBackground = Color.GRAY.toDrawable()
 
             override fun onMove(
