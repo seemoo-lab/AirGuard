@@ -11,7 +11,7 @@
     <string name="title_scan">掃描</string>
     <string name="title_scan_detail">詳細掃描：{deviceAddress}</string>
     <string name="title_observe_tracker">觀察追蹤器：{deviceAddress}</string>
-    <string name="title_device_map">所有裝置</string>
+    <string name="all_devices">所有裝置</string>
     <string name="title_devices">裝置清單</string>
     <string name="title_data_deletion">資料刪除請求</string>
 

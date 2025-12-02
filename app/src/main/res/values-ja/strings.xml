@@ -8,7 +8,7 @@
     <string name="title_feedback">発見した場所</string>
     <string name="title_tracking">{deviceAddress} があなたを追跡しています</string>
     <string name="title_devices_tracking">タグのBluetoothアドレス {deviceAddress}</string>
-    <string name="title_device_map">すべてのデバイス</string>
+    <string name="all_devices">すべてのデバイス</string>
     <string name="title_devices">タグ</string>
     <string name="map_empty_text">まだタグは検知されていません、検知されるたびに検知した場所をマップ上に表示します。これは追跡されているという意味ではありません。不特定多数の人が所有しているタグを検知しているケースがほとんどです。</string>
     <string name="mark_false_alarm">誤報</string>

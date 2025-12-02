@@ -13,7 +13,7 @@
     <string name="title_scan_detail">Lokalizovať: {deviceAddress}</string>
     <string name="title_observe_tracker">Sledovať tracker: {deviceAddress}</string>
     <string name="title_export_device">Exportovať údaje zariadenia: {deviceAddress}</string>
-    <string name="title_device_map">Všetky zariadenia</string>
+    <string name="all_devices">Všetky zariadenia</string>
     <string name="title_devices_map_device">Mapa: %1$s</string>
     <string name="title_devices">Zariadenia</string>
     <string name="title_data_deletion">Žiadosť o vymazanie údajov</string>

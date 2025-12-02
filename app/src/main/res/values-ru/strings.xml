@@ -19,7 +19,7 @@
     <string name="tip_airtag_testing"><b>Тестируете приложение?</b> Подключенные к iPhone/iPad устройства AirTag может быть обнаружены только если это разрешено в настройках. В этом случае устройства AirTag / SmartTag нужно отключить от Bluetooth и повторить поиск через 15 минут. AirGuard не сохраняет подключенные к устройствам владельцев устройства слежения</string>
     <string name="title_observe_tracker">Наблюдаемое устройство: {deviceAddress}</string>
     <string name="title_export_device">"Эспортировать данные устройства: "</string>
-    <string name="title_device_map">Все устройства</string>
+    <string name="all_devices">Все устройства</string>
     <string name="title_devices_map_device">Карта: %1$s</string>
     <string name="title_devices">Устройства</string>
     <string name="onboarding_4_description">Приложению нужен постоянный доступ к геолокации, чтобы получить подробную историю местоположений при обнаружении устройства слежки.</string>

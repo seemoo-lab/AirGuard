@@ -101,7 +101,7 @@ class DevicesViewModel @Inject constructor(
             val deviceTypeFilter = activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
 
             if (deviceTypeFilter.deviceTypes.count() == DeviceManager.devices.count()) {
-                filterStringBuilder.append(context.getString(R.string.title_device_map))
+                filterStringBuilder.append(context.getString(R.string.all_devices))
             }else {
 
                 for (device in deviceTypeFilter.deviceTypes) {
@@ -117,7 +117,7 @@ class DevicesViewModel @Inject constructor(
             }
         }else {
             // All devices
-            filterStringBuilder.append(context.getString(R.string.title_device_map))
+            filterStringBuilder.append(context.getString(R.string.all_devices))
         }
 
         filterSummaryText.postValue(filterStringBuilder.toString())

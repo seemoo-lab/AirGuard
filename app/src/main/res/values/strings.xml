@@ -525,13 +525,15 @@
     <string name="article_load_error" translatable="false">Article Load Error</string>
     <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
     <string name="map_footer_device">This map shows all locations ever found for this device.</string>
+    <string name="all_devices">All devices</string>
 
     <!-- TODO: Changed: Require Translation -->
     <string name="locations_tracked">Recent locations</string>
-    <string name="title_device_map">Recently found locations</string> <!-- TODO: Requires new all devices string now, do when refactoring FoundDevicesFragment and DevicesFragment -->
 
     <!-- TODO: New: Require Translation -->
     <string name="dismiss_article">Dismiss article</string>
     <string name="navigate_to_details">Navigate to details</string>
     <string name="more_trackers_found">+%d more trackers found</string>
+    <string name="title_device_map">Recently found locations</string>
+    <string name="found_at_location">Found at location</string>
 </resources>

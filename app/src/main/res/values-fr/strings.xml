@@ -11,7 +11,7 @@
     <string name="title_scan">Scan</string>
     <string name="title_scan_detail">Localiser\u00a0: {deviceAddress}</string>
     <string name="title_observe_tracker">Observer le traceur\u00a0: {deviceAddress}</string>
-    <string name="title_device_map">Tous les appareils</string>
+    <string name="all_devices">Tous les appareils</string>
     <string name="title_devices">Appareil</string>
     <string name="title_data_deletion">Demande de suppression de données</string>
     <string name="title_article">Article</string>
