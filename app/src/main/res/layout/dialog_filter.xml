@@ -29,21 +29,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="16dp"
+                android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:paddingVertical="8dp"
+                android:paddingVertical="4dp"
                 android:background="?attr/selectableItemBackground"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_baseline_filter_list_24"
-                    app:tint="?attr/colorOnSurfaceVariant"
-                    android:importantForAccessibility="no"
-                    android:layout_marginEnd="12dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/filter_expand_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    app:icon="@drawable/ic_baseline_keyboard_arrow_down_24"
+                    app:iconTint="?attr/colorOnSurfaceVariant"
+                    android:contentDescription="@string/filter" />
 
                 <TextView
                     android:id="@+id/filter_summary_text"
@@ -55,16 +56,17 @@
                     android:textColor="?attr/colorOnSurface"
                     android:maxLines="1"
                     android:ellipsize="end"
+                    android:paddingHorizontal="8dp"
                     tools:text="All devices, Ignored" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/filter_expand_button"
+                    android:id="@+id/filter_sort_button"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     style="@style/Widget.Material3.Button.IconButton"
-                    app:icon="@drawable/ic_baseline_keyboard_arrow_down_24"
+                    app:icon="@drawable/ic_baseline_filter_list_24"
                     app:iconTint="?attr/colorOnSurfaceVariant"
-                    android:contentDescription="@string/filter" />
+                    android:contentDescription="@string/sort_list" />
 
             </LinearLayout>
 
@@ -169,12 +171,8 @@
                             tools:text="2023.01.01 until 2023.02.01"
                             android:focusableInTouchMode="false" />
                     </com.google.android.material.textfield.TextInputLayout>
-
                 </LinearLayout>
-
             </androidx.core.widget.NestedScrollView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

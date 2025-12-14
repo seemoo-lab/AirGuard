@@ -24,10 +24,74 @@ class DevicesViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
+    enum class SortOption {
+        NAME, LAST_SEEN, FIRST_DISCOVERED
+    }
+
+    private var currentSort = SortOption.LAST_SEEN
+    private var rawDevicesList: List<BaseDevice> = emptyList()
+
+    val devices = MediatorLiveData<List<BaseDevice>>()
+    val activeFilter: MutableMap<String, Filter> = mutableMapOf()
+
+    // UI State
+    val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
+    var emptyListText: MutableLiveData<String> = MutableLiveData()
+    var infoText: MutableLiveData<String> = MutableLiveData()
+    var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
+    var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
+
+    init {
+        devices.addSource(deviceRepository.devices.asLiveData()) {
+            rawDevicesList = it
+            updateVisibleList()
+        }
+    }
+
+    fun setSortOption(option: SortOption) {
+        currentSort = option
+        updateVisibleList()
+    }
+
+    fun getCurrentSort(): SortOption = currentSort
+
+    fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
+        val filterName = filter::class.toString()
+        if (remove) {
+            activeFilter.remove(filterName)
+        } else {
+            activeFilter[filterName] = filter
+        }
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Active Filter: $activeFilter")
+    }
+
+    // applies Filters AND Sorting
+    private fun updateVisibleList() {
+        var filteredDevices = rawDevicesList
+
+        // Apply Filters
+        activeFilter.forEach { (_, filter) ->
+            filteredDevices = filter.apply(filteredDevices)
+        }
+
+        // Apply Sorting
+        filteredDevices = when (currentSort) {
+            SortOption.NAME -> filteredDevices.sortedBy { it.getDeviceNameWithID() }
+            SortOption.LAST_SEEN -> filteredDevices.sortedByDescending { it.lastSeen }
+            SortOption.FIRST_DISCOVERED -> filteredDevices.sortedByDescending { it.firstDiscovery }
+        }
+
+        devices.value = filteredDevices
+    }
 
     fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
         deviceRepository.setIgnoreFlag(deviceAddress, state)
-        updateDeviceList()
+    }
+
+    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
+        deviceRepository.update(baseDevice)
     }
 
     fun getDeviceBeaconsCount(deviceAddress: String): String =
@@ -37,52 +101,6 @@ class DevicesViewModel @Inject constructor(
 
     fun getMarkerLocations(deviceAddress: String): List<Beacon> =
         beaconRepository.getDeviceBeacons(deviceAddress)
-
-    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
-        deviceRepository.update(baseDevice)
-    }
-
-    fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
-        val filterName = filter::class.toString()
-        if (remove) {
-            activeFilter.remove(filterName)
-        } else {
-            activeFilter[filterName] = filter
-        }
-        updateDeviceList()
-        Timber.d("Active Filter: $activeFilter")
-        updateFilterSummaryText()
-    }
-
-    private fun updateDeviceList() {
-        devices.addSource(deviceRepository.devices.asLiveData()) {
-            var filteredDevices = it
-            activeFilter.forEach { (_, filter) ->
-                filteredDevices = filter.apply(filteredDevices)
-            }
-            devices.value = filteredDevices
-        }
-    }
-
-    val devices = MediatorLiveData<List<BaseDevice>>()
-
-    init {
-        devices.addSource(deviceRepository.devices.asLiveData()) {
-            if (activeFilter.isEmpty()) {
-                devices.value = it
-            }
-        }
-    }
-
-    val activeFilter: MutableMap<String, Filter> = mutableMapOf()
-
-    val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
-
-    var emptyListText: MutableLiveData<String> = MutableLiveData()
-    var infoText: MutableLiveData<String> = MutableLiveData()
-
-    var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
-    var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
 
     private fun updateFilterSummaryText() {
         val context = ATTrackingDetectionApplication.getAppContext()
@@ -134,5 +152,4 @@ class DevicesViewModel @Inject constructor(
         // Join with commas
         filterSummaryText.postValue(summaryParts.joinToString(", "))
     }
-
 }

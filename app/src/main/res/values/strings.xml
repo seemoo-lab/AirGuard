@@ -537,4 +537,8 @@
     <string name="title_device_map">Recently found locations</string>
     <string name="found_at_location">Found at location</string>
     <string name="selected_types_count">%d types</string>
+    <string name="sort_list">Sort list</string>
+    <string name="filter_sort_by_name">Sort by Name</string>
+    <string name="filter_sort_by_last_seen">Sort by Last Seen</string>
+    <string name="filter_sort_by_first_discovered">Sort by First Discovered</string>
 </resources>

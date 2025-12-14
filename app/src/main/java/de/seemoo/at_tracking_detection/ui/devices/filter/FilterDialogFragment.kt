@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,17 +16,16 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogFilterBinding
 import de.seemoo.at_tracking_detection.databinding.IncludeFilterChipBinding
 import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
 @AndroidEntryPoint
-class FilterDialogFragment :
-    Fragment() {
+class FilterDialogFragment : Fragment() {
 
     private val devicesViewModel: DevicesViewModel by viewModels({ requireParentFragment() })
 
@@ -49,25 +49,53 @@ class FilterDialogFragment :
         filterAdaptions()
 
         val expandButton = view.findViewById<MaterialButton>(R.id.filter_expand_button)
-        val headerContainer = view.findViewById<View>(R.id.filter_header_container)
+        val headerSummary = view.findViewById<View>(R.id.filter_summary_text)
 
         val toggleListener = View.OnClickListener {
             val value = devicesViewModel.filterIsExpanded.value ?: false
             devicesViewModel.filterIsExpanded.postValue(!value)
 
-            // Rotate the arrow
             val rotation = if (!value) 180f else 0f
             expandButton.animate().rotation(rotation).setDuration(200).start()
         }
 
         expandButton.setOnClickListener(toggleListener)
-        headerContainer.setOnClickListener(toggleListener)
+        headerSummary.setOnClickListener(toggleListener)
+
+        val sortButton = view.findViewById<MaterialButton>(R.id.filter_sort_button)
+        sortButton.setOnClickListener {
+            SortPopupWindow(requireContext(), devicesViewModel).show(it)
+        }
+    }
+
+    private fun showSortMenu(v: View) {
+        val popup = PopupMenu(requireContext(), v)
+
+        popup.menu.setGroupCheckable(0, true, true)
+
+        val nameItem = popup.menu.add(0, 1, 0, getString(R.string.filter_sort_by_name))
+        val lastSeenItem = popup.menu.add(0, 2, 0, getString(R.string.filter_sort_by_last_seen))
+        val firstDiscoveredItem = popup.menu.add(0, 3, 0, getString(R.string.filter_sort_by_first_discovered))
+
+        // Check the currently selected sort option
+        when (devicesViewModel.getCurrentSort()) {
+            DevicesViewModel.SortOption.NAME -> nameItem.isChecked = true
+            DevicesViewModel.SortOption.LAST_SEEN -> lastSeenItem.isChecked = true
+            DevicesViewModel.SortOption.FIRST_DISCOVERED -> firstDiscoveredItem.isChecked = true
+        }
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> devicesViewModel.setSortOption(DevicesViewModel.SortOption.NAME)
+                2 -> devicesViewModel.setSortOption(DevicesViewModel.SortOption.LAST_SEEN)
+                3 -> devicesViewModel.setSortOption(DevicesViewModel.SortOption.FIRST_DISCOVERED)
+            }
+            true
+        }
+        popup.show()
     }
 
     private fun filterAdaptions() {
-        val devicesViewModel = devicesViewModel
-
-        // Initialize filter chips
         binding.filterIgnoreChip.isChecked =
             devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())
         binding.filterNotifiedChip.isChecked =
@@ -90,7 +118,6 @@ class FilterDialogFragment :
             chip.text = device.defaultDeviceName
             val isChecked = activeDeviceTypeFilter.contains(device.deviceType)
             chip.filterDeviceTypeChip.isChecked = isChecked
-
             chip.filterDeviceTypeChip.id = (device.deviceType.toString() + ".chip").hashCode()
 
             chip.filterDeviceTypeChip.setOnCheckedChangeListener { _, isChecked ->
@@ -116,17 +143,13 @@ class FilterDialogFragment :
             )
         }
 
-        // Date range picker click listener
         binding.filterDateRangeInput.setOnClickListener {
             openDateRangePicker()
         }
-
-        // Also allow clicking the layout
         binding.filterDateRange.setStartIconOnClickListener {
             openDateRangePicker()
         }
 
-        // Clear date range filter (End Icon is now X/Close)
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
             devicesViewModel.addOrRemoveFilter(DateRangeFilter(), remove = true)
