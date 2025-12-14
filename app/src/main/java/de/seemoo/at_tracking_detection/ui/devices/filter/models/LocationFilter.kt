@@ -13,11 +13,4 @@ class LocationFilter(private val locationId: Int) : Filter() {
 
         return baseDevices.filter { deviceAddresses.contains(it.address) }
     }
-
-    companion object {
-        fun build(locationId: Int): Filter {
-            return LocationFilter(locationId)
-        }
-    }
 }
-

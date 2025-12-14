@@ -8,8 +8,4 @@ class IgnoredFilter : Filter() {
             it.ignore
         }
     }
-
-    companion object {
-        fun build(): Filter = IgnoredFilter()
-    }
 }

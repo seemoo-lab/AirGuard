@@ -74,7 +74,7 @@ class FilterDialogFragment :
             devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())
         getActiveTimeRange()?.let { setDateRangeText(it) }
 
-        val defaultDeviceTypeFilter = DeviceTypeFilter.build(
+        val defaultDeviceTypeFilter = DeviceTypeFilter(
             DeviceManager.devices.map { it.deviceType }.toSet()
         )
         val activeDeviceTypeFilter =
@@ -107,12 +107,12 @@ class FilterDialogFragment :
         // Set click listeners for filter chips
         binding.filterIgnoreChip.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(
-                IgnoredFilter.build(), !binding.filterIgnoreChip.isChecked
+                IgnoredFilter(), !binding.filterIgnoreChip.isChecked
             )
         }
         binding.filterNotifiedChip.setOnClickListener {
             devicesViewModel.addOrRemoveFilter(
-                NotifiedFilter.build(), !binding.filterNotifiedChip.isChecked
+                NotifiedFilter(), !binding.filterNotifiedChip.isChecked
             )
         }
 
@@ -129,7 +129,7 @@ class FilterDialogFragment :
         // Clear date range filter (End Icon is now X/Close)
         binding.filterDateRange.setEndIconOnClickListener {
             binding.filterDateRangeInput.text?.clear()
-            devicesViewModel.addOrRemoveFilter(DateRangeFilter.build(), true)
+            devicesViewModel.addOrRemoveFilter(DateRangeFilter(), remove = true)
         }
     }
 
@@ -144,12 +144,11 @@ class FilterDialogFragment :
         datePicker.show(childFragmentManager, DATE_RANGE_PICKER_TAG)
         datePicker.addOnPositiveButtonClickListener {
             setDateRangeText(it)
-            devicesViewModel.addOrRemoveFilter(
-                DateRangeFilter.build(
-                    toLocalDate(it.first),
-                    toLocalDate(it.second)
-                )
+            val newFilter = DateRangeFilter(
+                toLocalDate(it.first),
+                toLocalDate(it.second)
             )
+            devicesViewModel.addOrRemoveFilter(newFilter)
         }
     }
 

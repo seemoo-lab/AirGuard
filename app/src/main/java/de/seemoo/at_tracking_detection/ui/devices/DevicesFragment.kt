@@ -82,16 +82,16 @@ class DevicesFragment : Fragment() {
             activity?.setTitle(R.string.title_ignored_devices)
             emptyListText = R.string.ignored_device_list_empty
             swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-            devicesViewModel.addOrRemoveFilter(IgnoredFilter.build())
+            devicesViewModel.addOrRemoveFilter(IgnoredFilter())
             devicesViewModel.addOrRemoveFilter(
-                DeviceTypeFilter.build(
+                DeviceTypeFilter(
                     DeviceManager.devices.map { it.deviceType }.toSet()
                 )
             )
         } else {
             val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation.toLocalDate()
             devicesViewModel.addOrRemoveFilter(
-                DateRangeFilter.build(
+                DateRangeFilter(
                     relevantTrackingStartDate,
                     LocalDate.now()
                 )
@@ -102,7 +102,7 @@ class DevicesFragment : Fragment() {
                 emptyListText = R.string.empty_list_devices
             } else {
                 // Only show tracker devices, for which a notification has been received
-                devicesViewModel.addOrRemoveFilter(NotifiedFilter.build())
+                devicesViewModel.addOrRemoveFilter(NotifiedFilter())
                 deviceInfoText = R.string.info_text_only_trackers
                 emptyListText = R.string.empty_list_trackers
             }
@@ -110,16 +110,16 @@ class DevicesFragment : Fragment() {
 
         if (deviceType != null && deviceType != DeviceType.UNKNOWN) {
             if (deviceType2 != null && deviceType2 != DeviceType.UNKNOWN) {
-                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!, deviceType2!!)))
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter(setOf(deviceType!!, deviceType2!!)))
             } else {
-                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter.build(setOf(deviceType!!)))
+                devicesViewModel.addOrRemoveFilter(DeviceTypeFilter(setOf(deviceType!!)))
             }
         }
 
         // Apply location filter if locationId is provided
         val locationId = safeArgs.locationId
         if (locationId > 0) {
-            devicesViewModel.addOrRemoveFilter(LocationFilter.build(locationId))
+            devicesViewModel.addOrRemoveFilter(LocationFilter(locationId))
         }
 
         devicesViewModel.emptyListText.value = getString(emptyListText)
@@ -161,10 +161,10 @@ class DevicesFragment : Fragment() {
 
         val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
         showAllButton.setOnClickListener {
-            devicesViewModel.addOrRemoveFilter(NotifiedFilter.build(), true)
-            devicesViewModel.addOrRemoveFilter(IgnoredFilter.build(), true)
+            devicesViewModel.addOrRemoveFilter(NotifiedFilter(), true)
+            devicesViewModel.addOrRemoveFilter(IgnoredFilter(), true)
             devicesViewModel.addOrRemoveFilter(
-                DeviceTypeFilter.build(
+                DeviceTypeFilter(
                     DeviceManager.devices.map { it.deviceType }.toSet()
                 )
             )

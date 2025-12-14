@@ -8,8 +8,4 @@ class NotifiedFilter : Filter() {
             it.notificationSent
         }
     }
-
-    companion object {
-        fun build(): Filter = NotifiedFilter()
-    }
 }
