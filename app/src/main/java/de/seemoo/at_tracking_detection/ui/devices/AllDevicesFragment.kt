@@ -53,54 +53,100 @@ class AllDevicesFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.tracker_devices_card).setOnClickListener {
             val directions: NavDirections =
-                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true)
+                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                    showDevicesFound = true,
+                    preselectNotifiedFilter = "INCLUDING",
+                    preselectIgnoredFilter = "EXCLUDING"
+                )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.all_devices_card).setOnClickListener {
             val directions: NavDirections =
-                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true)
+                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                    showDevicesFound = true,
+                    showAllDevices = true
+                )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.ignored_devices_card).setOnClickListener {
             val directions: NavDirections =
-                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToNavigationIgnoredDevicesFragment()
+                AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                    showDevicesFound = true,
+                    preselectIgnoredFilter = "INCLUDING",
+                    preselectRemoveDateRange = true
+                )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.airtags_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.AIRTAG)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                deviceType = DeviceType.AIRTAG,
+                preselectRemoveDateRange = true,
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.findmy_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.FIND_MY)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                deviceType = DeviceType.FIND_MY,
+                preselectRemoveDateRange = true,
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.tiles_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.TILE)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                deviceType = DeviceType.TILE,
+                preselectRemoveDateRange = true,
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.chipolos_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.CHIPOLO)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                preselectRemoveDateRange = true,
+                deviceType = DeviceType.CHIPOLO
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.pebblebees_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.PEBBLEBEE)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                preselectRemoveDateRange = true,
+                deviceType = DeviceType.PEBBLEBEE
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.smarttags_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.SAMSUNG_TRACKER)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                preselectRemoveDateRange = true,
+                deviceType = DeviceType.SAMSUNG_TRACKER
+            )
             findNavController().navigate(directions)
         }
 
         view.findViewById<MaterialCardView>(R.id.google_found_card).setOnClickListener {
-            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(showDevicesFound = true, showAllDevices = true, deviceType = DeviceType.GOOGLE_FIND_MY_NETWORK)
+            val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
+                showDevicesFound = true,
+                showAllDevices = true,
+                preselectRemoveDateRange = true,
+                deviceType = DeviceType.GOOGLE_FIND_MY_NETWORK
+            )
             findNavController().navigate(directions)
         }
     }

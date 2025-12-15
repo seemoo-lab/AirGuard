@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
@@ -44,6 +45,9 @@ class DevicesViewModel @Inject constructor(
 
     // UI State
     val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
+    private var hasLoadedData = false
+    val showEmptyState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val showAllDevicesButton: MutableLiveData<Boolean> = MutableLiveData(false)
     var emptyListText: MutableLiveData<String> = MutableLiveData()
     var infoText: MutableLiveData<String> = MutableLiveData()
     var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -52,6 +56,7 @@ class DevicesViewModel @Inject constructor(
     init {
         devices.addSource(deviceRepository.devices.asLiveData()) {
             rawDevicesList = it
+            hasLoadedData = true
             updateVisibleList()
         }
     }
@@ -116,7 +121,7 @@ class DevicesViewModel @Inject constructor(
     }
 
     // applies Filters AND Sorting
-    private fun updateVisibleList() {
+    fun updateVisibleList() {
         var filteredDevices = rawDevicesList
 
         // Apply Filters
@@ -132,6 +137,23 @@ class DevicesViewModel @Inject constructor(
         }
 
         devices.value = filteredDevices
+
+        if (hasLoadedData) {
+            showEmptyState.value = filteredDevices.isEmpty()
+
+            // Show "show all" button only if there are meaningful filters that could be hiding devices
+            showAllDevicesButton.value = filteredDevices.isEmpty() && hasMeaningfulFilters()
+        }
+    }
+
+    private fun hasMeaningfulFilters(): Boolean {
+        // Check if we have filters that actually filter out devices (not just DeviceTypeFilter with all types)
+        return activeFilter.any { (filterName, _) ->
+            filterName == NotifiedFilter::class.toString() ||
+            filterName == IgnoredFilter::class.toString() ||
+            filterName == DateRangeFilter::class.toString() ||
+            filterName == LocationFilter::class.toString()
+        }
     }
 
     fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
@@ -150,7 +172,7 @@ class DevicesViewModel @Inject constructor(
     fun getMarkerLocations(deviceAddress: String): List<Beacon> =
         beaconRepository.getDeviceBeacons(deviceAddress)
 
-    private fun updateFilterSummaryText() {
+    fun updateFilterSummaryText() {
         val context = ATTrackingDetectionApplication.getAppContext()
         val summaryParts = mutableListOf<String>()
 

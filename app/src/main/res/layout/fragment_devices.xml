@@ -55,9 +55,10 @@
                 layout="@layout/include_empty_explanation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{vm.deviceListEmpty ? View.VISIBLE : View.GONE, default=gone}"
+                android:visibility="@{vm.showEmptyState ? View.VISIBLE : View.GONE, default=gone}"
                 bind:drawable="@{@drawable/ic_no_data}"
-                bind:text="@{vm.emptyListText}" />
+                bind:text="@{vm.emptyListText}"
+                bind:showButton="@{vm.showAllDevicesButton}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

@@ -57,6 +57,9 @@ class DevicesFragment : Fragment() {
     private var showAllDevices: Boolean = false
     private var deviceType: DeviceType? = null
     private var deviceType2: DeviceType? = null
+    private var preselectNotifiedFilter: String = "UNSELECTED"
+    private var preselectIgnoredFilter: String = "UNSELECTED"
+    private var preselectRemoveDateRange: Boolean = false
 
     val devicesViewModel: DevicesViewModel by viewModels()
 
@@ -72,6 +75,9 @@ class DevicesFragment : Fragment() {
         this.showAllDevices = safeArgs.showAllDevices
         this.deviceType = safeArgs.deviceType
         this.deviceType2 = safeArgs.deviceType2
+        this.preselectNotifiedFilter = safeArgs.preselectNotifiedFilter
+        this.preselectIgnoredFilter = safeArgs.preselectIgnoredFilter
+        this.preselectRemoveDateRange = safeArgs.preselectRemoveDateRange
 
         super.onCreate(savedInstanceState)
 
@@ -122,6 +128,9 @@ class DevicesFragment : Fragment() {
             devicesViewModel.addOrRemoveFilter(LocationFilter(locationId))
         }
 
+        // Apply preselected filter states if provided
+        applyPreselectFilters()
+
         devicesViewModel.emptyListText.value = getString(emptyListText)
         devicesViewModel.infoText.value = getString(deviceInfoText)
 
@@ -159,10 +168,25 @@ class DevicesFragment : Fragment() {
             updateTexts()
         }
 
+        // Update empty list text based on whether filters are active
+        devicesViewModel.showAllDevicesButton.observe(viewLifecycleOwner) { showButton ->
+            if (!showButton) {
+                devicesViewModel.emptyListText.value = getString(R.string.empty_list_no_devices)
+            }
+        }
+
         val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
         showAllButton.setOnClickListener {
+            // Reset filter states to UNSELECTED
+            devicesViewModel.ignoredFilterState.value = DevicesViewModel.FilterState.UNSELECTED
+            devicesViewModel.notifiedFilterState.value = DevicesViewModel.FilterState.UNSELECTED
+
+            // Remove filters
             devicesViewModel.addOrRemoveFilter(NotifiedFilter(), true)
             devicesViewModel.addOrRemoveFilter(IgnoredFilter(), true)
+            devicesViewModel.addOrRemoveFilter(DateRangeFilter(LocalDate.now(), LocalDate.now()), true)
+
+            // Add device type filter to show all devices
             devicesViewModel.addOrRemoveFilter(
                 DeviceTypeFilter(
                     DeviceManager.devices.map { it.deviceType }.toSet()
@@ -337,6 +361,52 @@ class DevicesFragment : Fragment() {
                 }
             }
         }
+
+    private fun applyPreselectFilters() {
+        // remove the date range filter
+        if (preselectRemoveDateRange) {
+            val keysToRemove = devicesViewModel.activeFilter.filter { (_, f) -> f is DateRangeFilter }.keys
+            keysToRemove.forEach { devicesViewModel.activeFilter.remove(it) }
+            devicesViewModel.updateFilterSummaryText()
+            devicesViewModel.updateVisibleList()
+        }
+
+        // Apply preselected notified filter state
+        when (preselectNotifiedFilter) {
+            "INCLUDING" -> {
+                devicesViewModel.notifiedFilterState.value = DevicesViewModel.FilterState.INCLUDING
+                devicesViewModel.activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = true)
+            }
+            "EXCLUDING" -> {
+                devicesViewModel.notifiedFilterState.value = DevicesViewModel.FilterState.EXCLUDING
+                devicesViewModel.activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = false)
+            }
+            else -> {
+                // default, do nothing
+            }
+        }
+
+        // Apply preselected ignored filter state
+        when (preselectIgnoredFilter) {
+            "INCLUDING" -> {
+                devicesViewModel.ignoredFilterState.value = DevicesViewModel.FilterState.INCLUDING
+                devicesViewModel.activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = true)
+            }
+            "EXCLUDING" -> {
+                devicesViewModel.ignoredFilterState.value = DevicesViewModel.FilterState.EXCLUDING
+                devicesViewModel.activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = false)
+            }
+            else -> {
+                // default, do nothing
+            }
+        }
+
+        // Update the filter summary text and visible list if any preselections were made
+        if (preselectNotifiedFilter != "UNSELECTED" || preselectIgnoredFilter != "UNSELECTED") {
+            devicesViewModel.updateFilterSummaryText()
+            devicesViewModel.updateVisibleList()
+        }
+    }
 
     companion object {
         private const val DIALOG_TAG = "de.seemoo.at_tracking_detection.filter_dialog"

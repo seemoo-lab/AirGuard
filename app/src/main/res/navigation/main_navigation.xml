@@ -202,6 +202,18 @@
             android:name="locationId"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="preselectNotifiedFilter"
+            app:argType="string"
+            android:defaultValue="UNSELECTED" />
+        <argument
+            android:name="preselectIgnoredFilter"
+            app:argType="string"
+            android:defaultValue="UNSELECTED" />
+        <argument
+            android:name="preselectRemoveDateRange"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <!-- Device Map -->
