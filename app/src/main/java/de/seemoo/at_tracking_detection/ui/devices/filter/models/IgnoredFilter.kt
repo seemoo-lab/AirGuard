@@ -2,10 +2,13 @@ package de.seemoo.at_tracking_detection.ui.devices.filter.models
 
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 
-class IgnoredFilter : Filter() {
+// filterFor:
+// true: returns only devices that are ignored
+// false: returns only devices that are not ignored
+class IgnoredFilter(private val filterFor: Boolean = true) : Filter() {
     override fun apply(baseDevices: List<BaseDevice>): List<BaseDevice> {
         return baseDevices.filter {
-            it.ignore
+            if (filterFor) it.ignore else !it.ignore
         }
     }
 }

@@ -541,4 +541,6 @@
     <string name="filter_sort_by_name">Sort by Name</string>
     <string name="filter_sort_by_last_seen">Sort by Last Seen</string>
     <string name="filter_sort_by_first_discovered">Sort by First Discovered</string>
+    <string name="not_ignored">Not ignored</string>
+    <string name="not_notified">Not notified</string>
 </resources>

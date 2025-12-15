@@ -96,10 +96,6 @@ class FilterDialogFragment : Fragment() {
     }
 
     private fun filterAdaptions() {
-        binding.filterIgnoreChip.isChecked =
-            devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())
-        binding.filterNotifiedChip.isChecked =
-            devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())
         getActiveTimeRange()?.let { setDateRangeText(it) }
 
         val defaultDeviceTypeFilter = DeviceTypeFilter(
@@ -133,14 +129,18 @@ class FilterDialogFragment : Fragment() {
 
         // Set click listeners for filter chips
         binding.filterIgnoreChip.setOnClickListener {
-            devicesViewModel.addOrRemoveFilter(
-                IgnoredFilter(), !binding.filterIgnoreChip.isChecked
-            )
+            devicesViewModel.cycleIgnoredFilterState()
         }
         binding.filterNotifiedChip.setOnClickListener {
-            devicesViewModel.addOrRemoveFilter(
-                NotifiedFilter(), !binding.filterNotifiedChip.isChecked
-            )
+            devicesViewModel.cycleNotifiedFilterState()
+        }
+
+        // Observe filter states to update chip appearance
+        devicesViewModel.ignoredFilterState.observe(viewLifecycleOwner) { state ->
+            updateChipAppearance(binding.filterIgnoreChip, state)
+        }
+        devicesViewModel.notifiedFilterState.observe(viewLifecycleOwner) { state ->
+            updateChipAppearance(binding.filterNotifiedChip, state)
         }
 
         binding.filterDateRangeInput.setOnClickListener {
@@ -199,6 +199,26 @@ class FilterDialogFragment : Fragment() {
 
     private fun toLocalDate(millis: Long): LocalDate =
         Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
+
+    private fun updateChipAppearance(chip: com.google.android.material.chip.Chip, state: DevicesViewModel.FilterState) {
+        when (state) {
+            DevicesViewModel.FilterState.UNSELECTED -> {
+                chip.isChecked = false
+                chip.checkedIcon = null
+                chip.paintFlags = chip.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            }
+            DevicesViewModel.FilterState.INCLUDING -> {
+                chip.isChecked = true
+                chip.setCheckedIconResource(R.drawable.ic_baseline_check_24)
+                chip.paintFlags = chip.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            }
+            DevicesViewModel.FilterState.EXCLUDING -> {
+                chip.isChecked = true
+                chip.setCheckedIconResource(R.drawable.ic_baseline_close_24)
+                chip.paintFlags = chip.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

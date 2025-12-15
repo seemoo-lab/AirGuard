@@ -54,7 +54,7 @@
                     android:text="@{viewModel.filterSummaryText}"
                     style="@style/TextAppearance.Material3.BodyLarge"
                     android:textColor="?attr/colorOnSurface"
-                    android:maxLines="1"
+                    android:maxLines="2"
                     android:ellipsize="end"
                     android:paddingHorizontal="8dp"
                     tools:text="All devices, Ignored" />

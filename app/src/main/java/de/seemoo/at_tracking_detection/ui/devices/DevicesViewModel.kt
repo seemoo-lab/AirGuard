@@ -28,11 +28,19 @@ class DevicesViewModel @Inject constructor(
         NAME, LAST_SEEN, FIRST_DISCOVERED
     }
 
+    enum class FilterState {
+        UNSELECTED, INCLUDING, EXCLUDING
+    }
+
     private var currentSort = SortOption.LAST_SEEN
     private var rawDevicesList: List<BaseDevice> = emptyList()
 
     val devices = MediatorLiveData<List<BaseDevice>>()
     val activeFilter: MutableMap<String, Filter> = mutableMapOf()
+
+    // Track the state of Ignored and Notified filters
+    val ignoredFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
+    val notifiedFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
 
     // UI State
     val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
@@ -54,6 +62,46 @@ class DevicesViewModel @Inject constructor(
     }
 
     fun getCurrentSort(): SortOption = currentSort
+
+    fun cycleIgnoredFilterState() {
+        val currentState = ignoredFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        ignoredFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(IgnoredFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Ignored Filter State: $nextState")
+    }
+
+    fun cycleNotifiedFilterState() {
+        val currentState = notifiedFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        notifiedFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(NotifiedFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Notified Filter State: $nextState")
+    }
 
     fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
         val filterName = filter::class.toString()
@@ -113,12 +161,16 @@ class DevicesViewModel @Inject constructor(
         }
 
         // Check Status Filters
-        if (activeFilter.containsKey(IgnoredFilter::class.toString())) {
-            summaryParts.add(context.getString(R.string.ignored_devices))
+        when (ignoredFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.ignored_devices))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.not_ignored))
+            else -> {}
         }
 
-        if (activeFilter.containsKey(NotifiedFilter::class.toString())) {
-            summaryParts.add(context.getString(R.string.tracker_detected))
+        when (notifiedFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.tracker_detected))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.not_notified))
+            else -> {}
         }
 
         // Check Device Type Filters
