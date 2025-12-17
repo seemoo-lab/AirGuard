@@ -3,7 +3,7 @@
 ## Allgemein & Kernfunktionen
 
 **Welche Arten von Trackern könnt ihr erkennen?**
-Wir erkennen derzeit verschiedene Tracker, darunter Apple AirTags, AirPods, FindMy-Geräte, andere Apple-Geräte im Modus "Verloren", Samsung SmartTags, Chipolos und Tiles.
+Wir erkennen derzeit verschiedene Tracker, darunter Google „Mein Gerät finden“-Geräte, Apple AirTags, AirPods, FindMy-Geräte („Wo ist?“), andere Apple-Geräte im Modus „Verloren“, Samsung SmartTags, Chipolos und Tiles.
 
 **Wie viel Akku verbraucht AirGuard?**
 AirGuard ist so konzipiert, dass es energieeffizient ist. Bei typischer Nutzung wirst du keinen signifikanten Unterschied in der Akkulaufzeit bemerken; es verbraucht normalerweise weniger als 1 % deines Akkus.
@@ -17,7 +17,7 @@ Ja, wir planen, AirGuard auf unbestimmte Zeit kostenlos anzubieten.
 Wenn du bei einer manuellen Suche Tracker in deiner Nähe bemerkst, mache dir nicht sofort Sorgen. Diese Tracker sind lediglich in der Nähe und folgen dir nicht zwangsläufig. Unsere App, AirGuard, wird dich benachrichtigen, wenn sich einer dieser Tracker mit dir bewegt. Wenn sie das nicht tun, gibt es normalerweise keinen Grund zur Besorgnis.
 
 **Was ist der Unterschied zwischen weißen und grauen Geräten?**
-Weiße Geräte (oder schwarz im Dunkelmodus) befinden sich im "Offline"-Modus und sind von ihrem Besitzer getrennt. Diese können eine Tracking-Bedrohung darstellen. Wir speichern ihre Standorte und benachrichtigen dich, wenn sie dir zu folgen scheinen. Graue Geräte sind mit dem Gerät ihres Besitzers verbunden oder waren es kürzlich. Sie sind im Allgemeinen sicher und werden nicht in der App gespeichert.
+Weiße Geräte (oder schwarz im Dunkelmodus) befinden sich im „Offline“-Modus und sind von ihrem Besitzer getrennt. Diese können eine Tracking-Bedrohung darstellen. Wir speichern ihre Standorte und benachrichtigen dich, wenn sie dir zu folgen scheinen. Graue Geräte sind mit dem Gerät ihres Besitzers verbunden oder waren es kürzlich. Sie sind im Allgemeinen sicher und werden nicht in der App gespeichert.
 
 **Was bedeutet 'verbundenes Gerät'?**
 Ein verbundenes Gerät ist eines, das aktuell oder kürzlich (innerhalb von 15 Minuten) mit dem Gerät seines Besitzers verbunden war. Diese werden nicht in der App gespeichert, da sie kein Risiko darstellen, wenn sie sich in der Nähe ihres Besitzers befinden.
