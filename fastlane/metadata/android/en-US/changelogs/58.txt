@@ -1,0 +1,10 @@
+NEW: AirGuard is now available in 6 new languages: Italian, Czech, Slovak, French, Russian and Traditional Chinese
+NEW: Added option in settings to prevent screenshots
+NEW: Added option in settings (expert mode only) to configure how long tracker data is saved and after which time it should be deleted
+NEW: Map now shows the radius in which a location was found
+IMPROVED: The articles on the home screen are rendered more beautifully and are now compatible with the dark mode
+IMPROVED: The articles do not require an active internet connection anymore
+IMPROVED: Redesigned Map Interface with more explanations
+IMPROVED: Added technical hints in the pdf export
+IMPROVED: Better Detection of the Samsung SmartTag 2
+IMPROVED: Bugfixes and performance improvements

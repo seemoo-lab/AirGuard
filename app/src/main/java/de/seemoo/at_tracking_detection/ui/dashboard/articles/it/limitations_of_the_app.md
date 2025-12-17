@@ -2,47 +2,49 @@
 
 AirGuard può trovare solo tracker basati su Bluetooth. I tracker che funzionano con il GPS e condividono la posizione con il proprietario tramite una connessione cellulare non possono essere trovati.
 
-Di seguito imparerai quali tracker AirGuard può rilevare automaticamente in background e quali tracker sono visibili utilizzando la scansione manuale.
+Sebbene AirGuard possa rilevare un'ampia varietà di tracker, le funzionalità avanzate come la riproduzione di un suono, l'identificazione del proprietario o la determinazione se il dispositivo è attualmente connesso al suo proprietario variano in base al produttore.
+
+**Dispositivi Google Trova il mio dispositivo**
+Questi sono tracker compatibili con la rete Trova il mio dispositivo di Google.
+* **È connesso al proprietario:** ✅ (Determina se il proprietario è nelle vicinanze)
+* **Riproduci suono:** ✅
+* **Identifica proprietario:** ✅
+
+**Apple AirTag & Dispositivi Dov'è (Find My)**
+Questo include AirTag, AirPods e tracker di terze parti (come Chipolo o Pebblebee) che utilizzano la rete Apple Dov'è.
+* **È connesso al proprietario:** ✅ (Determina se il proprietario è nelle vicinanze)
+* **Riproduci suono:** ✅ (La disponibilità dipende dalla modalità specifica del dispositivo)
+* **Identifica proprietario:** ✅ (Via NFC per AirTag e dispositivi Dov'è supportati)
 
 **Samsung SmartTag**
-Questi tag sono prodotti da Samsung e funzionano quasi come gli AirTag.
-
-*Avviso di tracciamento automatico* ✅
-*Scansione manuale* ✅
+Questi sono tracker prodotti da Samsung.
+* **È connesso al proprietario:** ✅ (Determina se il proprietario è nelle vicinanze)
+* **Riproduci suono:** ❌
+* **Identifica proprietario:** ❌
 
 **Tile Tracker**
-Tile è un'azienda che produce esclusivamente tracker Bluetooth. Anche questi dispositivi hanno funzionalità simili agli AirTag.
-
-*Avviso di tracciamento automatico* ✅
-*Scansione manuale* ✅
+Tile è un'azienda che produce esclusivamente tracker Bluetooth.
+* **È connesso al proprietario:** ❌
+* **Riproduci suono:** ❌
+* **Identifica proprietario:** ❌
 
 **Chipolo Tracker (senza Dov'è)**
-Chipolo offre tracker Dov'è (Find My) che funzionano solo con iPhone e tracker che funzionano anche con dispositivi Android.
-Qui trattiamo i tracker compatibili anche con i telefoni Android.
+Questi sono i tracker Bluetooth standard di Chipolo che non fanno parte della rete Apple Dov'è.
+* **È connesso al proprietario:** ✅ (Supportato su alcuni modelli)
+* **Riproduci suono:** ❌
+* **Identifica proprietario:** ❌
 
-*Avviso di tracciamento automatico* ✅
-*Scansione manuale* ✅
+**Pebblebee (senza Dov'è)**
+Questi sono tracker Bluetooth standard di Pebblebee che non fanno parte della rete Apple Dov'è.
+* **È connesso al proprietario:** ❌
+* **Riproduci suono:** ✅
+* **Identifica proprietario:** ❌
 
-**AirTag**
-Gli AirTag sono i tracker di Apple. Di conseguenza, sono rilevabili solo in misura limitata, poiché molti segnali vengono filtrati dal sistema.
-Con la scansione manuale possiamo trovare gli AirTag e puoi localizzarli.
-Il rilevamento del tracciamento in background è già fornito dall'app Dov'è (Find My) di Apple.
+### Limitazioni tecniche aggiuntive
 
-*Avviso di tracciamento automatico* ❌
-*Scansione manuale* ✅
+**Stato della connessione**
+Attualmente non è possibile per tutti i tipi di tracker determinare se sono connessi al loro proprietario. Se un tracker non supporta questa funzione (ad es. Tile), AirGuard non può filtrarlo anche se il proprietario è nelle vicinanze. Pertanto, potresti vedere i tuoi tracker o quelli dei tuoi amici più spesso.
 
-**Tracker Dov'è (Find My)**
-Questi sono tracker compatibili con il sistema Dov'è (Find My) di Apple, ma provengono da altri produttori.
-Ci sono alcuni produttori che realizzano tracker di questo tipo: Chipolo, Pebblebee, Atuvos, ecc.
-Come per gli AirTag, il tracker non può essere rilevato in background.
-Anche in questo caso, l'app Dov'è (Find My) ti avvisa automaticamente.
-
-*Avviso di tracciamento automatico* ❌
-*Scansione manuale* ✅
-
-Tieni a mente che attualmente non è possibile determinare per tutti i tipi di tracker se sono connessi al loro proprietario.
-Pertanto, potresti vedere i tuoi tracker o quelli dei tuoi amici.
-
-Inoltre, è importante sapere che alcuni tracker cambiano casualmente la loro identità (indirizzo MAC Bluetooth) un paio di volte al giorno.
-Di conseguenza, un tracker potrebbe essere visualizzato più volte nell'app.
-Questo succede perché spesso non è possibile far corrispondere le diverse identità randomizzate.
+**Identificatori casuali**
+Alcuni tracker Bluetooth cambiano regolarmente la loro identità (indirizzo MAC Bluetooth) — a volte più volte al giorno.
+AirGuard potrebbe visualizzare lo stesso tracker come più voci diverse nel tempo perché non è sempre possibile far corrispondere queste identità randomizzate. I tracker che non cambiano la loro identificazione (ad es. Tile) vengono rilevati in modo più coerente ma possono comportare una maggiore probabilità di falsi positivi se ti trovi spesso vicino a loro.
