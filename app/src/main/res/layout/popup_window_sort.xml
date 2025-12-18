@@ -43,6 +43,7 @@
                 android:src="@drawable/ic_baseline_check_24"
                 app:tint="?attr/colorOnSurface"
                 android:visibility="invisible"
+                android:contentDescription="@string/sort_check_name_description"
                 tools:visibility="visible" />
         </LinearLayout>
 
@@ -73,6 +74,7 @@
                 android:src="@drawable/ic_baseline_check_24"
                 app:tint="?attr/colorOnSurface"
                 android:visibility="invisible"
+                android:contentDescription="@string/sort_check_last_seen_description"
                 tools:visibility="visible" />
         </LinearLayout>
 
@@ -103,6 +105,7 @@
                 android:src="@drawable/ic_baseline_check_24"
                 app:tint="?attr/colorOnSurface"
                 android:visibility="invisible"
+                android:contentDescription="@string/sort_check_first_discovered_description"
                 tools:visibility="visible" />
         </LinearLayout>
 

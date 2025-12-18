@@ -544,4 +544,7 @@
     <string name="not_ignored">Not ignored</string>
     <string name="not_notified">Not notified</string>
     <string name="empty_list_no_devices">No devices have been found. AirGuard scans for Bluetooth tracking devices in the background. Make sure Bluetooth is enabled and the app has the necessary permissions to scan for devices.</string>
+    <string name="sort_check_name_description">Selected sorting order: sort by name</string>
+    <string name="sort_check_last_seen_description">Selected sorting order: sort by last seen</string>
+    <string name="sort_check_first_discovered_description">Selected sorting order: sort by first discovered</string>
 </resources>
