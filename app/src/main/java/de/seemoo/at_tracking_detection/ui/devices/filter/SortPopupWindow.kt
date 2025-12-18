@@ -2,16 +2,14 @@ package de.seemoo.at_tracking_detection.ui.devices.filter
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
+import androidx.core.graphics.drawable.toDrawable
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
-import androidx.core.graphics.drawable.toDrawable
 
 class SortPopupWindow(
     private val context: Context,
@@ -65,7 +63,15 @@ class SortPopupWindow(
             popupWindow.dismiss()
         }
 
-        // Show Popup aligned to the end (right) of the anchor view
-        popupWindow.showAsDropDown(anchor, 0, 0, Gravity.END)
+
+        // Aligns the Pop Up to the right side of the dialog filer
+        view.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val popupWidth = view.measuredWidth
+        val offsetX = anchor.width - popupWidth
+
+        popupWindow.showAsDropDown(anchor, offsetX, 0)
     }
 }
