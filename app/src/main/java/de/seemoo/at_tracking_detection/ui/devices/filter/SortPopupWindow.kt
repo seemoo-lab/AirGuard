@@ -41,11 +41,15 @@ class SortPopupWindow(
         val optionFirstDiscovered = view.findViewById<View>(R.id.sort_option_first_discovered)
         val checkFirstDiscovered = view.findViewById<ImageView>(R.id.check_first_discovered)
 
+        val optionTimesSeen = view.findViewById<View>(R.id.sort_option_times_seen)
+        val checkTimesSeen = view.findViewById<ImageView>(R.id.check_times_seen)
+
         // Set Initial State
         val currentSort = viewModel.getCurrentSort()
         checkName.visibility = if (currentSort == DevicesViewModel.SortOption.NAME) View.VISIBLE else View.INVISIBLE
         checkLastSeen.visibility = if (currentSort == DevicesViewModel.SortOption.LAST_SEEN) View.VISIBLE else View.INVISIBLE
         checkFirstDiscovered.visibility = if (currentSort == DevicesViewModel.SortOption.FIRST_DISCOVERED) View.VISIBLE else View.INVISIBLE
+        checkTimesSeen.visibility = if (currentSort == DevicesViewModel.SortOption.TIMES_SEEN) View.VISIBLE else View.INVISIBLE
 
         // Set Listeners
         optionName.setOnClickListener {
@@ -63,6 +67,10 @@ class SortPopupWindow(
             popupWindow.dismiss()
         }
 
+        optionTimesSeen.setOnClickListener {
+            viewModel.setSortOption(DevicesViewModel.SortOption.TIMES_SEEN)
+            popupWindow.dismiss()
+        }
 
         // Aligns the Pop Up to the right side of the dialog filer
         view.measure(

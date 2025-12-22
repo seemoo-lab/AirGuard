@@ -76,12 +76,14 @@ class FilterDialogFragment : Fragment() {
         val nameItem = popup.menu.add(0, 1, 0, getString(R.string.filter_sort_by_name))
         val lastSeenItem = popup.menu.add(0, 2, 0, getString(R.string.filter_sort_by_last_seen))
         val firstDiscoveredItem = popup.menu.add(0, 3, 0, getString(R.string.filter_sort_by_first_discovered))
+        val timesSeenItem = popup.menu.add(0, 4, 0, getString(R.string.filter_sort_by_times_seen))
 
         // Check the currently selected sort option
         when (devicesViewModel.getCurrentSort()) {
             DevicesViewModel.SortOption.NAME -> nameItem.isChecked = true
             DevicesViewModel.SortOption.LAST_SEEN -> lastSeenItem.isChecked = true
             DevicesViewModel.SortOption.FIRST_DISCOVERED -> firstDiscoveredItem.isChecked = true
+            DevicesViewModel.SortOption.TIMES_SEEN -> timesSeenItem.isChecked = true
         }
 
         popup.setOnMenuItemClickListener { item ->

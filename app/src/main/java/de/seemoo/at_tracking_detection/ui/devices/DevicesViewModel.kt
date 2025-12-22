@@ -26,7 +26,7 @@ class DevicesViewModel @Inject constructor(
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
     enum class SortOption {
-        NAME, LAST_SEEN, FIRST_DISCOVERED
+        NAME, LAST_SEEN, FIRST_DISCOVERED, TIMES_SEEN
     }
 
     enum class FilterState {
@@ -134,6 +134,10 @@ class DevicesViewModel @Inject constructor(
             SortOption.NAME -> filteredDevices.sortedBy { it.getDeviceNameWithID() }
             SortOption.LAST_SEEN -> filteredDevices.sortedByDescending { it.lastSeen }
             SortOption.FIRST_DISCOVERED -> filteredDevices.sortedByDescending { it.firstDiscovery }
+            SortOption.TIMES_SEEN -> {
+                val beaconCounts = filteredDevices.associate { it.address to getDeviceBeaconsCountInt(it.address) }
+                filteredDevices.sortedByDescending { beaconCounts[it.address] ?: 0 }
+            }
         }
 
         devices.value = filteredDevices
@@ -165,7 +169,10 @@ class DevicesViewModel @Inject constructor(
     }
 
     fun getDeviceBeaconsCount(deviceAddress: String): String =
-        beaconRepository.getDeviceBeaconsCount(deviceAddress).toString()
+        getDeviceBeaconsCountInt(deviceAddress).toString()
+
+    fun getDeviceBeaconsCountInt(deviceAddress: String): Int =
+        beaconRepository.getDeviceBeaconsCount(deviceAddress)
 
     fun getDevice(deviceAddress: String): BaseDevice? = deviceRepository.getDevice(deviceAddress)
 

@@ -109,5 +109,36 @@
                 tools:visibility="visible" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/sort_option_times_seen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_sort_by_times_seen"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/check_times_seen"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_check_24"
+                app:tint="?attr/colorOnSurface"
+                android:visibility="invisible"
+                android:contentDescription="@string/sort_check_times_seen_description"
+                tools:visibility="visible" />
+        </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
