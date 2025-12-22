@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class FeedbackRepository @Inject constructor(private val feedbackDao: FeedbackDao) {
 
-    fun getFeedback(notificationId: Int): Feedback = feedbackDao.getFeedback(notificationId)
+    fun getFeedback(notificationId: Int): Feedback? = feedbackDao.getFeedback(notificationId)
 
     @WorkerThread
     suspend fun insert(feedback: Feedback): Long {

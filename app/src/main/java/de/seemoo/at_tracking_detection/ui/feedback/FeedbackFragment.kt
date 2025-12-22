@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,6 +90,13 @@ class FeedbackFragment : Fragment() {
 
                 // Show a Toast message indicating success
                 Toast.makeText(requireContext(), R.string.feedback_success, Toast.LENGTH_SHORT).show()
+
+                // Immediately submit feedback and navigate away
+                feedbackViewModel.submitFeedback(safeArgs.notificationId)
+                val navigated = findNavController().navigateUp()
+                if (!navigated) {
+                    requireActivity().finish()
+                }
             }
 
             // Set layout params for location card
@@ -110,11 +118,6 @@ class FeedbackFragment : Fragment() {
         }
 
         locationLayout.addView(locationsLinearLayout)
-    }
-
-    override fun onPause() {
-        feedbackViewModel.submitFeedback(safeArgs.notificationId)
-        super.onPause()
     }
 
 }

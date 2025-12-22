@@ -5,8 +5,8 @@ import de.seemoo.at_tracking_detection.database.models.Feedback
 
 @Dao
 interface FeedbackDao {
-    @Query("SELECT * FROM feedback WHERE notificationId = :notificationId")
-    fun getFeedback(notificationId: Int): Feedback
+    @Query("SELECT * FROM feedback WHERE notificationId = :notificationId LIMIT 1")
+    fun getFeedback(notificationId: Int): Feedback?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(feedback: Feedback): Long
