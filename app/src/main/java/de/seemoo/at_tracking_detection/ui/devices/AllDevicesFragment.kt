@@ -84,8 +84,7 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                deviceType = DeviceType.AIRTAG,
-                preselectRemoveDateRange = true,
+                deviceType = DeviceType.AIRTAG
             )
             findNavController().navigate(directions)
         }
@@ -94,8 +93,7 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                deviceType = DeviceType.FIND_MY,
-                preselectRemoveDateRange = true,
+                deviceType = DeviceType.FIND_MY
             )
             findNavController().navigate(directions)
         }
@@ -104,8 +102,7 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                deviceType = DeviceType.TILE,
-                preselectRemoveDateRange = true,
+                deviceType = DeviceType.TILE
             )
             findNavController().navigate(directions)
         }
@@ -114,7 +111,6 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                preselectRemoveDateRange = true,
                 deviceType = DeviceType.CHIPOLO
             )
             findNavController().navigate(directions)
@@ -124,7 +120,6 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                preselectRemoveDateRange = true,
                 deviceType = DeviceType.PEBBLEBEE
             )
             findNavController().navigate(directions)
@@ -134,7 +129,6 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                preselectRemoveDateRange = true,
                 deviceType = DeviceType.SAMSUNG_TRACKER
             )
             findNavController().navigate(directions)
@@ -144,7 +138,6 @@ class AllDevicesFragment : Fragment() {
             val directions = AllDevicesFragmentDirections.actionNavigationAllDevicesFragmentToDevicesFound2(
                 showDevicesFound = true,
                 showAllDevices = true,
-                preselectRemoveDateRange = true,
                 deviceType = DeviceType.GOOGLE_FIND_MY_NETWORK
             )
             findNavController().navigate(directions)
