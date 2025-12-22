@@ -85,13 +85,17 @@ class MarkerInfoPopUp(
             )
 
             // Set click listener for the "+x more trackers" text
-            moreTrackersText.setOnClickListener {
+            val moreTrackersClickListener = View.OnClickListener {
                 onMoreTrackersClick(locationId)
                 close()
             }
+            divider.setOnClickListener(moreTrackersClickListener)
+            moreTrackersText.setOnClickListener(moreTrackersClickListener)
         } else {
             divider.visibility = View.GONE
             moreTrackersText.visibility = View.GONE
+            divider.setOnClickListener(null)
+            moreTrackersText.setOnClickListener(null)
         }
 
         // Set click listener to navigate to tracking fragment
@@ -105,7 +109,8 @@ class MarkerInfoPopUp(
         // Clear click listeners
         mView.setOnClickListener(null)
         val moreTrackersText = mView.findViewById<TextView>(R.id.marker_more_trackers)
+        val divider = mView.findViewById<View>(R.id.marker_divider)
         moreTrackersText?.setOnClickListener(null)
+        divider?.setOnClickListener(null)
     }
 }
-
