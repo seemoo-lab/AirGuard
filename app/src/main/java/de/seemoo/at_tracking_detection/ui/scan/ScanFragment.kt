@@ -2,9 +2,11 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,6 +85,15 @@ class ScanFragment : Fragment() {
         view.findViewById<Button>(R.id.open_ble_settings_button).setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
         }
+        view.findViewById<Button>(R.id.open_location_settings_button)?.setOnClickListener {
+            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            try {
+                startActivity(settingsIntent)
+            } catch (_: Exception) {
+                // Fallback to general settings if location page is unavailable
+                try { startActivity(Intent(Settings.ACTION_SETTINGS)) } catch (_: Exception) {}
+            }
+        }
 
         view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan).setOnClickListener {
             if (scanViewModel.scanFinished.value == true) {
@@ -100,7 +111,8 @@ class ScanFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scanViewModel.startMonitoringSystemToggles()
-        scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
+        scanViewModel.refreshBluetoothState()
+        scanViewModel.refreshLocationState()
     }
 
     override fun onStop() {
@@ -109,9 +121,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun readyToScan(): Boolean {
-        val btOn = scanViewModel.bluetoothEnabled.value == true
-        val locOn = scanViewModel.locationEnabled.value == true
-        return btOn && locOn
+        return scanViewModel.canScan.value == true
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
@@ -241,6 +251,7 @@ class ScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        scanViewModel.refreshBluetoothState()
         scanViewModel.refreshLocationState()
         if (scanViewModel.scanFinished.value == false) {
             startBluetoothScanIfNeeded()

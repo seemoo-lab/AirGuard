@@ -53,6 +53,16 @@
             app:layout_constraintTop_toBottomOf="@id/location_image"
             tools:text="@string/location_off_explanation" />
 
+        <Button
+            android:id="@+id/open_location_settings_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="@string/open_location_settings"
+            app:layout_constraintTop_toBottomOf="@id/location_off_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

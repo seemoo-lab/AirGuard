@@ -40,7 +40,7 @@
             android:id="@+id/scan_result_wrapper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.canScan ? (vm.scanFinished &amp;&amp; vm.isListEmpty ? View.GONE : View.VISIBLE) : View.GONE, default=gone}"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -155,7 +155,7 @@
             android:layout_marginBottom="16dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{!vm.bluetoothEnabled || !vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.canScan ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_stop_24"
