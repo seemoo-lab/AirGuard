@@ -497,7 +497,8 @@
     <string name="old_device_timeframe_2_months">2 mois</string>
     <string name="old_device_timeframe_3_months">3 mois</string>
     <string name="old_device_deactivate_title">Confirmer la désactivation de la suppression auto.</string>
-    <string name="old_device_deactivate_text">Êtes-vous sûr de vouloir désactiver la suppression automatique des données des anciens traceurs ? Si vous confirmez, l\'application ralentira avec le temps. Le rétablissement de ce paramètre ultérieurement peut prendre jusqu\'à 24 heures.</string>
+    <string name="old_device_deactivate_text">Êtes-vous sûr de vouloir désactiver la suppression automatique des données des anciens traceurs ? Si vous confirmez, l\'application ralentira avec le temps.</string>
     <string name="old_device_deactivate_yes">Oui, désactiver</string>
     <string name="old_device_deactivate_no">Non, garder activé</string>
+    <string name="save">Enregistrer</string>
 </resources>

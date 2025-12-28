@@ -9,13 +9,10 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
-import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
@@ -67,13 +64,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
 
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
-
-        try {
-            deleteSafeGoogleTrackers()
-            deleteOldAndSafeTrackers()
-        } catch (e:Exception) {
-            Timber.e("Deleting trackers failed $e")
-        }
 
         return Result.success(
             Data.Builder()
@@ -129,81 +119,6 @@ class TrackingDetectorWorker @AssistedInject constructor(
         return false
     }
 
-    private suspend fun deleteSafeGoogleTrackers() {
-        // This function is necessary because:
-        // If an adversary constructs a device in the Find My Network where the connection state bit is always false, we still need to map this
-        // We assume that after a fixed time (e.g. 12 hours) it is not the if there has been no indications that it is a malicious tracking device
-        Timber.d("Start deleting safe google trackers")
-        val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteSafeGoogleTrackersBeforeDate
-
-        try {
-            val googleTrackersToBeDeleted = deviceRepository.getDevicesWithDeviceTypeAndConnectionStateOlderThan(
-                DeviceType.GOOGLE_FIND_MY_NETWORK,
-                ConnectionState.PREMATURE_OFFLINE,
-                deleteSafeTrackersBefore
-            )
-            if (googleTrackersToBeDeleted.isNotEmpty()) {
-                Timber.d("Deleting ${googleTrackersToBeDeleted.size} google trackers")
-                deviceRepository.deleteDevices(googleTrackersToBeDeleted)
-                Timber.d("Deleting Google Trackers successful")
-            } else {
-                Timber.d("No Google trackers to delete")
-            }
-        } catch (e: Exception) {
-            Timber.e("Deleting Safe Google Trackers failed $e")
-        }
-    }
-
-    private suspend fun deleteOldAndSafeTrackers() {
-        // Delete old devices and beacons from the database
-        Timber.d("Start deleting old and safe Trackers")
-
-        val deleteTrackers = SharedPrefs.deleteOldDevices
-
-        if (!deleteTrackers) {
-            Timber.d("Deleting old devices is disabled in settings, skipping deletion")
-            return
-        }
-
-        val alsoDeleteUnsafeTrackers = SharedPrefs.deleteUnsafeOldDevices
-        val deleteSafeTrackersBefore = RiskLevelEvaluator.deleteBeforeDate
-
-        try {
-            val devicesToBeDeleted = if (alsoDeleteUnsafeTrackers) {
-                Timber.d("Deleting all devices older than $deleteSafeTrackersBefore")
-                deviceRepository.getDevicesOlderThan(deleteSafeTrackersBefore)
-            } else {
-                Timber.d("Only deleting safe trackers older than $deleteSafeTrackersBefore")
-                deviceRepository.getDevicesOlderThanWithoutNotifications(deleteSafeTrackersBefore)
-            }
-
-            if (devicesToBeDeleted.isNotEmpty()) {
-                Timber.d("Deleting ${devicesToBeDeleted.size} devices")
-                deviceRepository.deleteDevices(devicesToBeDeleted)
-                Timber.d("Deleting Devices successful")
-            } else {
-                Timber.d("No old devices to delete")
-            }
-        } catch (e: Exception) {
-            Timber.e("Deleting Devices failed $e")
-        }
-
-        try {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
-            val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
-            if (locationsToBeDeleted.isNotEmpty()) {
-                Timber.d("Deleting ${locationsToBeDeleted.size} locations")
-                locationRepository.deleteLocations(locationsToBeDeleted)
-                Timber.d("Deleting Locations successful")
-            } else {
-                Timber.d("No locations to delete")
-            }
-        } catch (e: Exception) {
-            Timber.e("Deleting Locations failed $e")
-        }
-
-        Timber.d("Deleting old and safe Trackers finished")
-    }
 
     companion object {
         fun getLocation(latitude: Double, longitude: Double): Location {

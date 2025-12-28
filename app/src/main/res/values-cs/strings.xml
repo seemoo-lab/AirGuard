@@ -509,7 +509,8 @@
     <string name="old_device_timeframe_2_months">2 měsíce</string>
     <string name="old_device_timeframe_3_months">3 měsíce</string>
     <string name="old_device_deactivate_title">Potvrdit deaktivaci automatického mazání</string>
-    <string name="old_device_deactivate_text">Jste si jisti, že chcete deaktivovat automatické mazání starých dat trackerů? Pokud potvrdíte, tato aplikace se časem zpomalí. Vrácení tohoto nastavení později může trvat až 24 hodin.</string>
+    <string name="old_device_deactivate_text">Jste si jisti, že chcete deaktivovat automatické mazání starých dat trackerů? Pokud potvrdíte, tato aplikace se časem zpomalí.</string>
     <string name="old_device_deactivate_yes">Ano, deaktivovat</string>
     <string name="old_device_deactivate_no">Ne, ponechat aktivované</string>
+    <string name="save">Uložit</string>
 </resources>

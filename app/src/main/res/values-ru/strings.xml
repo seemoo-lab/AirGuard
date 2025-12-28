@@ -453,9 +453,10 @@
     <string name="old_device_timeframe_2_months">2 месяца</string>
     <string name="old_device_timeframe_3_months">3 месяца</string>
     <string name="old_device_deactivate_title">Подтверждение отключения автоматического удаления</string>
-    <string name="old_device_deactivate_text">Вы уверены, что хотите отключить автоматическое удаление старых меток? Если вы подтвердите это, приложение со временем будет работать медленнее. Изменение этой настройки позже, может занять до 24 часов</string>
+    <string name="old_device_deactivate_text">Вы уверены, что хотите отключить автоматическое удаление старых меток? Если вы подтвердите это, приложение со временем будет работать медленнее.</string>
     <string name="old_device_deactivate_yes">Да, отключить</string>
     <string name="old_device_deactivate_no">Нет, оставить включенной</string>
+    <string name="save">Сохранить</string>
 
     <plurals name="notification_observe_tracker_positive">
         <item quantity="one">Отслеживаемый трекер преследует вас как минимум %d час.</item>
