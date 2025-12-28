@@ -149,6 +149,15 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             PermanentBluetoothScanner.scan()
         }
 
+        // Schedule periodic device cleanup independent of tracking detection
+        GlobalScope.launch(Dispatchers.Default) {
+            try {
+                backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
+            } catch (t: Throwable) {
+                Timber.w(t, "Failed scheduling device cleanup on startup")
+            }
+        }
+
         Timber.d("Application onCreate completed")
     }
 

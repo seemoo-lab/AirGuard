@@ -517,7 +517,7 @@
     <string name="old_device_timeframe_2_months">2 months</string>
     <string name="old_device_timeframe_3_months">3 months</string>
     <string name="old_device_deactivate_title">Confirm deactivating automatic deletion</string>
-    <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time. Reverting this setting at a later point may take up to 24 hours.</string>
+    <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time.</string>
     <string name="old_device_deactivate_yes">Yes, deactivate</string>
     <string name="old_device_deactivate_no">No, keep activated</string>
 
@@ -549,4 +549,6 @@
     <string name="not_ignored">Not ignored</string>
     <string name="not_notified">Not notified</string>
     <string name="empty_list_no_devices">No devices have been found. AirGuard scans for Bluetooth tracking devices in the background. Make sure Bluetooth is enabled and the app has the necessary permissions to scan for devices.</string>
+
+    <string name="save">Save</string>
 </resources>

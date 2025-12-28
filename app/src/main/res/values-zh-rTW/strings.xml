@@ -485,7 +485,8 @@
     <string name="old_device_timeframe_2_months">2 個月</string>
     <string name="old_device_timeframe_3_months">3 個月</string>
     <string name="old_device_deactivate_title">確認停用自動刪除</string>
-    <string name="old_device_deactivate_text">您確定要停用自動刪除舊追蹤器資料嗎？如果您確認，應用程式的速度可能會隨著時間變慢。日後若還原此設定，可能需要長達 24 小時才能生效。</string>
+    <string name="old_device_deactivate_text">您確定要停用自動刪除舊追蹤器資料嗎？如果您確認，應用程式的速度可能會隨著時間變慢。</string>
     <string name="old_device_deactivate_yes">是，停用</string>
     <string name="old_device_deactivate_no">否，保持啟用</string>
+    <string name="save">儲存</string>
 </resources>
