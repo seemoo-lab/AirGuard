@@ -4,7 +4,7 @@ Die App scannt im Hintergrund deine Umgebung, um Tracker wie AirTags, Samsung Sm
 Diese Tracker sind oft nicht größer als eine Münze und werden leider missbraucht, um Menschen heimlich zu verfolgen. Da jeder Tracker anders funktioniert, bräuchtest du normalerweise mehrere Apps, um unerwünschtes Tracking zu erkennen.
 AirGuard vereint die Erkennung verschiedener Tracker in einer einzigen App – so bleibst du einfach geschützt.
 
-Sobald ein Tracker entdeckt wurde, kannst du ihn einen Ton abspielen lassen (für unterstützte Modelle) oder einen manuellen Scan durchführen, um ihn zu lokalisieren. Wenn du einen Tracker findest, empfehlen wir, ihn zu deaktivieren, damit er deinen Standort nicht weiter verfolgen kann.
+Sobald ein Tracker entdeckt wird, kannst du (bei unterstützten Modellen) einen Ton abspielen lassen oder einen manuellen Scan durchführen, um ihn zu lokalisieren. Wenn du einen Tracker findest, empfehlen wir, ihn zu deaktivieren, damit er deinen Standort nicht weiter verfolgen kann.
 
 Die App speichert Standortdaten ausschließlich auf deinem Gerät, sodass du später nachvollziehen kannst, wo dich ein Tracker verfolgt hat. Deine persönlichen Daten werden niemals weitergegeben.
 
@@ -16,7 +16,7 @@ Wenn ein Tracker an mindestens drei verschiedenen Orten festgestellt wird, erhä
 
 <h2><b>Wer sind wir?</b></h2>
 Wir sind Teil der Technischen Universität Darmstadt. Dieses Projekt ist Teil der wissenschaftlichen Forschung des Secure Mobile Networking Lab.
-Unser Ziel ist es, die Privatsphäre von Menschen zu schützen und zu untersuchen, wie weit verbreitet das Problem des tracker-basierten Stalkings ist.
+Unser Ziel ist es, die Privatsphäre von Menschen zu schützen und zu untersuchen, wie weit verbreitet das Problem des trackerbasierten Stalkings ist.
 
 Du kannst freiwillig an einer anonymen Studie teilnehmen, um uns mehr Einblicke in die Nutzung und Verbreitung dieser Tracker zu geben.
 
@@ -27,4 +27,4 @@ https://tpe.seemoo.tu-darmstadt.de/privacy-policy.html
 
 <h2><b>Rechtlicher Hinweis</b></h2>
 AirTag, Find My und iOS sind eingetragene Marken der Apple Inc.
-Dieses Projekt ist nicht mit Apple Inc. verbunden
+Dieses Projekt ist nicht mit Apple Inc. verbunden.
