@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AirGuard</string>
+    <string name="title_ignored_devices">Görmezden gelinenler</string>
+    <string name="title_dashboard">Ana sayfa</string>
+    <string name="title_settings">Ayarlar</string>
+    <string name="title_debug">Hata ayıklama</string>
+    <string name="title_feedback">Geribildirim</string>
+    <string name="title_tracking">Bu ID\'ye sahip bir cihaz sizi takip ediyor: {deviceAddress}</string>
+    <string name="title_devices_tracking">Cihaz ID\'si: {deviceAddress}</string>
+    <string name="title_scan">Tara</string>
+    <string name="title_device_map">Tüm Cihazlar</string>
+    <string name="title_devices">Cihazlar</string>
+    <string name="title_data_deletion">Veri silme talebi</string>
+    <string name="map_empty_text">Henüz bir cihaz bulunamadı. Her yeni bir cihaz keşfedildiğinde, haritada bunun nerede keşfedildiğinin konumu gösterilecektir. Bu, birisinin sizi her konumda takip ettiği anlamına gelmez. Çoğunlukla toplu taşımadaki diğer insanlardan ya da komşularınızın birinden bir cihaz bulacaksınızdır.</string>
+    <string name="mark_false_alarm">YANLIŞ ALARM</string>
+    <string name="channel_description">Sizi muhtemel bir takip cihazı hakkında uyarır</string>
+    <string name="statistics_beacons">Bulunan cihazlar</string>
+    <string name="statistics_devices">Konumlar</string>
+    <string name="statistics_alerts">Gönderilen Takip Uyarıları</string>
+    <string name="statistics_false_alarms">Yanlış Alarmlar</string>
+    <string name="statistics_devices_monitored">Şu Anda İzlenen Cihazlar</string>
+    <string name="settings_share_data_summary">Biraz anonim veri paylaşarak projeyi destekleyin</string>
+    <string name="settings_advanced_mode_summary">Airguard\'a daha fazla seçenek ekler.\nBu seçenekler gelişmiş kullanıcılara yöneliktir.</string>
+    <string name="settings_advanced_mode_title">Uzman Modu</string>
+    <string name="settings_deactivate_scanning_title">Arkaplan taramasını devre dışı bırak</string>
+    <string name="settings_deactivate_scanning_summary">Bu Airguard\'ın arkaplanda çalışmasını devre dışı bırakır. Lütfen bilin ki: Artık eğer bir takip cihazı sizi takip ediyorsa uyarılmayacaksınızdır.</string>
+    <string name="settings_permanent_scanning_title">Kalıcı tarama</string>
+</resources>
