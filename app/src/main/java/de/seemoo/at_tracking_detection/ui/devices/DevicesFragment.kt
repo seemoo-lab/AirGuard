@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
@@ -67,7 +66,7 @@ class DevicesFragment : Fragment() {
 
     private lateinit var deviceAdapter: DeviceAdapter
 
-    private var swipeDirs: Int = ItemTouchHelper.LEFT
+    private var swipeDirs: Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Initialize properties from SafeArgs
@@ -87,7 +86,6 @@ class DevicesFragment : Fragment() {
         if (!showDevicesFound) {
             activity?.setTitle(R.string.title_ignored_devices)
             emptyListText = R.string.ignored_device_list_empty
-            swipeDirs = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             devicesViewModel.addOrRemoveFilter(IgnoredFilter())
             devicesViewModel.addOrRemoveFilter(
                 DeviceTypeFilter(
@@ -236,8 +234,8 @@ class DevicesFragment : Fragment() {
     private fun swipeToDeleteCallback(swipeDirs: Int) =
         object :
             ItemTouchHelper.SimpleCallback(0, swipeDirs) {
-            private val deleteBackground = Color.RED.toDrawable()
             private val editBackground = Color.GRAY.toDrawable()
+            private val heartBackground = editBackground
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -258,50 +256,53 @@ class DevicesFragment : Fragment() {
             ) {
                 val itemView = viewHolder.itemView
 
-                val deleteIcon =
-                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_delete_24)
                 val editIcon =
                     ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_edit_24)
+                val heartIcon =
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_heart_filled)
 
                 var transitionX = dX
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     when {
                         dX > 0 -> {
-                            val iconMargin = (itemView.height - deleteIcon!!.intrinsicHeight) / 2
+                            val limitedDx = dX / 4f
+                            val iconMargin = (itemView.height - heartIcon!!.intrinsicHeight) / 2
                             val iconTop =
-                                itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
-                            val iconBottom = itemView.bottom - deleteIcon.intrinsicHeight
+                                itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
+                            val iconBottom = iconTop + heartIcon.intrinsicHeight
                             val iconLeft = itemView.left + iconMargin
-                            val iconRight = itemView.left + iconMargin + deleteIcon.intrinsicWidth
-                            deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                            deleteBackground.setBounds(
+                            val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
+                            heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            heartBackground.setBounds(
                                 itemView.left,
                                 itemView.top,
-                                itemView.left + dX.toInt(),
+                                (itemView.left + limitedDx).toInt(),
                                 itemView.bottom
                             )
-                            deleteBackground.draw(c)
-                            deleteIcon.draw(c)
+                            heartBackground.draw(c)
+                            heartIcon.draw(c)
+                            transitionX = limitedDx
                         }
-                        dX < 0 -> {
-                            val iconMargin = (itemView.height - editIcon!!.intrinsicHeight) / 2
-                            val iconTop =
-                                itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
-                            val iconBottom = iconTop + editIcon.intrinsicHeight
-                            val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
-                            val iconRight = itemView.right - iconMargin
-                            editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                            editBackground.setBounds(
-                                itemView.right + dX.toInt(),
-                                itemView.top,
-                                itemView.right,
-                                itemView.bottom
-                            )
-                            transitionX /= 4
-                            editBackground.draw(c)
-                            editIcon.draw(c)
-                        }
+                         dX < 0 -> {
+                             val iconMargin = (itemView.height - editIcon!!.intrinsicHeight) / 2
+                             val iconTop =
+                                 itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
+                             val iconBottom = iconTop + editIcon.intrinsicHeight
+                             val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
+                             val iconRight = itemView.right - iconMargin
+                             editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                             val limitedDx = dX / 4f
+                             editBackground.setBounds(
+                                 (itemView.right + limitedDx).toInt(),
+                                 itemView.top,
+                                 itemView.right,
+                                 itemView.bottom
+                             )
+                             transitionX = limitedDx
+                             editBackground.draw(c)
+                             editIcon.draw(c)
+                         }
                     }
                 }
 
@@ -316,15 +317,6 @@ class DevicesFragment : Fragment() {
                 )
 
             }
-
-            private fun showRestoreDevice(baseDevice: BaseDevice) = Snackbar.make(
-                view!!, getString(
-                    R.string.devices_alter_removed, baseDevice.getDeviceNameWithID()
-                ), Snackbar.LENGTH_LONG
-            ).setAction(getString(R.string.undo_button)) {
-                Timber.d("Undo remove device!")
-                devicesViewModel.setIgnoreFlag(baseDevice.address, false)
-            }.show()
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val device =
@@ -354,13 +346,13 @@ class DevicesFragment : Fragment() {
                             deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
                         }
                         .show()
-                } else if (direction == ItemTouchHelper.RIGHT && device.ignore) {
-                    devicesViewModel.setIgnoreFlag(device.address, false)
-                    showRestoreDevice(device)
-                    Timber.d("Removed device ${device.address} from ignored list")
-                }
-            }
-        }
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    devicesViewModel.setHeartState(device.address, !device.hearted)
+                    deviceAdapter.notifyDataSetChanged()
+                    Timber.d("Toggled heart for ${device.address} to ${!device.hearted}")
+                 }
+             }
+         }
 
     private fun applyPreselectFilters() {
         // remove the date range filter

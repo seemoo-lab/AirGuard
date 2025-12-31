@@ -525,6 +525,7 @@
     <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
     <string name="map_footer_device">This map shows all locations ever found for this device.</string>
     <string name="all_devices">All devices</string>
+    <string name="save">Save</string>
 
     <!-- TODO: Changed: Require Translation -->
     <string name="locations_tracked">Recent locations</string>
@@ -550,5 +551,6 @@
     <string name="not_notified">Not notified</string>
     <string name="empty_list_no_devices">No devices have been found. AirGuard scans for Bluetooth tracking devices in the background. Make sure Bluetooth is enabled and the app has the necessary permissions to scan for devices.</string>
 
-    <string name="save">Save</string>
+    <string name="filter_hearted">Favourite</string>
+    <string name="filter_not_hearted">Not Favourite</string>
 </resources>

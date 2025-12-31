@@ -50,6 +50,7 @@ data class BaseDevice(
     @ColumnInfo(name = "address") var address: String,
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "ignore") val ignore: Boolean,
+    @ColumnInfo(name = "hearted", defaultValue = "0") var hearted: Boolean = false,
     @ColumnInfo(name = "connectable", defaultValue = "0") val connectable: Boolean?,
     @ColumnInfo(name = "payloadData") var payloadData: Byte?,
     @ColumnInfo(name = "firstDiscovery") val firstDiscovery: LocalDateTime,
@@ -83,6 +84,7 @@ data class BaseDevice(
         address,
         null,
         ignore,
+        hearted = false,
         connectable,
         payloadData,
         firstDiscovery,
@@ -105,6 +107,7 @@ data class BaseDevice(
         getUniqueIdentifier(scanResult),
         getDeviceName(scanResult),
         false,
+        hearted = false,
         scanResult.let {
             scanResult.isConnectable
         },

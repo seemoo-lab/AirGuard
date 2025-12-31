@@ -16,6 +16,12 @@ import javax.inject.Inject
 class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val devices: Flow<List<BaseDevice>> = deviceDao.getAll()
 
+    suspend fun toggleHeart(address: String, hearted: Boolean) {
+        val device = deviceDao.getByAddress(address) ?: return
+        device.hearted = hearted
+        deviceDao.update(device)
+    }
+
     fun trackingDevicesSince(since: LocalDateTime) = deviceDao.getAllNotificationSince(since)
 
     fun trackingDevicesNotIgnoredSince(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSince(since)

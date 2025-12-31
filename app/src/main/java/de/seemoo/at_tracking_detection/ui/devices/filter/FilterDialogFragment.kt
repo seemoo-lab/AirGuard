@@ -20,6 +20,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.FavoriteFilter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -136,6 +137,9 @@ class FilterDialogFragment : Fragment() {
         binding.filterNotifiedChip.setOnClickListener {
             devicesViewModel.cycleNotifiedFilterState()
         }
+        binding.filterFavoriteChip.setOnClickListener {
+            devicesViewModel.cycleFavoriteFilterState()
+        }
 
         // Observe filter states to update chip appearance
         devicesViewModel.ignoredFilterState.observe(viewLifecycleOwner) { state ->
@@ -143,6 +147,9 @@ class FilterDialogFragment : Fragment() {
         }
         devicesViewModel.notifiedFilterState.observe(viewLifecycleOwner) { state ->
             updateChipAppearance(binding.filterNotifiedChip, state)
+        }
+        devicesViewModel.favoriteFilterState.observe(viewLifecycleOwner) { state ->
+            updateChipAppearance(binding.filterFavoriteChip, state)
         }
 
         binding.filterDateRangeInput.setOnClickListener {

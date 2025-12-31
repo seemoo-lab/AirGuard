@@ -16,6 +16,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.FavoriteFilter
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,6 +43,7 @@ class DevicesViewModel @Inject constructor(
     // Track the state of Ignored and Notified filters
     val ignoredFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
     val notifiedFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
+    val favoriteFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
 
     // UI State
     val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
@@ -64,6 +66,10 @@ class DevicesViewModel @Inject constructor(
     fun setSortOption(option: SortOption) {
         currentSort = option
         updateVisibleList()
+    }
+
+    fun setHeartState(deviceAddress: String, hearted: Boolean) = viewModelScope.launch {
+        deviceRepository.toggleHeart(deviceAddress, hearted)
     }
 
     fun getCurrentSort(): SortOption = currentSort
@@ -108,6 +114,26 @@ class DevicesViewModel @Inject constructor(
         Timber.d("Notified Filter State: $nextState")
     }
 
+    fun cycleFavoriteFilterState() {
+        val currentState = favoriteFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        favoriteFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(FavoriteFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[FavoriteFilter::class.toString()] = FavoriteFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[FavoriteFilter::class.toString()] = FavoriteFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Favorite Filter State: $nextState")
+    }
+
     fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
         val filterName = filter::class.toString()
         if (remove) {
@@ -140,6 +166,8 @@ class DevicesViewModel @Inject constructor(
             }
         }
 
+        filteredDevices = filteredDevices.filter { it.hearted } + filteredDevices.filterNot { it.hearted }
+
         devices.value = filteredDevices
 
         if (hasLoadedData) {
@@ -155,6 +183,7 @@ class DevicesViewModel @Inject constructor(
         return activeFilter.any { (filterName, _) ->
             filterName == NotifiedFilter::class.toString() ||
             filterName == IgnoredFilter::class.toString() ||
+            filterName == FavoriteFilter::class.toString() ||
             filterName == DateRangeFilter::class.toString() ||
             filterName == LocationFilter::class.toString()
         }
@@ -193,6 +222,12 @@ class DevicesViewModel @Inject constructor(
         when (ignoredFilterState.value) {
             FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.ignored_devices))
             FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.not_ignored))
+            else -> {}
+        }
+
+        when (favoriteFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.filter_hearted))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.filter_not_hearted))
             else -> {}
         }
 

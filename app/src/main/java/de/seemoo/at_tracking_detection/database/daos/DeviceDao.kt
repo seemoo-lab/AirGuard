@@ -8,19 +8,19 @@ import java.time.LocalDateTime
 
 @Dao
 interface DeviceDao {
-    @Query("SELECT * FROM device ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device ORDER BY hearted DESC, lastSeen DESC")
     fun getAll(): Flow<List<BaseDevice>>
 
-    @Query("SELECT * FROM device WHERE lastSeen >= :since ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since ORDER BY hearted DESC, lastSeen DESC")
     fun getAllSince(since: LocalDateTime): Flow<List<BaseDevice>>
 
-    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getAllNotificationSinceFlow(since: LocalDateTime): Flow<List<BaseDevice>>
 
-    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getAllNotificationSince(since: LocalDateTime): List<BaseDevice>
 
-    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY hearted DESC, lastSeen DESC")
     fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0")
@@ -29,10 +29,10 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1")
     fun trackingDevicesCount(since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getIgnored(): Flow<List<BaseDevice>>
 
-    @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY lastSeen DESC")
+    @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getIgnoredSync(): List<BaseDevice>
 
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
