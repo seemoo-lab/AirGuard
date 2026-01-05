@@ -12,15 +12,20 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
 import androidx.core.net.toUri
+import kotlinx.coroutines.launch
+import androidx.core.app.NotificationManagerCompat
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 
 class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
@@ -156,5 +161,29 @@ class TrackingViewModel @Inject constructor(
             }
         }
         deviceComment.postValue(newComment)
+    }
+
+    suspend fun deleteDeviceAndRelatedData(): Boolean = withContext(Dispatchers.IO) {
+        val address = deviceAddress.value ?: return@withContext false
+        val baseDevice = deviceRepository.getDevice(address) ?: return@withContext false
+
+        // cancel all remaining system notifications for this device
+        runCatching {
+            val nm = NotificationManagerCompat.from(ATTrackingDetectionApplication.getAppContext())
+            notificationId.value?.let { id ->
+                nm.cancel(NotificationService.TRACKING_NOTIFICATION_TAG, id)
+            }
+        }
+
+        val beacons = beaconRepository.getDeviceBeacons(address)
+        try {
+            beaconRepository.deleteBeacons(beacons)
+            notificationRepository.deleteForDevice(address)
+            deviceRepository.delete(baseDevice)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to delete device")
+            false
+        }
     }
 }

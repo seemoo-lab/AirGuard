@@ -553,4 +553,9 @@
 
     <string name="filter_hearted">Favourite</string>
     <string name="filter_not_hearted">Not Favourite</string>
+
+    <string name="forget_tracker">Forget Tracker</string>
+    <string name="forget_tracker_dialog_title">Forget tracker?</string>
+    <string name="forget_tracker_dialog_message">This operation will delete all information about this tracker. Are you sure you want to continue?</string>
+    <string name="forget_tracker_success">Tracker deleted</string>
 </resources>

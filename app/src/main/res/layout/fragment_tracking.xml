@@ -377,6 +377,21 @@
                     bind:subtitle="@{@string/website_manufacturer_detail}"
                     bind:title="@{@string/website_manufacturer}" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/forget_tracker_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="?attr/colorSurface"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/forget_tracker"
+                    android:textAllCaps="false"
+                    android:textColor="@color/tracker_not_following_blue" />
+
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

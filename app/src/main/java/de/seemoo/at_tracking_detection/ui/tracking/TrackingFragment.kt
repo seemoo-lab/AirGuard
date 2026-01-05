@@ -27,6 +27,7 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -179,6 +180,10 @@ class TrackingFragment : Fragment() {
 
         view.findViewById<View>(R.id.manufacturer_website).setOnClickListener {
             trackingViewModel.clickOnWebsite(requireContext())
+        }
+
+        view.findViewById<View>(R.id.forget_tracker_button).setOnClickListener {
+            showForgetTrackerDialog()
         }
 
         view.findViewById<CardView>(R.id.tracking_feedback).setOnClickListener {
@@ -420,6 +425,40 @@ class TrackingFragment : Fragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
+        }
+    }
+
+    private fun showForgetTrackerDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.forget_tracker_dialog_title))
+            .setMessage(getString(R.string.forget_tracker_dialog_message))
+            .setNegativeButton(R.string.cancel_button, null)
+            .setPositiveButton(R.string.yes_button) { _, _ ->
+                lifecycleScope.launch {
+                    val deleted = trackingViewModel.deleteDeviceAndRelatedData()
+                    if (deleted) {
+                        Toast.makeText(requireContext(), R.string.forget_tracker_success, Toast.LENGTH_SHORT).show()
+                        navigateAfterDeletion()
+                    } else {
+                        Snackbar.make(requireView(), R.string.delete_data_error, Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun navigateAfterDeletion() {
+        val navController = findNavController()
+        val popped = navController.popBackStack()
+        if (!popped) {
+            navController.navigate(
+                R.id.navigation_dashboard,
+                null,
+                NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, inclusive = false)
+                    .setLaunchSingleTop(true)
+                    .build()
+            )
         }
     }
 
