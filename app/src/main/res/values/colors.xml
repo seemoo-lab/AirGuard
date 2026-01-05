@@ -24,4 +24,37 @@
     <color name="tracker_following_red">#FF0000</color>
     <color name="low_risk_trackers_text_color">#000000</color>
     <color name="low_risk_trackers_background_color">#D3D3D3</color>
+
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#EADDFF</color>
+    <color name="md_theme_onPrimaryContainer">#21005D</color>
+
+    <color name="md_theme_secondary">#625B71</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#E8DEF8</color>
+    <color name="md_theme_onSecondaryContainer">#1D192B</color>
+
+    <color name="md_theme_tertiary">#7D5260</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_onTertiaryContainer">#31111D</color>
+
+    <color name="md_theme_error">#B3261E</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_errorContainer">#F9DEDC</color>
+    <color name="md_theme_onErrorContainer">#410E0B</color>
+
+    <color name="md_theme_background">#FEF7FF</color>
+    <color name="md_theme_onBackground">#1D1B20</color>
+
+    <color name="md_theme_surface">#FEF7FF</color>
+    <color name="md_theme_onSurface">#1D1B20</color>
+    <color name="md_theme_surfaceVariant">#E7E0EC</color>
+    <color name="md_theme_onSurfaceVariant">#49454F</color>
+    <color name="md_theme_outline">#79747E</color>
+
+    <color name="md_theme_surfaceContainerLow">#F7F2FA</color>
+    <color name="md_theme_surfaceContainer">#F3EDF7</color>
+    <color name="md_theme_surfaceContainerHigh">#ECE6F0</color>
 </resources>

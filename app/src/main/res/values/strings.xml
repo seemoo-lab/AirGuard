@@ -38,7 +38,6 @@
     <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but it might affect the stability of the app. When in doubt: leave this option disabled.</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
-    <string name="times_seen">Times seen</string>
     <string name="devices_swipe">Swipe to remove</string>
     <string name="devices_list_empty">Whenever the app detects an AirTag or another tracking device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
     <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile, Chipolo, Pebblebee) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new entry after a day.</string>
@@ -46,7 +45,6 @@
     <string name="settings_use_location_title">Use Location</string>
     <string name="error_requesting_location_permission">Error requesting background Location permission</string>
     <string name="tracking_locate_at_title">Play Sound</string>
-    <string name="tracking_locate_at_subtitle">Locate AirTag</string>
     <string name="permissions_background_location_title">Background Location</string>
     <string name="permission_background_location_message">By granting this permission, more detailed tracking information can be provided when being tracked. This is an optional feature.</string>
     <string name="ok_button">OK</string>
@@ -530,6 +528,8 @@
     <!-- TODO: Changed: Require Translation -->
     <string name="locations_tracked">Recent locations</string>
     <string name="all_devices_found">All recent devices</string>
+    <string name="times_seen">Seen</string>
+    <string name="tracking_locate_at_subtitle">Locate Tracker via Audio</string>
 
     <!-- TODO: New: Require Translation -->
     <string name="dismiss_article">Dismiss article</string>
@@ -558,4 +558,9 @@
     <string name="forget_tracker_dialog_title">Forget tracker?</string>
     <string name="forget_tracker_dialog_message">This operation will delete all information about this tracker. Are you sure you want to continue?</string>
     <string name="forget_tracker_success">Tracker deleted</string>
+
+    <string name="open_map_description">Open full screen map</string>
+    <string name="error_connection">Connection error</string>
+    <string name="active">Active</string>
+    <string name="actions">Actions</string>
 </resources>

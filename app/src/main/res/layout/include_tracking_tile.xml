@@ -1,154 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
+        <variable name="clickable" type="java.lang.Boolean" />
+        <variable name="checkable" type="java.lang.Boolean" />
+        <variable name="checked" type="java.lang.Boolean" />
+        <variable name="drawable" type="android.graphics.drawable.Drawable" />
+        <variable name="imageDescription" type="String" />
+        <variable name="title" type="String" />
+        <variable name="subtitle" type="String" />
 
-        <variable
-            name="clickable"
-            type="java.lang.Boolean" />
+        <variable name="isLoading" type="java.lang.Boolean" />
+        <variable name="isError" type="java.lang.Boolean" />
 
-        <variable
-            name="checkable"
-            type="java.lang.Boolean" />
-
-        <variable
-            name="checked"
-            type="java.lang.Boolean" />
-
-        <variable
-            name="drawable"
-            type="android.graphics.drawable.Drawable" />
-
-        <variable
-            name="imageDescription"
-            type="String" />
-
-        <variable
-            name="title"
-            type="String" />
-
-        <variable
-            name="subtitle"
-            type="String" />
-
-        <variable
-            name="showLoader"
-            type="java.lang.Boolean" />
-
-        <variable
-            name="vm"
-            type="de.seemoo.at_tracking_detection.ui.tracking.TrackingViewModel" />
-
+        <variable name="vm" type="de.seemoo.at_tracking_detection.ui.tracking.TrackingViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewElevatedStyle"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/md_theme_surfaceVariant"
+        app:strokeWidth="0dp"
+        app:checkedIcon="@null"
+        android:clickable="@{clickable}"
         android:checked="@{checked}"
         android:checkable="@{checkable}"
-        android:clickable="@{clickable}">
+        android:stateListAnimator="@null">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/tracking_guideline_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.80" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/tracking_guideline_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.35" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:minHeight="72dp">
 
             <ImageView
                 android:id="@+id/tracking_tile_image"
-                android:layout_width="wrap_content"
+                android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@{imageDescription}"
                 android:src="@{drawable}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/md_theme_primary"
                 tools:src="@drawable/ic_baseline_play_circle_outline_24" />
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="@{showLoader ? View.VISIBLE : View.INVISIBLE, default=invisible}"
-                app:layout_constraintBottom_toTopOf="@id/tracking_guideline_horizontal"
-                app:layout_constraintLeft_toRightOf="@id/tracking_guideline_right"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tracking_tile_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{title}"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/md_theme_onSurface"
+                    tools:text="Play Sound" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{subtitle}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:visibility="@{subtitle != null &amp;&amp; !subtitle.isEmpty() ? View.VISIBLE : View.GONE}"
+                    tools:text="Sound is playing..." />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <com.github.ybq.android.spinkit.SpinKitView
-                    android:id="@+id/tracking_playing_sound_indicator"
+                    android:id="@+id/tracking_loading_indicator"
                     style="@style/SpinKitView.Wave"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:indeterminate="true"
-                    android:visibility="@{vm.soundPlaying ? View.VISIBLE : View.INVISIBLE}"
-                    app:SpinKit_Color="?colorPrimary" />
-
-                <com.github.ybq.android.spinkit.SpinKitView
-                    android:id="@+id/tracking_connecting_indicator"
-                    style="@style/SpinKitView.Circle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:indeterminate="true"
-                    android:visibility="@{vm.connecting ? View.VISIBLE : View.INVISIBLE}"
-                    app:SpinKit_Color="?colorPrimary" />
+                    android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"
+                    app:SpinKit_Color="@color/md_theme_primary" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:contentDescription="@string/tracking_locate_at_playing_sound"
-                    android:scaleType="fitEnd"
-                    android:visibility="@{vm.error ? View.VISIBLE : View.INVISIBLE}"
-                    app:srcCompat="@drawable/ic_baseline_error_outline_24" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="@{isError ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_baseline_error_outline_24"
+                    app:tint="@color/md_theme_error"
+                    android:contentDescription="@string/error_connection" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="@{checked ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_check_circle"
+                    app:tint="@color/md_theme_primary"
+                    tools:visibility="visible"
+                    android:contentDescription="@string/active" />
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/tracking_tile_title"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:text="@{title}"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tracking_tile_image"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Title text" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoSizeMinTextSize="10sp"
-                android:autoSizeTextType="uniform"
-                android:text="@{subtitle}"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tracking_tile_title"
-                tools:text="Subtitle text" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
