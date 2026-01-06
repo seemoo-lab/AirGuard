@@ -18,7 +18,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -71,7 +71,7 @@ class ExportDeviceFragment: Fragment() {
 
     private var deviceAddress: String? = null
 
-    private lateinit var exportDocumentButton: Button
+    private lateinit var exportDocumentButton: MaterialButton
     private lateinit var progressBar: ProgressBar
 
     private lateinit var noInternetTextView: TextView
@@ -130,14 +130,17 @@ class ExportDeviceFragment: Fragment() {
         noInternetTextView = binding.noInternetTextView
         MapUtils.basicMapSetup(mapView)
 
+        // Ensure map card rounds corners
+        binding.mapContainer.clipToOutline = true
+
         mapView.setMultiTouchControls(false)
         mapView.setBuiltInZoomControls(false)
         mapView.setOnTouchListener { _, _ -> true }
 
         checkInternetAndLoadMap()
 
-        exportDocumentButton = view.findViewById<Button>(R.id.create_document_button)
-        progressBar = view.findViewById(R.id.progress_bar)
+        exportDocumentButton = binding.createDocumentButton
+        progressBar = binding.progressBar
 
         exportDocumentButton.setOnClickListener {
             val hasInternet = Utility.isInternetAvailable(requireContext())
@@ -164,7 +167,7 @@ class ExportDeviceFragment: Fragment() {
         beaconsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = beaconPreviewAdapter
-            // setHasFixedSize(true)
+            isNestedScrollingEnabled = false
         }
     }
 
@@ -480,7 +483,7 @@ class ExportDeviceFragment: Fragment() {
 
                 val beaconEntryHeight = getBeaconEntryHeight(beaconLocation, show15MinuteWarning)
 
-                // Check if the *entire* beacon entry fits on the current page
+                // Check if the entire beacon entry fits on the current page
                 if (yPos + beaconEntryHeight > drawablePageHeight) {
                     Timber.d("Beacon entry doesn't fit on page $currentPageNumber, creating new page.")
                     drawPageFooter(canvas, currentPageNumber, totalPages, textPaint)
@@ -614,7 +617,6 @@ class ExportDeviceFragment: Fragment() {
         }
         yPos += basicInfoHeight
 
-        // --- Simulate Map ---
         val hasInternet = Utility.isInternetAvailable(requireContext())
         if (hasInternet) {
             val mapBitmap = createMapBitmap() // Need to create it to get dimensions

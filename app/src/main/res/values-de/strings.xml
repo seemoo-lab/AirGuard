@@ -43,7 +43,7 @@
     <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, Find My-Gerät, SmartTag, Google Mein Gerät finden-Gerät, Pebblebee, Chipolo oder Tile erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
-    <string name="tracking_feedback_subtitle">Mehr Informationen mitteilen</string>
+    <string name="tracking_feedback_subtitle">Hilf uns bei unserer Forschung</string>
     <string name="tracking_detail_scan_title">Gerät orten</string>
     <string name="tracking_detail_scan_subtitle">Zeigt Live Informationen über diesen Tracker</string>
     <string name="tracking_ignore_device_title">Gerät ignorieren</string>

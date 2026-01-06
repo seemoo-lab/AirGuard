@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentObserveTrackerBinding
@@ -25,8 +24,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import de.seemoo.at_tracking_detection.worker.ScheduleWorkersReceiver
 
-
-class ObserveTrackerFragment: Fragment() {
+class ObserveTrackerFragment: BottomSheetDialogFragment() {
     private val viewModel: ObserveTrackerViewModel by viewModels()
     private val safeArgs: ObserveTrackerFragmentArgs by navArgs()
 
@@ -37,12 +35,7 @@ class ObserveTrackerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        if (deviceAddress != null) {
-//            val text = view.findViewById<TextView>(R.id.changing_id_text)
-//            text.visibility = View.VISIBLE
-//        }
-
-        val observationButton = view.findViewById<Button>(R.id.start_observation_button)
+        val observationButton = view.findViewById<MaterialButton>(R.id.start_observation_button)
 
         if (deviceAddress != null) {
             val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()!!.deviceRepository
@@ -54,11 +47,11 @@ class ObserveTrackerFragment: Fragment() {
                     explanationText.text = getString(R.string.observe_tracker_stop_observation_explanation)
 
                     observationButton.text = getString(R.string.observe_tracker_stop_observation)
+                    observationButton.setIconResource(R.drawable.ic_baseline_close_24) // Change icon for stop action
 
                     observationButton.setOnClickListener {
                         val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-                        // Because update is a suspend function, we need a coroutine
                         val coroutine = coroutineScope.launch {
                             try {
                                 withContext(Dispatchers.IO) {
@@ -68,10 +61,8 @@ class ObserveTrackerFragment: Fragment() {
                                     device.currentObservationDuration = null
 
                                     deviceRepository.update(device)
-                                    // ScheduleWorkersReceiver.cancelWorker(requireContext(), device.address)
                                 }
                             } catch (e: Exception) {
-                                // Handle any exceptions here
                                 e.printStackTrace()
                             }
 
@@ -81,11 +72,9 @@ class ObserveTrackerFragment: Fragment() {
                             withContext(Dispatchers.Main) {
                                 toast.show()
                             }
-
-                            findNavController().popBackStack()
+                            dismiss()
                         }
 
-                        // Ensure coroutine cancellation if needed
                         viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
                             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                                 if (event == Lifecycle.Event.ON_DESTROY) {
@@ -106,7 +95,6 @@ class ObserveTrackerFragment: Fragment() {
                     observationButton.setOnClickListener {
                         val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-                        // Because update is a suspend function, we need a coroutine
                         val coroutine = coroutineScope.launch {
                             try {
                                 withContext(Dispatchers.IO) {
@@ -121,7 +109,6 @@ class ObserveTrackerFragment: Fragment() {
                                     ScheduleWorkersReceiver.scheduleWorker(requireContext(), device.address)
                                 }
                             } catch (e: Exception) {
-                                // Handle any exceptions here
                                 e.printStackTrace()
                             }
 
@@ -131,11 +118,9 @@ class ObserveTrackerFragment: Fragment() {
                             withContext(Dispatchers.Main) {
                                 toast.show()
                             }
-
-                            findNavController().popBackStack()
+                            dismiss()
                         }
 
-                        // Ensure coroutine cancellation if needed
                         viewLifecycleOwner.lifecycle.addObserver(
                             LifecycleEventObserver { _, event ->
                                 if (event == Lifecycle.Event.ON_DESTROY) {
@@ -145,7 +130,6 @@ class ObserveTrackerFragment: Fragment() {
                         )
                     }
                 }
-
             }
         }
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -10,90 +11,84 @@
         <import type="android.view.View" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:background="@color/md_theme_surface">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"/>
 
-            <!-- Headline -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp">
+
+            <ImageView
+                android:id="@+id/clock_icon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                bind:srcCompat="@drawable/ic_clock"
+                app:tint="@color/md_theme_primary"
+                android:contentDescription="@string/observe_tracker_clock_description" />
+
             <TextView
                 android:id="@+id/headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
                 android:text="@string/observe_tracker_title"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textColor="@color/md_theme_onSurface"
                 android:gravity="center"
-                android:visibility="gone"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toTopOf="parent" />
+                android:visibility="visible" />
 
-            <!-- Clock icon -->
-            <ImageView
-                android:id="@+id/clock_icon"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:padding="16dp"
-                bind:layout_constraintBottom_toTopOf="@+id/explanation_text"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/headline"
-                bind:srcCompat="@drawable/ic_clock"
-                bind:tint="?attr/colorControlNormal"
-                android:contentDescription="@string/observe_tracker_clock_description" />
-
-            <!-- Explanation text -->
             <TextView
                 android:id="@+id/explanation_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:textSize="18sp"
                 android:text="@string/observe_tracker_explanation"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="@color/md_theme_onSurfaceVariant"
                 android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                bind:layout_constraintBottom_toTopOf="@+id/changing_id_text"
-                bind:layout_constraintTop_toBottomOf="@+id/clock_icon"/>
+                android:layout_marginBottom="16dp" />
 
-            <!-- Explanation text about id changing -->
             <TextView
                 android:id="@+id/changing_id_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="16dp"
                 android:text="@string/observe_tracker_changing_id"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:textColor="#FF0000"
-                bind:layout_constraintBottom_toTopOf="@+id/start_observation_button"
-                bind:layout_constraintTop_toBottomOf="@+id/explanation_text"
-                tools:layout_editor_absoluteX="0dp" />
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/md_theme_onErrorContainer"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/shape_rounded_rectangle"
+                android:backgroundTint="@color/md_theme_errorContainer"
+                android:padding="12dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
-            <!-- Start observation button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/start_observation_button"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:paddingVertical="12dp"
                 android:text="@string/observe_tracker_start_observation"
-                android:textSize="18sp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/md_theme_onSecondaryContainer"
+                app:backgroundTint="@color/md_theme_secondaryContainer"
+                app:icon="@drawable/ic_clock"
+                app:iconTint="@color/md_theme_onSecondaryContainer"
+                app:iconGravity="textStart" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
+        </LinearLayout>
+    </LinearLayout>
 </layout>

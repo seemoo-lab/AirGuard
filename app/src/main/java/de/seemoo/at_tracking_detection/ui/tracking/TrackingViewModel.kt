@@ -61,6 +61,11 @@ class TrackingViewModel @Inject constructor(
 
     val isMapLoading = MutableLiveData(false)
 
+    // feedback: visible only if notification exists and sharing data is enabled
+    val showFeedback = notificationId.map { id ->
+        id != -1 && SharedPrefs.shareData
+    }
+
     // Reactively update markers when beacons are written
     // This is relevant for the case when a user very quickly opens the map from the manual scan while the device and beacons are still beeing written
     val markerLocations: LiveData<List<Beacon>> = deviceAddress.switchMap { address ->

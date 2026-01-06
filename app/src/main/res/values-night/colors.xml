@@ -5,6 +5,8 @@
     <color name="low_risk_trackers_background_color">#424242</color>
     <color name="tracker_not_following_blue">#8a8aff</color>
     <color name="tracker_following_red">#FB6161</color>
+
+    <!-- Material Design Colors -->
     <color name="md_theme_primary">#D0BCFF</color>
     <color name="md_theme_onPrimary">#381E72</color>
     <color name="md_theme_primaryContainer">#4F378B</color>

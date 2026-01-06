@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Deprecated Colors -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -25,6 +26,7 @@
     <color name="low_risk_trackers_text_color">#000000</color>
     <color name="low_risk_trackers_background_color">#D3D3D3</color>
 
+    <!-- Material Design Colors -->
     <color name="md_theme_primary">#6750A4</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#EADDFF</color>
@@ -57,4 +59,7 @@
     <color name="md_theme_surfaceContainerLow">#F7F2FA</color>
     <color name="md_theme_surfaceContainer">#F3EDF7</color>
     <color name="md_theme_surfaceContainerHigh">#ECE6F0</color>
+
+    <!-- Additional Colors -->
+    <!-- state_risk_high etc. for Risk Card, but also in new color palette -->
 </resources>

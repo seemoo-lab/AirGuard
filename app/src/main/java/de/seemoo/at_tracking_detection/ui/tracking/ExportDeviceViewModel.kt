@@ -19,7 +19,7 @@ import java.time.format.FormatStyle
 
 class ExportDeviceViewModel : ViewModel() {
     val followingStatusText = MutableLiveData<String>()
-    var followingStatusColor = MutableLiveData(R.color.warning_light_red)
+    var followingStatusColor = MutableLiveData(R.color.md_theme_error)
     val basicInfoText = MutableLiveData("Loading")
     val beaconPreviewList = MutableLiveData<List<BeaconPreviewItem>>()
 
@@ -53,15 +53,15 @@ class ExportDeviceViewModel : ViewModel() {
             val trackerFollowing = isTrackerFollowing(device)
             if (trackerFollowing) {
                 followingStatusText.postValue(context.getString(R.string.export_trackers_following))
-                followingStatusColor.postValue(ContextCompat.getColor(context, R.color.tracker_following_red))
+                followingStatusColor.postValue(ContextCompat.getColor(context, R.color.md_theme_error))
             } else {
                 if (device.ignore) {
                     followingStatusText.postValue(context.getString(R.string.export_trackers_ignored))
+                    followingStatusColor.postValue(ContextCompat.getColor(context, R.color.md_theme_secondary))
                 } else {
                     followingStatusText.postValue(context.getString(R.string.export_trackers_not_following))
+                    followingStatusColor.postValue(ContextCompat.getColor(context, R.color.md_theme_primary))
                 }
-                followingStatusColor.postValue(ContextCompat.getColor(context, R.color.tracker_not_following_blue))
-
             }
 
             val deviceTypeStr = DeviceManager.deviceTypeToString(device.deviceType ?: DeviceType.UNKNOWN)

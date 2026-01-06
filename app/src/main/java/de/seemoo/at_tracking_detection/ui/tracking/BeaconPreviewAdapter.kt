@@ -1,4 +1,4 @@
-package de.seemoo.at_tracking_detection.ui.tracking // Or your adapters package
+package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.view.LayoutInflater
 import android.view.View

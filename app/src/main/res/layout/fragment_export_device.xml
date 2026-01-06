@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -10,147 +11,179 @@
         <import type="android.view.View" />
     </data>
 
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/md_theme_background"
+        android:fillViewport="true">
 
-        <!-- Scrollable Content Area -->
-        <ScrollView
-            android:id="@+id/content_scrollview"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/bottom_bar_container"
-            android:fillViewport="true"> <!-- Ensure ScrollView fills space -->
+            android:layout_height="wrap_content"
+            android:paddingBottom="32dp">
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/map_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- 1. Following Status -->
-                <TextView
-                    android:id="@+id/following_status_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:gravity="start"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textStyle="bold"
-                    android:text="@{vm.followingStatusText}"
-                    android:textColor="@{vm.followingStatusColor}"
-                    tools:text="@string/export_trackers_following" />
-
-                <!-- 2. Basic Info -->
-                <TextView
-                    android:id="@+id/basic_info_title_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/export_trackers_basic_info_title"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/basic_info_content_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:lineSpacingExtra="4dp"
-                    android:text="@{vm.basicInfoText}"
-                    tools:text="Type: Unknown\nMAC: AA:BB:CC:DD:EE:FF\nFirst Seen: Jan 1, 2024\nLast Seen: Jan 10, 2024\nDetections: 50\nUnique Locations: 10" />
-
-                <!-- 15-minute algorithm caution label -->
-                <TextView
-                    android:id="@+id/fifteen_minute_caution_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:text="@string/export_trackers_algo_warning_text"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:textColor="@color/tracker_following_red"
-                    android:visibility="@{vm.warning15MinAlgoVisible ? View.VISIBLE : View.GONE}"
-                    tools:visibility="visible"/>
-
-                <!-- 3. Map -->
-                <TextView
-                    android:id="@+id/map_title_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/export_trackers_map_title"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold" />
+                android:layout_height="280dp"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <org.osmdroid.views.MapView
                     android:id="@+id/map_preview"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginBottom="24dp"/>
+                    android:layout_height="match_parent" />
 
-                <!-- "No Internet" Message (if map cannot load) -->
                 <TextView
                     android:id="@+id/no_internet_text_view"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/export_trackers_no_internet_during_generation"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:background="@color/md_theme_surfaceContainerLow"
                     android:visibility="gone"
                     tools:visibility="visible" />
+            </androidx.cardview.widget.CardView>
 
-                <!-- 4. Beacons -->
-                <TextView
-                    android:id="@+id/beacons_title_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/export_trackers_detections_title"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/following_status_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:text="@{vm.followingStatusText}"
+                android:textColor="@{vm.followingStatusColor}"
+                app:layout_constraintTop_toBottomOf="@id/map_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="@string/export_trackers_following" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/beacons_recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    bind:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="vertical"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_beacon_preview"
-                    tools:itemCount="5" />
+            <TextView
+                android:id="@+id/basic_info_title_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/export_trackers_basic_info_title"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/md_theme_primary"
+                app:layout_constraintTop_toBottomOf="@id/following_status_textview" />
 
-            </LinearLayout>
-        </ScrollView>
-
-        <!-- Fixed Bottom Bar Area -->
-        <FrameLayout
-            android:id="@+id/bottom_bar_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="?android:attr/windowBackground" >
-
-            <Button
-                android:id="@+id/create_document_button"
+            <TextView
+                android:id="@+id/basic_info_content_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:padding="16dp"
-                android:text="@string/export_trackers_create_document" />
+                android:layout_marginHorizontal="20dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:lineSpacingExtra="4dp"
+                android:text="@{vm.basicInfoText}"
+                app:layout_constraintTop_toBottomOf="@id/basic_info_title_textview"
+                tools:text="Type: Unknown\nMAC: AA:BB\nSeen: Jan 1" />
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/warning_card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-        </FrameLayout>
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                app:cardBackgroundColor="@color/md_theme_errorContainer"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="0dp"
+                app:cardElevation="0dp"
+                android:visibility="@{vm.warning15MinAlgoVisible ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@id/basic_info_content_textview">
 
-    </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_error_outline_24"
+                        app:tint="@color/md_theme_onErrorContainer"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/fifteen_minute_caution_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/export_trackers_algo_warning_text"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                        android:textColor="@color/md_theme_onErrorContainer" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/beacons_title_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/export_trackers_detections_title"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@color/md_theme_primary"
+                app:layout_constraintTop_toBottomOf="@id/warning_card" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/beacons_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="vertical"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/beacons_title_textview"
+                tools:listitem="@layout/item_beacon_preview"
+                tools:itemCount="3" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/beacons_recyclerview">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_document_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="12dp"
+                    android:text="@string/export_trackers_create_document"
+                    android:textColor="@color/md_theme_onSecondaryContainer"
+                    app:backgroundTint="@color/md_theme_secondaryContainer"
+                    app:icon="@drawable/ic_baseline_attach_file_24"
+                    app:iconTint="@color/md_theme_onSecondaryContainer"
+                    app:iconGravity="textStart" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

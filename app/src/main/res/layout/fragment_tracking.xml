@@ -77,7 +77,7 @@
                 <include
                     android:id="@+id/tracking_feedback"
                     layout="@layout/include_tracking_tile"
-                    android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{vm.showFeedback ? View.VISIBLE : View.GONE}"
                     bind:clickable="@{true}"
                     bind:drawable="@{@drawable/ic_baseline_feedback_24}"
                     bind:title="@{@string/tracking_feedback_title}"
