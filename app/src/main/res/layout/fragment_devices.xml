@@ -21,12 +21,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:animateLayoutChanges="true"
-        android:paddingHorizontal="10dp">
+        android:background="@color/md_theme_background"
+        android:paddingHorizontal="16dp">
 
         <FrameLayout
             android:id="@+id/filter_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             tools:layout="@layout/dialog_filter">
         </FrameLayout>
@@ -65,6 +67,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
-
-
 </layout>

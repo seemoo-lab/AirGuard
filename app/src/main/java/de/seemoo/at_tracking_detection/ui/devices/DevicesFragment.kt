@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.ui.devices
 
 import android.Manifest
 import android.graphics.Canvas
-import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter
 import android.transition.TransitionInflater
@@ -14,6 +13,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -234,8 +234,7 @@ class DevicesFragment : Fragment() {
     private fun swipeToDeleteCallback(swipeDirs: Int) =
         object :
             ItemTouchHelper.SimpleCallback(0, swipeDirs) {
-            private val editBackground = Color.GRAY.toDrawable()
-            private val heartBackground = editBackground
+            // Material 3 Colors will be initialized in onChildDraw where context is available
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -255,54 +254,74 @@ class DevicesFragment : Fragment() {
                 isCurrentlyActive: Boolean
             ) {
                 val itemView = viewHolder.itemView
+                val context = itemView.context
 
-                val editIcon =
-                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_edit_24)
-                val heartIcon =
-                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_heart_filled)
+                // Material3 Colors
+                val editColor = ContextCompat.getColor(context, R.color.md_theme_secondaryContainer)
+                val heartColor = ContextCompat.getColor(context, R.color.md_theme_tertiaryContainer)
+                val editIconTint = ContextCompat.getColor(context, R.color.md_theme_onSecondaryContainer)
+                val heartIconTint = ContextCompat.getColor(context, R.color.md_theme_onTertiaryContainer)
+
+                val editBackground = editColor.toDrawable()
+                val heartBackground = heartColor.toDrawable()
+
+                val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)?.mutate()
+                editIcon?.let {
+                    DrawableCompat.setTint(it, editIconTint)
+                }
+
+                val heartIcon = ContextCompat.getDrawable(context, R.drawable.ic_heart_filled)?.mutate()
+                heartIcon?.let {
+                    DrawableCompat.setTint(it, heartIconTint)
+                }
 
                 var transitionX = dX
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     when {
                         dX > 0 -> {
+                            // Right swipe (Heart)
                             val limitedDx = dX / 4f
-                            val iconMargin = (itemView.height - heartIcon!!.intrinsicHeight) / 2
-                            val iconTop =
-                                itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
-                            val iconBottom = iconTop + heartIcon.intrinsicHeight
-                            val iconLeft = itemView.left + iconMargin
-                            val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
-                            heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                            heartBackground.setBounds(
-                                itemView.left,
-                                itemView.top,
-                                (itemView.left + limitedDx).toInt(),
-                                itemView.bottom
-                            )
-                            heartBackground.draw(c)
-                            heartIcon.draw(c)
+                            if (heartIcon != null) {
+                                val iconMargin = (itemView.height - heartIcon.intrinsicHeight) / 2
+                                val iconTop = itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
+                                val iconBottom = iconTop + heartIcon.intrinsicHeight
+                                val iconLeft = itemView.left + iconMargin
+                                val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
+                                heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                                heartBackground.setBounds(
+                                    itemView.left,
+                                    itemView.top,
+                                    (itemView.left + limitedDx).toInt(),
+                                    itemView.bottom
+                                )
+                                heartBackground.draw(c)
+                                heartIcon.draw(c)
+                            }
                             transitionX = limitedDx
                         }
-                         dX < 0 -> {
-                             val iconMargin = (itemView.height - editIcon!!.intrinsicHeight) / 2
-                             val iconTop =
-                                 itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
-                             val iconBottom = iconTop + editIcon.intrinsicHeight
-                             val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
-                             val iconRight = itemView.right - iconMargin
-                             editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                             val limitedDx = dX / 4f
-                             editBackground.setBounds(
-                                 (itemView.right + limitedDx).toInt(),
-                                 itemView.top,
-                                 itemView.right,
-                                 itemView.bottom
-                             )
-                             transitionX = limitedDx
-                             editBackground.draw(c)
-                             editIcon.draw(c)
-                         }
+                        dX < 0 -> {
+                            // Left swipe (Edit)
+                            val limitedDx = dX / 4f
+                            if (editIcon != null) {
+                                val iconMargin = (itemView.height - editIcon.intrinsicHeight) / 2
+                                val iconTop = itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
+                                val iconBottom = iconTop + editIcon.intrinsicHeight
+                                val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
+                                val iconRight = itemView.right - iconMargin
+                                editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                                editBackground.setBounds(
+                                    (itemView.right + limitedDx).toInt(),
+                                    itemView.top,
+                                    itemView.right,
+                                    itemView.bottom
+                                )
+                                editBackground.draw(c)
+                                editIcon.draw(c)
+                            }
+                            transitionX = limitedDx
+                        }
                     }
                 }
 
@@ -315,7 +334,6 @@ class DevicesFragment : Fragment() {
                     actionState,
                     isCurrentlyActive
                 )
-
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -350,9 +368,9 @@ class DevicesFragment : Fragment() {
                     devicesViewModel.setHeartState(device.address, !device.hearted)
                     deviceAdapter.notifyDataSetChanged()
                     Timber.d("Toggled heart for ${device.address} to ${!device.hearted}")
-                 }
-             }
-         }
+                }
+            }
+        }
 
     private fun applyPreselectFilters() {
         // remove the date range filter

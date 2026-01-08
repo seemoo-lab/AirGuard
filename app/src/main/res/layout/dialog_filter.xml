@@ -14,9 +14,10 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        style="?attr/materialCardViewElevatedStyle"
-        app:cardBackgroundColor="?attr/colorSurfaceContainerLow">
+        app:cardCornerRadius="28dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/md_theme_surfaceContainerLow">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -29,9 +30,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:paddingVertical="4dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingVertical="8dp"
                 android:background="?attr/selectableItemBackground"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +44,7 @@
                     android:layout_height="48dp"
                     style="@style/Widget.Material3.Button.IconButton"
                     app:icon="@drawable/ic_baseline_keyboard_arrow_down_24"
-                    app:iconTint="?attr/colorOnSurfaceVariant"
+                    app:iconTint="@color/md_theme_onSurfaceVariant"
                     android:contentDescription="@string/filter" />
 
                 <TextView
@@ -53,7 +54,7 @@
                     android:layout_weight="1"
                     android:text="@{viewModel.filterSummaryText}"
                     style="@style/TextAppearance.Material3.BodyLarge"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@color/md_theme_onSurface"
                     android:maxLines="2"
                     android:ellipsize="end"
                     android:paddingHorizontal="8dp"
@@ -65,7 +66,7 @@
                     android:layout_height="48dp"
                     style="@style/Widget.Material3.Button.IconButton"
                     app:icon="@drawable/ic_baseline_filter_list_24"
-                    app:iconTint="?attr/colorOnSurfaceVariant"
+                    app:iconTint="@color/md_theme_onSurfaceVariant"
                     android:contentDescription="@string/sort_list" />
 
             </LinearLayout>
@@ -75,6 +76,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.filterIsExpanded ? View.VISIBLE : View.GONE}"
+                app:dividerColor="@color/md_theme_outline"
+                android:alpha="0.2"
                 app:layout_constraintTop_toBottomOf="@id/filter_header_container"/>
 
             <androidx.core.widget.NestedScrollView
@@ -103,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_title_device_attributes"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/md_theme_primary"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"/>
 
@@ -139,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_title_device_types"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/md_theme_primary"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 
@@ -154,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_date_range_picker_title"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/md_theme_primary"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 
