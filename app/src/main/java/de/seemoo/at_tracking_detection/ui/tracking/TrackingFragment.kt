@@ -20,7 +20,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
-import androidx.core.graphics.toColorInt
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -270,18 +269,6 @@ class TrackingFragment : Fragment() {
         }
 
         val commentEditText = view.findViewById<EditText>(R.id.device_comment)
-
-        // Set colors of the EditText for the comment based on the selected theme
-        // Hint: In the future this should be replaced with the new color, theme system
-        if (Utility.isActualThemeDark(requireContext())) {
-            commentEditText.setBackgroundColor(resources.getColor(R.color.light_black))
-            commentEditText.setTextColor("#FFFFFF".toColorInt())
-            commentEditText.setHintTextColor(resources.getColor(R.color.light_grey))
-        } else {
-            commentEditText.setBackgroundColor("#FFFFFF".toColorInt())
-            commentEditText.setTextColor("#222222".toColorInt())
-            commentEditText.setHintTextColor(resources.getColor(R.color.grey))
-        }
 
         trackingViewModel.deviceComment.observe(viewLifecycleOwner) { comment ->
             if (commentEditText.text.toString() != comment) {

@@ -1,11 +1,18 @@
 package de.seemoo.at_tracking_detection.ui.scan
 
 import android.animation.ObjectAnimator
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +25,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getBatteryState
@@ -26,6 +35,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Compani
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice.Companion.getUniqueIdentifier
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -41,9 +51,12 @@ import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@AndroidEntryPoint
 class ScanDistanceFragment : Fragment() {
     private val viewModel: ScanDistanceViewModel by viewModels()
     private val safeArgs: ScanDistanceFragmentArgs by navArgs()
@@ -54,10 +67,7 @@ class ScanDistanceFragment : Fragment() {
     private var subTypeSamsung: SamsungTrackerType? = null
     private var subTypeGoogle: GoogleFindMyNetworkType? = null
 
-//    sealed class SubType {
-//        data class SamsungValue(val value: SamsungTrackerType) : SubType()
-//        data class GoogleValue(val value: GoogleFindMyNetworkType) : SubType()
-//    }
+    private var isReceiverRegistered = false
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -76,6 +86,11 @@ class ScanDistanceFragment : Fragment() {
 
                 if (getUniqueIdentifier(scanResult) == filteredIdentifier){
                     latestWrappedScanResult = ScanResultWrapper(scanResult)
+
+                    // Populate current device in ViewModel for sound playing
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    var device = deviceRepository.getDevice(filteredIdentifier)
+                    viewModel.currentDevice.postValue(device)
 
                     if (deviceType == null) {
                         deviceType = DeviceManager.getDeviceType(scanResult)
@@ -101,12 +116,10 @@ class ScanDistanceFragment : Fragment() {
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
 
-                        // TODO: add drawable
                         val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
-                        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-                        val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
+
                         val deviceNameFromDB = device?.name
 
                         if (device?.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && googleSubType == GoogleFindMyNetworkType.TAG && deviceNameFromDB != null && deviceNameFromDB != "") {
@@ -156,37 +169,27 @@ class ScanDistanceFragment : Fragment() {
     private fun removeSearchMessage() {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
-        binding.connectionQuality.visibility = View.VISIBLE
-        binding.deviceIcon.visibility = View.VISIBLE
+        binding.infoContainer.visibility = View.VISIBLE
         binding.batteryLayout.visibility = if (SharedPrefs.advancedMode) View.VISIBLE else View.GONE
-        binding.deviceTypeLayout.visibility = View.VISIBLE
-        binding.connectionStateLayout.visibility = View.VISIBLE
-        binding.scanExplanationLayout.visibility = View.VISIBLE
         binding.deviceNotFound.visibility = View.GONE
+        binding.actionsContainer.visibility = View.VISIBLE
+        binding.playSoundButton.visibility = View.VISIBLE
     }
 
     private fun showSearchMessage() {
         binding.scanResultLoadingBar.visibility = View.VISIBLE
         binding.searchingForDevice.visibility = View.VISIBLE
-        binding.connectionQuality.visibility = View.GONE
-        binding.deviceIcon.visibility = View.GONE
-        binding.batteryLayout.visibility = View.GONE
-        binding.scanExplanationLayout.visibility = View.GONE
-        binding.deviceTypeLayout.visibility = View.GONE
-        binding.connectionStateLayout.visibility = View.GONE
+        binding.infoContainer.visibility = View.GONE
         binding.deviceNotFound.visibility = View.GONE
+        binding.actionsContainer.visibility = View.GONE
     }
 
     private fun deviceNotFound() {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
-        binding.connectionQuality.visibility = View.GONE
-        binding.deviceIcon.visibility = View.GONE
-        binding.batteryLayout.visibility = View.GONE
-        binding.scanExplanationLayout.visibility = View.GONE
-        binding.deviceTypeLayout.visibility = View.GONE
-        binding.connectionStateLayout.visibility = View.GONE
+        binding.infoContainer.visibility = View.GONE
         binding.deviceNotFound.visibility = View.VISIBLE
+        binding.actionsContainer.visibility = View.GONE
 
         setHeight(1f, 100L)
     }
@@ -406,12 +409,96 @@ class ScanDistanceFragment : Fragment() {
             Toast.makeText(requireContext(), text, duration).show()
         }
 
+        binding.playSoundButton.setOnClickListener {
+            handlePlaySound()
+        }
+
         return binding.root
+    }
+
+    private fun handlePlaySound() {
+        if (!Utility.checkAndRequestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+            return
+        }
+
+        // We need the baseDevice to play sound.
+        // We try to get it from ViewModel which is populated during scan
+        val baseDevice = viewModel.currentDevice.value
+        if (baseDevice != null && baseDevice.device is Connectable) {
+            toggleSound()
+        } else {
+            Snackbar.make(
+                requireView(),
+                getString(R.string.tracking_device_not_connectable),
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun toggleSound() {
+        viewModel.error.postValue(false)
+        if (viewModel.soundPlaying.value == false) {
+            viewModel.connecting.postValue(true)
+            val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
+            requireContext().bindService(
+                gattServiceIntent,
+                serviceConnection,
+                Context.BIND_AUTO_CREATE
+            )
+        } else {
+            Timber.d("Sound already playing! Stopping sound...")
+            viewModel.soundPlaying.postValue(false)
+        }
+    }
+
+    // Broadcast Receiver for Bluetooth Events (copied logic from TrackingFragment)
+    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                BluetoothConstants.ACTION_EVENT_RUNNING -> {
+                    viewModel.soundPlaying.postValue(true)
+                    viewModel.connecting.postValue(false)
+                }
+                BluetoothConstants.ACTION_GATT_DISCONNECTED -> {
+                    viewModel.soundPlaying.postValue(false)
+                    viewModel.connecting.postValue(false)
+                }
+                BluetoothConstants.ACTION_EVENT_FAILED -> {
+                    viewModel.error.postValue(true)
+                    viewModel.connecting.postValue(false)
+                    viewModel.soundPlaying.postValue(false)
+                }
+                BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.soundPlaying.postValue(false)
+            }
+        }
+    }
+
+    private val serviceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Timber.d("Trying to connect to ble device!")
+            val bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
+            bluetoothService.let {
+                if (!it.init()) {
+                    Timber.e("Unable to init bluetooth")
+                    viewModel.error.postValue(true)
+                } else {
+                    Timber.d("Device is ready to connect!")
+                    viewModel.currentDevice.value?.let { baseDevice ->
+                        it.connect(baseDevice)
+                    }
+                }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            viewModel.soundPlaying.postValue(false)
+            viewModel.connecting.postValue(false)
+        }
     }
 
     private fun defineRetrieveOwnerOnClickBehaviour(deviceNameFromDB: String? = null) {
         binding.retrieveOwnerInformationButton.setOnClickListener {
-            val builder = AlertDialog.Builder(requireContext())
+            val builder = MaterialAlertDialogBuilder(requireContext())
             builder.setTitle(R.string.retrieve_owner_information_alert_title)
 
             val displayName: String = deviceNameFromDB ?: viewModel.displayName.value ?: ""
@@ -613,7 +700,7 @@ class ScanDistanceFragment : Fragment() {
                     viewModel.displayName.postValue(deviceName)
                 }
 
-                    updateDeviceIcon()
+                updateDeviceIcon()
                 binding.progressCircular.visibility = View.GONE
                 binding.deviceTypeText.visibility = View.VISIBLE
             }
@@ -641,6 +728,7 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         viewModel.refreshLocationState()
@@ -648,6 +736,25 @@ class ScanDistanceFragment : Fragment() {
         determineDeviceTypeButtonVisible()
         showSearchMessage()
         startBluetoothScan()
+
+        // Register BroadcastReceiver for Sound
+
+        val activity = ATTrackingDetectionApplication.getCurrentActivity()
+        if (activity != null && !isReceiverRegistered) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                activity.registerReceiver(
+                    gattUpdateReceiver,
+                    DeviceManager.gattIntentFilter,
+                    Context.RECEIVER_NOT_EXPORTED
+                )
+            } else {
+                activity.registerReceiver(
+                    gattUpdateReceiver,
+                    DeviceManager.gattIntentFilter
+                )
+            }
+            isReceiverRegistered = true
+        }
     }
 
     override fun onStart() {
@@ -664,6 +771,32 @@ class ScanDistanceFragment : Fragment() {
         super.onPause()
         showSearchMessage()
         stopBluetoothScan()
+
+        // Unregister BroadcastReceiver
+        if (isReceiverRegistered) {
+            val activity = ATTrackingDetectionApplication.getCurrentActivity()
+            try {
+                if (activity != null) {
+                    activity.unregisterReceiver(gattUpdateReceiver)
+                } else {
+                    context?.unregisterReceiver(gattUpdateReceiver)
+                }
+            } catch (e: IllegalArgumentException) {
+                Timber.e("Receiver not registered or already unregistered")
+            }
+            isReceiverRegistered = false
+        }
+
+        // Stop sound if playing
+        if (viewModel.soundPlaying.value == true || viewModel.connecting.value == true) {
+            try {
+                requireContext().unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                Timber.e("Tried to unbind an unbound service!")
+            }
+            viewModel.soundPlaying.postValue(false)
+            viewModel.connecting.postValue(false)
+        }
     }
 
     override fun onDestroyView() {

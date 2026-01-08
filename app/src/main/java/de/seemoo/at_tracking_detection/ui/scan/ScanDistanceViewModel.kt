@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
@@ -16,6 +17,12 @@ class ScanDistanceViewModel: ViewModel() {
     var batteryState = MutableLiveData<BatteryState>()
     var connectionQuality = MutableLiveData<Int>()
     var isFirstScanCallback = MutableLiveData<Boolean>(true)
+
+    // Sound Playback LiveData
+    val soundPlaying = MutableLiveData(false)
+    val connecting = MutableLiveData(false)
+    val error = MutableLiveData(false)
+    val currentDevice = MutableLiveData<BaseDevice?>()
 
     var bluetoothEnabled = MutableLiveData(true)
     var locationEnabled = MutableLiveData(true)
