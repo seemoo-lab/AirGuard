@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -15,6 +14,7 @@ import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
@@ -107,8 +107,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
         deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
-                // Show confirmation dialog
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setTitle(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_title))
                     .setMessage(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_text))
                     .setPositiveButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_yes)) { _, _ ->

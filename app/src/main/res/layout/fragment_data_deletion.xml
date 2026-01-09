@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/md_theme_surface"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center_horizontal"
+    android:paddingBottom="24dp">
 
-    <ScrollView
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        app:tint="@color/md_theme_onSurfaceVariant" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+    <TextView
+        android:id="@+id/deletion_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/settings_delete_study_data_title"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textColor="@color/md_theme_onSurface"
+        android:gravity="center" />
 
-            <TextView
-                android:id="@+id/deletion_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/delete_data_explanation"
-                android:gravity="center"/>
-        </LinearLayout>
-    </ScrollView>
+    <TextView
+        android:id="@+id/deletion_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/md_theme_onSurfaceVariant"
+        android:text="@string/delete_data_explanation"
+        android:gravity="center"/>
 
     <Button
         android:id="@+id/delete_button"
+        style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="@color/md_theme_error"
+        android:textColor="@color/md_theme_onError"
         android:padding="16dp"
-        android:text="@string/delete_data_button"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+        android:text="@string/delete_data_button" />
 
 </LinearLayout>

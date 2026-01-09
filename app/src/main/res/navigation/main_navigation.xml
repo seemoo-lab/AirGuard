@@ -95,12 +95,12 @@
     </fragment>
 
     <!-- Data Deletion -->
-    <fragment
+    <dialog
         android:id="@+id/data_deletion"
         android:name="de.seemoo.at_tracking_detection.ui.settings.DataDeletionFragment"
         android:label="@string/title_data_deletion"
         tools:layout="@layout/fragment_data_deletion">
-    </fragment>
+    </dialog>
 
     <!-- Information -->
     <fragment

@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -23,8 +23,8 @@ class OldDeviceCleanupFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var switchDeleteOldDevices: SwitchMaterial
-    private lateinit var switchDeleteUnsafeDevices: SwitchMaterial
+    private lateinit var switchDeleteOldDevices: MaterialSwitch
+    private lateinit var switchDeleteUnsafeDevices: MaterialSwitch
     private lateinit var timeframeDropdown: AutoCompleteTextView
     private lateinit var saveButton: Button
 
@@ -67,7 +67,7 @@ class OldDeviceCleanupFragment : Fragment() {
             if (!isChecked) {
                 switchDeleteOldDevices.setOnCheckedChangeListener(null)
 
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setTitle(getString(R.string.old_device_deactivate_title))
                     .setMessage(getString(R.string.old_device_deactivate_text))
                     .setPositiveButton(getString(R.string.old_device_deactivate_yes)) { _, _ ->

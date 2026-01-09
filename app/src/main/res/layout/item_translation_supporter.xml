@@ -1,26 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-
-    <TextView
-        android:id="@+id/textViewLanguage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textStyle="bold"
-        android:paddingEnd="16dp"
-        android:paddingStart="0dp" />
+    android:layout_marginBottom="8dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
-        android:id="@+id/layoutTranslators"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical" />
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/textViewLanguage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/md_theme_onSurface"
+            android:textStyle="bold"
+            android:paddingEnd="16dp"
+            android:paddingStart="0dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutTranslators"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

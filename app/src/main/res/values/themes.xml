@@ -1,28 +1,41 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Theme.ATTrackingDetection" parent="Theme.Material3.Light">
-        <!-- Customize your theme here. -->
-        <item name="android:actionBarStyle">@style/ThemeActionBar</item>
-        <!-- Support library compatibility -->
-        <item name="actionBarStyle">@style/ThemeActionBar</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
+
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+
+        <item name="colorTertiary">@color/md_theme_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
+
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item>
+
+        <item name="android:windowBackground">@color/md_theme_background</item>
+        <item name="android:colorBackground">@color/md_theme_background</item>
+
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_outline</item>
+
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowBackground">@color/appintro_background_color</item>
     </style>
 
-    <style name="ThemeActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="ThemeActionBar" parent="Widget.Material3.ActionBar.Solid">
         <item name="android:background">@null</item>
-        <!-- Support library compatibility -->
         <item name="background">@null</item>
+        <item name="titleTextColor">@color/md_theme_onSurface</item>
     </style>
-
-    <color name="appintro_ripple_color">@color/black</color>
-    <color name="appintro_background_color">@color/slate_gray</color>
-    <color name="appintro_title_color">@color/black</color>
-    <color name="appintro_desc_color">@color/black</color>
-    <color name="appintro_icon_tint">@color/black</color>
-
-    <color name="defaultTextColor">@color/black</color>
 </resources>

@@ -2,26 +2,30 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/old_device_cleanup_description"
-            android:textSize="16sp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/md_theme_onBackground"
             android:layout_marginBottom="24dp" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_delete_old_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_old_devices_title"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/md_theme_onSurface"
             android:padding="12dp"
             android:layout_marginBottom="8dp" />
 
@@ -29,17 +33,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_old_devices_summary"
-            android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/md_theme_onSurfaceVariant"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="24dp" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_delete_unsafe_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_unsafe_old_devices_title"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/md_theme_onSurface"
             android:padding="12dp"
             android:layout_marginBottom="8dp" />
 
@@ -47,8 +53,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_unsafe_old_devices_summary"
-            android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/md_theme_onSurfaceVariant"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="24dp" />
@@ -57,8 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/old_device_timeframe_label"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/md_theme_onSurface"
             android:layout_marginBottom="8dp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -66,6 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/old_device_timeframe_hint"
+            android:textColorHint="@color/md_theme_onSurfaceVariant"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
             <AutoCompleteTextView
@@ -74,15 +81,19 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:textSize="16sp"
+                android:textColor="@color/md_theme_onSurface"
                 android:hint="@string/old_device_timeframe_hint" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
+            style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/md_theme_primary"
+            android:textColor="@color/md_theme_onPrimary"
             android:text="@string/save" />
 
     </LinearLayout>
