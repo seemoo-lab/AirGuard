@@ -5,15 +5,12 @@
     >
 
     <data>
-
         <variable
             name="drawable"
             type="android.graphics.drawable.Drawable" />
-
         <variable
             name="text"
             type="String" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,8 +18,7 @@
         android:layout_height="match_parent"
         android:layout_margin="24dp"
         android:padding="20dp"
-        android:background="?android:colorBackground"
-        >
+        android:background="@color/md_theme_background">
 
         <ImageView
             android:id="@+id/location_image"
@@ -37,7 +33,7 @@
             app:layout_constraintHeight_max="100dp"
             app:layout_constraintWidth_max="100dp"
             android:contentDescription="@string/empty_image_content_description"
-            app:tint="@color/defaultTextColor"
+            app:tint="@color/md_theme_primary"
             tools:src="@drawable/ic_baseline_location_on_24" />
 
 
@@ -45,24 +41,28 @@
             android:id="@+id/location_off_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/location_off_explanation"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/md_theme_onBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/location_image"
+            app:layout_constraintBottom_toTopOf="@id/open_location_settings_button"
             tools:text="@string/location_off_explanation" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/open_location_settings_button"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/open_location_settings"
             app:layout_constraintTop_toBottomOf="@id/location_off_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

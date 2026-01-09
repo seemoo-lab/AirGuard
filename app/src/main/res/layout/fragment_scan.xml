@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
@@ -23,6 +22,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/md_theme_background"
         tools:context=".ui.scan.ScanFragment">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -30,6 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
+            app:indicatorColor="@color/md_theme_primary"
+            app:trackColor="@color/md_theme_surfaceVariant"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
             app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -40,6 +42,8 @@
             android:id="@+id/scan_result_wrapper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:paddingBottom="88dp"
+            android:clipToPadding="false"
             android:visibility="@{vm.canScan ? (vm.scanFinished &amp;&amp; vm.isListEmpty ? View.GONE : View.VISIBLE) : View.GONE, default=gone}"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
             app:layout_constraintBottom_toBottomOf="parent">
@@ -49,19 +53,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- High-risk trackers label -->
-<!--                <TextView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/high_risk_trackers"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="18sp"-->
-<!--                    android:paddingStart="16dp"-->
-<!--                    android:paddingEnd="16dp"-->
-<!--                    android:paddingTop="8dp"-->
-<!--                    android:paddingBottom="4dp"-->
-<!--                    android:background="@android:color/darker_gray" />-->
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scan_result_recycler_high_risk"
                     android:layout_width="match_parent"
@@ -69,31 +60,30 @@
                     android:nestedScrollingEnabled="false"
                     android:clipToPadding="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_high_risk}" />
+                    app:setAdapter="@{adapter_high_risk}"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_scan_result" />
 
-                <!-- Low-risk trackers label -->
                 <RelativeLayout
                     android:id="@+id/low_risk_trackers_wrapper"
                     android:visibility="@{vm.lowRiskIsEmpty ? View.GONE : View.VISIBLE, default=visible}"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/low_risk_trackers_background_color">
+                    android:background="@color/md_theme_surfaceContainer">
 
                     <TextView
                         android:id="@+id/low_risk_trackers_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/low_risk_trackers"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
                         android:paddingTop="12dp"
-                        android:paddingBottom="4dp"
-                        android:textColor="@color/low_risk_trackers_text_color" />
+                        android:paddingBottom="12dp"
+                        android:textColor="@color/md_theme_onSurface" />
 
-                    <!-- Adjust the ImageButton position -->
                     <ImageButton
                         android:id="@+id/info_button"
                         android:layout_width="wrap_content"
@@ -102,9 +92,10 @@
                         android:contentDescription="@string/info_button_description"
                         android:src="@drawable/ic_baseline_info_24"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
                         android:padding="8dp"
-                        android:background="@android:color/transparent" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        app:tint="@color/md_theme_onSurfaceVariant" />
 
                 </RelativeLayout>
 
@@ -114,12 +105,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/md_theme_surfaceContainerLow">
 
-                    <!-- Your information content here -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
                         android:text="@string/explanation_safe_trackers" />
                 </LinearLayout>
 
@@ -129,7 +122,9 @@
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_low_risk}" />
+                    app:setAdapter="@{adapter_low_risk}"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_scan_result" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -159,6 +154,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_stop_24"
+            app:backgroundTint="@color/md_theme_primaryContainer"
+            app:tint="@color/md_theme_onPrimaryContainer"
             android:contentDescription="@string/scan_accessibility" />
 
         <include
