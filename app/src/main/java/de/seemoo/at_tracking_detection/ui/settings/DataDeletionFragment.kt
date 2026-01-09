@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 @AndroidEntryPoint
 class DataDeletionFragment : BottomSheetDialogFragment() {
@@ -37,6 +40,12 @@ class DataDeletionFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         val deletionButton = view.findViewById<Button>(R.id.delete_button)
         deletionButton.setOnClickListener {

@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.ATTrackingDetection" parent="Theme.Material3.Light">
+    <style name="Theme.ATTrackingDetection" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -31,11 +31,8 @@
 
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="ThemeActionBar" parent="Widget.Material3.ActionBar.Solid">
-        <item name="android:background">@null</item>
-        <item name="background">@null</item>
-        <item name="titleTextColor">@color/md_theme_onSurface</item>
-    </style>
 </resources>

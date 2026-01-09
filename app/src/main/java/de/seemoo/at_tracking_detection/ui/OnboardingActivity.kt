@@ -48,7 +48,7 @@ class OnboardingActivity : AppIntro() {
             )
         }
 
-        MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
+        MainActivity.configureSystemBars(this, applyRootPadding = true)
 
         try {
             WindowCompat.getInsetsController(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())

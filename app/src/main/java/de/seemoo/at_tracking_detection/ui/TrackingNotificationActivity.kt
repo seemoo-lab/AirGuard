@@ -39,7 +39,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
         }
 
         // For notification entry: disable edge-to-edge so content area automatically respects system bars
-        MainActivity.configureSystemBars(this, edgeToEdge = true, applyRootPadding = true)
+        MainActivity.configureSystemBars(this, applyRootPadding = true)
 
         setContentView(R.layout.activity_tracking)
 
@@ -62,7 +62,7 @@ class TrackingNotificationActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.configureSystemBars(this, edgeToEdge = false, applyRootPadding = false)
+        MainActivity.configureSystemBars(this, applyRootPadding = true)
         val fragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment)
         if (fragment is NavHostFragment) {
             val trackingFragment = fragment.childFragmentManager.primaryNavigationFragment

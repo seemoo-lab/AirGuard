@@ -20,6 +20,7 @@
             android:id="@+id/background_bar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="-500dp"
             android:background="@color/md_theme_primaryContainer"
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
@@ -135,7 +136,6 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 tools:text="@string/connection_state_offline_explanation" />
-
         </LinearLayout>
 
         <LinearLayout

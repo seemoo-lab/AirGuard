@@ -15,7 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.marginBottom
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,6 +30,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +50,6 @@ import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import timber.log.Timber
 import java.time.LocalDate
-
 
 @AndroidEntryPoint
 class DevicesFragment : Fragment() {
@@ -158,8 +162,38 @@ class DevicesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
-        view.findViewById<RecyclerView>(R.id.devices_recycler_view)
-            .doOnPreDraw { startPostponedEnterTransition() }
+        val recyclerView = view.findViewById<RecyclerView>(R.id.devices_recycler_view)
+        val filterContainer = view.findViewById<View>(R.id.filter_fragment)
+
+        recyclerView.doOnPreDraw { startPostponedEnterTransition() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(filterContainer) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply Top Padding ONLY to the container (Fixes overlap)
+            v.updatePadding(top = bars.top)
+
+            // Handle Sibling (RecyclerView) padding logic
+            val navView = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav_view)
+            val navHeight = if (navView != null && navView.height > 0)
+                navView.height + navView.marginBottom
+            else
+                bars.bottom + (88 * resources.displayMetrics.density).toInt()
+
+            recyclerView.updatePadding(bottom = navHeight)
+
+            v.post {
+                recyclerView.updatePadding(top = v.height + v.marginBottom)
+            }
+
+            // Stop system from adding unnecessary padding to te dialog filter
+            WindowInsetsCompat.CONSUMED
+        }
+
+        // Update Recycler Padding when Filter Expands/Collapses
+        filterContainer.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            recyclerView.updatePadding(top = v.height + v.marginBottom)
+        }
 
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
@@ -231,146 +265,88 @@ class DevicesFragment : Fragment() {
         }
     }
 
-    private fun swipeToDeleteCallback(swipeDirs: Int) =
-        object :
-            ItemTouchHelper.SimpleCallback(0, swipeDirs) {
-            // Material 3 Colors will be initialized in onChildDraw where context is available
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-                val itemView = viewHolder.itemView
-                val context = itemView.context
-
-                // Material3 Colors
-                val editColor = ContextCompat.getColor(context, R.color.md_theme_secondaryContainer)
-                val heartColor = ContextCompat.getColor(context, R.color.md_theme_tertiaryContainer)
-                val editIconTint = ContextCompat.getColor(context, R.color.md_theme_onSecondaryContainer)
-                val heartIconTint = ContextCompat.getColor(context, R.color.md_theme_onTertiaryContainer)
-
-                val editBackground = editColor.toDrawable()
-                val heartBackground = heartColor.toDrawable()
-
-                val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)?.mutate()
-                editIcon?.let {
-                    DrawableCompat.setTint(it, editIconTint)
-                }
-
-                val heartIcon = ContextCompat.getDrawable(context, R.drawable.ic_heart_filled)?.mutate()
-                heartIcon?.let {
-                    DrawableCompat.setTint(it, heartIconTint)
-                }
-
-                var transitionX = dX
-
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    when {
-                        dX > 0 -> {
-                            // Right swipe (Heart)
-                            val limitedDx = dX / 4f
-                            if (heartIcon != null) {
-                                val iconMargin = (itemView.height - heartIcon.intrinsicHeight) / 2
-                                val iconTop = itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
-                                val iconBottom = iconTop + heartIcon.intrinsicHeight
-                                val iconLeft = itemView.left + iconMargin
-                                val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
-                                heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                                heartBackground.setBounds(
-                                    itemView.left,
-                                    itemView.top,
-                                    (itemView.left + limitedDx).toInt(),
-                                    itemView.bottom
-                                )
-                                heartBackground.draw(c)
-                                heartIcon.draw(c)
-                            }
-                            transitionX = limitedDx
+    private fun swipeToDeleteCallback(swipeDirs: Int) = object : ItemTouchHelper.SimpleCallback(0, swipeDirs) {
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+        override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+            val itemView = viewHolder.itemView
+            val context = itemView.context
+            val editColor = ContextCompat.getColor(context, R.color.md_theme_secondaryContainer)
+            val heartColor = ContextCompat.getColor(context, R.color.md_theme_tertiaryContainer)
+            val editIconTint = ContextCompat.getColor(context, R.color.md_theme_onSecondaryContainer)
+            val heartIconTint = ContextCompat.getColor(context, R.color.md_theme_onTertiaryContainer)
+            val editBackground = editColor.toDrawable()
+            val heartBackground = heartColor.toDrawable()
+            val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)?.mutate()
+            editIcon?.let { DrawableCompat.setTint(it, editIconTint) }
+            val heartIcon = ContextCompat.getDrawable(context, R.drawable.ic_heart_filled)?.mutate()
+            heartIcon?.let { DrawableCompat.setTint(it, heartIconTint) }
+            var transitionX = dX
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                when {
+                    dX > 0 -> {
+                        val limitedDx = dX / 4f
+                        if (heartIcon != null) {
+                            val iconMargin = (itemView.height - heartIcon.intrinsicHeight) / 2
+                            val iconTop = itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
+                            val iconBottom = iconTop + heartIcon.intrinsicHeight
+                            val iconLeft = itemView.left + iconMargin
+                            val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
+                            heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            heartBackground.setBounds(itemView.left, itemView.top, (itemView.left + limitedDx).toInt(), itemView.bottom)
+                            heartBackground.draw(c)
+                            heartIcon.draw(c)
                         }
-                        dX < 0 -> {
-                            // Left swipe (Edit)
-                            val limitedDx = dX / 4f
-                            if (editIcon != null) {
-                                val iconMargin = (itemView.height - editIcon.intrinsicHeight) / 2
-                                val iconTop = itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
-                                val iconBottom = iconTop + editIcon.intrinsicHeight
-                                val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
-                                val iconRight = itemView.right - iconMargin
-                                editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-
-                                editBackground.setBounds(
-                                    (itemView.right + limitedDx).toInt(),
-                                    itemView.top,
-                                    itemView.right,
-                                    itemView.bottom
-                                )
-                                editBackground.draw(c)
-                                editIcon.draw(c)
-                            }
-                            transitionX = limitedDx
+                        transitionX = limitedDx
+                    }
+                    dX < 0 -> {
+                        val limitedDx = dX / 4f
+                        if (editIcon != null) {
+                            val iconMargin = (itemView.height - editIcon.intrinsicHeight) / 2
+                            val iconTop = itemView.top + (itemView.height - editIcon.intrinsicHeight) / 2
+                            val iconBottom = iconTop + editIcon.intrinsicHeight
+                            val iconLeft = itemView.right - iconMargin - editIcon.intrinsicWidth
+                            val iconRight = itemView.right - iconMargin
+                            editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            editBackground.setBounds((itemView.right + limitedDx).toInt(), itemView.top, itemView.right, itemView.bottom)
+                            editBackground.draw(c)
+                            editIcon.draw(c)
                         }
+                        transitionX = limitedDx
                     }
                 }
-
-                super.onChildDraw(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    transitionX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
-                )
             }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val device =
-                    deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
-                if (direction == ItemTouchHelper.LEFT) {
-                    val editName = EditText(context).apply {
-                        maxLines = 1
-                        filters = arrayOf(InputFilter.LengthFilter(TrackingFragment.MAX_CHARACTER_LIMIT))
-                        setText(device.getDeviceNameWithID())
-                    }
-                    editName.setText(device.getDeviceNameWithID())
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setIcon(R.drawable.ic_baseline_edit_24)
-                        .setTitle(getString(R.string.devices_edit_title)).setView(editName)
-                        .setNegativeButton(getString(R.string.cancel_button), null)
-                        .setPositiveButton(R.string.ok_button) { _, _ ->
-                            val newName = editName.text.toString()
-                            if (newName.isNotEmpty()) {
-                                device.name = newName
-                                devicesViewModel.update(device)
-                                Timber.d("Renamed device to ${device.name}")
-                            } else {
-                                Toast.makeText(context, R.string.device_name_cannot_be_empty, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        .setOnDismissListener {
-                            deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
-                        }
-                        .show()
-                } else if (direction == ItemTouchHelper.RIGHT) {
-                    devicesViewModel.setHeartState(device.address, !device.hearted)
-                    deviceAdapter.notifyDataSetChanged()
-                    Timber.d("Toggled heart for ${device.address} to ${!device.hearted}")
+            super.onChildDraw(c, recyclerView, viewHolder, transitionX, dY, actionState, isCurrentlyActive)
+        }
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val device = deviceAdapter.currentList[viewHolder.bindingAdapterPosition]
+            if (direction == ItemTouchHelper.LEFT) {
+                val editName = EditText(context).apply {
+                    maxLines = 1
+                    filters = arrayOf(InputFilter.LengthFilter(TrackingFragment.MAX_CHARACTER_LIMIT))
+                    setText(device.getDeviceNameWithID())
                 }
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.ic_baseline_edit_24)
+                    .setTitle(getString(R.string.devices_edit_title)).setView(editName)
+                    .setNegativeButton(getString(R.string.cancel_button), null)
+                    .setPositiveButton(R.string.ok_button) { _, _ ->
+                        val newName = editName.text.toString()
+                        if (newName.isNotEmpty()) {
+                            device.name = newName
+                            devicesViewModel.update(device)
+                            Timber.d("Renamed device to ${device.name}")
+                        } else {
+                            Toast.makeText(context, R.string.device_name_cannot_be_empty, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setOnDismissListener { deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition) }
+                    .show()
+            } else if (direction == ItemTouchHelper.RIGHT) {
+                devicesViewModel.setHeartState(device.address, !device.hearted)
+                deviceAdapter.notifyDataSetChanged()
             }
         }
+    }
 
     private fun applyPreselectFilters() {
         // remove the date range filter

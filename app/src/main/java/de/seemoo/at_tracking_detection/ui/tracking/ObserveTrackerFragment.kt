@@ -23,6 +23,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import de.seemoo.at_tracking_detection.worker.ScheduleWorkersReceiver
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class ObserveTrackerFragment: BottomSheetDialogFragment() {
     private val viewModel: ObserveTrackerViewModel by viewModels()
@@ -34,6 +37,12 @@ class ObserveTrackerFragment: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         val observationButton = view.findViewById<MaterialButton>(R.id.start_observation_button)
 
