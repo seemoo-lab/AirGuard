@@ -20,6 +20,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -55,7 +58,6 @@ import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import androidx.core.view.isGone
 
 @AndroidEntryPoint
 class ScanDistanceFragment : Fragment() {
@@ -72,6 +74,10 @@ class ScanDistanceFragment : Fragment() {
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
+
+    // Insets for Edge-to-Edge calculations
+    private var topInset = 0
+    private var bottomInset = 0
 
     private lateinit var binding: FragmentScanDistanceBinding
 
@@ -274,20 +280,32 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun setHeight(connectionQuality: Float, speed: Long = animationDuration) {
-        val viewHeight = binding.backgroundBar.height
-        val targetHeight: Float = connectionQuality * viewHeight * (-1) + viewHeight
+        if (binding.root.height == 0) return
+
+        val parentHeight = binding.root.height.toFloat()
+
+        // 100% -> Top of the screen (after Insets)
+        val limitTop = topInset.toFloat()
+
+        // 0% -> Bottom of the screen (before Insets)
+        val limitBottom = parentHeight - bottomInset.toFloat()
+
+        // Interpolate position
+        // Q=1.0 -> targetY = limitTop
+        // Q=0.0 -> targetY = limitBottom
+        val targetY: Float = limitBottom - (connectionQuality * (limitBottom - limitTop))
 
         ObjectAnimator.ofFloat(
             binding.backgroundBar,
             "translationY",
             oldAnimationValue,
-            targetHeight
+            targetY
         ).apply {
             cancel() // cancels any old animation
             duration = speed
             addListener(onEnd = {
                 // only changes the value after the animation is done
-                oldAnimationValue = targetHeight
+                oldAnimationValue = targetY
             })
             start()
         }
@@ -415,6 +433,17 @@ class ScanDistanceFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            topInset = bars.top
+            bottomInset = bars.bottom
+            insets
+        }
     }
 
     private fun handlePlaySound() {
