@@ -53,7 +53,7 @@
         </FrameLayout>
 
         <include
-            android:id="@+id/include_map_empty_explanation"
+            android:id="@+id/include_list_empty_explanation"
             layout="@layout/include_empty_explanation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

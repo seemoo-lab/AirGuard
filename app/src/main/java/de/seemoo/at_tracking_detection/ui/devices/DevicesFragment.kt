@@ -164,6 +164,7 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         val recyclerView = view.findViewById<RecyclerView>(R.id.devices_recycler_view)
         val filterContainer = view.findViewById<View>(R.id.filter_fragment)
+        val emptyListInclude = view.findViewById<View>(R.id.include_list_empty_explanation)
 
         recyclerView.doOnPreDraw { startPostponedEnterTransition() }
 
@@ -181,6 +182,9 @@ class DevicesFragment : Fragment() {
                 bars.bottom + (88 * resources.displayMetrics.density).toInt()
 
             recyclerView.updatePadding(bottom = navHeight)
+
+            // Apply padding to the empty list view
+            emptyListInclude.updatePadding(top = bars.top, bottom = navHeight)
 
             v.post {
                 recyclerView.updatePadding(top = v.height + v.marginBottom)
