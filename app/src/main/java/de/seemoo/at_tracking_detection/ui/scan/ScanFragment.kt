@@ -13,11 +13,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,6 +86,26 @@ class ScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Handle Edge-to-Edge padding for include views
+        val emptyScanExplanation = view.findViewById<View>(R.id.include_scan_empty_explanation)
+        val bluetoothDisabled = view.findViewById<View>(R.id.include_bluetooth_disabled)
+        val locationDisabled = view.findViewById<View>(R.id.include_location_disabled)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navView = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav_view)
+            val navHeight = if (navView != null && navView.height > 0)
+                navView.height + navView.marginBottom
+            else
+                bars.bottom + (88 * resources.displayMetrics.density).toInt()
+
+            emptyScanExplanation.updatePadding(top = bars.top, bottom = navHeight)
+            bluetoothDisabled.updatePadding(top = bars.top, bottom = navHeight)
+            locationDisabled.updatePadding(top = bars.top, bottom = navHeight)
+
+            insets
+        }
 
         view.findViewById<Button>(R.id.open_ble_settings_button).setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }

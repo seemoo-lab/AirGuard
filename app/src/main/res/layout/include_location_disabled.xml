@@ -8,6 +8,7 @@
         <variable
             name="drawable"
             type="android.graphics.drawable.Drawable" />
+
         <variable
             name="text"
             type="String" />
