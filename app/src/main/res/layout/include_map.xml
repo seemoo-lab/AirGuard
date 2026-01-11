@@ -12,18 +12,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.osmdroid.views.MapView
-            android:id="@+id/map"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="@{loading ? 0.3F : 1F}" />
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@android:color/transparent">
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="@{loading ? 0.3F : 1.0F}" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.github.ybq.android.spinkit.SpinKitView
             style="@style/SpinKitView.Circle"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:visibility="@{loading ? View.VISIBLE : View.INVISIBLE, default=invisible}"
-            app:SpinKit_Color="?attr/colorPrimary"
+            app:SpinKit_Color="@color/md_theme_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

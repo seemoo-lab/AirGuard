@@ -565,4 +565,5 @@
     <string name="actions">Actions</string>
 
     <string name="feedback_research_explanation">By selecting an option, you help us improve our detection algorithms and support our research.</string>
+    <string name="close">close</string>
 </resources>

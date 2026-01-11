@@ -13,7 +13,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
@@ -55,7 +54,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("MainActivity onCreate called")
 
-        // 1. Configure Edge-to-Edge Basics
+        // Configure Edge-to-Edge Basics
         configureSystemBars(this, applyRootPadding = false)
 
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -99,10 +98,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             item.isVisible = false
         }
 
-        // 2. Handle Floating Nav Bar Positioning
+        // Handle Floating Nav Bar Positioning
         setupFloatingBottomNavigation(navView)
 
-        // 3. Automagically handle Padding for Content inside Fragments
+        // Automagically handle Padding for Content inside Fragments
         setupFragmentContentPadding()
 
         val navOptions = androidx.navigation.NavOptions.Builder()
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // Store total height immediately
             floatingNavHeight = view.height + view.marginBottom
             if (floatingNavHeight == 0) {
-                // Fallback estimate if not laid out yet: ~80dp + bars.bottom
+                // Fallback estimate if not laid out yet: approx. 80dp + bars.bottom
                 // (56dp nav + 16dp margin + 8dp elevation/shadow approx)
                 val density = view.resources.displayMetrics.density
                 val approximateHeight = (88 * density).toInt()
@@ -158,10 +157,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setupFragmentContentPadding() {
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
-                // Issue 1 Fix: Removed v.post { } wrapper to prevent layout jumping.
 
-                // A. Handle Scrolling Content (RecyclerView, etc.)
-                // Note: We skip this logic for DevicesFragment as it handles its own complex layering
+                // Handle Scrolling Content (RecyclerView, etc.)
+                // DevicesFragment handles its own layering
                 if (f.javaClass.simpleName != "DevicesFragment") {
                     val scrollingView = findScrollingView(v) ?: v
 
@@ -186,22 +184,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     }
                 }
 
-                // B. Handle Floating Action Buttons (Issue 2)
-                val fabs = findFloatingActionButtons(v)
-                fabs.forEach { fab ->
-                    val originalFabMargin = (fab.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+                // Handle Floating Action Buttons
+                // Exclude DeviceMapFragment because it manually manages its own Legend FAB positioning
+                if (f.javaClass.simpleName != "DeviceMapFragment") {
+                    val fabs = findFloatingActionButtons(v)
+                    fabs.forEach { fab ->
+                        val originalFabMargin = (fab.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
 
-                    ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
-                        val currentNavHeight = if (navView.height > 0)
-                            navView.height + navView.marginBottom
-                        else
-                            floatingNavHeight
+                        ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+                            val currentNavHeight = if (navView.height > 0)
+                                navView.height + navView.marginBottom
+                            else
+                                floatingNavHeight
 
-                        view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            // Ensure FAB floats above the Nav Bar
-                            bottomMargin = originalFabMargin + currentNavHeight
+                            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                                // Ensure FAB floats above the Nav Bar
+                                bottomMargin = originalFabMargin + currentNavHeight
+                            }
+                            insets
                         }
-                        insets
                     }
                 }
             }
@@ -244,8 +245,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
-
-    // ... [LifeCycle methods remain the same] ...
 
     override fun onResume() {
         super.onResume()

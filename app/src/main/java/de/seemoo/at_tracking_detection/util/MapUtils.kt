@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.util
 import android.graphics.BitmapFactory
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -14,6 +15,7 @@ import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.MapEventsOverlay
@@ -53,6 +55,10 @@ object MapUtils {
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setUseDataConnection(true)
         map.setMultiTouchControls(true)
+
+        // Hide Zoom Buttons
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+
         map.maxZoomLevel = MAX_ZOOM_LEVEL
 
         map.overlays.add(copyrightOverlay)
@@ -74,6 +80,7 @@ object MapUtils {
     }
 
     // Helper to run actions only after the MapView is loaded (has non-zero size)
+    // Currently not used
     private fun runWhenMapReady(map: MapView, action: () -> Unit) {
         if (map.width > 0 && map.height > 0) {
             map.post { action() }
@@ -94,7 +101,8 @@ object MapUtils {
         map: MapView,
         showDeviceInfoOnClick: Boolean = false,
         onMarkerClick: ((String) -> Unit)? = null,
-        onMoreTrackersClick: ((Int) -> Unit)? = null
+        onMoreTrackersClick: ((Int) -> Unit)? = null,
+        onMapClick: (() -> Unit)? = null
     ): Boolean {
         val context = ATTrackingDetectionApplication.getAppContext()
         val mapController = map.controller
@@ -103,17 +111,21 @@ object MapUtils {
         val icon = R.drawable.ic_baseline_location_on_45_black
         val iconDrawable = ContextCompat.getDrawable(context, icon)
 
-        // 1. Cleanup existing overlays
+        // Resolve Theme Colors for Circles using map context (for theme attributes) or fallback to resources
+        val primaryColor = ContextCompat.getColor(map.context, R.color.md_theme_primary)
+        val circleFillColor = ColorUtils.setAlphaComponent(primaryColor, 32)
+        val circleStrokeColor = ColorUtils.setAlphaComponent(primaryColor, 85)
+
+        // Cleanup existing overlays
         map.overlays.removeAll { it is RadiusMarkerClusterer }
         map.overlays.removeAll { it is Polygon && it.subDescription == "LOCATION_RADIUS_CIRCLE" }
         map.overlays.removeAll { it is MapEventsOverlay }
 
-        // 2. Add Background Click Listener (Fixes Problem #2)
-        // We add this at the bottom of the stack (index 0) or before markers
         val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                 // Close all info windows when tapping empty map space
                 InfoWindow.closeAllInfoWindowsOn(map)
+                onMapClick?.invoke()
                 return true
             }
 
@@ -123,7 +135,7 @@ object MapUtils {
         })
         map.overlays.add(mapEventsOverlay)
 
-        // 3. Setup Clusterer
+        // Setup Clusterer
         val clusterer = RadiusMarkerClusterer(context)
         val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
         clusterer.setIcon(clusterIcon)
@@ -183,7 +195,6 @@ object MapUtils {
                     )
                     marker.infoWindow = infoWindow
 
-                    // Fix for Problem #1: Close others, open this one
                     marker.setOnMarkerClickListener { clickedMarker, _ ->
                         if (clickedMarker.isInfoWindowShown) {
                             clickedMarker.closeInfoWindow()
@@ -206,8 +217,8 @@ object MapUtils {
                 // Circle setup
                 val circle = Polygon(map).apply {
                     points = Polygon.pointsAsCircle(geoPoint, LOCATION_CLUSTER_RADIUS_METERS)
-                    fillColor = 0x2034A7FF
-                    strokeColor = 0x5534A7FF
+                    fillColor = circleFillColor
+                    strokeColor = circleStrokeColor
                     strokeWidth = 2f
                     subDescription = "LOCATION_RADIUS_CIRCLE"
                     isVisible = map.zoomLevelDouble >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
@@ -268,4 +279,3 @@ object MapUtils {
         map.invalidate()
     }
 }
-
