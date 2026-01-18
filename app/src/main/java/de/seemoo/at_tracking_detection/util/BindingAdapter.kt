@@ -2,10 +2,12 @@ package de.seemoo.at_tracking_detection.util
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.Observable
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -101,3 +103,10 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     }
 }
 
+@BindingAdapter("riskColorRes")
+fun setCardBackgroundColor(view: MaterialCardView, @ColorRes colorRes: Int) {
+    if (colorRes != 0) {
+        val color = ContextCompat.getColor(view.context, colorRes)
+        view.setCardBackgroundColor(color)
+    }
+}

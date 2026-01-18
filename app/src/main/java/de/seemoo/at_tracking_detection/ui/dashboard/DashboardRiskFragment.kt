@@ -241,7 +241,8 @@ class DashboardRiskFragment : Fragment() {
      */
     private fun resolveCardColor(colorName: String): Int {
         return when (colorName) {
-            "warning_light_red", "risk_high" -> R.color.risk_high
+            "warning_light_red" -> R.color.md_theme_error
+            "risk_high" -> R.color.risk_high
             "blue_card_background", "md_theme_secondaryContainer" -> R.color.md_theme_secondaryContainer
             "gray_card_background" -> R.color.md_theme_surfaceVariant
             else -> {

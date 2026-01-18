@@ -13,7 +13,7 @@
             type="Integer" />
 
         <variable
-            name="cardBackgroundColorInt"
+            name="cardBackgroundColorRes"
             type="Integer" />
     </data>
 
@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@{cardBackgroundColorInt}"
+        app:riskColorRes="@{cardBackgroundColorRes}"
         tools:cardBackgroundColor="@color/risk_high">
 
         <androidx.constraintlayout.widget.ConstraintLayout

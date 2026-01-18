@@ -39,7 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:visibility="visible"
-                    app:cardBackgroundColorInt="@{viewModel.riskColor}"
+                    app:cardBackgroundColorRes="@{viewModel.riskColor}"
                     app:cardName="@{@string/all_devices_found}"
                     app:cardNumber="@{viewModel.totalNumberOfDevicesFound}"
                     app:layout_constraintDimensionRatio="3:2"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="22dp"
                 android:visibility="@{viewModel.numberOfTrackersFound == 0 ? View.GONE : View.VISIBLE}"
-                app:cardBackgroundColor="@{viewModel.riskColor}"
+                app:riskColorRes="@{viewModel.riskColor}"
                 tools:cardBackgroundColor="@color/risk_high">
 
                 <LinearLayout

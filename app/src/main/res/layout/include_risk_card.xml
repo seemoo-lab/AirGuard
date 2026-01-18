@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -19,8 +18,8 @@
         android:layout_margin="@dimen/card_margin"
         android:clickable="@{vm.clickable}"
         android:focusable="true"
-        app:cardBackgroundColor="@{vm.riskColor}"
-        tools:cardBackgroundColor="@color/risk_low">
+        app:riskColorRes="@{vm.riskColor}"
+        tools:cardBackgroundColor="@color/risk_high">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -93,7 +92,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    app:dividerColor="?attr/colorOutlineVariant" />
+                    android:alpha="0.2"
+                    app:dividerColor="?attr/colorOnSurface" />
 
                 <LinearLayout
                     android:id="@+id/last_detection_row"
@@ -126,7 +126,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
                     android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
-                    app:dividerColor="?attr/colorOutlineVariant" />
+                    android:alpha="0.2"
+                    app:dividerColor="?attr/colorOnSurface" />
 
                 <LinearLayout
                     android:id="@+id/last_update_row"

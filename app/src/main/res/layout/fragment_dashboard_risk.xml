@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:paddingTop="16dp"
                 android:orientation="vertical"
                 android:animateLayoutChanges="true">
 
@@ -50,7 +51,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="85dp" />
+                    android:layout_height="32dp" />
 
             </LinearLayout>
 
