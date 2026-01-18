@@ -79,7 +79,8 @@ fun loadArticlesJson(context: Context = ATTrackingDetectionApplication.getAppCon
             // Build a minimal fallback inline so UI still shows something.
             val offlineTitle = context.getString(R.string.article_offline_header)
             val offlineText = context.getString(R.string.article_offline_text)
-            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"blue_card_background","preview_image":"","filename":""}}"""
+            // MD3 Update: Use secondaryContainer instead of blue_card_background
+            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"md_theme_secondaryContainer","preview_image":"","filename":""}}"""
         }
     }
 }

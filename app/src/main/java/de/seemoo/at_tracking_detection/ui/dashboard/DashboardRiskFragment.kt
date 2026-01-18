@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -78,7 +82,9 @@ class DashboardRiskFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.loading_progress_bar)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            progressBar.visibility = View.VISIBLE
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.VISIBLE
+            }
 
             val articlesJSON = loadArticlesJson(requireContext())
             Timber.d("Articles JSON: %s", articlesJSON)
@@ -88,14 +94,13 @@ class DashboardRiskFragment : Fragment() {
                 Timber.d("Number of Articles: %s", articles.size)
 
                 // Error articles
-
                 if (SharedPrefs.showGenericBluetoothBugNotification || SharedPrefs.showSamsungAndroid15BugNotification) {
                     val bugArticle = Article(
                         title = getString(R.string.samsung_bug_notification_title),
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.generic_bluetooth_bug_notification_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
                         preview_image = "",
                         filename = ""
                     )
@@ -108,7 +113,7 @@ class DashboardRiskFragment : Fragment() {
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.notification_permission_missing_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
                         preview_image = "",
                         filename = ""
                     )
@@ -121,7 +126,7 @@ class DashboardRiskFragment : Fragment() {
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.background_location_permission_missing_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
                         preview_image = "",
                         filename = ""
                     )
@@ -134,7 +139,14 @@ class DashboardRiskFragment : Fragment() {
                 articleCardsLinearLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
                 for (article in articles) {
-                    val articleCard = MaterialCardView(context)
+                    val articleCard = MaterialCardView(requireContext())
+
+                    // Standard Corner Radius for MD3 Cards is 12dp
+                    val radiusPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, resources.displayMetrics)
+                    articleCard.radius = radiusPx
+                    // Standard Elevation for Filled Cards is 0dp (flat)
+                    articleCard.cardElevation = 0f
+                    articleCard.strokeWidth = 0
 
                     val layout = LayoutInflater.from(context).inflate(R.layout.include_article_card, null)
                     val textViewTitle = layout.findViewById<TextView>(R.id.card_title)
@@ -150,8 +162,16 @@ class DashboardRiskFragment : Fragment() {
                         textViewPreviewText.visibility = View.GONE
                     }
 
-                    val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
-                    materialCard.setCardBackgroundColor(resources.getColor(colorResourceId, null))
+                    // Safe Color Resolution for MD3 Migration
+                    val colorResId = resolveCardColor(article.cardColor)
+                    val backgroundColor = ContextCompat.getColor(requireContext(), colorResId)
+                    materialCard.setCardBackgroundColor(backgroundColor)
+
+                    // Ensure Text Color is Dark (onSurface) for Pastel Backgrounds
+                    val textColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
+                    textViewTitle.setTextColor(textColor)
+                    textViewPreviewText.setTextColor(textColor)
+                    dismissButton.setColorFilter(textColor)
 
                     // Show dismiss button for error articles (aka articles without filenames)
                     if (article.filename.isEmpty()) {
@@ -216,16 +236,21 @@ class DashboardRiskFragment : Fragment() {
         // checkAndShowReview()
     }
 
-    // Google Play Review Controller: Only active in Google Play builds
-//    private fun checkAndShowReview() {
-//        Timber.d("Checking if review should be shown")
-//        if (BuildConfig.DEBUG) {
-//            reviewController.debugReviewStatus()
-//        }
-//        reviewController.requestReviewDialog(requireActivity()) {
-//            Timber.d("Review dialog request completed")
-//        }
-//    }
+    /**
+     * Maps legacy color names from JSON/Article objects to new Material 3 colors.
+     */
+    private fun resolveCardColor(colorName: String): Int {
+        return when (colorName) {
+            "warning_light_red", "risk_high" -> R.color.risk_high
+            "blue_card_background", "md_theme_secondaryContainer" -> R.color.md_theme_secondaryContainer
+            "gray_card_background" -> R.color.md_theme_surfaceVariant
+            else -> {
+                // Try to find resource by name, fallback to secondaryContainer
+                val resId = resources.getIdentifier(colorName, "color", requireContext().packageName)
+                if (resId != 0) resId else R.color.md_theme_secondaryContainer
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()

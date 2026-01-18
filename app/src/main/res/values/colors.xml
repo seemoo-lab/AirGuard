@@ -58,6 +58,7 @@
     <color name="md_theme_surfaceContainerHigh">#ECE6F0</color>
 
     <!-- Additional Colors -->
+    <!-- TODO: a little lighter / pastell colors -->
     <color name="risk_high">#B3261E</color>
     <color name="risk_medium">#8D6E05</color>
     <color name="risk_low">#2E6C35</color>

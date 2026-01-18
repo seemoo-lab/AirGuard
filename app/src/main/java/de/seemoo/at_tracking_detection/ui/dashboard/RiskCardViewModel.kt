@@ -50,7 +50,7 @@ class RiskCardViewModel @Inject constructor(
                     dismissSurveyInformation.postValue(SharedPrefs.dismissSurveyInformation)
                 }
             }
-            }
+        }
 
 
     init {
