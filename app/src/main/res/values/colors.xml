@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Deprecated Colors -->
-    <!-- TODO: remove -->
-    <color name="white">#FFFFFFFF</color>
-    <color name="gray_card_background">#434343</color>
-    <color name="card_background_teal">#1B9CAE</color>
-
     <!-- Material Design Colors -->
     <color name="md_theme_primary">#6750A4</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>

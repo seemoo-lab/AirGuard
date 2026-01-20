@@ -7,23 +7,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin"
-        app:cardBackgroundColor="@color/gray_card_background">
+        app:cardBackgroundColor="@color/md_theme_surfaceContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/dashboard_tile_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
                 android:maxLines="3"
                 android:text="@string/i_cannot_find_the_tracker"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                android:textColor="@color/white"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/md_theme_onSurface"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,11 +31,10 @@
                 android:id="@+id/risk_level_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:text="@string/find_tracker_help"
                 android:textAlignment="textStart"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="@color/white" />
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
