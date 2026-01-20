@@ -301,11 +301,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     companion object {
         fun configureSystemBars(activity: AppCompatActivity, applyRootPadding: Boolean = true) {
             WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-            val controller = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
-            // TODO: eventually get rid of this for universal colors
-            val isDarkTheme = Utility.isActualThemeDark(activity)
-            controller.isAppearanceLightStatusBars = !isDarkTheme
-            controller.isAppearanceLightNavigationBars = !isDarkTheme
 
             activity.window.statusBarColor = Color.TRANSPARENT
             activity.window.navigationBarColor = Color.TRANSPARENT

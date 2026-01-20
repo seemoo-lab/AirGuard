@@ -94,23 +94,11 @@ object Utility {
         return ((value.toInt() shr position) and 1) == 1
     }
 
-    // TODO: at some point, refactor application, so it uses proper color schemes everywhere instead of this function
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        }
-    }
-
-    fun isActualThemeDark(context: Context): Boolean {
-        return when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> true // App theme explicitly set to Dark
-            AppCompatDelegate.MODE_NIGHT_NO -> false // App theme explicitly set to Light
-            else -> { // App theme set to Follow System or other modes (e.g., Battery Saver)
-                val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                currentNightMode == Configuration.UI_MODE_NIGHT_YES // Return true if the system configuration is currently dark
-            }
         }
     }
 
