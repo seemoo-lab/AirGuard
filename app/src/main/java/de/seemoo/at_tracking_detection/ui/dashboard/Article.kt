@@ -14,6 +14,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
+    val textColor: String? = null,
     val preview_image: String, // This has to be named like this because of the file format
     val filename: String
 )

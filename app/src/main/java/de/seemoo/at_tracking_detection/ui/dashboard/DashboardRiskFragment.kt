@@ -101,6 +101,7 @@ class DashboardRiskFragment : Fragment() {
                         readingTime = 0,
                         previewText = getString(R.string.generic_bluetooth_bug_notification_text),
                         cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -114,6 +115,7 @@ class DashboardRiskFragment : Fragment() {
                         readingTime = 0,
                         previewText = getString(R.string.notification_permission_missing_text),
                         cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -127,6 +129,7 @@ class DashboardRiskFragment : Fragment() {
                         readingTime = 0,
                         previewText = getString(R.string.background_location_permission_missing_text),
                         cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -168,7 +171,7 @@ class DashboardRiskFragment : Fragment() {
                     materialCard.setCardBackgroundColor(backgroundColor)
 
                     // Ensure Text Color is Dark (onSurface) for Pastel Backgrounds
-                    val textColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
+                    val textColor = ContextCompat.getColor(requireContext(), resolveTextColor(article.textColor))
                     textViewTitle.setTextColor(textColor)
                     textViewPreviewText.setTextColor(textColor)
                     dismissButton.setColorFilter(textColor)
@@ -251,6 +254,12 @@ class DashboardRiskFragment : Fragment() {
                 if (resId != 0) resId else R.color.md_theme_secondaryContainer
             }
         }
+    }
+
+    private fun resolveTextColor(colorName: String?): Int {
+        if (colorName.isNullOrBlank()) return R.color.md_theme_onSurface
+        val resId = resources.getIdentifier(colorName, "color", requireContext().packageName)
+        return if (resId != 0) resId else R.color.md_theme_onSurface
     }
 
     override fun onStart() {

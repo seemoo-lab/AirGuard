@@ -2,12 +2,25 @@ package de.seemoo.at_tracking_detection.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
@@ -30,6 +43,8 @@ class TrackingNotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
         // Prevent Screenshots, if set in settings
         if (SharedPrefs.preventScreenshots) {
             window.setFlags(
@@ -38,10 +53,10 @@ class TrackingNotificationActivity : AppCompatActivity() {
             )
         }
 
-        // For notification entry: disable edge-to-edge so content area automatically respects system bars
-        MainActivity.configureSystemBars(this, applyRootPadding = true)
-
         setContentView(R.layout.activity_tracking)
+
+        // Automagically handle Padding for Content inside Fragments to prevent cut-offs
+        setupFragmentContentPadding()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -60,9 +75,78 @@ class TrackingNotificationActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * Similar to MainActivity but without BottomNavigation
+     */
+    private fun setupFragmentContentPadding() {
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
+
+                // Handle Scrolling Content (RecyclerView, etc.)
+                val scrollingView = findScrollingView(v) ?: v
+
+                if (scrollingView is ViewGroup) {
+                    scrollingView.clipToPadding = false
+                }
+
+                ViewCompat.setOnApplyWindowInsetsListener(scrollingView) { view, insets ->
+                    val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+                    // Apply padding for Status Bar (top) and Navigation Bar (bottom)
+                    view.updatePadding(
+                        top = bars.top,
+                        bottom = bars.bottom
+                    )
+                    insets
+                }
+
+                // Handle Floating Action Buttons
+                val fabs = findFloatingActionButtons(v)
+                fabs.forEach { fab ->
+                    val originalFabMargin = (fab.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+                    ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+                        val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+                        view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                            // Ensure FAB floats above the system navigation bar
+                            bottomMargin = originalFabMargin + bars.bottom
+                        }
+                        insets
+                    }
+                }
+            }
+        }, true)
+    }
+
+    private fun findScrollingView(view: View): View? {
+        if (view is RecyclerView || view is NestedScrollView || view is ScrollView) {
+            return view
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val child = view.getChildAt(i)
+                val result = findScrollingView(child)
+                if (result != null) return result
+            }
+        }
+        return null
+    }
+
+    private fun findFloatingActionButtons(view: View): List<FloatingActionButton> {
+        val fabs = mutableListOf<FloatingActionButton>()
+        if (view is FloatingActionButton) {
+            fabs.add(view)
+        } else if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                fabs.addAll(findFloatingActionButtons(view.getChildAt(i)))
+            }
+        }
+        return fabs
+    }
+
     override fun onResume() {
         super.onResume()
-        MainActivity.configureSystemBars(this, applyRootPadding = true)
         val fragment = supportFragmentManager.findFragmentById(R.id.tracking_host_fragment)
         if (fragment is NavHostFragment) {
             val trackingFragment = fragment.childFragmentManager.primaryNavigationFragment

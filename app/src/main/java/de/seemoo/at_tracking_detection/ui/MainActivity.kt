@@ -1,16 +1,15 @@
 package de.seemoo.at_tracking_detection.ui
 
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
@@ -30,7 +29,6 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import org.osmdroid.config.Configuration
@@ -54,8 +52,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("MainActivity onCreate called")
 
-        // Configure Edge-to-Edge Basics
-        configureSystemBars(this, applyRootPadding = false)
+        enableEdgeToEdge()
 
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
@@ -295,25 +292,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
         } else if (key == "prevent_screenshots") {
             updateSecureFlag()
-        }
-    }
-
-    companion object {
-        fun configureSystemBars(activity: AppCompatActivity, applyRootPadding: Boolean = true) {
-            WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-
-            activity.window.statusBarColor = Color.TRANSPARENT
-            activity.window.navigationBarColor = Color.TRANSPARENT
-
-            if (applyRootPadding) {
-                val content = activity.findViewById<ViewGroup>(android.R.id.content)
-                val root = content.getChildAt(0) ?: return
-                ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-                    val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-                    insets
-                }
-            }
         }
     }
 }

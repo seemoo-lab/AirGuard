@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/appintro_statusbar_height"
-        android:paddingBottom="@dimen/appintro2_bottombar_height">
+        android:paddingBottom="96dp"
+        android:background="?attr/colorSurface">
 
         <TextView
             android:id="@+id/onboarding_ignore_battery_optimization_title"
@@ -44,13 +45,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/onboarding_ignore_battery_optimization_description"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/onboarding_ignore_battery_optimization_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/onboarding_ignore_battery_optimization_image"
             app:layout_constraintVertical_weight="2" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/onboarding_ignore_battery_optimization_button"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -59,9 +64,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/onboarding_ignore_battery_optimization_description"
-            app:layout_constraintVertical_weight="2"
-            app:icon="@drawable/ic_baseline_open_in_new_24"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"/>
+            app:layout_constraintVertical_bias="1.0"
+            app:icon="@drawable/ic_baseline_open_in_new_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

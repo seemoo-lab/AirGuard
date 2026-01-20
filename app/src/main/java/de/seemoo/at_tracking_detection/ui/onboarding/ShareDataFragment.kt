@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlidePolicy
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
@@ -49,19 +51,38 @@ class ShareDataFragment : Fragment(), SlidePolicy {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val yesButton = view.findViewById<Button>(R.id.onboarding_share_data_yes)
-        val noButton = view.findViewById<Button>(R.id.onboarding_share_data_no)
+        val yesButton = view.findViewById<MaterialButton>(R.id.onboarding_share_data_yes)
+        val noButton = view.findViewById<MaterialButton>(R.id.onboarding_share_data_no)
+
+        // Using defined colors from colors.xml
+        val colorSafe = ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
+        val colorSafeText = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary)
+        val colorRisk = ContextCompat.getColor(requireContext(), R.color.md_theme_error)
+        val colorRiskText = ContextCompat.getColor(requireContext(), R.color.md_theme_onError)
+        val colorTransparent = Color.TRANSPARENT
+        val colorDefaultText = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
+
+        // Set default colors
+        yesButton.setTextColor(colorDefaultText)
+        noButton.setTextColor(colorDefaultText)
+
         yesButton.setOnClickListener {
             buttonPressed = true
-            it.setBackgroundColor(Color.GREEN)
-            noButton.setBackgroundColor(Color.TRANSPARENT)
-            sharedPreferences.edit().putBoolean("share_data", true).apply()
+            yesButton.setBackgroundColor(colorSafe)
+            yesButton.setTextColor(colorSafeText)
+            noButton.setBackgroundColor(colorTransparent)
+            noButton.setTextColor(colorDefaultText)
+
+            sharedPreferences.edit { putBoolean("share_data", true) }
         }
         noButton.setOnClickListener {
             buttonPressed = true
-            yesButton.setBackgroundColor(Color.TRANSPARENT)
-            it.setBackgroundColor(Color.RED)
-            sharedPreferences.edit().putBoolean("share_data", false).apply()
+            yesButton.setBackgroundColor(colorTransparent)
+            yesButton.setTextColor(colorDefaultText)
+            noButton.setBackgroundColor(colorRisk)
+            noButton.setTextColor(colorRiskText)
+
+            sharedPreferences.edit { putBoolean("share_data", false) }
         }
     }
 
