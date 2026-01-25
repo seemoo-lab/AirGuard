@@ -97,9 +97,9 @@
     <!-- Data Deletion -->
     <dialog
         android:id="@+id/data_deletion"
-        android:name="de.seemoo.at_tracking_detection.ui.settings.DataDeletionFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.settings.DataDeletionDialog"
         android:label="@string/title_data_deletion"
-        tools:layout="@layout/fragment_data_deletion">
+        tools:layout="@layout/dialog_data_deletion">
     </dialog>
 
     <!-- Information -->
@@ -322,7 +322,7 @@
 
     <dialog
         android:id="@+id/observationFragment"
-        android:name="de.seemoo.at_tracking_detection.ui.tracking.ObserveTrackerFragment"
+        android:name="de.seemoo.at_tracking_detection.ui.tracking.ObserveTrackerDialog"
         android:label="@string/title_observe_tracker">
         <argument
             android:name="deviceAddress"

@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.databinding.FragmentObserveTrackerBinding
+import de.seemoo.at_tracking_detection.databinding.DialogObserveTrackerBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,13 +27,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
-class ObserveTrackerFragment: BottomSheetDialogFragment() {
+class ObserveTrackerDialog: BottomSheetDialogFragment() {
     private val viewModel: ObserveTrackerViewModel by viewModels()
-    private val safeArgs: ObserveTrackerFragmentArgs by navArgs()
+    private val safeArgs: ObserveTrackerDialogArgs by navArgs()
 
     private var deviceAddress: String? = null
 
-    private lateinit var binding: FragmentObserveTrackerBinding
+    private lateinit var binding: DialogObserveTrackerBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -150,7 +150,7 @@ class ObserveTrackerFragment: BottomSheetDialogFragment() {
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_observe_tracker,
+            R.layout.dialog_observe_tracker,
             container,
             false
         )

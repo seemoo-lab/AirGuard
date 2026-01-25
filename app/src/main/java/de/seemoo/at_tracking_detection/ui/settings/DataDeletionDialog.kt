@@ -23,7 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
 @AndroidEntryPoint
-class DataDeletionFragment : BottomSheetDialogFragment() {
+class DataDeletionDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var api: Api
 
@@ -35,7 +35,7 @@ class DataDeletionFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_data_deletion, container, false)
+        return inflater.inflate(R.layout.dialog_data_deletion, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

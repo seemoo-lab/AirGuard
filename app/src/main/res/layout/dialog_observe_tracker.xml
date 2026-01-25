@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="24dp"
-        android:background="@color/md_theme_surface">
+        android:background="@drawable/bg_bottom_sheet_rounded">
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:layout_width="match_parent"
@@ -26,14 +26,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp">
+            android:paddingHorizontal="24dp"
+            android:layout_marginTop="8dp">
 
             <ImageView
                 android:id="@+id/clock_icon"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 bind:srcCompat="@drawable/ic_clock"
                 app:tint="@color/md_theme_primary"
