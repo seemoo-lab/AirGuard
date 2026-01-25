@@ -18,9 +18,6 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import javax.inject.Inject
-import com.google.android.material.button.MaterialButton
-import androidx.core.content.ContextCompat
-import android.content.res.ColorStateList
 
 @AndroidEntryPoint
 class OldDeviceCleanupFragment : Fragment() {
