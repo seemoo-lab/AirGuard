@@ -1,19 +1,21 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import dagger.hilt.android.AndroidEntryPoint
-import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ class OldDeviceCleanupFragment : Fragment() {
     private lateinit var switchDeleteOldDevices: MaterialSwitch
     private lateinit var switchDeleteUnsafeDevices: MaterialSwitch
     private lateinit var timeframeDropdown: AutoCompleteTextView
-    private lateinit var saveButton: Button
+    private lateinit var saveButton: MaterialButton
 
     private var pendingDeleteOldDevices: Boolean = false
     private var pendingDeleteUnsafeOldDevices: Boolean = false
@@ -60,6 +62,17 @@ class OldDeviceCleanupFragment : Fragment() {
         }
 
         updateSaveButtonState()
+    }
+
+    private fun updateButtonAppearance(enabled: Boolean) {
+        val enabledColor = ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
+        val disabledColor = ContextCompat.getColor(requireContext(), R.color.md_theme_surfaceVariant)
+
+        val enabledTextColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary)
+        val disabledTextColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurfaceVariant)
+
+        saveButton.backgroundTintList = ColorStateList.valueOf(if (enabled) enabledColor else disabledColor)
+        saveButton.setTextColor(if (enabled) enabledTextColor else disabledTextColor)
     }
 
     private fun setupDeactivationWarning() {
@@ -174,5 +187,6 @@ class OldDeviceCleanupFragment : Fragment() {
                 pendingDeleteUnsafeOldDevices != SharedPrefs.deleteUnsafeOldDevices ||
                 pendingOldDeviceTimeframeDays != SharedPrefs.oldDeviceTimeframeDays
         saveButton.isEnabled = hasChanges
+        updateButtonAppearance(hasChanges)
     }
 }

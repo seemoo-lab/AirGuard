@@ -47,7 +47,7 @@ class ObserveTrackerDialog: BottomSheetDialogFragment() {
         val observationButton = view.findViewById<MaterialButton>(R.id.start_observation_button)
 
         if (deviceAddress != null) {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()!!.deviceRepository
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
             deviceRepository.let {
                 val baseDevice = deviceRepository.getDevice(deviceAddress!!)
 
