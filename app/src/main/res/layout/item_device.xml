@@ -129,13 +129,13 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/heart_icon"
+                    android:id="@+id/star_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:contentDescription="@string/device_icon"
                     android:visibility="@{baseDevice.hearted ? View.VISIBLE : View.GONE}"
-                    app:srcCompat="@drawable/ic_heart_filled"
-                    app:tint="@color/md_theme_tertiary"
+                    app:srcCompat="@drawable/ic_star_filled"
+                    app:tint="@color/star_yellow"
                     android:layout_marginEnd="4dp"/>
 
                 <ImageView

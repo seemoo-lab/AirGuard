@@ -45,6 +45,18 @@
                     android:background="?attr/selectableItemBackground" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/favorite_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="16dp"
+                    android:src="@{vm.device.hearted ? @drawable/ic_star_filled : @drawable/ic_star_outline}"
+                    app:fabSize="mini"
+                    app:backgroundTint="@color/md_theme_surface"
+                    app:tint="@color/md_theme_onSurface"
+                    android:contentDescription="@string/device_icon" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/open_map_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

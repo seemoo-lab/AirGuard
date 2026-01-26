@@ -35,7 +35,13 @@
     <color name="md_theme_surfaceContainerHigh">#ECE6F0</color>
 
     <!-- Additional Colors -->
+
+    <!-- Risk Colors -->
     <color name="risk_high">#EF5350</color>
     <color name="risk_medium">#FFA726</color>
     <color name="risk_low">#9CCC65</color>
+
+    <!-- Mark Favorite -->
+    <color name="star_yellow">#FBC02D</color>
+    <color name="star_container">#FFF9C4</color>
 </resources>

@@ -275,30 +275,30 @@ class DevicesFragment : Fragment() {
             val itemView = viewHolder.itemView
             val context = itemView.context
             val editColor = ContextCompat.getColor(context, R.color.md_theme_secondaryContainer)
-            val heartColor = ContextCompat.getColor(context, R.color.md_theme_tertiaryContainer)
+            val starColor = ContextCompat.getColor(context, R.color.star_container)
             val editIconTint = ContextCompat.getColor(context, R.color.md_theme_onSecondaryContainer)
-            val heartIconTint = ContextCompat.getColor(context, R.color.md_theme_onTertiaryContainer)
+            val starIconTint = ContextCompat.getColor(context, R.color.star_yellow)
             val editBackground = editColor.toDrawable()
-            val heartBackground = heartColor.toDrawable()
+            val starBackground = starColor.toDrawable()
             val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)?.mutate()
             editIcon?.let { DrawableCompat.setTint(it, editIconTint) }
-            val heartIcon = ContextCompat.getDrawable(context, R.drawable.ic_heart_filled)?.mutate()
-            heartIcon?.let { DrawableCompat.setTint(it, heartIconTint) }
+            val starIcon = ContextCompat.getDrawable(context, R.drawable.ic_star_filled)?.mutate()
+            starIcon?.let { DrawableCompat.setTint(it, starIconTint) }
             var transitionX = dX
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 when {
                     dX > 0 -> {
                         val limitedDx = dX / 4f
-                        if (heartIcon != null) {
-                            val iconMargin = (itemView.height - heartIcon.intrinsicHeight) / 2
-                            val iconTop = itemView.top + (itemView.height - heartIcon.intrinsicHeight) / 2
-                            val iconBottom = iconTop + heartIcon.intrinsicHeight
+                        if (starIcon != null) {
+                            val iconMargin = (itemView.height - starIcon.intrinsicHeight) / 2
+                            val iconTop = itemView.top + (itemView.height - starIcon.intrinsicHeight) / 2
+                            val iconBottom = iconTop + starIcon.intrinsicHeight
                             val iconLeft = itemView.left + iconMargin
-                            val iconRight = itemView.left + iconMargin + heartIcon.intrinsicWidth
-                            heartIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-                            heartBackground.setBounds(itemView.left, itemView.top, (itemView.left + limitedDx).toInt(), itemView.bottom)
-                            heartBackground.draw(c)
-                            heartIcon.draw(c)
+                            val iconRight = itemView.left + iconMargin + starIcon.intrinsicWidth
+                            starIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                            starBackground.setBounds(itemView.left, itemView.top, (itemView.left + limitedDx).toInt(), itemView.bottom)
+                            starBackground.draw(c)
+                            starIcon.draw(c)
                         }
                         transitionX = limitedDx
                     }
@@ -346,7 +346,7 @@ class DevicesFragment : Fragment() {
                     .setOnDismissListener { deviceAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition) }
                     .show()
             } else if (direction == ItemTouchHelper.RIGHT) {
-                devicesViewModel.setHeartState(device.address, !device.hearted)
+                devicesViewModel.setFavoriteState(device.address, !device.hearted)
                 deviceAdapter.notifyDataSetChanged()
             }
         }

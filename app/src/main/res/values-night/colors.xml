@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Deprecated Colors -->
-    <!-- TODO: remove -->
-    <color name="card_background_teal">#0E8393</color>
-
     <!-- Material Design Colors -->
     <color name="md_theme_primary">#D0BCFF</color>
     <color name="md_theme_onPrimary">#381E72</color>
@@ -39,7 +35,13 @@
     <color name="md_theme_surfaceContainerHigh">#2B2930</color>
 
     <!-- Additional Colors -->
+
+    <!-- Risk Colors -->
     <color name="risk_high">#B3261E</color>
     <color name="risk_medium">#8D6E05</color>
     <color name="risk_low">#2E6C35</color>
+
+    <!-- Mark Favorite -->
+    <color name="star_yellow">#FFD54F</color>
+    <color name="star_container">#564600</color>
 </resources>

@@ -68,7 +68,7 @@ class DevicesViewModel @Inject constructor(
         updateVisibleList()
     }
 
-    fun setHeartState(deviceAddress: String, hearted: Boolean) = viewModelScope.launch {
+    fun setFavoriteState(deviceAddress: String, hearted: Boolean) = viewModelScope.launch {
         deviceRepository.toggleHeart(deviceAddress, hearted)
     }
 

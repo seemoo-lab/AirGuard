@@ -30,6 +30,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -336,10 +337,22 @@ class TrackingFragment : Fragment() {
 
     private fun addInteractions(view: View) {
         val button = view.findViewById<ImageButton>(R.id.open_map_button)
-
         button.setOnClickListener {
             val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
             findNavController().navigate(direction)
+        }
+
+        val favoriteButton = view.findViewById<FloatingActionButton>(R.id.favorite_button)
+        favoriteButton.setOnClickListener {
+            val device = trackingViewModel.device.value
+            if (device != null) {
+                device.hearted = !device.hearted
+                lifecycleScope.launch {
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    deviceRepository.update(device)
+                    trackingViewModel.device.postValue(device)
+                }
+            }
         }
 
         val overlay = view.findViewById<View>(R.id.map_overlay)
