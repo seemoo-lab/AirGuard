@@ -40,8 +40,8 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="@string/marker_legend"
             app:srcCompat="@drawable/ic_baseline_info_24"
-            app:tint="@color/md_theme_onPrimaryContainer"
-            app:backgroundTint="@color/md_theme_primaryContainer"
+            app:tint="?attr/colorOnPrimaryContainer"
+            app:backgroundTint="?attr/colorPrimaryContainer"
             android:visibility="@{vm.hideMapShowNoDevicesFoundInstead || vm.hideMapShowNoInternetInstead ? View.GONE : View.VISIBLE, default=visible}"
             />
 
@@ -80,7 +80,7 @@
                         android:text="@string/marker_legend"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/md_theme_onSurface"
+                        android:textColor="?attr/colorOnSurface"
                         bind:layout_constraintStart_toStartOf="parent"
                         bind:layout_constraintEnd_toStartOf="@id/legendCollapseButton"
                         bind:layout_constraintTop_toTopOf="parent"
@@ -93,7 +93,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/close"
                         android:src="@drawable/ic_baseline_close_24"
-                        app:tint="@color/md_theme_onSurfaceVariant"
+                        app:tint="?attr/colorOnSurfaceVariant"
                         bind:layout_constraintTop_toTopOf="parent"
                         bind:layout_constraintEnd_toEndOf="parent"
                         bind:layout_constraintBottom_toBottomOf="parent" />
@@ -125,7 +125,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_baseline_location_on_45_black"
-                            app:tint="@color/md_theme_primary"
+                            app:tint="?attr/colorPrimary"
                             android:contentDescription="@null"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toTopOf="parent"
@@ -137,7 +137,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/device_marker"
                             android:textSize="14sp"
-                            android:textColor="@color/md_theme_onSurfaceVariant"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:gravity="center_vertical"
                             android:layout_marginStart="16dp"
                             bind:layout_constraintStart_toEndOf="@id/legendMarkerIcon"
@@ -160,7 +160,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_legend_circle"
-                            app:tint="@color/md_theme_primary"
+                            app:tint="?attr/colorPrimary"
                             android:contentDescription="@null"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toTopOf="parent"
@@ -172,7 +172,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/location_radius_circle"
                             android:textSize="14sp"
-                            android:textColor="@color/md_theme_onSurfaceVariant"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:gravity="center_vertical"
                             android:layout_marginStart="16dp"
                             bind:layout_constraintStart_toEndOf="@id/legendCircleIcon"
@@ -188,7 +188,7 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="@color/md_theme_outline"
+                        android:background="?attr/colorOutline"
                         android:alpha="0.2"
                         bind:layout_constraintTop_toBottomOf="@id/legendRowCircle"
                         bind:layout_constraintStart_toStartOf="parent"
@@ -200,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:text=""
                         android:textSize="14sp"
-                        android:textColor="@color/md_theme_onSurface"
+                        android:textColor="?attr/colorOnSurface"
                         android:layout_marginTop="12dp"
                         bind:layout_constraintTop_toBottomOf="@id/legendDivider"
                         bind:layout_constraintStart_toStartOf="parent"
@@ -243,7 +243,7 @@
                 android:text="@string/export_trackers_no_internet"
                 android:gravity="center"
                 android:textSize="16sp"
-                android:textColor="@color/md_theme_onSurface"/>
+                android:textColor="?attr/colorOnSurface"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -368,6 +368,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("show_too_many_notifications_hint", value) }
         }
 
+    var useDynamicColors: Boolean
+        get() {
+            return sharedPreferences.getBoolean("use_dynamic_colors", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("use_dynamic_colors", value) }
+        }
+
     fun getAllDevicesFilterOptions(): Set<String> {
         val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
         return allOptions.toSet()

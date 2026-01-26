@@ -52,8 +52,8 @@
                     android:layout_margin="16dp"
                     android:src="@{vm.device.hearted ? @drawable/ic_star_filled : @drawable/ic_star_outline}"
                     app:fabSize="mini"
-                    app:backgroundTint="@color/md_theme_surface"
-                    app:tint="@color/md_theme_onSurface"
+                    app:backgroundTint="?attr/colorSurface"
+                    app:tint="?attr/colorOnSurface"
                     android:contentDescription="@string/device_icon" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -64,8 +64,8 @@
                     android:layout_margin="16dp"
                     android:src="@drawable/ic_map_zoom"
                     app:fabSize="mini"
-                    app:backgroundTint="@color/md_theme_surface"
-                    app:tint="@color/md_theme_onSurface"
+                    app:backgroundTint="?attr/colorSurface"
+                    app:tint="?attr/colorOnSurface"
                     android:contentDescription="@string/open_map_description" />
             </androidx.cardview.widget.CardView>
 
@@ -111,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textColor="@color/md_theme_primary"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_marginBottom="8dp"
                     android:layout_marginStart="4dp"/>
 
@@ -225,7 +225,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/last_seen_times_title"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/md_theme_primary" />
+                        android:textColor="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -233,7 +233,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@{vm.lastSeenTimesString}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="@color/md_theme_onSurfaceVariant" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <TextView
@@ -243,7 +243,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/tracking_info"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="@{vm.showNfcHint ? View.VISIBLE : View.GONE}" />
 
                 <TextView
@@ -253,7 +253,7 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/explanation_apple"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
 
             <LinearLayout
@@ -280,10 +280,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/forget_tracker"
-                    android:textColor="@color/md_theme_error"
-                    app:backgroundTint="@color/md_theme_errorContainer"
+                    android:textColor="?attr/colorError"
+                    app:backgroundTint="?attr/colorErrorContainer"
                     app:icon="@drawable/ic_baseline_delete_24"
-                    app:iconTint="@color/md_theme_error" />
+                    app:iconTint="?attr/colorError" />
 
             </LinearLayout>
 

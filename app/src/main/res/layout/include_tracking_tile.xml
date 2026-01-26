@@ -29,7 +29,7 @@
 
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/md_theme_surfaceVariant"
+        app:strokeColor="?attr/colorSurfaceVariant"
         app:strokeWidth="0dp"
         app:checkedIcon="@null"
         android:clickable="@{clickable}"
@@ -54,7 +54,7 @@
                 android:layout_height="24dp"
                 android:contentDescription="@{imageDescription}"
                 android:src="@{drawable}"
-                app:tint="@color/md_theme_primary"
+                app:tint="?attr/colorPrimary"
                 tools:src="@drawable/ic_baseline_play_circle_outline_24" />
 
             <LinearLayout
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{title}"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    android:textColor="@color/md_theme_onSurface"
+                    android:textColor="?attr/colorOnSurface"
                     tools:text="Play Sound" />
 
                 <TextView
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{subtitle}"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="@{subtitle != null &amp;&amp; !subtitle.isEmpty() ? View.VISIBLE : View.GONE}"
                     tools:text="Sound is playing..." />
             </LinearLayout>
@@ -95,14 +95,14 @@
                     android:layout_height="24dp"
                     android:indeterminate="true"
                     android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"
-                    app:SpinKit_Color="@color/md_theme_primary" />
+                    app:SpinKit_Color="?attr/colorPrimary" />
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:visibility="@{isError ? View.VISIBLE : View.GONE}"
                     app:srcCompat="@drawable/ic_baseline_error_outline_24"
-                    app:tint="@color/md_theme_error"
+                    app:tint="?attr/colorError"
                     android:contentDescription="@string/error_connection" />
 
                 <ImageView
@@ -110,7 +110,7 @@
                     android:layout_height="24dp"
                     android:visibility="@{checked ? View.VISIBLE : View.GONE}"
                     app:srcCompat="@drawable/ic_check_circle"
-                    app:tint="@color/md_theme_primary"
+                    app:tint="?attr/colorPrimary"
                     tools:visibility="visible"
                     android:contentDescription="@string/active" />
             </FrameLayout>

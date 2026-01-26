@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -107,7 +108,14 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             Timber.v("File tree planted")
         }
 
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        DynamicColors.applyToActivitiesIfAvailable(
+            this,
+            DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ ->
+                    SharedPrefs.useDynamicColors
+                }
+                .build()
+        )
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
 

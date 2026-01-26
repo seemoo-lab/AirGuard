@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/feedback_question1"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                android:textColor="@color/md_theme_onSurface"
+                android:textColor="?attr/colorOnSurface"
                 tools:text="Where was the device?" />
 
             <TextView
@@ -36,7 +36,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/feedback_research_explanation"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="By selecting an option, you help improve our detection algorithms and support our research." />
 
             <LinearLayout

@@ -164,6 +164,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         scrollingView.clipToPadding = false
                     }
 
+                    // Apply Insets Listener
                     ViewCompat.setOnApplyWindowInsetsListener(scrollingView) { view, insets ->
                         val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
@@ -179,6 +180,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         )
                         insets
                     }
+
+                    // Layout Change Listener on NavView
+                    val layoutListener = View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                        // Re-trigger insets on the fragment root view, which should propagate to scrollingView and FABs
+                        ViewCompat.requestApplyInsets(v)
+                    }
+                    navView.addOnLayoutChangeListener(layoutListener)
+
+                    // Remove listener when view is destroyed
+                    f.viewLifecycleOwner.lifecycle.addObserver(object : androidx.lifecycle.DefaultLifecycleObserver {
+                        override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {
+                            navView.removeOnLayoutChangeListener(layoutListener)
+                        }
+                    })
                 }
 
                 // Handle Floating Action Buttons
@@ -292,6 +307,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
         } else if (key == "prevent_screenshots") {
             updateSecureFlag()
+        } else if (key == "app_theme" || key == "use_dynamic_colors") {
+            recreate()
         }
     }
 }

@@ -44,7 +44,7 @@
                     android:layout_height="48dp"
                     style="@style/Widget.Material3.Button.IconButton"
                     app:icon="@drawable/ic_baseline_keyboard_arrow_down_24"
-                    app:iconTint="@color/md_theme_onSurfaceVariant"
+                    app:iconTint="?attr/colorOnSurfaceVariant"
                     android:contentDescription="@string/filter" />
 
                 <TextView
@@ -54,7 +54,7 @@
                     android:layout_weight="1"
                     android:text="@{viewModel.filterSummaryText}"
                     style="@style/TextAppearance.Material3.BodyLarge"
-                    android:textColor="@color/md_theme_onSurface"
+                    android:textColor="?attr/colorOnSurface"
                     android:maxLines="2"
                     android:ellipsize="end"
                     android:paddingHorizontal="8dp"
@@ -66,7 +66,7 @@
                     android:layout_height="48dp"
                     style="@style/Widget.Material3.Button.IconButton"
                     app:icon="@drawable/ic_baseline_filter_list_24"
-                    app:iconTint="@color/md_theme_onSurfaceVariant"
+                    app:iconTint="?attr/colorOnSurfaceVariant"
                     android:contentDescription="@string/sort_list" />
 
             </LinearLayout>
@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.filterIsExpanded ? View.VISIBLE : View.GONE}"
-                app:dividerColor="@color/md_theme_outline"
+                app:dividerColor="?attr/colorOutline"
                 android:alpha="0.2"
                 app:layout_constraintTop_toBottomOf="@id/filter_header_container"/>
 
@@ -106,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_title_device_attributes"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/md_theme_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"/>
 
@@ -142,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_title_device_types"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/md_theme_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 
@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/filter_date_range_picker_title"
                         style="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/md_theme_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 

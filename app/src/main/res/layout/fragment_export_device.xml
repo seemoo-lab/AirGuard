@@ -47,7 +47,7 @@
                     android:gravity="center"
                     android:text="@string/export_trackers_no_internet_during_generation"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:background="@color/md_theme_surfaceContainerLow"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -75,7 +75,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:text="@string/export_trackers_basic_info_title"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/md_theme_primary"
+                android:textColor="?attr/colorPrimary"
                 app:layout_constraintTop_toBottomOf="@id/following_status_textview" />
 
             <TextView
@@ -85,7 +85,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginHorizontal="20dp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:lineSpacingExtra="4dp"
                 android:text="@{vm.basicInfoText}"
                 app:layout_constraintTop_toBottomOf="@id/basic_info_title_textview"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginHorizontal="16dp"
-                app:cardBackgroundColor="@color/md_theme_errorContainer"
+                app:cardBackgroundColor="?attr/colorErrorContainer"
                 app:cardCornerRadius="16dp"
                 app:strokeWidth="0dp"
                 app:cardElevation="0dp"
@@ -115,7 +115,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_baseline_error_outline_24"
-                        app:tint="@color/md_theme_onErrorContainer"
+                        app:tint="?attr/colorOnErrorContainer"
                         android:layout_marginEnd="16dp"
                         android:contentDescription="@null" />
 
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/export_trackers_algo_warning_text"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/md_theme_onErrorContainer" />
+                        android:textColor="?attr/colorOnErrorContainer" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -137,7 +137,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:text="@string/export_trackers_detections_title"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="@color/md_theme_primary"
+                android:textColor="?attr/colorPrimary"
                 app:layout_constraintTop_toBottomOf="@id/warning_card" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -168,10 +168,10 @@
                     android:layout_height="wrap_content"
                     android:paddingVertical="12dp"
                     android:text="@string/export_trackers_create_document"
-                    android:textColor="@color/md_theme_onSecondaryContainer"
-                    app:backgroundTint="@color/md_theme_secondaryContainer"
+                    android:textColor="?attr/colorOnSecondaryContainer"
+                    app:backgroundTint="?attr/colorSecondaryContainer"
                     app:icon="@drawable/ic_baseline_attach_file_24"
-                    app:iconTint="@color/md_theme_onSecondaryContainer"
+                    app:iconTint="?attr/colorOnSecondaryContainer"
                     app:iconGravity="textStart" />
 
                 <ProgressBar

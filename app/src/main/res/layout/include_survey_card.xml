@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin"
-        app:cardBackgroundColor="@color/md_theme_secondaryContainer">
+        app:cardBackgroundColor="?attr/colorSecondaryContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                     android:maxLines="3"
                     android:text="@string/survey_card_title"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textColor="@color/md_theme_onSecondaryContainer" />
+                    android:textColor="?attr/colorOnSecondaryContainer" />
 
                 <ImageButton
                     android:id="@+id/hide_survey_card_button"
@@ -43,7 +43,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:src="@drawable/ic_baseline_close_24"
-                    app:tint="@color/md_theme_onSecondaryContainer"
+                    app:tint="?attr/colorOnSecondaryContainer"
                     style="?attr/borderlessButtonStyle"
                     android:contentDescription="@string/feedback_close"
                     />
@@ -78,11 +78,11 @@
                 android:text="@string/participate"
                 android:textAppearance="?attr/textAppearanceLabelLarge"
                 android:layout_marginTop="16dp"
-                app:backgroundTint="@color/md_theme_primary"
+                app:backgroundTint="?attr/colorPrimary"
                 app:icon="@drawable/ic_baseline_open_in_new_24"
                 app:iconGravity="textEnd"
-                app:iconTint="@color/md_theme_onPrimary"
-                android:textColor="@color/md_theme_onPrimary"
+                app:iconTint="?attr/colorOnPrimary"
+                android:textColor="?attr/colorOnPrimary"
                 />
 
         </LinearLayout>

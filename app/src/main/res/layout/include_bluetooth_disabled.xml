@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="24dp"
-        android:background="@color/md_theme_background"
+        android:background="?android:attr/colorBackground"
         >
 
         <ImageView
@@ -35,7 +35,7 @@
             app:layout_constraintHeight_max="120dp"
             app:layout_constraintWidth_max="120dp"
             android:contentDescription="@string/empty_image_content_description"
-            app:tint="@color/md_theme_primary"
+            app:tint="?attr/colorPrimary"
             tools:src="@drawable/ic_bluetooth_off" />
 
 

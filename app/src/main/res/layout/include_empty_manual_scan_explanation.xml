@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:layout_margin="24dp"
         android:padding="20dp"
-        android:background="@color/md_theme_background">
+        android:background="?android:attr/colorBackground">
 
         <ImageView
             android:id="@+id/empty_explanation_image"
@@ -42,7 +42,7 @@
             android:text="@string/scan_result_no_devices"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:textColor="@color/md_theme_onBackground"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/empty_explanation_image"
@@ -59,7 +59,7 @@
             android:layout_marginBottom="20dp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/md_theme_onSurfaceVariant"
+            android:textColor="?attr/colorOnSurfaceVariant"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

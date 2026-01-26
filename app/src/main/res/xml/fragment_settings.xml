@@ -9,7 +9,7 @@
         android:key="advanced_mode"
         android:summary="@string/settings_advanced_mode_summary"
         app:title="@string/settings_advanced_mode_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <!--<Preference
         android:icon="@drawable/ic_baseline_attach_file_24"
@@ -23,7 +23,7 @@
         android:key="deactivate_background_scanning"
         android:summary="@string/settings_deactivate_scanning_summary"
         app:title="@string/settings_deactivate_scanning_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
@@ -31,28 +31,28 @@
         android:summary="@string/settings_permanent_scanning_summary"
         app:title="@string/settings_permanent_scanning_title"
         app:defaultValue="false"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_analytics_24"
         android:key="share_data"
         android:summary="@string/settings_share_data_summary"
         app:title="@string/settings_share_data_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <Preference
         android:icon="@drawable/ic_delete"
         android:key="delete_study_data"
         android:summary="@string/settings_delete_study_data_summary"
         android:title="@string/settings_delete_study_data_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_baseline_location_on_24"
         android:key="use_location"
         android:summary="@string/settings_use_location_summary"
         android:title="@string/settings_use_location_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
@@ -60,7 +60,7 @@
         android:key="use_low_power_ble"
         android:summary="@string/settings_use_low_power_ble_summary"
         android:title="@string/settings_use_low_power_ble_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
@@ -68,7 +68,7 @@
         android:key="send_ble_error_messages"
         android:summary="@string/settings_send_bluetooth_error_messages_summary"
         android:title="@string/settings_send_bluetooth_error_messages"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
@@ -76,14 +76,14 @@
         android:key="prevent_screenshots"
         android:summary="@string/settings_prevent_screenshots_summary"
         android:title="@string/settings_prevent_screenshots_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <Preference
         android:icon="@drawable/ic_delete"
         android:key="old_device_cleanup"
         android:summary="@string/settings_old_device_cleanup_summary"
         android:title="@string/settings_old_device_cleanup_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <ListPreference
         android:defaultValue="medium"
@@ -93,7 +93,7 @@
         android:key="risk_sensitivity"
         android:summary="@string/settings_risk_sensitivity_summary"
         android:title="@string/settings_risk_sensitivity_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <MultiSelectListPreference
         android:key="devices_filter_unselected"
@@ -104,7 +104,7 @@
         android:entries="@array/devicesFilter"
         android:entryValues="@array/devicesFilterValue"
         android:defaultValue="@array/defaultFilterSetEmpty"
-        app:iconTint="@color/md_theme_primary"
+        app:iconTint="?attr/colorPrimary"
         />
 
     <SwitchPreferenceCompat
@@ -113,7 +113,7 @@
         android:key="notification_priority_high"
         android:summary="@string/settings_notification_priority_high"
         android:title="@string/settings_notification_priority_high_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <!--
     <SwitchPreferenceCompat
@@ -135,11 +135,19 @@
         android:defaultValue="system_default"
         android:entries="@array/AppThemeName"
         android:entryValues="@array/AppThemeValues"
-        android:icon="@drawable/ic_baseline_color_lens_24"
+        android:icon="@drawable/ic_baseline_dark_mode_24"
         android:key="app_theme"
         android:summary="@string/settings_app_theme_summary"
         android:title="@string/settings_app_theme_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
+
+    <SwitchPreferenceCompat
+        android:key="use_dynamic_colors"
+        android:title="@string/settings_use_dynamic_colors_title"
+        android:summary="@string/settings_use_dynamic_colors_summary"
+        android:defaultValue="true"
+        app:iconTint="?attr/colorPrimary"
+        android:icon="@drawable/ic_baseline_color_lens_24" />
 
 <!--    <Preference-->
 <!--        android:icon="@drawable/ic_baseline_library_books_24"-->
@@ -158,14 +166,14 @@
         android:key="information_contact"
         android:summary="@string/settings_information_contact_summary"
         android:title="@string/settings_information_contact_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
     <Preference
         android:icon="@drawable/ic_baseline_info_24"
         android:key="privacy_policy"
         android:summary="@string/settings_privacy_policy_summary"
         android:title="@string/settings_privacy_policy_title"
-        app:iconTint="@color/md_theme_primary" />
+        app:iconTint="?attr/colorPrimary" />
 
 <!--    <Preference-->
 <!--        android:icon="@drawable/ic_twitter"-->
@@ -177,7 +185,7 @@
         android:key="show_onboarding"
         android:summary="@string/onboarding_setting_summary"
         android:title="@string/onboarding_setting_title"
-        app:iconTint="@color/md_theme_primary"
+        app:iconTint="?attr/colorPrimary"
         app:isPreferenceVisible="@bool/debug" />
 
 </PreferenceScreen>

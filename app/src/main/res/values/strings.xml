@@ -566,4 +566,7 @@
 
     <string name="feedback_research_explanation">By selecting an option, you help us improve our detection algorithms and support our research.</string>
     <string name="close">close</string>
+
+    <string name="settings_use_dynamic_colors_title">Use Material You</string>
+    <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
 </resources>

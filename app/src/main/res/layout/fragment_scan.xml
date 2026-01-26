@@ -22,7 +22,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/md_theme_background"
+        android:background="?android:attr/colorBackground"
         tools:context=".ui.scan.ScanFragment">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -30,8 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            app:indicatorColor="@color/md_theme_primary"
-            app:trackColor="@color/md_theme_surfaceVariant"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackColor="?attr/colorSurfaceVariant"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
             app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -82,7 +82,7 @@
                         android:paddingEnd="16dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
-                        android:textColor="@color/md_theme_onSurface" />
+                        android:textColor="?attr/colorOnSurface" />
 
                     <ImageButton
                         android:id="@+id/info_button"
@@ -95,7 +95,7 @@
                         android:layout_centerVertical="true"
                         android:padding="8dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        app:tint="@color/md_theme_onSurfaceVariant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                 </RelativeLayout>
 
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:text="@string/explanation_safe_trackers" />
                 </LinearLayout>
 
@@ -154,8 +154,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_stop_24"
-            app:backgroundTint="@color/md_theme_primaryContainer"
-            app:tint="@color/md_theme_onPrimaryContainer"
+            app:backgroundTint="?attr/colorPrimaryContainer"
+            app:tint="?attr/colorOnPrimaryContainer"
             android:contentDescription="@string/scan_accessibility" />
 
         <include

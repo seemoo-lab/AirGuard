@@ -6,7 +6,7 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeWidth="0dp"
@@ -27,7 +27,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:scaleType="fitCenter"
-            app:tint="@color/md_theme_primary"
+            app:tint="?attr/colorPrimary"
             tools:src="@drawable/ic_baseline_backpack_24"
             android:contentDescription="@null" />
 
@@ -38,14 +38,14 @@
             android:layout_weight="1"
             android:layout_marginStart="16dp"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="@color/md_theme_onSurface"
+            android:textColor="?attr/colorOnSurface"
             tools:text="Backpack" />
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-            app:tint="@color/md_theme_onSurfaceVariant"
+            app:tint="?attr/colorOnSurfaceVariant"
             android:importantForAccessibility="no" />
 
     </LinearLayout>

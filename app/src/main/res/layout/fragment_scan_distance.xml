@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="-500dp"
-            android:background="@color/md_theme_primaryContainer"
+            android:background="?attr/colorPrimaryContainer"
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"
