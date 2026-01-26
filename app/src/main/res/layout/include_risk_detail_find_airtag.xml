@@ -47,7 +47,7 @@
 
             <include
                 layout="@layout/item_icon_text_white"
-                app:iconDrawable="@{@drawable/ic_battery}"
+                app:iconDrawable="@{@drawable/ic_battery_full_24}"
                 app:rowText="@{@string/find_battery}" />
 
 
