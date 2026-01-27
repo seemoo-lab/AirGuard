@@ -171,10 +171,8 @@ class DevicesFragment : Fragment() {
         ViewCompat.setOnApplyWindowInsetsListener(filterContainer) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Apply Top Padding ONLY to the container (Fixes overlap)
             v.updatePadding(top = bars.top)
 
-            // Handle Sibling (RecyclerView) padding logic
             val navView = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav_view)
             val navHeight = if (navView != null && navView.height > 0)
                 navView.height + navView.marginBottom
@@ -192,11 +190,6 @@ class DevicesFragment : Fragment() {
 
             // Stop system from adding unnecessary padding to te dialog filter
             WindowInsetsCompat.CONSUMED
-        }
-
-        // Update Recycler Padding when Filter Expands/Collapses
-        filterContainer.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-            recyclerView.updatePadding(top = v.height + v.marginBottom)
         }
 
         devicesViewModel.devices.observe(viewLifecycleOwner) {

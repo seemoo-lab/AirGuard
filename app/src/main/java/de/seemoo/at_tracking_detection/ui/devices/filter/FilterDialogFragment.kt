@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.devices.filter
 
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +55,8 @@ class FilterDialogFragment : Fragment() {
         val headerSummary = view.findViewById<View>(R.id.filter_summary_text)
 
         val toggleListener = View.OnClickListener {
+            TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
+
             val value = devicesViewModel.filterIsExpanded.value ?: false
             devicesViewModel.filterIsExpanded.postValue(!value)
 

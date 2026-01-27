@@ -17,7 +17,9 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.FavoriteFilter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -46,7 +48,7 @@ class DevicesViewModel @Inject constructor(
     val favoriteFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
 
     // UI State
-    val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData(true) // Start loading
     private var hasLoadedData = false
     val showEmptyState: MutableLiveData<Boolean> = MutableLiveData(false)
     val showAllDevicesButton: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -56,6 +58,7 @@ class DevicesViewModel @Inject constructor(
     var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
 
     init {
+        isLoading.value = true
         devices.addSource(deviceRepository.devices.asLiveData()) {
             rawDevicesList = it
             hasLoadedData = true
@@ -148,33 +151,42 @@ class DevicesViewModel @Inject constructor(
 
     // applies Filters AND Sorting
     fun updateVisibleList() {
-        var filteredDevices = rawDevicesList
+        val currentDevices = rawDevicesList
+        val currentFilters = activeFilter.toMap() // Snapshot for thread safety
+        val sort = currentSort
 
-        // Apply Filters
-        activeFilter.forEach { (_, filter) ->
-            filteredDevices = filter.apply(filteredDevices)
-        }
+        showEmptyState.value = false
 
-        // Apply Sorting
-        filteredDevices = when (currentSort) {
-            SortOption.NAME -> filteredDevices.sortedBy { it.getDeviceNameWithID() }
-            SortOption.LAST_SEEN -> filteredDevices.sortedByDescending { it.lastSeen }
-            SortOption.FIRST_DISCOVERED -> filteredDevices.sortedByDescending { it.firstDiscovery }
-            SortOption.TIMES_SEEN -> {
-                val beaconCounts = filteredDevices.associate { it.address to getDeviceBeaconsCountInt(it.address) }
-                filteredDevices.sortedByDescending { beaconCounts[it.address] ?: 0 }
+        viewModelScope.launch(Dispatchers.Default) {
+            var filteredDevices = currentDevices
+
+            // Apply Filters
+            currentFilters.forEach { (_, filter) ->
+                filteredDevices = filter.apply(filteredDevices)
             }
-        }
 
-        filteredDevices = filteredDevices.filter { it.hearted } + filteredDevices.filterNot { it.hearted }
+            // Apply Sorting
+            filteredDevices = when (sort) {
+                SortOption.NAME -> filteredDevices.sortedBy { it.getDeviceNameWithID() }
+                SortOption.LAST_SEEN -> filteredDevices.sortedByDescending { it.lastSeen }
+                SortOption.FIRST_DISCOVERED -> filteredDevices.sortedByDescending { it.firstDiscovery }
+                SortOption.TIMES_SEEN -> {
+                    val beaconCounts = filteredDevices.associate { it.address to getDeviceBeaconsCountInt(it.address) }
+                    filteredDevices.sortedByDescending { beaconCounts[it.address] ?: 0 }
+                }
+            }
 
-        devices.value = filteredDevices
+            filteredDevices = filteredDevices.filter { it.hearted } + filteredDevices.filterNot { it.hearted }
 
-        if (hasLoadedData) {
-            showEmptyState.value = filteredDevices.isEmpty()
+            withContext(Dispatchers.Main) {
+                devices.value = filteredDevices
+                isLoading.value = false // Done loading
 
-            // Show "show all" button only if there are meaningful filters that could be hiding devices
-            showAllDevicesButton.value = filteredDevices.isEmpty() && hasMeaningfulFilters()
+                if (hasLoadedData) {
+                    showEmptyState.value = filteredDevices.isEmpty()
+                    showAllDevicesButton.value = filteredDevices.isEmpty() && hasMeaningfulFilters()
+                }
+            }
         }
     }
 

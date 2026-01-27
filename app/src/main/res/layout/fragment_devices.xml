@@ -19,7 +19,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
         android:background="?android:attr/colorBackground">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,18 +45,29 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="8dp"
+            android:elevation="4dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:layout="@layout/dialog_filter">
         </FrameLayout>
 
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.isLoading ? View.VISIBLE : View.GONE, default=visible}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <include
             android:id="@+id/include_list_empty_explanation"
             layout="@layout/include_empty_explanation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{vm.showEmptyState ? View.VISIBLE : View.GONE, default=gone}"
+            android:visibility="@{vm.showEmptyState &amp;&amp; !vm.isLoading ? View.VISIBLE : View.GONE, default=gone}"
             bind:drawable="@{@drawable/ic_no_data}"
             bind:text="@{vm.emptyListText}"
             bind:showButton="@{vm.showAllDevicesButton}" />
