@@ -198,7 +198,8 @@ class ScanDistanceFragment : Fragment() {
         binding.deviceNotFound.visibility = View.VISIBLE
         binding.actionsContainer.visibility = View.GONE
 
-        setHeight(1f, 100L)
+        // Move bar completely off screen when device is not found
+        moveBackgroundBarOffScreen()
     }
 
     private fun readyToScan(): Boolean {
@@ -311,6 +312,26 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
+    private fun moveBackgroundBarOffScreen() {
+        if (binding.root.height == 0) return
+
+        val targetY = binding.root.height.toFloat()
+
+        ObjectAnimator.ofFloat(
+            binding.backgroundBar,
+            "translationY",
+            oldAnimationValue,
+            targetY
+        ).apply {
+            cancel()
+            duration = animationDuration
+            addListener(onEnd = {
+                oldAnimationValue = targetY
+            })
+            start()
+        }
+    }
+
     private fun updateDeviceIcon() {
         latestWrappedScanResult?.let { wrappedScanResult ->
             val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
@@ -402,6 +423,19 @@ class ScanDistanceFragment : Fragment() {
         )
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = viewModel
+
+        // Observe system toggles to hide bar when features are disabled
+        viewModel.bluetoothEnabled.observe(viewLifecycleOwner) { enabled ->
+            if (!enabled) {
+                moveBackgroundBarOffScreen()
+            }
+        }
+
+        viewModel.locationEnabled.observe(viewLifecycleOwner) { enabled ->
+            if (!enabled) {
+                moveBackgroundBarOffScreen()
+            }
+        }
 
         // This is called deviceAddress but contains the ID
         deviceAddress = safeArgs.deviceAddress

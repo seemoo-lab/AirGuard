@@ -13,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.transition.AutoTransition
+import android.transition.TransitionManager
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -151,42 +154,16 @@ class ScanFragment : Fragment() {
 
     private fun toggleInfoLayoutVisibility(view: View) {
         val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
+        val parent = infoLayout.parent as ViewGroup
 
-        val duration = 200L
-        val density = view.context.resources.displayMetrics.density
-        val slidePx = (-10 * density)
-
-        if (infoLayout.isVisible) {
-            infoLayout.animate()
-                .alpha(0f)
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .translationY(slidePx)
-                .setDuration(duration)
-                .withEndAction {
-                    infoLayout.visibility = View.GONE
-                    // reset properties for next show
-                    infoLayout.alpha = 1f
-                    infoLayout.scaleX = 1f
-                    infoLayout.scaleY = 1f
-                    infoLayout.translationY = 0f
-                }
-                .start()
-        } else {
-            infoLayout.alpha = 0f
-            infoLayout.scaleX = 0.95f
-            infoLayout.scaleY = 0.95f
-            infoLayout.translationY = slidePx
-            infoLayout.visibility = View.VISIBLE
-
-            infoLayout.animate()
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .translationY(0f)
-                .setDuration(duration)
-                .start()
+        val transition = AutoTransition().apply {
+            duration = 250
+            interpolator = FastOutSlowInInterpolator()
         }
+
+        TransitionManager.beginDelayedTransition(parent, transition)
+
+        infoLayout.isVisible = !infoLayout.isVisible
     }
 
     private val scanCallback = object : ScanCallback() {

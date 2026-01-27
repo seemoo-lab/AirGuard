@@ -106,7 +106,10 @@
                     android:orientation="vertical"
                     android:visibility="gone"
                     android:padding="16dp"
-                    android:background="@color/md_theme_surfaceContainerLow">
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@drawable/shape_rounded_rectangle"
+                    android:backgroundTint="@color/md_theme_surfaceContainerLow">
 
                     <TextView
                         android:layout_width="wrap_content"
