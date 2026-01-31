@@ -569,4 +569,7 @@
 
     <string name="settings_use_dynamic_colors_title">Use Material You</string>
     <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
+
+    <string name="load_all_occurrences">Load all occurrences</string>
+    <string name="scroll_button">Scrolls to the top or bottom of this view</string>
 </resources>

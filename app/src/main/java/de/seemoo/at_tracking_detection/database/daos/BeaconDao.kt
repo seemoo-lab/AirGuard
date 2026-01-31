@@ -35,6 +35,9 @@ interface BeaconDao {
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun getDeviceBeacons(deviceAddress: String): List<Beacon>
 
+    @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC LIMIT :limit")
+    fun getDeviceBeaconsLimit(deviceAddress: String, limit: Int): List<Beacon>
+
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun observeDeviceBeacons(deviceAddress: String): Flow<List<Beacon>>
 

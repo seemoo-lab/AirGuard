@@ -37,6 +37,9 @@ class BeaconRepository @Inject constructor(
     fun getDeviceBeacons(deviceAddress: String): List<Beacon> =
         beaconDao.getDeviceBeacons(deviceAddress)
 
+    fun getRecentDeviceBeacons(deviceAddress: String, limit: Int): List<Beacon> =
+        beaconDao.getDeviceBeaconsLimit(deviceAddress, limit)
+
     fun getDeviceBeaconsFlow(deviceAddress: String): Flow<List<Beacon>> =
         beaconDao.observeDeviceBeacons(deviceAddress)
 
