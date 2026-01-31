@@ -301,8 +301,9 @@ class TrackingFragment : Fragment() {
     }
 
     private fun navigateToScanDistance(deviceAddress: String) {
+        val connectable = trackingViewModel.connectable.value ?: false
         val directions: NavDirections =
-            TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
+            TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress, connectable)
         findNavController().navigate(directions)
     }
 

@@ -180,7 +180,7 @@ class ScanDistanceFragment : Fragment() {
         binding.batteryLayout.visibility = if (SharedPrefs.advancedMode) View.VISIBLE else View.GONE
         binding.deviceNotFound.visibility = View.GONE
         binding.actionsContainer.visibility = View.VISIBLE
-        binding.playSoundButton.visibility = View.VISIBLE
+        binding.playSoundButton.visibility = if (safeArgs.connectable) View.VISIBLE else View.GONE
     }
 
     private fun showSearchMessage() {

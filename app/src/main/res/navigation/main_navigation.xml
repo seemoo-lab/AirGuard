@@ -318,6 +318,10 @@
             android:defaultValue="null"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="connectable"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <dialog
