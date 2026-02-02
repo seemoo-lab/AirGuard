@@ -7,7 +7,6 @@
     <string name="title_settings">Settings</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
-    <string name="title_tracking">A device with this ID: {deviceAddress} is following you</string>
     <string name="title_devices_tracking">Device ID: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
@@ -33,7 +32,6 @@
     <string name="settings_advanced_mode_summary">Adds more options to AirGuard. These options are meant for advanced users.</string>
     <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="settings_deactivate_scanning_title">Deactivate background scan</string>
-    <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker is following you anymore.</string>
     <string name="settings_permanent_scanning_title">Permanent scanning</string>
     <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but it might affect the stability of the app. When in doubt: leave this option disabled.</string>
     <string name="device_item_first_discovery">Discovered:</string>
@@ -129,8 +127,6 @@
 
     <string name="settings_device_filter_title">Filter out device types</string>
     <string name="settings_device_filter_dialog_title">Ignore device types</string>
-    <string name="settings_device_filter_summary">Choose which device types AirGuard should ignore. Selected device types will not show up in the manual scan and you will not be notified if such a device follows you.</string>
-
 
     <string name="onboarding_share_data_no">No</string>
     <string name="onboarding_share_data_yes">Yes</string>
@@ -140,23 +136,9 @@
     <string name="device_name_find_my_device_google">Google "Find My Device" %s</string>
 
     <string name="notification_observe_tracker_title_base">Your observed tracker</string>
-    <plurals name="notification_observe_tracker_positive">
-        <item quantity="one">A tracker you observed has been following you for at least one hour.</item>
-        <item quantity="other">A tracker you observed has been following you for at least %d hours.</item>
-    </plurals>
     <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
     <string name="notification_observe_tracker_error">An error occurred while observing this tracker. Please try again.</string>
 
-    <plurals name="notification_text_base">
-        <item quantity="one">Open the notification to get more info. A tracker has followed you for at least one minute.</item>
-        <item quantity="other">Open the notification to get more info. A tracker has followed you for at least %d minutes.</item>
-    </plurals>
-    <string name="notification_title_base">A tracker has been following you</string>
-    <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least %d minutes.</string>
-    <string name="notification_text_multiple">Open the notification to get more info. The %s have followed you for at least %d minutes.</string>
-    <string name="notification_title_vocal">An %s follows you</string>
-    <string name="notification_title_consonant">A %s follows you</string>
-    <string name="notification_title_multiple">%s follow you</string>
     <string name="notification_title_ble_error">BLE Scanning failed</string>
     <string name="alert_sent_icon">Alert sent icon</string>
     <string name="device_icon">Device icon</string>
@@ -180,7 +162,6 @@
     <string name="onboarding_connect_title">Bluetooth Connect</string>
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
     <string name="onboarding_notification_title">Sending Notifications</string>
-    <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
     <string name="website_description">Check out our Website</string>
     <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
@@ -210,9 +191,6 @@
         • If you receive multiple notifications at different days, make sure to use the Play sound feature!
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
-    <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that follow you.</string>
-    <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker is following you to multiple locations!</string>
-    <string name="airguard_notification_explanation">You get a notification when a potential tracking device is following you! The card above will then change its color to orange or red.</string>
 
     <string name="find_sound">Play a sound and find it</string>
     <string name="find_manual_scan">Perform a manual scan and locate it</string>
@@ -243,7 +221,6 @@
     <string name="settings_app_theme_summary">Choose a theme!</string>
     <string name="settings_metric_title">Metric System</string>
     <string name="settings_metric_summary">Use the metric system to display distances</string>
-    <string name="info_text_only_trackers">This list only shows trackers that have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
     <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard in the last 14 days. This includes devices that are not tracking you. Identified trackers are marked with a exclamation mark. You can filter the devices by using the button in the bottom-right corner</string>
     <string name="info_text_all_locations">This view shows all locations at which a device has been found. This does include devices, which are not tracking your location.</string>
     <string name="empty_list_devices">This list shows all devices that have been found with AirGuard in the past 14 days. Since it is empty no devices have been found. Remember to keep Bluetooth activated, because the app can only find potential tracking devices by using Bluetooth</string>
@@ -376,8 +353,7 @@
     <string name="observe_tracker_stop_observation">Stop Observation</string>
     <string name="observe_tracker_stop_observation_explanation">This tracker is currently being observed.</string>
     <string name="observe_tracker_explanation">If you are not sure if this tracker follows you, you can manually observe it. \n\nIn one hour, AirGuard will search for this tracker and deliver a notification immediately, even if you did not move with this tracker. If the tracker is not around anymore, you will receive a notification about that as well.</string>
-    <string name="observe_tracker_changing_id">Please be aware that this tracker could change its identifier. Therefore it may still follow you even if we cannot detect it.</string>
-    <string name="tracking_observe_tracker_subtitle">Find out if this tracker is following you</string>
+    <string name="observe_tracker_changing_id">Please be aware that this tracker could change its identifier. Therefore, it may still follow you even if we cannot detect it.</string>
     <string name="observe_tracker_success">Observation started</string>
     <string name="observe_tracker_stopped">Observation stopped</string>
     <string name="observe_tracker_failure">You are already observing this tracker</string>
@@ -446,7 +422,6 @@
     <string name="retrieve_owner_information_alert_close">Close</string>
 
     <string name="confirm_deactivating_background_scan_title">Confirm deactivating the background scan</string>
-    <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that are following you anymore.</string>
     <string name="confirm_deactivating_background_scan_yes">Yes, deactivate</string>
     <string name="confirm_deactivating_background_scan_no">No, stay protected</string>
 
@@ -461,7 +436,6 @@
     <string name="export_trackers_label">Export Trackers</string>
     <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
     <string name="export_trackers_create_document">Create document</string>
-    <string name="export_trackers_following">The tracker has been following you</string>
     <string name="export_trackers_not_following">The tracker has not been following you</string>
     <string name="export_trackers_ignored">The tracker has been ignored</string>
     <string name="export_trackers_location_unknown">Location: Unknown</string>
@@ -494,9 +468,7 @@
 
     <string name="device_comment_hint">Add a comment</string>
     <string name="notification_permission_missing_title">Notification Permission disabled</string>
-    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you. To change this enable notifications for this app in your system settings.</string>
     <string name="background_location_permission_missing_title">Background location permission disabled</string>
-    <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
 
     <string name="title_old_device_cleanup">Auto delete old devices</string>
     <string name="settings_old_device_cleanup_title">Auto delete old devices</string>
@@ -530,6 +502,34 @@
     <string name="times_seen">Seen</string>
     <string name="tracking_locate_at_subtitle">Locate Tracker via Audio</string>
     <string name="tracking_feedback_subtitle">Help us with our research</string>
+
+    <string name="title_tracking">A device with this ID: {deviceAddress} could be following you</string>
+    <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker might be following you anymore.</string>
+    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker might follow you. To change this enable notifications for this app in your system settings.</string>
+    <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker might follow you while this app is closed. To change this enable background locations for this app in your system settings.</string>
+    <string name="export_trackers_following">The tracker might have been following you</string>
+    <string name="tracking_observe_tracker_subtitle">Find out if this tracker could be following you</string>
+    <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker might be following you to multiple locations!</string>
+    <string name="airguard_notification_explanation">You get a notification when a potential tracking device could be following you! The card above will then change its color to orange or red.</string>
+    <string name="onboarding_notification_description">To send you notifications when we identified that a tracker might be following you, we need the permission to send notifications.</string>
+    <plurals name="notification_text_base">
+        <item quantity="one">Open the notification to get more info. A tracker could have followed you for at least one minute.</item>
+        <item quantity="other">Open the notification to get more info. A tracker could have followed you for at least %d minutes.</item>
+    </plurals>
+    <string name="notification_title_base">A tracker could be following you</string>
+    <string name="notification_text_single">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_text_multiple">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_title_vocal">%s might follow you</string>
+    <string name="notification_title_consonant">A %s might follow you</string>
+    <string name="notification_title_multiple">%s might follow you</string>
+    <string name="settings_device_filter_summary">Choose which device types AirGuard should ignore. Selected device types will not show up in the manual scan and you will not be notified if such a device might follow you.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">A tracker you observed could have been following you for at least one hour.</item>
+        <item quantity="other">A tracker you observed could have been following you for at least %d hours.</item>
+    </plurals>
+    <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that might follow you.</string>
+    <string name="info_text_only_trackers">This list only shows trackers that might have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
+    <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that could follow you anymore.</string>
 
     <!-- TODO: New: Require Translation -->
     <string name="dismiss_article">Dismiss article</string>
