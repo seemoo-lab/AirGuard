@@ -7,7 +7,6 @@
     <string name="title_settings">Nastavení</string>
     <string name="title_debug">Ladění</string>
     <string name="title_feedback">Zpětná vazba</string>
-    <string name="title_tracking">Zařízení s tímto ID: {deviceAddress} vás sleduje</string>
     <string name="title_devices_tracking">ID zařízení: {deviceAddress}</string>
     <string name="title_scan">Skenovat</string>
     <string name="title_scan_detail">Lokalizovat: {deviceAddress}</string>
@@ -34,12 +33,10 @@
     <string name="settings_advanced_mode_summary">Přidá do AirGuardu více možností. Tyto možnosti jsou určeny pro pokročilé uživatele.</string>
     <string name="settings_advanced_mode_title">Režim experta</string>
     <string name="settings_deactivate_scanning_title">Deaktivovat skenování na pozadí</string>
-    <string name="settings_deactivate_scanning_summary">Toto deaktivuje běh AirGuardu na pozadí. Upozornění: Již nebudete varováni, pokud vás sleduje tracker.</string>
     <string name="settings_permanent_scanning_title">Trvalé skenování</string>
     <string name="settings_permanent_scanning_summary">Použít trvalý skener na pozadí. Povolení této funkce vede k přesnějším výsledkům, ale může ovlivnit stabilitu aplikace. Pokud si nejste jisti: nechte tuto možnost vypnutou.</string>
     <string name="device_item_first_discovery">Objeveno:</string>
     <string name="beacons">Majáky</string>
-    <string name="times_seen">Počet spatření</string>
     <string name="devices_swipe">Přejetím odstraníte</string>
     <string name="devices_list_empty">Kdykoli aplikace detekuje AirTag nebo jiné sledovací zařízení, bude zde uvedeno. Seznam bude pravděpodobně obsahovat zařízení, která vás nesledovala. U zařízení, která vás sledují, obdržíte oznámení.</string>
     <string name="ignored_device_list_empty">Kdykoli obdržíte oznámení o sledování známým zařízením (např. AirTag, který vlastníte), můžete je označit jako falešný poplach. Zařízení, která nemění svou Bluetooth adresu (např. Tile, Chipolo, Pebblebee), lze také ignorovat. Tato zařízení budou uvedena zde. Pamatujte: AirTag mění svou Bluetooth adresu jednou denně, takže i když jej označíte jako falešný poplach, stane se po dni novou položkou.</string>
@@ -47,12 +44,10 @@
     <string name="settings_use_location_title">Používat polohu</string>
     <string name="error_requesting_location_permission">Chyba při žádosti o povolení polohy na pozadí</string>
     <string name="tracking_locate_at_title">Přehrát zvuk</string>
-    <string name="tracking_locate_at_subtitle">Lokalizovat AirTag</string>
     <string name="permissions_background_location_title">Poloha na pozadí</string>
     <string name="permission_background_location_message">Udělením tohoto oprávnění mohou být při sledování poskytnuty podrobnější informace. Toto je volitelná funkce.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Zpětná vazba</string>
-    <string name="tracking_feedback_subtitle">Poskytněte nějaké postřehy</string>
     <string name="tracking_detail_scan_title">Lokalizovat tracker</string>
     <string name="tracking_detail_scan_subtitle">Zobrazí živé informace o tomto trackeru</string>
     <string name="tracking_ignore_device_title">Ignorovat zařízení</string>
@@ -133,8 +128,6 @@
 
     <string name="settings_device_filter_title">Filtrovat typy zařízení</string>
     <string name="settings_device_filter_dialog_title">Ignorovat typy zařízení</string>
-    <string name="settings_device_filter_summary">Vyberte, které typy zařízení má AirGuard ignorovat. Vybrané typy zařízení se nezobrazí v ručním skenování a nebudete upozorněni, pokud vás takové zařízení sleduje.</string>
-
 
     <string name="onboarding_share_data_no">Ne</string>
     <string name="onboarding_share_data_yes">Ano</string>
@@ -143,25 +136,9 @@
     <string name="device_name_find_my_device_google">Google \"Find My Device\" %s</string>
 
     <string name="notification_observe_tracker_title_base">Vámi sledovaný tracker</string>
-    <plurals name="notification_observe_tracker_positive">
-        <item quantity="one">Sledovaný tracker vás sleduje nejméně jednu hodinu.</item>
-        <item quantity="few">Sledovaný tracker vás sleduje nejméně %d hodiny.</item>
-        <item quantity="many">Sledovaný tracker vás sleduje nejméně %d hodin.</item>
-    </plurals>
     <string name="notification_observe_tracker_negative">Sledovaný tracker vás nesleduje.</string>
     <string name="notification_observe_tracker_error">Při sledování tohoto trackeru došlo k chybě. Zkuste to prosím znovu.</string>
 
-    <plurals name="notification_text_base">
-        <item quantity="one">Otevřete oznámení pro více informací. Tracker vás sleduje nejméně jednu minutu.</item>
-        <item quantity="few">Otevřete oznámení pro více informací. Tracker vás sleduje nejméně %d minuty.</item>
-        <item quantity="many">Otevřete oznámení pro více informací. Tracker vás sleduje nejméně %d minut.</item>
-    </plurals>
-    <string name="notification_title_base">Sleduje vás tracker</string>
-    <string name="notification_text_single">Otevřete oznámení pro více informací. %s vás sleduje nejméně %d minut.</string>
-    <string name="notification_text_multiple">Otevřete oznámení pro více informací. %s vás sledují nejméně %d minut.</string>
-    <string name="notification_title_vocal">Sleduje vás %s</string>
-    <string name="notification_title_consonant">Sleduje vás %s</string>
-    <string name="notification_title_multiple">Sledují vás %s</string>
     <string name="notification_title_ble_error">Skenování BLE selhalo</string>
     <string name="alert_sent_icon">Ikona odeslaného upozornění</string>
     <string name="device_icon">Ikona zařízení</string>
@@ -185,7 +162,6 @@
     <string name="onboarding_connect_title">Připojení Bluetooth</string>
     <string name="onboarding_connect_description">Pokud je nalezeno sledovací zařízení, AirGuard vám dává možnost na něm přehrát zvuk. K tomu potřebujeme oprávnění k připojení k tomuto zařízení.</string>
     <string name="onboarding_notification_title">Odesílání oznámení</string>
-    <string name="onboarding_notification_description">Abychom vám mohli posílat oznámení, když zjistíme, že vás sleduje tracker, potřebujeme oprávnění k odesílání oznámení.</string>
     <string name="website_description">Podívejte se na náš web</string>
     <string name="website">Webová stránka</string>
     <string name="scan_result_item_image_description">Položka výsledku skenování</string>
@@ -215,9 +191,6 @@
         • Pokud obdržíte více oznámení v různé dny, ujistěte se, že použijete funkci Přehrát zvuk!
     </string>
     <string name="i_cannot_find_the_tracker">Nemohu najít tracker</string>
-    <string name="airguard_scan_explanation">AirGuard používá Bluetooth ke skenování zařízení, která vás sledují.</string>
-    <string name="airguard_detection_explanation">S pomocí informací o poloze dokáže AirGuard zjistit, zda vás tracker sleduje na více místech!</string>
-    <string name="airguard_notification_explanation">Dostanete oznámení, když vás potenciální sledovací zařízení sleduje! Karta výše pak změní barvu na oranžovou nebo červenou.</string>
 
     <string name="find_sound">Přehrát zvuk a najít ho</string>
     <string name="find_manual_scan">Provést ruční skenování a lokalizovat ho</string>
@@ -226,7 +199,6 @@
     <string name="title_risk_detail">Vyhodnocení rizika</string>
     <string name="show_all">Zobrazit vše</string>
     <string name="tracker_detected">Tracker detekován</string>
-    <string name="locations_tracked">Všechny sledované polohy</string>
     <string name="dates_detected">Data detekce</string>
     <string name="filter">Otevřít filtr</string>
     <string name="filter_ignored">ignorováno</string>
@@ -249,7 +221,6 @@
     <string name="settings_app_theme_summary">Vyberte si vzhled!</string>
     <string name="settings_metric_title">Metrický systém</string>
     <string name="settings_metric_summary">Používat metrický systém k zobrazení vzdáleností</string>
-    <string name="info_text_only_trackers">Tento seznam zobrazuje pouze trackery, které vás sledovaly v posledních 14 dnech. Chcete-li zobrazit všechna zařízení, můžete změnit filtr pomocí tlačítka vpravo dole</string>
     <string name="info_text_all_devices">Tento seznam zobrazuje všechna zařízení, která byla objevena pomocí AirGuardu v posledních 14 dnech. To zahrnuje i zařízení, která vás nesledují. Identifikované trackery jsou označeny vykřičníkem. Zařízení můžete filtrovat pomocí tlačítka vpravo dole</string>
     <string name="info_text_all_locations">Toto zobrazení ukazuje všechna místa, na kterých bylo zařízení nalezeno. To zahrnuje i zařízení, která nesledují vaši polohu.</string>
     <string name="empty_list_devices">Tento seznam zobrazuje všechna zařízení, která byla nalezena pomocí AirGuardu v posledních 14 dnech. Jelikož je prázdný, žádná zařízení nebyla nalezena. Nezapomeňte mít aktivovaný Bluetooth, protože aplikace může najít potenciální sledovací zařízení pouze pomocí Bluetooth</string>
@@ -258,7 +229,6 @@
     <string name="empty_image_content_description">Obrázek zobrazující prázdný seznam</string>
     <string name="beacon_locations">Polohy majáků</string>
     <string name="other_devices_found">Nalezena další zařízení</string>
-    <string name="all_devices_found">Všechna nalezená zařízení</string>
     <string name="device_name_samsung_device">Zařízení Samsung %s</string>
     <string name="device_name_apple_device">Zařízení Apple %s</string>
     <string name="device_name_unknown_device">Neznámé zařízení %s</string>
@@ -371,7 +341,6 @@
     <string name="observe_tracker_stop_observation_explanation">Tento tracker je aktuálně sledován.</string>
     <string name="observe_tracker_explanation">Pokud si nejste jisti, zda vás tento tracker sleduje, můžete ho ručně sledovat. \n\nZa hodinu AirGuard tento tracker vyhledá a okamžitě doručí oznámení, i když jste se s tímto trackerem nepohybovali. Pokud tracker již nebude poblíž, obdržíte o tom také oznámení.</string>
     <string name="observe_tracker_changing_id">Uvědomte si prosím, že tento tracker může změnit svůj identifikátor. Proto vás může stále sledovat, i když ho nemůžeme detekovat.</string>
-    <string name="tracking_observe_tracker_subtitle">Zjistěte, zda vás tento tracker sleduje</string>
     <string name="observe_tracker_success">Sledování spuštěno</string>
     <string name="observe_tracker_stopped">Sledování zastaveno</string>
     <string name="observe_tracker_failure">Tento tracker již sledujete</string>
@@ -438,7 +407,6 @@
     <string name="retrieve_owner_information_alert_close">Zavřít</string>
 
     <string name="confirm_deactivating_background_scan_title">Potvrdit deaktivaci skenování na pozadí</string>
-    <string name="confirm_deactivating_background_scan_text">Jste si jisti, že chcete deaktivovat skenování na pozadí? Pokud potvrdíte, nebudete již upozorňováni na potenciální trackery, které vás sledují.</string>
     <string name="confirm_deactivating_background_scan_yes">Ano, deaktivovat</string>
     <string name="confirm_deactivating_background_scan_no">Ne, zůstat chráněn</string>
 
@@ -453,7 +421,6 @@
     <string name="export_trackers_label">Exportovat trackery</string>
     <string name="export_trackers_explanation">Kliknutím na tlačítko níže budete moci vytvořit pdf dokument, který obsahuje všechny trackery, jež byly identifikovány, že vás sledují po delší dobu.</string>
     <string name="export_trackers_create_document">Vytvořit dokument</string>
-    <string name="export_trackers_following">Tracker vás sleduje</string>
     <string name="export_trackers_not_following">Tracker vás nesleduje</string>
     <string name="export_trackers_ignored">Tracker byl ignorován</string>
     <string name="export_trackers_location_unknown">Poloha: Neznámá</string>
@@ -486,9 +453,7 @@
 
     <string name="device_comment_hint">Přidat komentář</string>
     <string name="notification_permission_missing_title">Chybí oprávnění k oznámením</string>
-    <string name="notification_permission_missing_text">Oznámení jsou pro tuto aplikaci zakázána. Nebudete varováni, když vás sleduje tracker. Chcete-li to změnit, povolte oznámení pro tuto aplikaci ve vašem systémovém nastavení.</string>
     <string name="background_location_permission_missing_title">Chybí oprávnění k poloze na pozadí</string>
-    <string name="background_location_permission_missing_text">Pro tuto aplikaci nebylo uděleno oprávnění k poloze na pozadí. Nebudete varováni, když vás sleduje tracker, zatímco je tato aplikace zavřená. Chcete-li to změnit, povolte polohu na pozadí pro tuto aplikaci ve vašem systémovém nastavení.</string>
 
     <string name="map_footer_all_devices">Tato mapa zobrazuje všechny polohy za posledních %d dní.</string>
     <string name="map_footer_device">Tato mapa zobrazuje všechny polohy, kde bylo toto zařízení nalezeno.</string>
@@ -513,4 +478,81 @@
     <string name="old_device_deactivate_yes">Ano, deaktivovat</string>
     <string name="old_device_deactivate_no">Ne, ponechat aktivované</string>
     <string name="save">Uložit</string>
+
+    <string name="locations_tracked">Nedávné polohy</string>
+    <string name="all_devices_found">Všechna nedávná zařízení</string>
+    <string name="times_seen">Viděno</string>
+    <string name="tracking_locate_at_subtitle">Najít tracker pomocí zvuku</string>
+    <string name="tracking_feedback_subtitle">Pomozte nám s naším výzkumem</string>
+
+    <string name="title_tracking">Zařízení s tímto ID: {deviceAddress} by vás mohlo sledovat</string>
+    <string name="settings_deactivate_scanning_summary">Toto deaktivuje AirGuard na pozadí. Upozornění: Už nebudete varováni, pokud vás bude sledovat tracker.</string>
+    <string name="notification_permission_missing_text">Oznámení jsou pro tuto aplikaci zakázána. Nebudete varováni, když by vás mohl sledovat tracker. Chcete-li to změnit, povolte oznámení pro tuto aplikaci v nastavení systému.</string>
+    <string name="background_location_permission_missing_text">Povolení k poloze na pozadí nebylo této aplikaci uděleno. Nebudete varováni, když by vás mohl sledovat tracker, zatímco je aplikace zavřená. Chcete-li to změnit, povolte polohu na pozadí pro tuto aplikaci v nastavení systému.</string>
+    <string name="export_trackers_following">Tracker vás mohl sledovat</string>
+    <string name="tracking_observe_tracker_subtitle">Zjistěte, zda by vás tento tracker mohl sledovat</string>
+    <string name="airguard_detection_explanation">S pomocí informací o poloze může AirGuard zjistit, zda vás tracker sleduje na více místech!</string>
+    <string name="airguard_notification_explanation">Dostanete upozornění, když by vás mohlo sledovat potenciální sledovací zařízení! Karta výše pak změní barvu na oranžovou nebo červenou.</string>
+    <string name="onboarding_notification_description">Abychom vám mohli posílat upozornění, když zjistíme, že by vás mohl sledovat tracker, potřebujeme povolení k zasílání oznámení.</string>
+    <plurals name="notification_text_base">
+        <item quantity="one">Otevřete oznámení pro více informací. Tracker vás mohl sledovat alespoň jednu minutu.</item>
+        <item quantity="few">Otevřete oznámení pro více informací. Tracker vás mohl sledovat alespoň %d minuty.</item>
+        <item quantity="many">Otevřete oznámení pro více informací. Tracker vás mohl sledovat alespoň %d minut.</item>
+    </plurals>
+    <string name="notification_title_base">Tracker by vás mohl sledovat</string>
+    <string name="notification_text_single">Otevřete oznámení pro více informací. %s vás mohl sledovat alespoň %d minut.</string>
+    <string name="notification_text_multiple">Otevřete oznámení pro více informací. %s vás mohli sledovat alespoň %d minut.</string>
+    <string name="notification_title_vocal">%s vás může sledovat</string>
+    <string name="notification_title_consonant">%s vás může sledovat</string>
+    <string name="notification_title_multiple">%s vás mohou sledovat</string>
+    <string name="settings_device_filter_summary">Vyberte, které typy zařízení má AirGuard ignorovat. Vybrané typy zařízení se nezobrazí v manuálním skenování a nebudete upozorněni, pokud by vás takové zařízení mohlo sledovat.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">Tracker, který jste pozorovali, vás mohl sledovat alespoň jednu hodinu.</item>
+        <item quantity="few">Tracker, který jste pozorovali, vás mohl sledovat alespoň %d hodiny.</item>
+        <item quantity="many">Tracker, který jste pozorovali, vás mohl sledovat alespoň %d hodin.</item>
+    </plurals>
+    <string name="airguard_scan_explanation">AirGuard používá Bluetooth k vyhledávání zařízení, která by vás mohla sledovat.</string>
+    <string name="info_text_only_trackers">Tento seznam zobrazuje pouze trackery, které vás mohly sledovat v posledních 14 dnech. Chcete-li zobrazit všechna zařízení, můžete změnit filtr pomocí tlačítka v pravém dolním rohu.</string>
+    <string name="confirm_deactivating_background_scan_text">Opravdu chcete deaktivovat skenování na pozadí? Pokud potvrdíte, nebudete již dostávat upozornění na potenciální trackery, které by vás mohly sledovat.</string>
+
+    <string name="dismiss_article">Zavřít článek</string>
+    <string name="navigate_to_details">Přejít na podrobnosti</string>
+    <string name="more_trackers_found">+%d dalších nalezených trackerů</string>
+    <string name="title_device_map">Nedávno nalezená místa</string>
+    <string name="found_at_location">Nalezeno na místě</string>
+    <string name="selected_types_count">%d typů</string>
+    <string name="sort_list">Seřadit seznam</string>
+    <string name="filter_sort_by_name">Seřadit podle názvu</string>
+    <string name="filter_sort_by_last_seen">Seřadit podle naposledy viděno</string>
+    <string name="filter_sort_by_first_discovered">Seřadit podle prvního objevení</string>
+    <string name="filter_sort_by_times_seen">Seřadit podle počtu vidění</string>
+    <string name="sort_check_times_seen_description">Vybrané řazení: podle počtu vidění</string>
+    <string name="sort_check_name_description">Vybrané řazení: podle názvu</string>
+    <string name="sort_check_last_seen_description">Vybrané řazení: podle naposledy viděno</string>
+    <string name="sort_check_first_discovered_description">Vybrané řazení: podle prvního objevení</string>
+    <string name="not_ignored">Není ignorováno</string>
+    <string name="not_notified">Bez upozornění</string>
+    <string name="empty_list_no_devices">Nebyla nalezena žádná zařízení. AirGuard skenuje Bluetooth sledovací zařízení na pozadí. Ujistěte se, že je Bluetooth zapnutý a aplikace má potřebná oprávnění ke skenování zařízení.</string>
+
+    <string name="filter_hearted">Oblíbené</string>
+    <string name="filter_not_hearted">Není oblíbené</string>
+
+    <string name="forget_tracker">Zapomenout tracker</string>
+    <string name="forget_tracker_dialog_title">Zapomenout tracker?</string>
+    <string name="forget_tracker_dialog_message">Tato operace vymaže všechny informace o tomto trackeru. Opravdu chcete pokračovat?</string>
+    <string name="forget_tracker_success">Tracker smazán</string>
+
+    <string name="open_map_description">Otevřít mapu na celou obrazovku</string>
+    <string name="error_connection">Chyba připojení</string>
+    <string name="active">Aktivní</string>
+    <string name="actions">Akce</string>
+
+    <string name="feedback_research_explanation">Výběrem možnosti nám pomůžete vylepšit naše detekční algoritmy a podpoříte náš výzkum.</string>
+    <string name="close">zavřít</string>
+
+    <string name="settings_use_dynamic_colors_title">Použít Material You</string>
+    <string name="settings_use_dynamic_colors_summary">Dynamicky přizpůsobí barvy aplikace vaší tapetě</string>
+
+    <string name="load_all_occurrences">Načíst všechny výskyty</string>
+    <string name="scroll_button">Posune na začátek nebo konec tohoto zobrazení</string>
 </resources>
