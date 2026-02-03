@@ -45,6 +45,16 @@
             android:visibility="@{vm.hideMapShowNoDevicesFoundInstead || vm.hideMapShowNoInternetInstead ? View.GONE : View.VISIBLE, default=visible}"
             />
 
+        <View
+            android:id="@+id/scrimOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurface"
+            android:alpha="0"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"/>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/legendContainer"
             android:layout_width="match_parent"
@@ -52,9 +62,9 @@
             android:layout_gravity="bottom"
             android:layout_margin="16dp"
             android:visibility="invisible"
-            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="6dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp"
             app:strokeWidth="0dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout

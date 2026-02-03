@@ -189,32 +189,44 @@ class DeviceMapFragment : Fragment() {
     private fun setupLegendInteractions() {
         binding.legendFab.setOnClickListener { showLegend() }
         binding.legendCollapseButton.setOnClickListener { hideLegend() }
+        binding.scrimOverlay.setOnClickListener { hideLegend() }
     }
 
     private fun showLegend() {
         if (isLegendVisible) return
         isLegendVisible = true
 
+        // Material3 emphasized interpolator for smooth motion
+        val emphasizedInterpolator = android.view.animation.PathInterpolator(0.2f, 0f, 0f, 1f)
+
+        // Show scrim overlay
+        binding.scrimOverlay.visibility = View.VISIBLE
+        binding.scrimOverlay.animate()
+            .alpha(0.32f)
+            .setDuration(200)
+            .setInterpolator(emphasizedInterpolator)
+            .start()
+
         // Animation: Fade out FAB
         binding.legendFab.animate()
             .alpha(0f)
-            .scaleX(0.1f)
-            .scaleY(0.1f)
+            .scaleX(0.8f)
+            .scaleY(0.8f)
             .setDuration(200)
+            .setInterpolator(emphasizedInterpolator)
             .withEndAction { binding.legendFab.visibility = View.INVISIBLE }
             .start()
 
-        // Animation: Reveal Card
+        // Animation: Reveal Card with slide-up effect
         binding.legendContainer.apply {
             visibility = View.VISIBLE
             alpha = 0f
-            scaleX = 0.8f
-            scaleY = 0.8f
+            translationY = 100f  // Slide up from bottom
             animate()
                 .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(250)
+                .translationY(0f)
+                .setDuration(300)
+                .setInterpolator(emphasizedInterpolator)
                 .setListener(null)
                 .start()
         }
@@ -224,15 +236,27 @@ class DeviceMapFragment : Fragment() {
         if (!isLegendVisible) return
         isLegendVisible = false
 
-        // Animation: Hide Card
+        // Material3 emphasized interpolator
+        val emphasizedInterpolator = android.view.animation.PathInterpolator(0.2f, 0f, 0f, 1f)
+
+        // Hide scrim overlay
+        binding.scrimOverlay.animate()
+            .alpha(0f)
+            .setDuration(250)
+            .setInterpolator(emphasizedInterpolator)
+            .withEndAction { binding.scrimOverlay.visibility = View.GONE }
+            .start()
+
+        // Animation: Hide Card with slide-down effect
         binding.legendContainer.animate()
             .alpha(0f)
-            .scaleX(0.8f)
-            .scaleY(0.8f)
-            .setDuration(200)
+            .translationY(100f)  // Slide down
+            .setDuration(250)
+            .setInterpolator(emphasizedInterpolator)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     binding.legendContainer.visibility = View.INVISIBLE
+                    binding.legendContainer.translationY = 0f  // Reset for next show
                 }
             })
             .start()
@@ -241,13 +265,14 @@ class DeviceMapFragment : Fragment() {
         binding.legendFab.apply {
             visibility = View.VISIBLE
             alpha = 0f
-            scaleX = 0.1f
-            scaleY = 0.1f
+            scaleX = 0.8f
+            scaleY = 0.8f
             animate()
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
                 .setDuration(250)
+                .setInterpolator(emphasizedInterpolator)
                 .start()
         }
     }
