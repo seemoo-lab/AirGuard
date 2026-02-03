@@ -1,16 +1,20 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import androidx.preference.PreferenceManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
 import org.osmdroid.bonuspack.utils.BonusPackHelper
+import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -24,6 +28,7 @@ import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.io.File
 
 object MapUtils {
 
@@ -31,6 +36,21 @@ object MapUtils {
     private const val LOCATION_CLUSTER_RADIUS_METERS: Double = BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION.toDouble()
     private const val MAX_ZOOM_LEVEL = 18.0
     private const val ZOOMED_OUT_LEVEL = 15.0
+
+    /**
+     * Initialize osmdroid configuration.
+     * Must be called before any map views are created or displayed.
+     */
+    fun initializeOsmDroidConfiguration(context: Context) {
+        val configuration = Configuration.getInstance()
+        configuration.load(context, PreferenceManager.getDefaultSharedPreferences(context))
+        configuration.userAgentValue = BuildConfig.APPLICATION_ID
+        val osmDroidDir = File(context.filesDir, "osmDroid")
+        osmDroidDir.mkdir()
+        val tilesDir = File(osmDroidDir, "tiles")
+        configuration.osmdroidBasePath = osmDroidDir
+        configuration.osmdroidTileCache = tilesDir
+    }
 
     fun enableMyLocationOverlay(
         map: MapView

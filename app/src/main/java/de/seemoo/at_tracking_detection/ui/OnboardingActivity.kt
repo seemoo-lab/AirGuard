@@ -25,6 +25,7 @@ import de.seemoo.at_tracking_detection.ui.onboarding.BackgroundLocationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.IgnoreBatteryOptimizationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.LocationFragment
 import de.seemoo.at_tracking_detection.ui.onboarding.ShareDataFragment
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import timber.log.Timber
@@ -53,6 +54,9 @@ class OnboardingActivity : AppIntro() {
                 android.view.WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+
+        // Initialize osmdroid configuration
+        MapUtils.initializeOsmDroidConfiguration(this)
 
         // Apply System Insets to Content View to prevent navigation bar overlap
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->

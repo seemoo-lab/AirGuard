@@ -26,6 +26,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragmentArgs
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +53,9 @@ class TrackingNotificationActivity : AppCompatActivity() {
                 android.view.WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+
+        // Initialize osmdroid configuration
+        MapUtils.initializeOsmDroidConfiguration(this)
 
         setContentView(R.layout.activity_tracking)
 
