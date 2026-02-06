@@ -11,7 +11,7 @@ import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.*
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
 import java.util.*
 
@@ -37,8 +37,8 @@ class AirTag(val id: Int) : Device(), Connectable {
                     BluetoothGatt.GATT_SUCCESS -> {
                         when (newState) {
                             BluetoothProfile.STATE_CONNECTED -> gatt.discoverServices()
-                            BluetoothProfile.STATE_DISCONNECTED -> broadcastUpdate(
-                                BluetoothConstants.ACTION_GATT_DISCONNECTED
+                            BluetoothProfile.STATE_DISCONNECTED -> sendBluetoothEvent(
+                                BluetoothEvent.Disconnected
                             )
                             else -> {
                                 Timber.d("Connection state changed to $newState")
@@ -46,9 +46,9 @@ class AirTag(val id: Int) : Device(), Connectable {
                         }
                     }
                     19 -> {
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
                     }
-                    else -> broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    else -> sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
             }
 
@@ -59,13 +59,13 @@ class AirTag(val id: Int) : Device(), Connectable {
                 if (service == null) {
                     Timber.e("AirTag sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 } else {
                     service.getCharacteristic(AIR_TAG_SOUND_CHARACTERISTIC)
                         .let {
                             it.setValue(175, BluetoothGattCharacteristic.FORMAT_UINT8, 0)
                             gatt.writeCharacteristic(it)
-                            broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                            sendBluetoothEvent(BluetoothEvent.EventRunning)
                             Timber.d("Playing sound...")
                         }
                 }
@@ -80,15 +80,15 @@ class AirTag(val id: Int) : Device(), Connectable {
                 if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
                     when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
                         AIR_TAG_EVENT_CALLBACK -> {
-                            broadcastUpdate(
-                                BluetoothConstants.ACTION_EVENT_COMPLETED
+                            sendBluetoothEvent(
+                                BluetoothEvent.EventCompleted
                             )
                             disconnect(gatt)
                         }
                     }
                 }
                 else if (status == 133) { // GATT_ERROR, Timeout
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     disconnect(gatt)
                 }else {
                     disconnect(gatt)
@@ -105,8 +105,8 @@ class AirTag(val id: Int) : Device(), Connectable {
                 if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
                     when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
                         AIR_TAG_EVENT_CALLBACK -> {
-                            broadcastUpdate(
-                                BluetoothConstants.ACTION_EVENT_COMPLETED
+                            sendBluetoothEvent(
+                                BluetoothEvent.EventCompleted
                             )
                             disconnect(gatt)
                         }

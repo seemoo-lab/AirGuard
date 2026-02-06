@@ -13,24 +13,30 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
-import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.databinding.DialogPlaySoundBinding
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEventManager
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels()
 
     private var _binding: DialogPlaySoundBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var bluetoothEventManager: BluetoothEventManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,42 +51,72 @@ class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragmen
         super.onResume()
         val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
         val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
-        LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
         activity.bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Observe Bluetooth events
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.playSoundState.collect {
-                    when (it) {
-                        is DialogViewModel.ConnectionState.Playing -> {
-                            binding.spinnerConnecting.visibility = View.INVISIBLE
-                            binding.spinnerPlaying.visibility = View.VISIBLE
+                launch {
+                    bluetoothEventManager.events.collectLatest { event ->
+                        when (event) {
+                            BluetoothEvent.Connecting -> {
+                                viewModel.playSoundState.value = DialogViewModel.ConnectionState.Connecting
+                            }
+                            BluetoothEvent.EventRunning -> {
+                                viewModel.playSoundState.value = DialogViewModel.ConnectionState.Playing
+                            }
+                            BluetoothEvent.Disconnected -> {
+                                viewModel.playSoundState.value = DialogViewModel.ConnectionState.Success
+                                dismissWithDelay()
+                            }
+                            BluetoothEvent.EventFailed -> {
+                                viewModel.playSoundState.value = DialogViewModel.ConnectionState.Error(
+                                    ATTrackingDetectionApplication.getAppContext()
+                                        .getString(R.string.play_sound_error_fail)
+                                )
+                                dismissWithDelay()
+                            }
+                            BluetoothEvent.EventCompleted -> {
+                                viewModel.playSoundState.value = DialogViewModel.ConnectionState.Success
+                                dismissWithDelay()
+                            }
                         }
+                    }
+                }
 
-                        is DialogViewModel.ConnectionState.Connecting -> {
-                            binding.spinnerConnecting.visibility = View.VISIBLE
-                        }
+                launch {
+                    viewModel.playSoundState.collect {
+                        when (it) {
+                            is DialogViewModel.ConnectionState.Playing -> {
+                                binding.spinnerConnecting.visibility = View.INVISIBLE
+                                binding.spinnerPlaying.visibility = View.VISIBLE
+                            }
 
-                        else -> {
-                            binding.spinnerConnecting.visibility = View.INVISIBLE
-                            binding.spinnerPlaying.visibility = View.INVISIBLE
-                            when (it) {
-                                is DialogViewModel.ConnectionState.Error -> {
-                                    binding.imageError.visibility = View.VISIBLE
-                                    binding.errorText.visibility = View.VISIBLE
-                                    binding.errorText.text = it.message
-                                }
+                            is DialogViewModel.ConnectionState.Connecting -> {
+                                binding.spinnerConnecting.visibility = View.VISIBLE
+                            }
 
-                                is DialogViewModel.ConnectionState.Success -> {
-                                    binding.imageSuccess.visibility = View.VISIBLE
-                                }
+                            else -> {
+                                binding.spinnerConnecting.visibility = View.INVISIBLE
+                                binding.spinnerPlaying.visibility = View.INVISIBLE
+                                when (it) {
+                                    is DialogViewModel.ConnectionState.Error -> {
+                                        binding.imageError.visibility = View.VISIBLE
+                                        binding.errorText.visibility = View.VISIBLE
+                                        binding.errorText.text = it.message
+                                    }
 
-                                else -> {
-                                    Timber.d("Reached unknown state $it!")
+                                    is DialogViewModel.ConnectionState.Success -> {
+                                        binding.imageSuccess.visibility = View.VISIBLE
+                                    }
+
+                                    else -> {
+                                        Timber.d("Reached unknown state $it!")
+                                    }
                                 }
                             }
                         }
@@ -95,32 +131,6 @@ class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragmen
             Handler(Looper.getMainLooper()).postDelayed({
                 dismiss()
             }, DIALOG_CLOSE_DELAY)
-        }
-    }
-
-    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothConstants.ACTION_GATT_CONNECTING -> {
-                    viewModel.playSoundState.value = DialogViewModel.ConnectionState.Connecting
-                }
-                BluetoothConstants.ACTION_EVENT_RUNNING -> viewModel.playSoundState.value =
-                    DialogViewModel.ConnectionState.Playing
-                else -> {
-                    when (intent.action) {
-                        BluetoothConstants.ACTION_GATT_DISCONNECTED -> viewModel.playSoundState.value =
-                            DialogViewModel.ConnectionState.Success
-                        BluetoothConstants.ACTION_EVENT_FAILED -> viewModel.playSoundState.value =
-                            DialogViewModel.ConnectionState.Error(
-                                ATTrackingDetectionApplication.getAppContext()
-                                    .getString(R.string.play_sound_error_fail)
-                            )
-                        BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.playSoundState.value =
-                            DialogViewModel.ConnectionState.Success
-                    }
-                    dismissWithDelay()
-                }
-            }
         }
     }
 
@@ -145,7 +155,6 @@ class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragmen
 
     override fun onDestroy() {
         try {
-            context?.unregisterReceiver(gattUpdateReceiver)
             context?.unbindService(serviceConnection)
         } catch (e: IllegalArgumentException) {
             Timber.e("Tried to unbind an unbound service!")

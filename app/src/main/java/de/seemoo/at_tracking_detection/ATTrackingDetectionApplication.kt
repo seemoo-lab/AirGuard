@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEventManager
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
 import fr.bipi.treessence.file.FileLoggerTree
@@ -74,6 +75,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var scanRepository: ScanRepository
+
+    @Inject
+    lateinit var bluetoothEventManager: BluetoothEventManager
 
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 

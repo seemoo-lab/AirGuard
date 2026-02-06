@@ -15,7 +15,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
 import java.util.*
 
@@ -44,7 +44,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                                 gatt.discoverServices()
                             }
                             BluetoothProfile.STATE_DISCONNECTED -> {
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
+                                sendBluetoothEvent(BluetoothEvent.Disconnected)
                                 Timber.d("Disconnected from gatt device!")
                             }
                             else -> {
@@ -54,7 +54,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                     }
                     else -> {
                         Timber.e("Failed to connect to bluetooth device! Status: $status")
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
             }
@@ -72,7 +72,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                 if (service == null) {
                     Timber.e("Playing sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
@@ -82,7 +82,7 @@ class AirPods(val id: Int) : Device(), Connectable {
                     it.value = AIRPODS_START_SOUND_OPCODE
                     gatt.writeCharacteristic(it)
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                    sendBluetoothEvent(BluetoothEvent.EventRunning)
                 }
             }
 
@@ -126,13 +126,13 @@ class AirPods(val id: Int) : Device(), Connectable {
 
                     if (characteristic?.value.contentEquals(AIRPODS_STOP_SOUND_OPCODE)) {
                         disconnect(gatt)
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
                     }
 
                 } else {
                     Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }

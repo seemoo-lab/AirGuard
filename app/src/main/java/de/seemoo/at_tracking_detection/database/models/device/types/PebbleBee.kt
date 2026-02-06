@@ -21,7 +21,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.UUID
@@ -52,7 +52,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                                 gatt.discoverServices()
                             }
                             BluetoothProfile.STATE_DISCONNECTED -> {
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
+                                sendBluetoothEvent(BluetoothEvent.Disconnected)
                                 Timber.d("Disconnected from gatt device!")
                             }
                             else -> {
@@ -62,7 +62,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                     }
                     else -> {
                         Timber.e("Failed to connect to bluetooth device! Status: $status")
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
             }
@@ -84,7 +84,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 if (service == null) {
                     Timber.e("Playing sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
@@ -95,7 +95,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 if (characteristic == null) {
                     Timber.e("Characteristic not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
@@ -112,7 +112,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 }
 
                 Timber.d("Playing sound on Find My device with ${characteristic.uuid}")
-                broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                sendBluetoothEvent(BluetoothEvent.EventRunning)
             }
 
             @SuppressLint("MissingPermission")
@@ -162,13 +162,13 @@ class PebbleBee (val id: Int) : Device(), Connectable {
 
                     if (characteristic?.value.contentEquals(PEBBLEBEE_STOP_SOUND_OPCODE)) {
                         disconnect(gatt)
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
                     }
 
                 } else {
                     Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }

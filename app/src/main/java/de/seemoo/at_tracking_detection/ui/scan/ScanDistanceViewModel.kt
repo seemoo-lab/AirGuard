@@ -2,12 +2,22 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.BatteryState
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEventManager
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ScanDistanceViewModel: ViewModel() {
+@HiltViewModel
+class ScanDistanceViewModel @Inject constructor(
+    private val bluetoothEventManager: BluetoothEventManager,
+): ViewModel() {
     // var bluetoothRssi = MutableLiveData<Int>()
     var displayName = MutableLiveData<String>("UNKNOWN")
     var deviceAddress = MutableLiveData<String>()
@@ -43,6 +53,33 @@ class ScanDistanceViewModel: ViewModel() {
 
         val locOn = de.seemoo.at_tracking_detection.util.ble.LocationStateMonitor.isLocationEnabled()
         locationEnabled.value = locOn
+
+        // Observe Bluetooth events and update the UI state
+        viewModelScope.launch {
+            bluetoothEventManager.events.collectLatest { event ->
+                when (event) {
+                    BluetoothEvent.Connecting -> {
+                        // Event is sent by BluetoothLeService
+                    }
+                    BluetoothEvent.EventRunning -> {
+                        soundPlaying.postValue(true)
+                        connecting.postValue(false)
+                    }
+                    BluetoothEvent.Disconnected -> {
+                        soundPlaying.postValue(false)
+                        connecting.postValue(false)
+                    }
+                    BluetoothEvent.EventFailed -> {
+                        error.postValue(true)
+                        connecting.postValue(false)
+                        soundPlaying.postValue(false)
+                    }
+                    BluetoothEvent.EventCompleted -> {
+                        soundPlaying.postValue(false)
+                    }
+                }
+            }
+        }
     }
 
     fun stopMonitoringSystemToggles() {

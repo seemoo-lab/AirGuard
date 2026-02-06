@@ -1,13 +1,11 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.text.InputFilter
@@ -27,7 +25,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
@@ -44,7 +41,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
 import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapListener
@@ -66,8 +62,6 @@ class TrackingFragment : Fragment() {
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     lateinit var mapView: MapView
-
-    private var isReceiverRegistered = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,33 +98,11 @@ class TrackingFragment : Fragment() {
 
         zoomToMarkers()
 
-        val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
-
-        LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.registerReceiver(
-                gattUpdateReceiver,
-                DeviceManager.gattIntentFilter,
-                Context.RECEIVER_NOT_EXPORTED
-            )
-        } else {
-            activity.registerReceiver(
-                gattUpdateReceiver,
-                DeviceManager.gattIntentFilter
-            )
-        }
-        isReceiverRegistered = true
-
         mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (isReceiverRegistered) {
-            context?.unregisterReceiver(gattUpdateReceiver)
-            isReceiverRegistered = false
-        }
         mapView.onPause()
     }
 
@@ -400,31 +372,6 @@ class TrackingFragment : Fragment() {
         } else {
             Timber.d("Sound already playing! Stopping sound...")
             trackingViewModel.soundPlaying.postValue(false)
-        }
-    }
-
-    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothConstants.ACTION_EVENT_RUNNING -> {
-                    trackingViewModel.soundPlaying.postValue(
-                        true
-                    )
-                    trackingViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_GATT_DISCONNECTED -> {
-                    trackingViewModel.soundPlaying.postValue(false)
-                    trackingViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_FAILED -> {
-                    trackingViewModel.error.postValue(true)
-                    trackingViewModel.connecting.postValue(false)
-                    trackingViewModel.soundPlaying.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_COMPLETED -> trackingViewModel.soundPlaying.postValue(
-                    false
-                )
-            }
         }
     }
 

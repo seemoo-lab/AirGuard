@@ -14,6 +14,8 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEventManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
@@ -31,6 +33,7 @@ class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository,
+    private val bluetoothEventManager: BluetoothEventManager,
 ) : ViewModel() {
 
     val deviceAddress = MutableLiveData<String>()
@@ -84,6 +87,35 @@ class TrackingViewModel @Inject constructor(
     val expertMode = MutableLiveData(false)
 
     val deviceComment = MutableLiveData<String>("")
+
+    init {
+        // Observe Bluetooth events and update the UI state
+        viewModelScope.launch {
+            bluetoothEventManager.events.collectLatest { event ->
+                when (event) {
+                    BluetoothEvent.Connecting -> {
+                        // Event is sent by BluetoothLeService
+                    }
+                    BluetoothEvent.EventRunning -> {
+                        soundPlaying.postValue(true)
+                        connecting.postValue(false)
+                    }
+                    BluetoothEvent.Disconnected -> {
+                        soundPlaying.postValue(false)
+                        connecting.postValue(false)
+                    }
+                    BluetoothEvent.EventFailed -> {
+                        error.postValue(true)
+                        connecting.postValue(false)
+                        soundPlaying.postValue(false)
+                    }
+                    BluetoothEvent.EventCompleted -> {
+                        soundPlaying.postValue(false)
+                    }
+                }
+            }
+        }
+    }
 
     fun loadDevice(address: String, deviceTypeOverride: DeviceType) {
         deviceAddress.postValue(address)

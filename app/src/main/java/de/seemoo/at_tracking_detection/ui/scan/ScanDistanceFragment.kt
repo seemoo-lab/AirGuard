@@ -4,12 +4,10 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -54,7 +52,6 @@ import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -69,8 +66,6 @@ class ScanDistanceFragment : Fragment() {
     private var latestWrappedScanResult: ScanResultWrapper? = null
     private var subTypeSamsung: SamsungTrackerType? = null
     private var subTypeGoogle: GoogleFindMyNetworkType? = null
-
-    private var isReceiverRegistered = false
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -515,28 +510,6 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
-    // Broadcast Receiver for Bluetooth Events (copied logic from TrackingFragment)
-    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothConstants.ACTION_EVENT_RUNNING -> {
-                    viewModel.soundPlaying.postValue(true)
-                    viewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_GATT_DISCONNECTED -> {
-                    viewModel.soundPlaying.postValue(false)
-                    viewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_FAILED -> {
-                    viewModel.error.postValue(true)
-                    viewModel.connecting.postValue(false)
-                    viewModel.soundPlaying.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_COMPLETED -> viewModel.soundPlaying.postValue(false)
-            }
-        }
-    }
-
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Timber.d("Trying to connect to ble device!")
@@ -821,25 +794,6 @@ class ScanDistanceFragment : Fragment() {
         determineDeviceTypeButtonVisible()
         showSearchMessage()
         startBluetoothScan()
-
-        // Register BroadcastReceiver for Sound
-
-        val activity = ATTrackingDetectionApplication.getCurrentActivity()
-        if (activity != null && !isReceiverRegistered) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                activity.registerReceiver(
-                    gattUpdateReceiver,
-                    DeviceManager.gattIntentFilter,
-                    Context.RECEIVER_NOT_EXPORTED
-                )
-            } else {
-                activity.registerReceiver(
-                    gattUpdateReceiver,
-                    DeviceManager.gattIntentFilter
-                )
-            }
-            isReceiverRegistered = true
-        }
     }
 
     override fun onStart() {
@@ -856,21 +810,6 @@ class ScanDistanceFragment : Fragment() {
         super.onPause()
         showSearchMessage()
         stopBluetoothScan()
-
-        // Unregister BroadcastReceiver
-        if (isReceiverRegistered) {
-            val activity = ATTrackingDetectionApplication.getCurrentActivity()
-            try {
-                if (activity != null) {
-                    activity.unregisterReceiver(gattUpdateReceiver)
-                } else {
-                    context?.unregisterReceiver(gattUpdateReceiver)
-                }
-            } catch (e: IllegalArgumentException) {
-                Timber.e("Receiver not registered or already unregistered")
-            }
-            isReceiverRegistered = false
-        }
 
         // Stop sound if playing
         if (viewModel.soundPlaying.value == true || viewModel.connecting.value == true) {
