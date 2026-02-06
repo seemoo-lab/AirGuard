@@ -6,14 +6,17 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.text.InputFilter
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -151,12 +154,19 @@ class TrackingFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val commentEditText = view.findViewById<EditText>(R.id.device_comment)
+
         // Register OnBackPressedCallback
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (safeArgs.notificationId != -1) {
+            if (commentEditText.hasFocus()) {
+                commentEditText.clearFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            } else if (safeArgs.notificationId != -1) {
                 // Check if the activity is not finishing before calling finish()
                 if (!requireActivity().isFinishing) {
                     requireActivity().finish()
@@ -165,6 +175,22 @@ class TrackingFragment : Fragment() {
                 // Safely find NavController as the view is attached
                 findNavController().navigateUp()
             }
+        }
+
+        // Handle clicking outside the edit text to clear focus
+        view.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (commentEditText.hasFocus()) {
+                    val outRect = Rect()
+                    commentEditText.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                        commentEditText.clearFocus()
+                        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                    }
+                }
+            }
+            false
         }
 
         mapView = view.findViewById(R.id.map)
@@ -268,8 +294,6 @@ class TrackingFragment : Fragment() {
                     .show()
             }
         }
-
-        val commentEditText = view.findViewById<EditText>(R.id.device_comment)
 
         trackingViewModel.deviceComment.observe(viewLifecycleOwner) { comment ->
             if (commentEditText.text.toString() != comment) {
