@@ -35,6 +35,7 @@ object MapUtils {
     private const val CIRCLE_VISIBILITY_ZOOM_THRESHOLD = 16.0
     private const val LOCATION_CLUSTER_RADIUS_METERS: Double = BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION.toDouble()
     private const val MAX_ZOOM_LEVEL = 18.0
+    private const val MIN_ZOOM_LEVEL = 4.0
     private const val ZOOMED_OUT_LEVEL = 15.0
 
     /**
@@ -80,6 +81,8 @@ object MapUtils {
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
 
         map.maxZoomLevel = MAX_ZOOM_LEVEL
+        map.minZoomLevel = MIN_ZOOM_LEVEL
+        map.setScrollableAreaLimitLatitude(MapView.getTileSystem().maxLatitude, MapView.getTileSystem().minLatitude, 0)
 
         map.overlays.add(copyrightOverlay)
     }
