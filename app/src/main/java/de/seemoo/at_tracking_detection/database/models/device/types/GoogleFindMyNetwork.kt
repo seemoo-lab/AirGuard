@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -97,13 +98,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         gatt.writeCharacteristic(it, GOOGLE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                     } else {
-                        // Deprecated since 33
                         @Suppress("DEPRECATION")
                         it.value = GOOGLE_START_SOUND_OPCODE
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
@@ -129,13 +129,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         gatt.writeCharacteristic(it, GOOGLE_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                     } else {
-                        // Deprecated since 33
                         @Suppress("DEPRECATION")
                         it.value = GOOGLE_STOP_SOUND_OPCODE
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
@@ -151,15 +150,17 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(GOOGLE_START_SOUND_OPCODE) && gatt != null) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnGoogleDevice(gatt)
-                        }, 5000)
-                    }
-
-                    if (characteristic?.value.contentEquals(GOOGLE_STOP_SOUND_OPCODE)) {
-                        disconnect(gatt)
-                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                    if (gatt != null) {
+                        // Use internal tracking since characteristic.value is deprecated
+                        val lastWrittenValue = getLastWrittenValue(characteristic)
+                        if (lastWrittenValue.contentEquals(GOOGLE_START_SOUND_OPCODE)) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stopSoundOnGoogleDevice(gatt)
+                            }, 5000)
+                        } else if (lastWrittenValue.contentEquals(GOOGLE_STOP_SOUND_OPCODE)) {
+                            disconnect(gatt)
+                            sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                        }
                     }
 
                 } else {
@@ -168,6 +169,13 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
+            }
+
+            private fun getLastWrittenValue(characteristic: BluetoothGattCharacteristic?): ByteArray {
+                return characteristic?.let {
+                    @Suppress("DEPRECATION")
+                    it.value ?: ByteArray(0)
+                } ?: ByteArray(0)
             }
         }
 
@@ -213,8 +221,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
             val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
-            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
             val context: Context = ATTrackingDetectionApplication.getAppContext()
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
 
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 Timber.e("Bluetooth adapter is null or not enabled")
@@ -245,8 +254,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         }
 
         suspend fun getOwnerInformationURL(wrappedScanResult: ScanResultWrapper): URL? {
-            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
             val context: Context = ATTrackingDetectionApplication.getAppContext()
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
 
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 Timber.e("Bluetooth adapter is null or not enabled")
@@ -323,8 +333,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
                         val descriptor = characteristic.getDescriptor(GOOGLE_DESCRIPTOR_UUID)
 
-                        // Write data to the descriptor
-                        if (Build.VERSION.SDK_INT >= 33) {
+                        // Write data to the descriptor using modern API
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)
                         } else {
                             @Suppress("DEPRECATION")
@@ -354,14 +364,14 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                             return
                         }
 
-                        if (Build.VERSION.SDK_INT >= 33) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             gatt.writeCharacteristic(characteristicToWrite, dataToSend, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                         } else {
                             @Suppress("DEPRECATION")
                             characteristicToWrite.value = dataToSend
                             characteristicToWrite.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                             @Suppress("DEPRECATION")
-                            (gatt.writeCharacteristic(characteristicToWrite))
+                            gatt.writeCharacteristic(characteristicToWrite)
                         }
                     } else {
                         continuation.resume(null)

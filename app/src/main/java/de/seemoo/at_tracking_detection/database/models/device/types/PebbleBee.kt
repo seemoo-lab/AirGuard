@@ -101,8 +101,12 @@ class PebbleBee (val id: Int) : Device(), Connectable {
 
                 gatt.setCharacteristicNotification(characteristic, true)
 
-                if (Build.VERSION.SDK_INT >= 33) {
-                    gatt.writeCharacteristic(characteristic, PEBBLEBEE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    gatt.writeCharacteristic(
+                        characteristic,
+                        PEBBLEBEE_START_SOUND_OPCODE,
+                        BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+                    )
                 } else {
                     @Suppress("DEPRECATION")
                     characteristic.value = PEBBLEBEE_START_SOUND_OPCODE
@@ -132,13 +136,12 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         gatt.writeCharacteristic(it, PEBBLEBEE_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                     } else {
-                        // Deprecated since 33
                         @Suppress("DEPRECATION")
                         it.value = PEBBLEBEE_STOP_SOUND_OPCODE
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
@@ -154,15 +157,16 @@ class PebbleBee (val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(PEBBLEBEE_START_SOUND_OPCODE) && gatt != null) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnPebbleBeeDevice(gatt)
-                        }, 5000)
-                    }
-
-                    if (characteristic?.value.contentEquals(PEBBLEBEE_STOP_SOUND_OPCODE)) {
-                        disconnect(gatt)
-                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                    if (gatt != null) {
+                        val lastWrittenValue = getLastWrittenValue(characteristic)
+                        if (lastWrittenValue.contentEquals(PEBBLEBEE_START_SOUND_OPCODE)) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stopSoundOnPebbleBeeDevice(gatt)
+                            }, 5000)
+                        } else if (lastWrittenValue.contentEquals(PEBBLEBEE_STOP_SOUND_OPCODE)) {
+                            disconnect(gatt)
+                            sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                        }
                     }
 
                 } else {
@@ -171,6 +175,13 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                     sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
+            }
+
+            private fun getLastWrittenValue(characteristic: BluetoothGattCharacteristic?): ByteArray {
+                return characteristic?.let {
+                    @Suppress("DEPRECATION")
+                    it.value ?: ByteArray(0)
+                } ?: ByteArray(0)
             }
         }
 
@@ -240,21 +251,23 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                         }
                     }
 
-                    @Deprecated("Deprecated in Java")
                     @SuppressLint("MissingPermission")
-                    override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                    override fun onCharacteristicRead(
+                        gatt: BluetoothGatt,
+                        characteristic: BluetoothGattCharacteristic,
+                        value: ByteArray,
+                        status: Int
+                    ) {
                         if (status == BluetoothGatt.GATT_SUCCESS) {
-                            when (characteristic?.uuid) {
+                            when (characteristic.uuid) {
                                 GATT_DEVICE_TYPE_CHARACTERISTIC -> {
-                                    if (characteristic != null) {
-                                        deviceName = characteristic.getStringValue(0)
-                                    }
+                                    deviceName = String(value, Charsets.UTF_8)
                                 }
                             }
                         } else {
                             Timber.w("Failed to read characteristic: $status")
                         }
-                        gatt?.let { readNextCharacteristic(it) }
+                        readNextCharacteristic(gatt)
                     }
 
                     @SuppressLint("MissingPermission")
