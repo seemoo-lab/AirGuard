@@ -9,8 +9,6 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.navigation.findNavController
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
@@ -43,8 +41,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
 
-        val riskSensitivityPref = findPreference<ListPreference>("risk_sensitivity")
-        val devicesFilterPref = findPreference<MultiSelectListPreference>("devices_filter_unselected")
+        val riskSensitivityPref = findPreference<Material3ListPreference>("risk_sensitivity")
+        val devicesFilterPref = findPreference<Material3MultiSelectListPreference>("devices_filter_unselected")
 
         val updateDevicesFilter = { sensitivity: String ->
             val entries = resources.getStringArray(R.array.devicesFilter).toMutableList()
@@ -112,15 +110,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setMessage(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_text))
                     .setPositiveButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_yes)) { _, _ ->
                         // User confirmed, allow the change
-                        if (deactivateBackgroundScanningPref != null) {
-                            deactivateBackgroundScanningPref.isChecked = true
-                        }
+                        deactivateBackgroundScanningPref.isChecked = true
                     }
                     .setNegativeButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_no)) { _, _ ->
                         // User canceled, revert the change
-                        if (deactivateBackgroundScanningPref != null) {
-                            deactivateBackgroundScanningPref.isChecked = false
-                        }
+                        deactivateBackgroundScanningPref.isChecked = false
                     }
                     .show()
                 // Return false to prevent the change until user confirms

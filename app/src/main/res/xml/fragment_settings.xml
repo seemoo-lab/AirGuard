@@ -85,7 +85,7 @@
         android:title="@string/settings_old_device_cleanup_title"
         app:iconTint="?attr/colorPrimary" />
 
-    <ListPreference
+    <de.seemoo.at_tracking_detection.ui.settings.Material3ListPreference
         android:defaultValue="medium"
         android:entries="@array/riskSensitivityName"
         android:entryValues="@array/riskSensitivityValue"
@@ -95,7 +95,7 @@
         android:title="@string/settings_risk_sensitivity_title"
         app:iconTint="?attr/colorPrimary" />
 
-    <MultiSelectListPreference
+    <de.seemoo.at_tracking_detection.ui.settings.Material3MultiSelectListPreference
         android:key="devices_filter_unselected"
         android:title="@string/settings_device_filter_title"
         android:dialogTitle="@string/settings_device_filter_dialog_title"
@@ -131,7 +131,7 @@
         android:title="@string/survey_settings_title" />
     -->
 
-    <ListPreference
+    <de.seemoo.at_tracking_detection.ui.settings.Material3ListPreference
         android:defaultValue="system_default"
         android:entries="@array/AppThemeName"
         android:entryValues="@array/AppThemeValues"
