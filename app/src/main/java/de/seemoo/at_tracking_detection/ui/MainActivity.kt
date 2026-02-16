@@ -152,15 +152,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 if (f.javaClass.simpleName != "DevicesFragment") {
                     val scrollingView = findScrollingView(v) ?: v
 
+                    // allows content to scroll behind the nav bar
                     if (scrollingView is ViewGroup) {
                         scrollingView.clipToPadding = false
                     }
 
-                    // Apply Insets Listener
                     ViewCompat.setOnApplyWindowInsetsListener(scrollingView) { view, insets ->
                         val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-                        // Recalculate nav height if view is now ready
+                        // Use the calculated floatingNavHeight or current height
                         val currentNavHeight = if (navView.height > 0)
                             navView.height + navView.marginBottom
                         else
@@ -173,19 +173,26 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         insets
                     }
 
-                    // Layout Change Listener on NavView
-                    val layoutListener = View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                        // Re-trigger insets on the fragment root view, which should propagate to scrollingView and FABs
-                        ViewCompat.requestApplyInsets(v)
-                    }
-                    navView.addOnLayoutChangeListener(layoutListener)
+                    // Fix for Articles behind the navbar (Race Condition)
+                    // waits for the NavView, forces one update, then removes itself
+                    if (navView.isLaidOut && navView.height > 0) {
+                        // If NavView is already ready, just trigger the update now
+                        ViewCompat.requestApplyInsets(scrollingView)
+                    } else {
+                        // wait for NavView to be ready
+                        navView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                            override fun onLayoutChange(
+                                v: View?, left: Int, top: Int, right: Int, bottom: Int,
+                                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+                            ) {
+                                // Remove itself
+                                navView.removeOnLayoutChangeListener(this)
 
-                    // Remove listener when view is destroyed
-                    f.viewLifecycleOwner.lifecycle.addObserver(object : androidx.lifecycle.DefaultLifecycleObserver {
-                        override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {
-                            navView.removeOnLayoutChangeListener(layoutListener)
-                        }
-                    })
+                                // Force scrolling view to update its padding
+                                ViewCompat.requestApplyInsets(scrollingView)
+                            }
+                        })
+                    }
                 }
 
                 // Handle Floating Action Buttons

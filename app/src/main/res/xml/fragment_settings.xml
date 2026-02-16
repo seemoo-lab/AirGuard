@@ -135,19 +135,22 @@
         android:defaultValue="system_default"
         android:entries="@array/AppThemeName"
         android:entryValues="@array/AppThemeValues"
-        android:icon="@drawable/ic_baseline_dark_mode_24"
+        android:icon="@drawable/ic_baseline_color_lens_24"
         android:key="app_theme"
         android:summary="@string/settings_app_theme_summary"
         android:title="@string/settings_app_theme_title"
         app:iconTint="?attr/colorPrimary" />
 
-    <SwitchPreferenceCompat
-        android:key="use_dynamic_colors"
-        android:title="@string/settings_use_dynamic_colors_title"
-        android:summary="@string/settings_use_dynamic_colors_summary"
-        android:defaultValue="true"
-        app:iconTint="?attr/colorPrimary"
-        android:icon="@drawable/ic_baseline_color_lens_24" />
+    <!--        android:icon="@drawable/ic_baseline_dark_mode_24"-->
+
+
+<!--    <SwitchPreferenceCompat-->
+<!--        android:key="use_dynamic_colors"-->
+<!--        android:title="@string/settings_use_dynamic_colors_title"-->
+<!--        android:summary="@string/settings_use_dynamic_colors_summary"-->
+<!--        android:defaultValue="true"-->
+<!--        app:iconTint="?attr/colorPrimary"-->
+<!--        android:icon="@drawable/ic_baseline_color_lens_24" />-->
 
 <!--    <Preference-->
 <!--        android:icon="@drawable/ic_baseline_library_books_24"-->

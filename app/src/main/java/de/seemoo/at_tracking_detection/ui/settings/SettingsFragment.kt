@@ -246,7 +246,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
             findPreference<Preference>("old_device_cleanup")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+//            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         } else {
             Timber.d("Disabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
@@ -256,7 +256,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = SharedPrefs.deactivateBackgroundScanning
             findPreference<Preference>("old_device_cleanup")?.isVisible = false
-            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = false
+//            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = false
         }
     }
 
