@@ -557,4 +557,5 @@
 
     <string name="load_all_occurrences">Načítať všetky výskyty</string>
     <string name="scroll_button">Posunie na začiatok alebo koniec tohto zobrazenia</string>
+    <string name="retrieve_owner_information_explanation_hama">Ak chcete získať informácie o majiteľovi, musíte Tracker fyzicky nájsť. Otvorte príslušenstvo zdvihnutím zadného krytu. Vyberte batériu a jednoducho ju znova vložte. Nakoniec nasaďte zadný kryt späť. Potom stlačte „ďalej“.</string>
 </resources>

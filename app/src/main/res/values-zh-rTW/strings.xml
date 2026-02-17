@@ -531,4 +531,5 @@
 
     <string name="load_all_occurrences">載入所有出現記錄</string>
     <string name="scroll_button">捲動到此視圖的頂部或底部</string>
+    <string name="retrieve_owner_information_explanation_hama">要獲取關於所有者的資訊，您必須親自找到追蹤器。提起後蓋以打開配件。取出電池並重新插入。最後，將後蓋裝回。然後按下「下一步」。</string>
 </resources>

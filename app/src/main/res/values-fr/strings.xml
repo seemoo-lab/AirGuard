@@ -541,5 +541,6 @@
     <string name="settings_use_dynamic_colors_summary">Adapte dynamiquement les couleurs de l\'application à votre fond d\'écran</string>
 
     <string name="load_all_occurrences">Charger toutes les occurrences</string>
-    <string name="scroll_button">Fait défiler jusqu\'en haut ou en bas de cette vue</string>
+    <string name="scroll_button">Fait dfiler jusqu\'en haut ou en bas de cette vue</string>
+    <string name="retrieve_owner_information_explanation_hama">Pour obtenir des informations sur le propriétaire, vous devez avoir physiquement trouvé le traceur. Ouvrez l\'accessoire en soulevant le couvercle arrière. Retirez la batterie et réinsérez-la simplement. Enfin, remettez le couvercle arrière. Appuyez ensuite sur « suivant ».</string>
 </resources>

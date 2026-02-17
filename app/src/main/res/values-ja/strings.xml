@@ -510,4 +510,5 @@
 
     <string name="load_all_occurrences">すべての発生を読み込む</string>
     <string name="scroll_button">このビューの先頭または末尾にスクロールします</string>
+    <string name="retrieve_owner_information_explanation_hama">所有者の情報を取得するには、トラッカーを物理的に見つけている必要があります。背面カバーを持ち上げてアクセサリーを開きます。電池を一度取り外してから、もう一度挿入してください。最後に背面カバーを元に戻します。その後、「次へ」を押してください。</string>
 </resources>

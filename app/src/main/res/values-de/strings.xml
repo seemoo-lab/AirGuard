@@ -532,4 +532,5 @@
 
     <string name="load_all_occurrences">Alle Vorkommnisse laden</string>
     <string name="scroll_button">Scrollt zum Anfang oder Ende dieser Ansicht</string>
+    <string name="retrieve_owner_information_explanation_hama">Um Informationen über den Eigentümer zu erhalten, müssen Sie den Tracker physisch gefunden haben. Öffnen Sie das Zubehör, indem Sie die hintere Abdeckung anheben. Entfernen Sie die Batterie und setzen Sie sie einfach wieder ein. Zum Schluss bringen Sie die hintere Abdeckung wieder an. Drücken Sie anschließend auf „Weiter“.</string>
 </resources>
