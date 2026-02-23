@@ -50,7 +50,6 @@ class BackgroundLocationFragment : Fragment(R.layout.fragment_background_locatio
             return granted || userDeclinedOnce
         }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,18 +65,20 @@ class BackgroundLocationFragment : Fragment(R.layout.fragment_background_locatio
     override fun onResume() {
         super.onResume()
         // Check permission again in case user granted it in system settings and returned
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            view?.let { updateButtonState(it) }
-        }
+        view?.let { updateButtonState(it) }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun updateButtonState(view: View) {
         val btn = view.findViewById<MaterialButton>(R.id.location_permission_button)
-        val isGranted = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        val isGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            // Background location permission not required below Android 10 (API 29)
+            true
+        }
 
         if (isGranted) {
             btn.visibility = View.GONE
@@ -91,8 +92,8 @@ class BackgroundLocationFragment : Fragment(R.layout.fragment_background_locatio
         requestLocationPermission()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun showAlertDialogForLocationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
         MaterialAlertDialogBuilder(requireContext())
             .setMessage(R.string.onboarding_4_description)
             .setTitle(R.string.onboarding_4_title)
@@ -106,8 +107,11 @@ class BackgroundLocationFragment : Fragment(R.layout.fragment_background_locatio
             .show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun requestLocationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // Background location permission not required below Android 10 (API 29)
+            return
+        }
         when {
             ContextCompat.checkSelfPermission(
                 requireContext(),
