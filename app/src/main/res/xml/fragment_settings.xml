@@ -8,7 +8,7 @@
         android:icon="@drawable/ic_baseline_admin_panel_settings_24"
         android:key="advanced_mode"
         android:summary="@string/settings_advanced_mode_summary"
-        app:title="@string/settings_advanced_mode_title"
+        android:title="@string/settings_advanced_mode_title"
         app:iconTint="?attr/colorPrimary" />
 
     <!--<Preference
@@ -22,14 +22,14 @@
         android:icon="@drawable/ic_scan_icon"
         android:key="deactivate_background_scanning"
         android:summary="@string/settings_deactivate_scanning_summary"
-        app:title="@string/settings_deactivate_scanning_title"
+        android:title="@string/settings_deactivate_scanning_title"
         app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="use_permanent_bluetooth_scanner"
         android:summary="@string/settings_permanent_scanning_summary"
-        app:title="@string/settings_permanent_scanning_title"
+        android:title="@string/settings_permanent_scanning_title"
         app:defaultValue="false"
         app:iconTint="?attr/colorPrimary" />
 
@@ -37,7 +37,7 @@
         android:icon="@drawable/ic_baseline_analytics_24"
         android:key="share_data"
         android:summary="@string/settings_share_data_summary"
-        app:title="@string/settings_share_data_title"
+        android:title="@string/settings_share_data_title"
         app:iconTint="?attr/colorPrimary" />
 
     <Preference
@@ -188,7 +188,6 @@
         android:key="show_onboarding"
         android:summary="@string/onboarding_setting_summary"
         android:title="@string/onboarding_setting_title"
-        app:iconTint="?attr/colorPrimary"
         app:isPreferenceVisible="@bool/debug" />
 
 </PreferenceScreen>
