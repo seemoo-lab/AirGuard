@@ -510,8 +510,9 @@
     <string name="not_notified">未通知</string>
     <string name="empty_list_no_devices">未找到任何裝置。AirGuard 在背景掃描藍牙追蹤裝置。請確保藍牙已啟用，並且應用程式具有掃描裝置所需的權限。</string>
 
-    <string name="filter_hearted">最愛</string>
-    <string name="filter_not_hearted">非最愛</string>
+    <string name="filter_marked_headline">已標記</string>
+    <string name="filter_marked">已標記</string>
+    <string name="filter_not_marked_headline">未標記</string>
 
     <string name="forget_tracker">忘記追蹤器</string>
     <string name="forget_tracker_dialog_title">忘記追蹤器？</string>

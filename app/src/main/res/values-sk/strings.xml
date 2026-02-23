@@ -537,8 +537,9 @@
     <string name="not_notified">Bez upozornenia</string>
     <string name="empty_list_no_devices">Neboli nájdené žiadne zariadenia. AirGuard skenuje Bluetooth sledovacie zariadenia na pozadí. Uistite sa, že je Bluetooth zapnutý a aplikácia má potrebné oprávnenia na skenovanie zariadení.</string>
 
-    <string name="filter_hearted">Obľúbené</string>
-    <string name="filter_not_hearted">Nie je obľúbené</string>
+    <string name="filter_marked_headline">Označené</string>
+    <string name="filter_marked">označené</string>
+    <string name="filter_not_marked_headline">Neoznačené</string>
 
     <string name="forget_tracker">Zabudnúť tracker</string>
     <string name="forget_tracker_dialog_title">Zabudnúť tracker?</string>

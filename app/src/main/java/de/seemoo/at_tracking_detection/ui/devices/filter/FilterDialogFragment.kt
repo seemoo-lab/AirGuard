@@ -131,6 +131,20 @@ class FilterDialogFragment : Fragment() {
                 }
                 devicesViewModel.addOrRemoveFilter(activeDeviceTypeFilter)
             }
+            chip.filterDeviceTypeChip.setOnLongClickListener {
+                // Exclusively select only this device type
+                activeDeviceTypeFilter.deviceTypes.clear()
+                activeDeviceTypeFilter.add(device.deviceType)
+                devicesViewModel.addOrRemoveFilter(activeDeviceTypeFilter)
+
+                // Update all chip checked states in the chip group
+                val chipGroup = binding.filterDeviceTypes
+                for (i in 0 until chipGroup.childCount) {
+                    val childChip = chipGroup.getChildAt(i) as? com.google.android.material.chip.Chip
+                    childChip?.isChecked = childChip?.id == chip.filterDeviceTypeChip.id
+                }
+                true
+            }
             binding.filterDeviceTypes.addView(chip.root)
         }
 

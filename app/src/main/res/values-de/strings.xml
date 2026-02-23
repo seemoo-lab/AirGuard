@@ -511,8 +511,9 @@
     <string name="not_notified">Nicht benachrichtigt</string>
     <string name="empty_list_no_devices">Es wurden keine Geräte gefunden. AirGuard sucht im Hintergrund nach Bluetooth-Tracking-Geräten. Stelle sicher, dass Bluetooth aktiviert ist und die App die erforderlichen Berechtigungen zum Scannen von Geräten hat.</string>
 
-    <string name="filter_hearted">Favorisiert</string>
-    <string name="filter_not_hearted">Nicht favorisiert</string>
+    <string name="filter_marked_headline">Markiert</string>
+    <string name="filter_marked">markiert</string>
+    <string name="filter_not_marked_headline">Nicht markiert</string>
 
     <string name="forget_tracker">Tracker vergessen</string>
     <string name="forget_tracker_dialog_title">Tracker vergessen?</string>

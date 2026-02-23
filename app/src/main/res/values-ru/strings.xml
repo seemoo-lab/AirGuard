@@ -491,8 +491,9 @@
     <string name="not_notified">Не уведомлен</string>
     <string name="empty_list_no_devices">Устройства не найдены. AirGuard сканирует Bluetooth-трекеры в фоновом режиме. Убедитесь, что Bluetooth включен, а у приложения есть необходимые разрешения для сканирования.</string>
 
-    <string name="filter_hearted">Избранное</string>
-    <string name="filter_not_hearted">Не избранное</string>
+    <string name="filter_marked_headline">Отмечено</string>
+    <string name="filter_marked">отмечено</string>
+    <string name="filter_not_marked_headline">Не отмечено</string>
 
     <string name="forget_tracker">Забыть трекер</string>
     <string name="forget_tracker_dialog_title">Забыть трекер?</string>

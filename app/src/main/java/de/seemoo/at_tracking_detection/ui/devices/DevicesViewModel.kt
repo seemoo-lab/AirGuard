@@ -238,8 +238,8 @@ class DevicesViewModel @Inject constructor(
         }
 
         when (favoriteFilterState.value) {
-            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.filter_hearted))
-            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.filter_not_hearted))
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.filter_marked_headline))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.filter_not_marked_headline))
             else -> {}
         }
 

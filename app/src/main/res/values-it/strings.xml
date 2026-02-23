@@ -623,8 +623,9 @@
     <string name="not_notified">Non notificato</string>
     <string name="empty_list_no_devices">Nessun dispositivo trovato. AirGuard esegue la scansione dei dispositivi di tracciamento Bluetooth in background. Assicurati che il Bluetooth sia abilitato e che l\'app abbia le autorizzazioni necessarie per scansionare i dispositivi.</string>
 
-    <string name="filter_hearted">Preferiti</string>
-    <string name="filter_not_hearted">Non preferiti</string>
+    <string name="filter_marked_headline">Contrassegnato</string>
+    <string name="filter_marked">contrassegnato</string>
+    <string name="filter_not_marked_headline">Non contrassegnato</string>
 
     <string name="forget_tracker">Dimentica tracker</string>
     <string name="forget_tracker_dialog_title">Dimenticare tracker?</string>

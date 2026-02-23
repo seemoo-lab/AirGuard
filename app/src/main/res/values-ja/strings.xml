@@ -489,8 +489,9 @@
     <string name="not_notified">通知なし</string>
     <string name="empty_list_no_devices">デバイスは見つかりませんでした。AirGuardはバックグラウンドでBluetooth追跡デバイスをスキャンします。Bluetoothが有効になっており、アプリにデバイスをスキャンするために必要な権限があることを確認してください。</string>
 
-    <string name="filter_hearted">お気に入り</string>
-    <string name="filter_not_hearted">お気に入りではない</string>
+    <string name="filter_marked_headline">マーク済み</string>
+    <string name="filter_marked">マーク済み</string>
+    <string name="filter_not_marked_headline">未マーク</string>
 
     <string name="forget_tracker">トラッカーを削除</string>
     <string name="forget_tracker_dialog_title">トラッカーを削除しますか？</string>
