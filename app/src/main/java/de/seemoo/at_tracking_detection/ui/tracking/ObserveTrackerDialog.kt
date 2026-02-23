@@ -70,6 +70,9 @@ class ObserveTrackerDialog: BottomSheetDialogFragment() {
                                     device.currentObservationDuration = null
 
                                     deviceRepository.update(device)
+
+                                    // Cancel the pending scan + ObserveTrackerWorker for this device
+                                    ScheduleWorkersReceiver.cancelWorker(requireContext(), device.address)
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
