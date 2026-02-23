@@ -555,5 +555,6 @@
 
     <string name="load_all_occurrences">Načíst všechny výskyty</string>
     <string name="scroll_button">Posune na začátek nebo konec tohoto zobrazení</string>
+    <string name="empty_list_others">Pro vybrané filtry nebyla nalezena žádná zařízení. Filtry můžete změnit kliknutím na tlačítko v levém horním rohu nebo zobrazením všech zařízení.</string>
     <string name="retrieve_owner_information_explanation_hama">Chcete-li získat informace o majiteli, musíte Tracker fyzicky najít. Otevřete příslušenství zvednutím zadního krytu. Vyjměte baterii a jednoduše ji znovu vložte. Nakonec nasaďte zadní kryt zpět. Poté stiskněte „další“.</string>
 </resources>

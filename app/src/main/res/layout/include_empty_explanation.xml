@@ -20,8 +20,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="24dp"
-        android:padding="20dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="20dp"
         android:background="@color/md_theme_background">
 
         <ImageView

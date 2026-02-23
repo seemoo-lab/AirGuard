@@ -65,9 +65,13 @@
         <include
             android:id="@+id/include_list_empty_explanation"
             layout="@layout/include_empty_explanation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:visibility="@{vm.showEmptyState &amp;&amp; !vm.isLoading ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             bind:drawable="@{@drawable/ic_no_data}"
             bind:text="@{vm.emptyListText}"
             bind:showButton="@{vm.showAllDevicesButton}" />

@@ -63,6 +63,7 @@ class DevicesFragment : Fragment() {
     private var preselectNotifiedFilter: String = "UNSELECTED"
     private var preselectIgnoredFilter: String = "UNSELECTED"
     private var preselectRemoveDateRange: Boolean = false
+    private var isShowingIgnoredDevices: Boolean = false
 
     val devicesViewModel: DevicesViewModel by viewModels()
 
@@ -88,8 +89,9 @@ class DevicesFragment : Fragment() {
         var deviceInfoText = R.string.info_text_all_devices
 
         if (!showDevicesFound) {
+            isShowingIgnoredDevices = true
             activity?.setTitle(R.string.title_ignored_devices)
-            emptyListText = R.string.ignored_device_list_empty
+            emptyListText = R.string.empty_list_others
             devicesViewModel.addOrRemoveFilter(IgnoredFilter())
             devicesViewModel.addOrRemoveFilter(
                 DeviceTypeFilter(
@@ -181,11 +183,13 @@ class DevicesFragment : Fragment() {
 
             recyclerView.updatePadding(bottom = navHeight)
 
-            // Apply padding to the empty list view
-            emptyListInclude.updatePadding(top = bars.top, bottom = navHeight)
+            // Apply bottom padding to the empty list view
+            emptyListInclude.updatePadding(bottom = navHeight)
 
             v.post {
-                recyclerView.updatePadding(top = v.height + v.marginBottom)
+                val filterHeight = v.height + v.marginBottom
+                recyclerView.updatePadding(top = filterHeight)
+                emptyListInclude.updatePadding(top = filterHeight)
             }
 
             // Stop system from adding unnecessary padding to te dialog filter
@@ -195,13 +199,6 @@ class DevicesFragment : Fragment() {
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
             updateTexts()
-        }
-
-        // Update empty list text based on whether filters are active
-        devicesViewModel.showAllDevicesButton.observe(viewLifecycleOwner) { showButton ->
-            if (!showButton) {
-                devicesViewModel.emptyListText.value = getString(R.string.empty_list_no_devices)
-            }
         }
 
         val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
@@ -248,6 +245,11 @@ class DevicesFragment : Fragment() {
         if (safeArgs.locationId > 0) {
             (requireActivity() as AppCompatActivity).supportActionBar?.title =
                 getString(R.string.found_at_location)
+        } else if (isShowingIgnoredDevices || devicesViewModel.activeFilter.containsKey(IgnoredFilter::class.toString())) {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.title_ignored_devices)
+            devicesViewModel.infoText.value = getString(R.string.info_text_all_devices)
+            devicesViewModel.emptyListText.value = getString(R.string.empty_list_others)
         } else if (devicesViewModel.activeFilter.containsKey(NotifiedFilter::class.toString())) {
             // Only shows trackers
             (requireActivity() as AppCompatActivity).supportActionBar?.title =

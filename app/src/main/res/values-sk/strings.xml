@@ -225,6 +225,7 @@
     <string name="info_text_all_locations">Toto zobrazenie ukazuje všetky miesta, na ktorých bolo nájdené zariadenie. To zahŕňa aj zariadenia, ktoré nesledujú vašu polohu.</string>
     <string name="empty_list_devices">Tento zoznam zobrazuje všetky zariadenia, ktoré boli nájdené pomocou AirGuardu za posledných 14 dní. Keďže je prázdny, nenašli sa žiadne zariadenia. Nezabudnite mať aktivovaný Bluetooth, pretože aplikácia dokáže nájsť potenciálne sledovacie zariadenia iba pomocou Bluetooth</string>
     <string name="empty_list_trackers">Tento zoznam zobrazuje iba zariadenia, ktoré sledovali vašu polohu za posledných 14 dní. Keďže je prázdny, žiadne zariadenie sa vás nepokúsilo sledovať a sledovať vašu polohu. Vždy, keď vás zariadenie sleduje, dostanete upozornenie. Nezabudnite mať aktivovaný Bluetooth, aby ste našli sledovacie zariadenia. Pomocou tlačidla nižšie si môžete zobraziť všetky zariadenia, aj tie, ktoré neboli identifikované ako tracker.</string>
+    <string name="empty_list_others">Pre vybrané filtre neboli nájdené žiadne zariadenia. Filtre môžete zmeniť kliknutím na tlačidlo v ľavom hornom rohu alebo zobrazením všetkých zariadení.</string>
     <string name="show_all_button">Zobraziť všetky zariadenia</string>
     <string name="empty_image_content_description">Obrázok zobrazujúci prázdny zoznam</string>
     <string name="beacon_locations">Polohy beaconov</string>
