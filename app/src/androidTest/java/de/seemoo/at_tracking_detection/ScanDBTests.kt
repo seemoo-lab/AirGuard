@@ -64,13 +64,17 @@ class ScanDBTests() {
     @Throws(IOException::class)
     fun insertAndRetrieve() =
         runTest {
-            val scanInserted =  Scan(
+            val scanInserted = Scan(
                 endDate = LocalDateTime.now(),
-                0,
-                0,
-                true,
-                ScanSettings.SCAN_MODE_LOW_LATENCY,
-                LocalDateTime.now()
+                noDevicesFound = 0,
+                duration = 0,
+                isManual = true,
+                scanMode = ScanSettings.SCAN_MODE_LOW_LATENCY,
+                startDate = LocalDateTime.now(),
+                locationDeg = null,
+                locationId = null,
+                devicesAddressesFound = null,
+                devicesTypesFound = null
             )
             val scanId = scanRepository.insert(
                scanInserted
