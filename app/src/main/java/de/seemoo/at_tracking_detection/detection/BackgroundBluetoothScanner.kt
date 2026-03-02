@@ -416,6 +416,12 @@ object BackgroundBluetoothScanner {
                     overrideIdentifier = deviceSaved.address
                 }
 
+                // Fix for Google Find My Network devices
+                if (overrideIdentifier == null && deviceSaved.address != wrappedScanResult.uniqueIdentifier) {
+                    Timber.d("saveDevice() resolved to a different address (${deviceSaved.address}) than the scanned identifier (${wrappedScanResult.uniqueIdentifier}). Using saved address for beacon.")
+                    overrideIdentifier = deviceSaved.address
+                }
+
                 val beaconSaved = saveBeacon(wrappedScanResult, discoveryDate, locId, overrideIdentifier) ?: return@withLock Pair(null, null)
 
                 return@withLock Pair(deviceSaved, beaconSaved)
