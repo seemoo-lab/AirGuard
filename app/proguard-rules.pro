@@ -90,7 +90,17 @@
 -keep class com.google.gson.stream.JsonWriter { *; }
 
 # Keep ProGuard/R8 from stripping out important methods or classes
--keep class * implements com.google.gson.reflect.TypeToken { *; }
+# TypeToken is a class (not an interface), so use 'extends' not 'implements'.
+# Also preserve generic signatures so Gson can read the type parameter at runtime.
+-keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.reflect.TypeToken { *; }
+
+# Keep Article data class used for Gson deserialization in DashboardRiskFragment
+-keep class de.seemoo.at_tracking_detection.ui.dashboard.Article { *; }
+-keepclassmembers class de.seemoo.at_tracking_detection.ui.dashboard.Article {
+    <fields>;
+    <init>(...);
+}
 
 # Ensure that the DeviceType class is not stripped or obfuscated
 -keep class de.seemoo.at_tracking_detection.database.models.device.DeviceType { *; }
@@ -118,7 +128,7 @@
 -keep class de.seemoo.at_tracking_detection.util.SharedPrefs { *; }
 
 # Keep Gson annotations
--keepattributes Signature,RuntimeVisibleAnnotations
+-keepattributes Signature, InnerClasses, EnclosingMethod, RuntimeVisibleAnnotations
 
 # Keep all data classes with Gson annotations
 -keep class de.seemoo.at_tracking_detection.database.relations.** { *; }
