@@ -253,8 +253,11 @@ object BackgroundBluetoothScanner {
             scan.noDevicesFound = scanResultDictionary.size
 
             if (BuildConfig.DEBUG) {
-                val dbLocation = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
-                scan.locationId = dbLocation?.locationId
+                val (dbLocation, dbLocationWasNew) = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
+                // Only attach an existing location to the scan record.
+                if (!dbLocationWasNew) {
+                    scan.locationId = dbLocation?.locationId
+                }
                 scan.locationDeg = "${location?.longitude},${location?.latitude}"
                 scan.devicesAddressesFound = scanResultDictionary.keys.joinToString(separator = ",")
                 scan.devicesTypesFound = scanResultDictionary.values.map{it.wrappedScanResult.deviceType}.toSet().joinToString(separator = ",")
@@ -401,13 +404,14 @@ object BackgroundBluetoothScanner {
                 ) // return when device does not qualify to be saved
 
                 // set locationId to null if gps location could not be retrieved
-                val locId: Int? = saveLocation(
+                val (savedLocation, locationWasNewlyCreated) = saveLocation(
                     latitude = latitude,
                     longitude = longitude,
                     altitude = altitude,
                     discoveryDate = discoveryDate,
                     accuracy = accuracy
-                )?.locationId
+                )
+                val locId: Int? = savedLocation?.locationId
 
                 // For 15 minute algorithm
                 var overrideIdentifier: String? = null
@@ -422,7 +426,23 @@ object BackgroundBluetoothScanner {
                     overrideIdentifier = deviceSaved.address
                 }
 
-                val beaconSaved = saveBeacon(wrappedScanResult, discoveryDate, locId, overrideIdentifier) ?: return@withLock Pair(null, null)
+                val beaconSaved = saveBeacon(wrappedScanResult, discoveryDate, locId, overrideIdentifier)
+
+                if (beaconSaved == null) {
+                    // Fallback case: If location is created but failure during Beacon saving, delete Location again so it does not become an orphan
+                    // This is necessary as it would become visible on the map but with no content for the info popup
+                    if (locationWasNewlyCreated && savedLocation != null) {
+                        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+                        val beaconCountAtLocation = locationRepository.getNumberOfBeaconsForLocation(savedLocation.locationId)
+                        if (beaconCountAtLocation == 0) {
+                            Timber.d("Beacon saving failed for a newly created location (id=${savedLocation.locationId}), deleting orphan location.")
+                            locationRepository.delete(savedLocation)
+                        } else {
+                            Timber.d("Beacon saving failed but location (id=${savedLocation.locationId}) is still referenced by $beaconCountAtLocation beacon(s), keeping it.")
+                        }
+                    }
+                    return@withLock Pair(null, null)
+                }
 
                 return@withLock Pair(deviceSaved, beaconSaved)
             }
@@ -708,13 +728,13 @@ object BackgroundBluetoothScanner {
         altitude: Double?,
         discoveryDate: LocalDateTime,
         accuracy: Float?
-    ): Location? {
+    ): Pair<Location?, Boolean> {
         return withContext(Dispatchers.IO) {
             locationMutex.withLock {
                 if (altitude != null && altitude > TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE) {
                     Timber.d("Ignoring location above ${TrackingDetectorConstants.IGNORE_LOCATION_ABOVE_ALTITUDE}m, we assume the User might be on a plane!")
                     // Do not save location object
-                    return@withLock null
+                    return@withLock Pair(null, false)
                 }
 
                 val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
@@ -737,14 +757,17 @@ object BackgroundBluetoothScanner {
                     if (location == null || distanceBetweenLocations > MAX_DISTANCE_UNTIL_NEW_LOCATION) {
                         // Create new location entry
                         Timber.d("Add new Location to the database!")
-                        location = Location(
+                        val newLocation = Location(
                             firstDiscovery = discoveryDate,
                             longitude = longitude,
                             latitude = latitude,
                             altitude = altitude,
                             accuracy = accuracy,
                         )
-                        locationRepository.insert(location)
+                        val newRowId = locationRepository.insert(newLocation)
+                        location = locationRepository.getLocationWithId(newRowId.toInt())
+                        Timber.d("Inserted new Location with rowId=$newRowId, fetched: $location")
+                        return@withLock Pair(location, true)
                     } else {
                         // If location is within the set limit, just use that location and update lastSeen
                         Timber.d("Location already in the database... Updating the last seen date!")
@@ -762,7 +785,7 @@ object BackgroundBluetoothScanner {
 
                     Timber.d("Location: $location")
                 }
-                return@withLock location
+                return@withLock Pair(location, false)
             }
         }
     }
