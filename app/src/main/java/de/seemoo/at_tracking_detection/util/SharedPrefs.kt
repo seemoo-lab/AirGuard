@@ -338,7 +338,7 @@ object SharedPrefs {
 
     var deleteOldDevices: Boolean
         get() {
-            return sharedPreferences.getBoolean("delete_old_devices", false)
+            return sharedPreferences.getBoolean("delete_old_devices", true)
         }
         set(value) {
             sharedPreferences.edit { putBoolean("delete_old_devices", value) }

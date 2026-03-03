@@ -164,7 +164,11 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         // Schedule periodic device cleanup independent of tracking detection
         GlobalScope.launch(Dispatchers.Default) {
             try {
-                backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
+                if (SharedPrefs.deleteOldDevices) {
+                    backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
+                } else {
+                    backgroundWorkScheduler.cancelDeviceCleanupPeriodic()
+                }
             } catch (t: Throwable) {
                 Timber.w(t, "Failed scheduling device cleanup on startup")
             }

@@ -84,6 +84,10 @@ class DeviceCleanupWorker @AssistedInject constructor(
 
             if (devicesToBeDeleted.isNotEmpty()) {
                 Timber.d("Deleting ${devicesToBeDeleted.size} devices")
+                // Delete notifications for the deleted devices
+                devicesToBeDeleted.forEach { device ->
+                    notificationRepository.deleteForDevice(device.address)
+                }
                 deviceRepository.deleteDevices(devicesToBeDeleted)
                 Timber.d("Deleting Devices successful")
             } else {

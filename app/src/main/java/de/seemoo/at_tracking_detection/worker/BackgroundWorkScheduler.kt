@@ -97,6 +97,10 @@ class BackgroundWorkScheduler @Inject constructor(
         backgroundWorkBuilder.buildDeviceCleanupWorker()
     ).also { it.logOperationSchedule(WorkerConstants.DEVICE_CLEANUP_WORKER) }
 
+    fun cancelDeviceCleanupPeriodic() =
+        workManager.cancelUniqueWork(WorkerConstants.DEVICE_CLEANUP_WORKER)
+            .also { Timber.d("${WorkerConstants.DEVICE_CLEANUP_WORKER} cancelled!") }
+
     fun scheduleDeviceCleanupNow() = workManager.enqueueUniqueWork(
         WorkerConstants.DEVICE_CLEANUP_WORKER_NOW,
         ExistingWorkPolicy.APPEND_OR_REPLACE,

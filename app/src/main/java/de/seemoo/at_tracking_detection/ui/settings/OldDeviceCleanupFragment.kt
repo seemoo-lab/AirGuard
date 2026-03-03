@@ -178,8 +178,12 @@ class OldDeviceCleanupFragment : Fragment() {
 
     private fun scheduleCleanupNow() {
         val app = ATTrackingDetectionApplication.getCurrentApp()
-        app.backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
-        app.backgroundWorkScheduler.scheduleDeviceCleanupNow()
+        if (pendingDeleteOldDevices) {
+            app.backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
+            app.backgroundWorkScheduler.scheduleDeviceCleanupNow()
+        } else {
+            app.backgroundWorkScheduler.cancelDeviceCleanupPeriodic()
+        }
     }
 
     private fun updateSaveButtonState() {
