@@ -1,1 +1,1 @@
-AirGuard dectects trackers that are used for stalking and warns you.
+AirGuard detects trackers that are used for stalking and warns you.
