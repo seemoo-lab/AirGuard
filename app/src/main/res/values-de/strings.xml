@@ -535,4 +535,7 @@
     <string name="scroll_button">Scrollt zum Anfang oder Ende dieser Ansicht</string>
     <string name="empty_list_others">Es wurden keine Geräte für die ausgewählten Filter identifiziert. Sie können die Filter ändern, indem Sie auf die Schaltfläche oben links klicken oder alle Geräte anzeigen.</string>
     <string name="retrieve_owner_information_explanation_hama">Um Informationen über den Eigentümer zu erhalten, müssen Sie den Tracker physisch gefunden haben. Öffnen Sie das Zubehör, indem Sie die hintere Abdeckung anheben. Entfernen Sie die Batterie und setzen Sie sie einfach wieder ein. Zum Schluss bringen Sie die hintere Abdeckung wieder an. Drücken Sie anschließend auf „Weiter“.</string>
+    <string name="safe_tracker_map_warning">Dies ist ein sicherer Tracker. Er ist derzeit oder war vor kurzem mit dem Gerät seines Besitzers verbunden. Sichere Tracker stellen keine Bedrohung für Sie dar.</string>
+    <string name="no_locations_yet_hint">Dieses Gerät wurde erkannt, aber es wurden noch keine Standortdaten aufgezeichnet. Standortdaten werden hier angezeigt, wenn der Tracker an einem Standort beobachtet wurde.</string>
+    <string name="safe_tracker_monitored_warning">Dies ist ein sicherer Tracker. Er ist derzeit oder war vor kurzem mit dem Gerät seines Besitzers verbunden. Er wird vorübergehend beobachtet, stellt aber keine Bedrohung für Sie dar.</string>
 </resources>

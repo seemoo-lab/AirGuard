@@ -386,6 +386,9 @@
     <string name="explanation_unknown">Please note:\nSome devices change their identifier over time.\nThese devices are recognized as new devices periodically and can be displayed multiple times.</string>
 
     <string name="explanation_safe_trackers">Safe Trackers are trackers around you that are currently connected or have been connected to their owner devices in the last minutes. They most likely do not pose a threat to you.\nAdditionally all tracker marked as ignored will be considered to be safe.</string>
+    <string name="safe_tracker_map_warning">This is a safe tracker. It is currently or was recently connected to its owner\'s device. Safe trackers do not pose a threat to you.</string>
+    <string name="no_locations_yet_hint">This device has been detected, but no location data has been recorded yet. Location data will appear here if the tracker is observed at a valid location.</string>
+    <string name="safe_tracker_monitored_warning">This is a safe tracker. It is currently or was recently connected to its owner\'s device. It is being temporarily observed, but it does not pose a threat to you.</string>
     <string name="device_name_cannot_be_empty">The device name cannot be empty</string>
 
     <string name="translation_supporters">Translation supporters</string>

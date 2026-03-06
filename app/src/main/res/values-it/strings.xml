@@ -647,4 +647,8 @@
     <string name="scroll_button">Scorre fino all\'inizio o alla fine di questa vista</string>
     <string name="empty_list_others">Non ci sono dispositivi identificati per i filtri selezionati. Puoi cambiare i filtri cliccando sul pulsante nell\'angolo in alto a sinistra o visualizzando tutti i dispositivi.</string>
     <string name="retrieve_owner_information_explanation_hama">Per ottenere informazioni sul proprietario devi aver trovato fisicamente il Tracker. Apri l\'accessorio sollevando la cover posteriore. Rimuovi la batteria e inseriscila di nuovo. Infine, rimetti la cover posteriore. Successivamente premi \"avanti\".</string>
+
+    <string name="safe_tracker_map_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. I tracker sicuri non rappresentano una minaccia per te.</string>
+    <string name="no_locations_yet_hint">Questo dispositivo è stato rilevato, ma non sono ancora stati registrati dati sulla sua posizione. I dati sulla posizione appariranno qui se il tracker viene osservato in una posizione valida.</string>
+    <string name="safe_tracker_monitored_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. È temporaneamente monitorato, ma non rappresenta una minaccia per te.</string>
 </resources>

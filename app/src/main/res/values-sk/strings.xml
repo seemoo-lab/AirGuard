@@ -560,4 +560,7 @@
     <string name="load_all_occurrences">Načítať všetky výskyty</string>
     <string name="scroll_button">Posunie na začiatok alebo koniec tohto zobrazenia</string>
     <string name="retrieve_owner_information_explanation_hama">Ak chcete získať informácie o majiteľovi, musíte Tracker fyzicky nájsť. Otvorte príslušenstvo zdvihnutím zadného krytu. Vyberte batériu a jednoducho ju znova vložte. Nakoniec nasaďte zadný kryt späť. Potom stlačte „ďalej“.</string>
+    <string name="safe_tracker_map_warning">Toto je bezpečný tracker. Je aktuálne alebo bol nedávno pripojený k zariadeniu majiteľa. Bezpečné trackery pre vás nepredstavujú hrozbu.</string>
+    <string name="no_locations_yet_hint">Toto zariadenie bolo detegované, ale zatiaľ neboli zaznamenané žiadne údaje o polohe. Údaje o polohe sa tu zobrazia, ak bude tracker spozorovaný na platnom mieste.</string>
+    <string name="safe_tracker_monitored_warning">Toto je bezpečný tracker. Je aktuálne alebo bol nedávno pripojený k zariadeniu majiteľa. Je dočasne monitorovaný, ale nepredstavuje pre vás hrozbu.</string>
 </resources>

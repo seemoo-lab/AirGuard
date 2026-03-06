@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.IBinder
 import android.text.InputFilter
@@ -96,7 +98,11 @@ class TrackingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        zoomToMarkers()
+        checkAndUpdateInternetAvailability()
+
+        if (shouldShowMap()) {
+            zoomToMarkers()
+        }
 
         mapView.onResume()
     }
@@ -104,6 +110,10 @@ class TrackingFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mapView.onPause()
+    }
+
+    private fun shouldShowMap(): Boolean {
+        return trackingViewModel.showMap.value ?: false
     }
 
     private fun initializeMap() {
@@ -121,7 +131,7 @@ class TrackingFragment : Fragment() {
             }
         })
 
-        if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
+        if (shouldShowMap() && trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
             zoomToMarkers()
         }
     }
@@ -165,7 +175,17 @@ class TrackingFragment : Fragment() {
             false
         }
 
+        trackingViewModel.showMap.observe(viewLifecycleOwner) { showMap ->
+            if (showMap) {
+                mapView.post {
+                    zoomToMarkers()
+                }
+            }
+        }
+
         mapView = view.findViewById(R.id.map)
+
+        checkAndUpdateInternetAvailability()
 
         view.post {
             initializeMap()
@@ -213,11 +233,13 @@ class TrackingFragment : Fragment() {
         // MapUtils.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
-            lifecycleScope.launch {
-                trackingViewModel.isMapLoading.postValue(true)
-                val locationList = MapUtils.fetchLocationListFromBeaconList(beacons)
-                MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
-                trackingViewModel.isMapLoading.postValue(false)
+            if (shouldShowMap()) {
+                lifecycleScope.launch {
+                    trackingViewModel.isMapLoading.postValue(true)
+                    val locationList = MapUtils.fetchLocationListFromBeaconList(beacons)
+                    MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
+                    trackingViewModel.isMapLoading.postValue(false)
+                }
             }
         }
 
@@ -281,7 +303,16 @@ class TrackingFragment : Fragment() {
         })
     }
 
+    private fun checkAndUpdateInternetAvailability() {
+        val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+        val hasInternet = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        // Use the new setter which updates UI states instantly
+        trackingViewModel.setInternetAvailable(hasInternet)
+    }
+
     private fun zoomToMarkers() {
+        if (!shouldShowMap()) return
         lifecycleScope.launch {
             trackingViewModel.isMapLoading.postValue(true)
             val locationList = MapUtils.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())

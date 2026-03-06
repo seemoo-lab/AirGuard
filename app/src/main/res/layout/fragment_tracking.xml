@@ -20,54 +20,206 @@
             android:layout_height="wrap_content"
             android:paddingBottom="32dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/map_container"
+            <!-- Single top-slot: exactly one child is visible at a time -->
+            <LinearLayout
+                android:id="@+id/top_card_slot"
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_margin="16dp"
-                app:cardCornerRadius="28dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
-                android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <include
-                    android:id="@+id/tracking_map"
-                    layout="@layout/include_map"
-                    bind:loading="@{vm.isMapLoading}" />
-
-                <View
-                    android:id="@+id/map_overlay"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/map_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/favorite_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|start"
+                    android:layout_height="280dp"
                     android:layout_margin="16dp"
-                    android:src="@{vm.device.hearted ? @drawable/ic_star_filled : @drawable/ic_star_outline}"
-                    app:fabSize="mini"
-                    app:backgroundTint="?attr/colorSurface"
-                    app:tint="?attr/colorOnSurface"
-                    android:contentDescription="@string/device_icon" />
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
+                    android:visibility="@{vm.showMap ? View.VISIBLE : View.GONE}">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/open_map_button"
-                    android:layout_width="wrap_content"
+                    <include
+                        android:id="@+id/tracking_map"
+                        layout="@layout/include_map"
+                        bind:loading="@{vm.isMapLoading}" />
+
+                    <View
+                        android:id="@+id/map_overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/selectableItemBackground" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/favorite_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|start"
+                        android:layout_margin="16dp"
+                        android:src="@{vm.device.hearted ? @drawable/ic_star_filled : @drawable/ic_star_outline}"
+                        app:fabSize="mini"
+                        app:backgroundTint="?attr/colorSurface"
+                        app:tint="?attr/colorOnSurface"
+                        android:contentDescription="@string/device_icon" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/open_map_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_map_zoom"
+                        app:fabSize="mini"
+                        app:backgroundTint="?attr/colorSurface"
+                        app:tint="?attr/colorOnSurface"
+                        android:contentDescription="@string/open_map_description" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/no_internet_warning_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top|end"
                     android:layout_margin="16dp"
-                    android:src="@drawable/ic_map_zoom"
-                    app:fabSize="mini"
-                    app:backgroundTint="?attr/colorSurface"
-                    app:tint="?attr/colorOnSurface"
-                    android:contentDescription="@string/open_map_description" />
-            </androidx.cardview.widget.CardView>
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
+                    android:visibility="@{vm.showNoInternetWarning ? View.VISIBLE : View.GONE}">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_baseline_info_24"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/export_trackers_no_internet"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/no_locations_warning_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorErrorContainer"
+                    android:visibility="@{vm.showNoLocationsWarning ? View.VISIBLE : View.GONE}">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_baseline_location_on_24"
+                            app:tint="?attr/colorError"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/no_locations_yet_hint"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnErrorContainer" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/safe_tracker_no_locations_warning_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorErrorContainer"
+                    android:visibility="@{vm.showSafeTrackerNoLocationsWarning ? View.VISIBLE : View.GONE}">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_baseline_error_outline_24"
+                            app:tint="?attr/colorError"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/safe_tracker_map_warning"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnErrorContainer" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/safe_tracker_has_locations_warning_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorErrorContainer"
+                    android:visibility="@{vm.showSafeTrackerHasLocationsWarning ? View.VISIBLE : View.GONE}">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_baseline_error_outline_24"
+                            app:tint="?attr/colorError"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/safe_tracker_monitored_warning"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnErrorContainer" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/device_info_section"
@@ -76,7 +228,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@id/map_container">
+                app:layout_constraintTop_toBottomOf="@id/top_card_slot">
 
                 <include
                     android:id="@+id/device_item"

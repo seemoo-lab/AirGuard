@@ -545,4 +545,7 @@
     <string name="scroll_button">Fait dfiler jusqu\'en haut ou en bas de cette vue</string>
     <string name="empty_list_others">Aucun appareil n\'a été identifié pour les filtres sélectionnés. Vous pouvez modifier les filtres en cliquant sur le bouton dans le coin supérieur gauche ou en affichant tous les appareils.</string>
     <string name="retrieve_owner_information_explanation_hama">Pour obtenir des informations sur le propriétaire, vous devez avoir physiquement trouvé le traceur. Ouvrez l\'accessoire en soulevant le couvercle arrière. Retirez la batterie et réinsérez-la simplement. Enfin, remettez le couvercle arrière. Appuyez ensuite sur « suivant ».</string>
+    <string name="safe_tracker_map_warning">Il s\'agit d\'un traceur sûr. Il est actuellement ou était récemment connecté à l\'appareil de son propriétaire. Les traceurs sûrs ne représentent pas une menace pour vous.</string>
+    <string name="no_locations_yet_hint">Cet appareil a été détecté, mais aucune donnée de localisation n\'a encore été enregistrée. Les données de localisation apparaîtront ici si le traceur est observé à un emplacement valide.</string>
+    <string name="safe_tracker_monitored_warning">Il s\'agit d\'un traceur sûr. Il est actuellement ou était récemment connecté à l\'appareil de son propriétaire. Il est temporairement observé, mais il ne représente pas une menace pour vous.</string>
 </resources>

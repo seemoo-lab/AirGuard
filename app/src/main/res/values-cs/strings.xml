@@ -558,4 +558,7 @@
     <string name="scroll_button">Posune na začátek nebo konec tohoto zobrazení</string>
     <string name="empty_list_others">Pro vybrané filtry nebyla nalezena žádná zařízení. Filtry můžete změnit kliknutím na tlačítko v levém horním rohu nebo zobrazením všech zařízení.</string>
     <string name="retrieve_owner_information_explanation_hama">Chcete-li získat informace o majiteli, musíte Tracker fyzicky najít. Otevřete příslušenství zvednutím zadního krytu. Vyjměte baterii a jednoduše ji znovu vložte. Nakonec nasaďte zadní kryt zpět. Poté stiskněte „další“.</string>
+    <string name="safe_tracker_map_warning">Toto je bezpečný tracker. Je aktuálně nebo byl nedávno připojen k zařízení svého majitele. Bezpečné trackery pro vás nepředstavují hrozbu.</string>
+    <string name="no_locations_yet_hint">Toto zařízení bylo detekováno, ale zatím nebyla zaznamenána žádná data o poloze. Údaje o poloze se zde zobrazí, pokud bude tracker zpozorován na platném místě.</string>
+    <string name="safe_tracker_monitored_warning">Toto je bezpečný tracker. Je aktuálně nebo byl nedávno připojen k zařízení svého majitele. Je dočasně sledován, ale nepředstavuje pro vás hrozbu.</string>
 </resources>

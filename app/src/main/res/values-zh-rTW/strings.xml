@@ -534,4 +534,7 @@
     <string name="scroll_button">捲動到此視圖的頂部或底部</string>
     <string name="empty_list_others">沒有符合所選篩選條件的裝置。您可以點擊左上角的按鈕更改篩選條件，或顯示所有裝置。</string>
     <string name="retrieve_owner_information_explanation_hama">要獲取關於所有者的資訊，您必須親自找到追蹤器。提起後蓋以打開配件。取出電池並重新插入。最後，將後蓋裝回。然後按下「下一步」。</string>
+    <string name="safe_tracker_map_warning">這是一個安全的追蹤器。它目前或最近已連接到其所有者的設備集。安全追蹤器不會對您構成威脅。</string>
+    <string name="no_locations_yet_hint">已檢測到此設備，但尚未記錄位置數據。如果追蹤器在有效位置被觀察到，位置數據將顯示在這裡。</string>
+    <string name="safe_tracker_monitored_warning">這是一個安全的追蹤器。它目前或最近已連接到其所有者的設備。它正受到臨時觀察，但不會對您構成威脅。</string>
 </resources>
