@@ -16,6 +16,12 @@ def apiPropertiesFile = rootProject.file("api.properties")
 def apiProperties = new Properties()
 apiProperties.load(new FileInputStream(apiPropertiesFile))
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
 android {
     buildFeatures {
         viewBinding true
@@ -30,8 +36,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 36
-        versionCode 59
-        versionName "2.7.1"
+        versionCode 62
+        versionName "3.0.0"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -58,11 +64,8 @@ android {
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     sourceSets {
@@ -103,8 +106,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.6'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.9.6'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.7'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.9.7'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.10.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -114,7 +117,7 @@ dependencies {
     implementation "androidx.profileinstaller:profileinstaller:1.4.1"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation "androidx.activity:activity-ktx:1.12.1"
+    implementation "androidx.activity:activity-ktx:1.12.4"
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:5.3.2'
@@ -168,18 +171,18 @@ dependencies {
 
     //Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.12.1'
+    implementation 'androidx.activity:activity-compose:1.12.4'
     // Compose Material3 Design
     implementation 'androidx.compose.material3:material3:1.4.0'
     implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.10.0'
+    implementation 'androidx.compose.animation:animation:1.10.4'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.10.0'
+    implementation 'androidx.compose.ui:ui-tooling:1.10.4'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.10.0'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.10.4'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 

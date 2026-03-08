@@ -1,10 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -30,14 +28,9 @@ class AllDevicesViewModel @Inject constructor(
     val countPebblebee = deviceRepository.countForDeviceType(DeviceType.PEBBLEBEE).asLiveData()
     val countSmartTag = deviceRepository.countForDeviceType(DeviceType.SAMSUNG_TRACKER).asLiveData()
 
-    var riskColor: Int
-
-    init {
-        val context = ATTrackingDetectionApplication.getAppContext()
-        riskColor = when (riskLevelEvaluator.evaluateRiskLevel()) {
-            RiskLevel.LOW -> ContextCompat.getColor(context, R.color.risk_low)
-            RiskLevel.MEDIUM -> ContextCompat.getColor(context, R.color.risk_medium)
-            RiskLevel.HIGH -> ContextCompat.getColor(context, R.color.risk_high)
-        }
+    var riskColor: Int = when (riskLevelEvaluator.evaluateRiskLevel()) {
+        RiskLevel.LOW -> R.color.risk_low
+        RiskLevel.MEDIUM -> R.color.risk_medium
+        RiskLevel.HIGH -> R.color.risk_high
     }
 }

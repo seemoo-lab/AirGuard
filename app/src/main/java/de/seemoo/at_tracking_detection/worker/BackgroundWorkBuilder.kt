@@ -64,6 +64,20 @@ class BackgroundWorkBuilder @Inject constructor() {
                 .build())
             .build()
 
+    fun buildDeviceCleanupWorker(): PeriodicWorkRequest =
+        PeriodicWorkRequestBuilder<DeviceCleanupWorker>(
+            WorkerConstants.DEVICE_CLEANUP_INTERVAL_HOURS,
+            TimeUnit.HOURS
+        ).addTag(WorkerConstants.DEVICE_CLEANUP_WORKER)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
+            .build()
+
+    fun buildDeviceCleanupWorkerNow(): OneTimeWorkRequest =
+        OneTimeWorkRequestBuilder<DeviceCleanupWorker>()
+            .addTag(WorkerConstants.DEVICE_CLEANUP_WORKER_NOW)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, WorkerConstants.KIND_DELAY, TimeUnit.MINUTES)
+            .build()
+
     private fun buildConstraints(): Constraints =
         Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

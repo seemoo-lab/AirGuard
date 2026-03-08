@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.databinding.FragmentIgnoreBatteryOptimizationBinding
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class IgnoreBatteryOptimizationFragment : Fragment() {
@@ -59,7 +60,7 @@ class IgnoreBatteryOptimizationFragment : Fragment() {
             }
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             if (action == Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
-                data = Uri.parse("package:$packageName")
+                data = "package:$packageName".toUri()
             }
         }
         requireContext().startActivity(intent)

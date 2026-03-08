@@ -5,7 +5,6 @@
     >
 
     <data>
-
         <variable
             name="drawable"
             type="android.graphics.drawable.Drawable" />
@@ -13,15 +12,13 @@
         <variable
             name="text"
             type="String" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="24dp"
-        android:padding="20dp"
-        android:background="?android:colorBackground"
+        android:padding="24dp"
+        android:background="?android:attr/colorBackground"
         >
 
         <ImageView
@@ -31,13 +28,14 @@
             android:layout_marginHorizontal="50sp"
             android:src="@drawable/ic_bluetooth_off"
             app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintBottom_toTopOf="@id/bluetooth_off_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHeight_max="100dp"
-            app:layout_constraintWidth_max="100dp"
+            app:layout_constraintHeight_max="120dp"
+            app:layout_constraintWidth_max="120dp"
             android:contentDescription="@string/empty_image_content_description"
-            app:tint="@color/defaultTextColor"
+            app:tint="?attr/colorPrimary"
             tools:src="@drawable/ic_bluetooth_off" />
 
 
@@ -45,18 +43,23 @@
             android:id="@+id/bluetooth_off_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/bluetooth_off_explanation"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/md_theme_onBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bluetooth_image"
+            app:layout_constraintBottom_toTopOf="@id/open_ble_settings_button"
             tools:text="@string/bluetooth_off_explanation" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/open_ble_settings_button"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/bluetooth_off_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

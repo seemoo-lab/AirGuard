@@ -15,19 +15,16 @@ class FeedbackViewModel @Inject constructor(
     private val feedbackRepository: FeedbackRepository
 ) : ViewModel() {
 
-    val location = MutableLiveData<String>()
+    val location = MutableLiveData<String?>()
 
     private val feedbackId = MutableLiveData<Int>()
 
     fun submitFeedback(notificationId: Int) {
-        val feedback = if (feedbackId.value == null) {
+        val existing = feedbackRepository.getFeedback(notificationId)
+        val feedback = if (existing == null) {
             Feedback(notificationId, location.value)
         } else {
-            Feedback(
-                feedbackRepository.getFeedback(notificationId).feedbackId,
-                notificationId,
-                location.value
-            )
+            Feedback(existing.feedbackId, notificationId, location.value)
         }
         viewModelScope.launch {
             feedbackRepository.insert(feedback)
@@ -37,11 +34,11 @@ class FeedbackViewModel @Inject constructor(
 
     fun loadFeedback(notificationId: Int) {
         Timber.d("Loading feedback...")
-        try {
-            val feedback = feedbackRepository.getFeedback(notificationId)
+        val feedback = feedbackRepository.getFeedback(notificationId)
+        if (feedback != null) {
             feedbackId.postValue(feedback.feedbackId)
-            location.value = (feedback.location)
-        } catch (e: NullPointerException) {
+            location.value = feedback.location
+        } else {
             Timber.d("No feedback found!")
         }
     }

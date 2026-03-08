@@ -31,8 +31,8 @@ class LocationRepository @Inject constructor(
     fun getLocationsWithNoBeacons(): List<LocationModel> = locationDao.getLocationsWithNoBeacons()
 
     @WorkerThread
-    suspend fun insert(location: LocationModel) {
-        locationDao.insert(location)
+    suspend fun insert(location: LocationModel): Long {
+        return locationDao.insert(location)
     }
 
     @WorkerThread

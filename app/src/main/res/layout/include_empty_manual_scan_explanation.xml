@@ -5,22 +5,20 @@
     >
 
     <data>
-
         <variable
             name="drawable"
             type="android.graphics.drawable.Drawable" />
-
         <variable
             name="text"
             type="String" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="24dp"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:background="?android:attr/colorBackground">
 
         <ImageView
             android:id="@+id/empty_explanation_image"
@@ -43,6 +41,8 @@
             android:layout_margin="8dp"
             android:text="@string/scan_result_no_devices"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/empty_explanation_image"
@@ -57,10 +57,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:text="@string/tip_airtag_testing"
             android:layout_marginBottom="20dp"
-            android:textSize="@dimen/appintro_button_margin"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
             />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

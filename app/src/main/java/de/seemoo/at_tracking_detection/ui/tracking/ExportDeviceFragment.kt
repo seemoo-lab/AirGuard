@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -18,7 +19,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Beacon
@@ -44,6 +45,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentExportDeviceBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +72,7 @@ class ExportDeviceFragment: Fragment() {
 
     private var deviceAddress: String? = null
 
-    private lateinit var exportDocumentButton: Button
+    private lateinit var exportDocumentButton: MaterialButton
     private lateinit var progressBar: ProgressBar
 
     private lateinit var noInternetTextView: TextView
@@ -80,8 +82,11 @@ class ExportDeviceFragment: Fragment() {
 
     private lateinit var binding: FragmentExportDeviceBinding
 
+    // Use two different adapters for the beacon list (one for the preview (10 items) and one for the rest)
     private lateinit var beaconPreviewAdapter: BeaconPreviewAdapter
+    private lateinit var secondaryBeaconAdapter: BeaconPreviewAdapter
     private lateinit var beaconsRecyclerView: RecyclerView
+    private lateinit var secondaryBeaconsRecyclerView: RecyclerView
 
     private val PAGE_WIDTH = 1200
     private val PAGE_HEIGHT = 2000
@@ -91,7 +96,6 @@ class ExportDeviceFragment: Fragment() {
     private val TEXT_SIZE_HEADER = 36f
     private val LINE_SPACING = 10f // Extra space between lines
     private val NORMAL_LINE_HEIGHT = TEXT_SIZE_NORMAL + LINE_SPACING
-    private val MAP_BOTTOM_MARGIN = 20f
     private val SECTION_SPACING = 40f // Space between logical sections
 
     override fun onCreateView(
@@ -111,6 +115,7 @@ class ExportDeviceFragment: Fragment() {
         deviceAddress = safeArgs.deviceAddress
 
         beaconPreviewAdapter = BeaconPreviewAdapter()
+        secondaryBeaconAdapter = BeaconPreviewAdapter()
 
         return binding.root
     }
@@ -120,14 +125,19 @@ class ExportDeviceFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         beaconsRecyclerView = binding.beaconsRecyclerview // Use binding
+        secondaryBeaconsRecyclerView = binding.secondaryBeaconsRecyclerview
         setupRecyclerView()
         observeViewModel()
+        setupScrollFab()
 
         viewModel.loadDevice(deviceAddress, requireContext())
 
         mapView = binding.mapPreview
         noInternetTextView = binding.noInternetTextView
-        Utility.basicMapSetup(mapView)
+        MapUtils.basicMapSetup(mapView)
+
+        // Ensure map card rounds corners
+        binding.mapContainer.clipToOutline = true
 
         mapView.setMultiTouchControls(false)
         mapView.setBuiltInZoomControls(false)
@@ -135,8 +145,12 @@ class ExportDeviceFragment: Fragment() {
 
         checkInternetAndLoadMap()
 
-        exportDocumentButton = view.findViewById<Button>(R.id.create_document_button)
-        progressBar = view.findViewById(R.id.progress_bar)
+        exportDocumentButton = binding.createDocumentButton
+        progressBar = binding.progressBar
+
+        binding.loadMoreBeaconsButton.setOnClickListener {
+            viewModel.loadAllBeacons(deviceAddress, requireContext())
+        }
 
         exportDocumentButton.setOnClickListener {
             val hasInternet = Utility.isInternetAvailable(requireContext())
@@ -163,14 +177,96 @@ class ExportDeviceFragment: Fragment() {
         beaconsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = beaconPreviewAdapter
-            // setHasFixedSize(true)
+            isNestedScrollingEnabled = false
+        }
+
+        secondaryBeaconsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = secondaryBeaconAdapter
+            isNestedScrollingEnabled = false
         }
     }
 
     private fun observeViewModel() {
-        viewModel.beaconPreviewList.observe(viewLifecycleOwner) { beaconList ->
+        viewModel.recentBeaconPreviewList.observe(viewLifecycleOwner) { beaconList ->
             beaconPreviewAdapter.submitList(beaconList)
         }
+        viewModel.secondaryBeaconPreviewList.observe(viewLifecycleOwner) { beaconList ->
+            secondaryBeaconAdapter.submitList(beaconList)
+            updateFabVisibility()
+        }
+        viewModel.totalBeaconCount.observe(viewLifecycleOwner) {
+             updateFabVisibility()
+        }
+    }
+
+    private fun updateFabVisibility() {
+        val secondaryLoaded = (viewModel.secondaryBeaconPreviewList.value?.size ?: 0) > 0
+        val totalCount = viewModel.totalBeaconCount.value ?: 0
+
+        if (secondaryLoaded && totalCount > 20) {
+            binding.scrollFab.visibility = View.VISIBLE
+        } else {
+            binding.scrollFab.visibility = View.GONE
+        }
+    }
+
+    private var isScrollingDown = true
+
+    private fun setupScrollFab() {
+        binding.scrollFab.setOnClickListener {
+            val targetY = if (isScrollingDown) {
+                val child = binding.contentScrollview.getChildAt(0)
+                if (child.height > binding.contentScrollview.height) {
+                    child.height - binding.contentScrollview.height + binding.contentScrollview.paddingBottom
+                } else {
+                    0
+                }
+            } else {
+                0
+            }
+
+            // Smooth scroll with duration
+            ObjectAnimator.ofInt(binding.contentScrollview, "scrollY", targetY).apply {
+                duration = 250 // ms
+                start()
+            }
+        }
+
+        binding.contentScrollview.setOnScrollChangeListener(androidx.core.widget.NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            // Buffer zone logic
+            val bufferZonePx = android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP,
+                100f,
+                resources.displayMetrics
+            ).toInt()
+
+            val childHeight = binding.contentScrollview.getChildAt(0).height
+            val scrollHeight = binding.contentScrollview.height
+            val maxScroll = childHeight - scrollHeight
+
+            val isNearTop = scrollY < bufferZonePx
+            val isNearBottom = scrollY > (maxScroll - bufferZonePx)
+
+            if (isNearTop) {
+                // When near top, show only direction down
+                isScrollingDown = true
+                binding.scrollFab.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+            } else if (isNearBottom) {
+                // When near bottom, show only direction up
+                isScrollingDown = false
+                binding.scrollFab.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+            } else {
+                // Otherwise: Show button in which direction the user is currently scrolling
+                if (scrollY > oldScrollY && !isScrollingDown) {
+                    isScrollingDown = true
+                    binding.scrollFab.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+                } else if (scrollY < oldScrollY && isScrollingDown) {
+                    isScrollingDown = false
+                    binding.scrollFab.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+                }
+            }
+        })
     }
 
     private fun setupMapContent() {
@@ -479,7 +575,7 @@ class ExportDeviceFragment: Fragment() {
 
                 val beaconEntryHeight = getBeaconEntryHeight(beaconLocation, show15MinuteWarning)
 
-                // Check if the *entire* beacon entry fits on the current page
+                // Check if the entire beacon entry fits on the current page
                 if (yPos + beaconEntryHeight > drawablePageHeight) {
                     Timber.d("Beacon entry doesn't fit on page $currentPageNumber, creating new page.")
                     drawPageFooter(canvas, currentPageNumber, totalPages, textPaint)
@@ -613,7 +709,6 @@ class ExportDeviceFragment: Fragment() {
         }
         yPos += basicInfoHeight
 
-        // --- Simulate Map ---
         val hasInternet = Utility.isInternetAvailable(requireContext())
         if (hasInternet) {
             val mapBitmap = createMapBitmap() // Need to create it to get dimensions

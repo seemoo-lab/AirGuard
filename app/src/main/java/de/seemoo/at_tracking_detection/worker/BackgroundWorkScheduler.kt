@@ -91,6 +91,22 @@ class BackgroundWorkScheduler @Inject constructor(
         backgroundWorkBuilder.buildFalseAlarmWorker(notificationId, notificationTag)
     ).also { it.logOperationSchedule(WorkerConstants.FALSE_ALARM_WORKER) }
 
+    fun scheduleDeviceCleanupPeriodic() = workManager.enqueueUniquePeriodicWork(
+        WorkerConstants.DEVICE_CLEANUP_WORKER,
+        ExistingPeriodicWorkPolicy.KEEP,
+        backgroundWorkBuilder.buildDeviceCleanupWorker()
+    ).also { it.logOperationSchedule(WorkerConstants.DEVICE_CLEANUP_WORKER) }
+
+    fun cancelDeviceCleanupPeriodic() =
+        workManager.cancelUniqueWork(WorkerConstants.DEVICE_CLEANUP_WORKER)
+            .also { Timber.d("${WorkerConstants.DEVICE_CLEANUP_WORKER} cancelled!") }
+
+    fun scheduleDeviceCleanupNow() = workManager.enqueueUniqueWork(
+        WorkerConstants.DEVICE_CLEANUP_WORKER_NOW,
+        ExistingWorkPolicy.APPEND_OR_REPLACE,
+        backgroundWorkBuilder.buildDeviceCleanupWorkerNow()
+    ).also { it.logOperationSchedule(WorkerConstants.DEVICE_CLEANUP_WORKER_NOW) }
+
     private fun Operation.logOperationSchedule(uniqueWorker: String) =
         this.result.addListener({ Timber.d("$uniqueWorker completed!") }, { it.run() })
             .also { Timber.d("$uniqueWorker scheduled!") }

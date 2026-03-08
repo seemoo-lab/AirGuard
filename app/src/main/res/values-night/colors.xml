@@ -1,8 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="card_background_teal">#0E8393</color>
-    <color name="low_risk_trackers_text_color">#FFFFFF</color>
-    <color name="low_risk_trackers_background_color">#424242</color>
-    <color name="tracker_not_following_blue">#8a8aff</color>
-    <color name="tracker_following_red">#FB6161</color>
+    <!-- Material Design Colors -->
+    <color name="md_theme_primary">#D0BCFF</color>
+    <color name="md_theme_onPrimary">#381E72</color>
+    <color name="md_theme_primaryContainer">#4F378B</color>
+    <color name="md_theme_onPrimaryContainer">#EADDFF</color>
+
+    <color name="md_theme_secondary">#CCC2DC</color>
+    <color name="md_theme_onSecondary">#332D41</color>
+    <color name="md_theme_secondaryContainer">#4A4458</color>
+    <color name="md_theme_onSecondaryContainer">#E8DEF8</color>
+
+    <color name="md_theme_tertiary">#EFB8C8</color>
+    <color name="md_theme_onTertiary">#492532</color>
+    <color name="md_theme_tertiaryContainer">#633B48</color>
+    <color name="md_theme_onTertiaryContainer">#FFD8E4</color>
+
+    <color name="md_theme_error">#F2B8B5</color>
+    <color name="md_theme_onError">#601410</color>
+    <color name="md_theme_errorContainer">#8C1D18</color>
+    <color name="md_theme_onErrorContainer">#F9DEDC</color>
+
+    <color name="md_theme_background">#141218</color>
+    <color name="md_theme_onBackground">#E6E1E5</color>
+
+    <color name="md_theme_surface">#141218</color>
+    <color name="md_theme_onSurface">#E6E1E5</color>
+    <color name="md_theme_surfaceVariant">#49454F</color>
+    <color name="md_theme_onSurfaceVariant">#CAC4D0</color>
+    <color name="md_theme_outline">#938F99</color>
+
+    <color name="md_theme_surfaceContainerLow">#1D1B20</color>
+    <color name="md_theme_surfaceContainer">#211F26</color>
+    <color name="md_theme_surfaceContainerHigh">#2B2930</color>
+
+    <!-- Additional Colors -->
+
+    <!-- Risk Colors -->
+    <color name="risk_high">#B3261E</color>
+    <color name="risk_medium">#8D6E05</color>
+    <color name="risk_low">#2E6C35</color>
+
+    <!-- Mark Favorite -->
+    <color name="star_yellow">#FFD54F</color>
+    <color name="star_container">#564600</color>
 </resources>

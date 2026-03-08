@@ -10,7 +10,7 @@
         android:layout_margin="@dimen/card_margin"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@color/blue_card_background">
+        app:cardBackgroundColor="?attr/colorSecondaryContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:maxLines="3"
                 android:text="@string/find_headline"
                 android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +47,7 @@
 
             <include
                 layout="@layout/item_icon_text_white"
-                app:iconDrawable="@{@drawable/ic_battery}"
+                app:iconDrawable="@{@drawable/ic_battery_full_24}"
                 app:rowText="@{@string/find_battery}" />
 
 

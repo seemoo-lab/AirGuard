@@ -276,6 +276,7 @@ object SharedPrefs {
         }
 
     var appOpenCount: Int
+        // DO NOT DELETE: This will be used in the Google Play Release Branch
         // How often the app has been opened
         get() {
             return sharedPreferences.getInt("app_open_count", 0)
@@ -285,6 +286,7 @@ object SharedPrefs {
         }
 
     var reviewShown: Boolean
+        // DO NOT DELETE: This will be used in the Google Play Release Branch
         // If the review dialog has been shown
         get() {
             return sharedPreferences.getBoolean("review_shown", false)
@@ -336,7 +338,7 @@ object SharedPrefs {
 
     var deleteOldDevices: Boolean
         get() {
-            return sharedPreferences.getBoolean("delete_old_devices", false)
+            return sharedPreferences.getBoolean("delete_old_devices", true)
         }
         set(value) {
             sharedPreferences.edit { putBoolean("delete_old_devices", value) }
@@ -358,7 +360,23 @@ object SharedPrefs {
             sharedPreferences.edit { putLong("old_device_timeframe_days", value) }
         }
 
-    private fun getAllDevicesFilterOptions(): Set<String> {
+    var showTooManyNotificationsHint: Boolean
+        get() {
+            return sharedPreferences.getBoolean("show_too_many_notifications_hint", false)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("show_too_many_notifications_hint", value) }
+        }
+
+    var useDynamicColors: Boolean
+        get() {
+            return sharedPreferences.getBoolean("use_dynamic_colors", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("use_dynamic_colors", value) }
+        }
+
+    fun getAllDevicesFilterOptions(): Set<String> {
         val allOptions = ATTrackingDetectionApplication.getAppContext().resources.getStringArray(R.array.devicesFilterValue)
         return allOptions.toSet()
     }

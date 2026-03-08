@@ -7,12 +7,15 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.os.Build
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.*
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.*
 
 class AirTag(val id: Int) : Device(), Connectable {
@@ -37,8 +40,8 @@ class AirTag(val id: Int) : Device(), Connectable {
                     BluetoothGatt.GATT_SUCCESS -> {
                         when (newState) {
                             BluetoothProfile.STATE_CONNECTED -> gatt.discoverServices()
-                            BluetoothProfile.STATE_DISCONNECTED -> broadcastUpdate(
-                                BluetoothConstants.ACTION_GATT_DISCONNECTED
+                            BluetoothProfile.STATE_DISCONNECTED -> sendBluetoothEvent(
+                                BluetoothEvent.Disconnected
                             )
                             else -> {
                                 Timber.d("Connection state changed to $newState")
@@ -46,9 +49,9 @@ class AirTag(val id: Int) : Device(), Connectable {
                         }
                     }
                     19 -> {
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
                     }
-                    else -> broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    else -> sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
             }
 
@@ -59,13 +62,21 @@ class AirTag(val id: Int) : Device(), Connectable {
                 if (service == null) {
                     Timber.e("AirTag sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 } else {
                     service.getCharacteristic(AIR_TAG_SOUND_CHARACTERISTIC)
                         .let {
-                            it.setValue(175, BluetoothGattCharacteristic.FORMAT_UINT8, 0)
-                            gatt.writeCharacteristic(it)
-                            broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                            // Use modern API for SDK 33+, fallback to deprecated for older versions
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val value = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(175.toByte()).array()
+                                gatt.writeCharacteristic(it, value, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                            } else {
+                                @Suppress("DEPRECATION")
+                                it.setValue(175, BluetoothGattCharacteristic.FORMAT_UINT8, 0)
+                                @Suppress("DEPRECATION")
+                                gatt.writeCharacteristic(it)
+                            }
+                            sendBluetoothEvent(BluetoothEvent.EventRunning)
                             Timber.d("Playing sound...")
                         }
                 }
@@ -77,36 +88,40 @@ class AirTag(val id: Int) : Device(), Connectable {
                 characteristic: BluetoothGattCharacteristic?,
                 status: Int
             ) {
-                if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
-                    when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
-                        AIR_TAG_EVENT_CALLBACK -> {
-                            broadcastUpdate(
-                                BluetoothConstants.ACTION_EVENT_COMPLETED
-                            )
-                            disconnect(gatt)
+                when (status) {
+                    BluetoothGatt.GATT_SUCCESS if characteristic != null -> {
+                        when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
+                            AIR_TAG_EVENT_CALLBACK -> {
+                                sendBluetoothEvent(
+                                    BluetoothEvent.EventCompleted
+                                )
+                                disconnect(gatt)
+                            }
                         }
                     }
-                }
-                else if (status == 133) { // GATT_ERROR, Timeout
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
-                    disconnect(gatt)
-                }else {
-                    disconnect(gatt)
+                    133 -> {
+                        // GATT_ERROR, Timeout
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
+                        disconnect(gatt)
+                    }
+                    else -> {
+                        disconnect(gatt)
+                    }
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }
 
-            @Deprecated("Deprecated in Java")
             override fun onCharacteristicRead(
-                gatt: BluetoothGatt?,
-                characteristic: BluetoothGattCharacteristic?,
+                gatt: BluetoothGatt,
+                characteristic: BluetoothGattCharacteristic,
+                value: ByteArray,
                 status: Int
             ) {
-                if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
+                if (status == BluetoothGatt.GATT_SUCCESS) {
                     when (characteristic.properties and AIR_TAG_EVENT_CALLBACK) {
                         AIR_TAG_EVENT_CALLBACK -> {
-                            broadcastUpdate(
-                                BluetoothConstants.ACTION_EVENT_COMPLETED
+                            sendBluetoothEvent(
+                                BluetoothEvent.EventCompleted
                             )
                             disconnect(gatt)
                         }

@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,11 +23,7 @@ import de.seemoo.at_tracking_detection.databinding.FragmentFeedbackBinding
 class FeedbackFragment : Fragment() {
 
     private val feedbackViewModel: FeedbackViewModel by viewModels()
-
     private val safeArgs: FeedbackFragmentArgs by navArgs()
-
-    // This gives the option to highlight the selected feedback location in future updates
-    private var selectedLocationCard: MaterialCardView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,68 +50,34 @@ class FeedbackFragment : Fragment() {
             LocationItem(getString(R.string.feedback_location_not_found), "NotFound", R.drawable.ic_baseline_cancel_24)
         )
 
-        val locationsLinearLayout = LinearLayout(context)
-        locationsLinearLayout.orientation = LinearLayout.VERTICAL
-        locationsLinearLayout.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            topMargin = 24
-        }
-
         val locationLayout = view.findViewById<LinearLayout>(R.id.feedback_location_layout)
+        val inflater = LayoutInflater.from(context)
 
         for (locationItem in locations) {
-            val locationCard = MaterialCardView(context)
+            val itemCard = inflater.inflate(R.layout.item_feedback_selection, locationLayout, false) as MaterialCardView
 
-            val layout = LayoutInflater.from(context).inflate(R.layout.item_feedback_selection, null, false)
-            val text = layout.findViewById<TextView>(R.id.text)
-            val icon = layout.findViewById<ImageView>(R.id.icon)
+            val text = itemCard.findViewById<TextView>(R.id.text)
+            val icon = itemCard.findViewById<ImageView>(R.id.icon)
 
             icon.setImageResource(locationItem.imageResId)
             text.text = locationItem.visibleString
 
-            locationCard.addView(layout)
-
-            locationCard.setOnClickListener {
-                // Clear previously selected location
-                selectedLocationCard?.isChecked = false
-
-                // Mark the current location as selected
-                locationCard.isChecked = true
-                selectedLocationCard = locationCard
-
+            itemCard.setOnClickListener {
                 // Update ViewModel with selected location
                 feedbackViewModel.location.postValue(locationItem.backendString)
 
                 // Show a Toast message indicating success
                 Toast.makeText(requireContext(), R.string.feedback_success, Toast.LENGTH_SHORT).show()
+
+                // Submit feedback and navigate away
+                feedbackViewModel.submitFeedback(safeArgs.notificationId)
+                val navigated = findNavController().navigateUp()
+                if (!navigated) {
+                    requireActivity().finish()
+                }
             }
 
-            // Set layout params for location card
-            locationCard.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = 16
-            }
-
-            locationsLinearLayout.addView(locationCard)
-
-            // Check if this location is already selected
-            if (locationItem.backendString == feedbackViewModel.location.value) {
-                // Mark the current location as selected
-                locationCard.isChecked = true
-                selectedLocationCard = locationCard
-            }
+            locationLayout.addView(itemCard)
         }
-
-        locationLayout.addView(locationsLinearLayout)
     }
-
-    override fun onPause() {
-        feedbackViewModel.submitFeedback(safeArgs.notificationId)
-        super.onPause()
-    }
-
 }

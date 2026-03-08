@@ -19,8 +19,12 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
 
     override suspend fun doWork(): Result {
+        val ignoreDeactivatedSetting = inputData.getBoolean(IGNORE_DEACTIVATED_SETTING_PARAM, false)
 
-        val results =  BackgroundBluetoothScanner.scanInBackground(startedFrom = "ScanBluetoothWorker")
+        val results = BackgroundBluetoothScanner.scanInBackground(
+            startedFrom = "ScanBluetoothWorker",
+            ignoreDeactivatedSetting = ignoreDeactivatedSetting
+        )
 
         if (results.failed) {
             return Result.retry()
@@ -33,5 +37,9 @@ class ScanBluetoothWorker @AssistedInject constructor(
                 .putInt("devicesFound", results.numberDevicesFound)
                 .build()
         )
+    }
+
+    companion object {
+        const val IGNORE_DEACTIVATED_SETTING_PARAM = "IGNORE_DEACTIVATED_SETTING"
     }
 }

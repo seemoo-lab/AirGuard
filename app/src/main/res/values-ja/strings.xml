@@ -6,9 +6,8 @@
     <string name="title_settings">設定</string>
     <string name="title_debug">デバック</string>
     <string name="title_feedback">発見した場所</string>
-    <string name="title_tracking">{deviceAddress} があなたを追跡しています</string>
     <string name="title_devices_tracking">タグのBluetoothアドレス {deviceAddress}</string>
-    <string name="title_device_map">すべてのデバイス</string>
+    <string name="all_devices">すべてのデバイス</string>
     <string name="title_devices">タグ</string>
     <string name="map_empty_text">まだタグは検知されていません、検知されるたびに検知した場所をマップ上に表示します。これは追跡されているという意味ではありません。不特定多数の人が所有しているタグを検知しているケースがほとんどです。</string>
     <string name="mark_false_alarm">誤報</string>
@@ -30,11 +29,9 @@
     <string name="settings_use_location_title">位置情報を使用する</string>
     <string name="error_requesting_location_permission">位置情報取得の許可の要求中にエラーが発生しました</string>
     <string name="tracking_locate_at_title">音を出す</string>
-    <string name="tracking_locate_at_subtitle">AirTagを見つける</string>
     <string name="permissions_background_location_title">バックグラウンド探知</string>
     <string name="permission_background_location_message">この許可を与えることにより、追跡時に、より詳細な情報を提供できます。これはオプション機能です</string>
     <string name="tracking_feedback_title">発見した場所</string>
-    <string name="tracking_feedback_subtitle">発見した場所をを提供する</string>
     <string name="tracking_ignore_device_title">無視するタグ</string>
     <string name="tracking_ignore_device_subtitle">このタグの通知をミュートする</string>
     <string name="tracking_false_alarm_title">誤報</string>
@@ -88,15 +85,6 @@
     <string name="onboarding_share_data_yes">はい</string>
     <string name="onboarding_share_data_dialog">匿名化されたデータを共有するかどうかを決定する必要があります</string>
     <string name="device_name_find_my_device_apple">Find My デバイス %s</string>
-    <plurals name="notification_text_base">
-        <item quantity="other">詳細については、通知を開いてください。追跡タグが少なくとも%d分間あなたを追跡しています。</item>
-    </plurals>
-    <string name="notification_title_base">追跡タグが発見されました!</string>
-    <string name="notification_text_single">詳細については、通知を開いてください。%sが少なくとも%d分間あなたを追跡しています。</string>
-    <string name="notification_text_multiple">詳細については、通知を開いてください。%sが少なくとも%d分間あなたをフォローしています。</string>
-    <string name="notification_title_vocal">%s があなたを追跡しています</string>
-    <string name="notification_title_consonant">%s があなたを追跡しています</string>
-    <string name="notification_title_multiple">%s があなたを追跡しています</string>
     <string name="notification_title_ble_error">BLEスキャンに失敗しました</string>
     <string name="alert_sent_icon">アラート送信アイコン</string>
     <string name="device_icon">デバイスアイコン</string>
@@ -147,9 +135,6 @@
         • 異なる日に複数の通知を受け取った場合は、必ず手動スキャンをしてください。
     </string>
     <string name="i_cannot_find_the_tracker">タグが見つかりません！</string>
-    <string name="airguard_scan_explanation">AirGuard は Bluetooth を使用してタグを探します</string>
-    <string name="airguard_detection_explanation">AirGuardは位置情報の助けを借りてタグが複数の場所であなたを追跡しているかどうかを検出できます</string>
-    <string name="airguard_notification_explanation">隠されたタグがあなたを追跡しているときに通知を出します。上のカードは、色がオレンジまたは赤に変わります。</string>
     <string name="find_sound">音を出して見つけます</string>
     <string name="find_manual_scan">手動スキャンを実行し、距離からタグを見つけます</string>
     <string name="find_battery">電池を外します</string>
@@ -157,7 +142,6 @@
     <string name="title_risk_detail">リスク評価</string>
     <string name="show_all">すべて表示</string>
     <string name="tracker_detected">検出されたデバイス</string>
-    <string name="locations_tracked">追跡された場所</string>
     <string name="dates_detected">検出された日付</string>
     <string name="filter">フィルターを開く</string>
     <string name="filter_ignored">無視する</string>
@@ -173,7 +157,6 @@
     <string name="settings_app_theme_summary">テーマを選ぶ</string>
     <string name="settings_metric_title">メートル法を使用する</string>
     <string name="settings_metric_summary">メートル法を使用して距離を表示する</string>
-    <string name="info_text_only_trackers">このリストには、過去14日間にあなたを追跡したと思われるタグのみが表示されます。すべてのデバイスを表示するには、右下隅のボタンを使用してフィルターを変更できます</string>
     <string name="info_text_all_devices">このリストには、過去14日間にAirGuardで検出されたすべてのデバイスが表示されます。これには、あなたを追跡していないデバイスが含まれます。タグには「!」が付いています。右下隅のボタンを使用して、デバイスをフィルタリングできます</string>
     <string name="info_text_all_locations">この画面には、デバイスが見つかったすべての場所が表示されます。これには、現在地を追跡していないデバイスも含まれます。</string>
     <string name="empty_list_devices">このリストには、過去14日間にAirGuardで検出されたすべてのデバイスが表示されます。デバイスは見つかりませんでした。アプリはBluetoothを使用してのみ潜在的な追跡デバイスを見つけることができるため、Bluetoothを有効にしておくことを忘れないでください</string>
@@ -182,7 +165,6 @@
     <string name="empty_image_content_description">空のリストを示す画像</string>
     <string name="beacon_locations">ビーコンの場所</string>
     <string name="other_devices_found">見つかった他のデバイス</string>
-    <string name="all_devices_found">すべてのデバイスが見つかりました</string>
     <string name="device_name_apple_device">Appleデバイス %s</string>
     <string name="device_name_unknown_device">不明なデバイス %s</string>
     <string name="play_sound_error_fail">音を出すことに失敗しました。やり直してください！</string>
@@ -223,10 +205,8 @@
     <string name="settings_advanced_mode_summary">AirGuardに高度なオプションを追加します。これらのオプションは上級者向けです。</string>
     <string name="settings_advanced_mode_title">エキスパートモード</string>
     <string name="settings_deactivate_scanning_title">バックグラウンドスキャンを無効化</string>
-    <string name="settings_deactivate_scanning_summary">これによりAirGuardのバックグラウンド動作が無効化されます。注意: 追跡されても警告されなくなります。</string>
     <string name="settings_permanent_scanning_title">常時スキャン</string>
     <string name="settings_permanent_scanning_summary">常時バックグラウンドスキャナーを使用します。精度が向上しますが、稀にアプリの安定性に影響する場合があります。</string>
-    <string name="times_seen">検知回数</string>
     <string name="device_name_find_my_device_google">Google「Find My Device」%s</string>
     <string name="settings_show_connected_devices_title">接続済みデバイスを表示</string>
     <string name="settings_show_connected_devices">スキャンタブで所有者デバイスに接続されているデバイスを表示する</string>
@@ -240,7 +220,6 @@
     <string name="settings_delete_study_data_summary">研究データの削除をリクエストする</string>
     <string name="settings_device_filter_title">デバイスタイプを除外</string>
     <string name="settings_device_filter_dialog_title">除外するデバイスタイプ</string>
-    <string name="settings_device_filter_summary">AirGuardが無視するデバイスタイプを選択します。選択したタイプは手動スキャンに表示されず、追跡通知もされません。</string>
     <string name="device_name_samsung_device">Samsungデバイス %s</string>
     <string name="bluetooth_off_explanation">Bluetoothがオフになっています。このアプリは近くのタグを検出するためにBluetoothが必要です。</string>
     <string name="location_off_explanation">位置情報がオフになっています。このアプリは近くのタグを検出するために位置情報の許可が必要です。システム設定で位置情報をオンにしてください。\n\n効果を反映するにはアプリの再起動が必要な場合があります。</string>
@@ -306,7 +285,6 @@
     <string name="observe_tracker_stop_observation_explanation">このトラッカーは現在監視されています。</string>
     <string name="observe_tracker_explanation">このトラッカーがあなたを追跡しているか不明な場合は手動で監視できます。\n\n1時間後、AirGuardはこのトラッカーを検索し、すぐに通知します。トラッカーが近くにいなければ通知されます。</string>
     <string name="observe_tracker_changing_id">このトラッカーは識別子を変更する可能性があります。検知できなくても追跡されている場合があります。</string>
-    <string name="tracking_observe_tracker_subtitle">このトラッカーがあなたを追跡しているか確認する</string>
     <string name="observe_tracker_success">監視開始しました</string>
     <string name="observe_tracker_stopped">監視停止しました</string>
     <string name="observe_tracker_failure">すでにこのトラッカーを監視しています</string>
@@ -358,7 +336,6 @@
     <string name="retrieve_owner_information_alert_next">次へ</string>
     <string name="retrieve_owner_information_alert_close">閉じる</string>
     <string name="confirm_deactivating_background_scan_title">バックグラウンドスキャン無効化の確認</string>
-    <string name="confirm_deactivating_background_scan_text">本当にバックグラウンドスキャンを無効化しますか？無効化すると追跡通知が届かなくなります。</string>
     <string name="confirm_deactivating_background_scan_yes">はい、無効化する</string>
     <string name="confirm_deactivating_background_scan_no">いいえ、保護を維持する</string>
     <string name="last_seen_times_title">トラッカーの最終検知場所:</string>
@@ -369,7 +346,6 @@
     <string name="export_trackers_label">トラッカーをエクスポート</string>
     <string name="export_trackers_explanation">下のボタンをクリックすると、長期間あなたを追跡していたトラッカーのPDF文書を作成できます。</string>
     <string name="export_trackers_create_document">文書を作成</string>
-    <string name="export_trackers_following">このトラッカーはあなたを追跡しています</string>
     <string name="export_trackers_not_following">このトラッカーはあなたを追跡していません</string>
     <string name="export_trackers_ignored">このトラッカーは無視されました</string>
     <string name="export_trackers_location_unknown">場所: 不明</string>
@@ -399,9 +375,7 @@
     <string name="generic_bluetooth_bug_notification_text">Bluetoothスキャン中に問題が発生しました。AirGuardに必要な権限があり、Bluetoothがオンになっていることを確認してください。問題が解決しない場合はスマートフォンを再起動してください。</string>
     <string name="device_comment_hint">コメントを追加</string>
     <string name="notification_permission_missing_title">通知が無効になっています</string>
-    <string name="notification_permission_missing_text">このアプリでは通知が無効になっています。トラッカーがあなたを追跡している場合、警告は表示されません。通知を有効にするには、システム設定でこのアプリの通知を有効にしてください。</string>
     <string name="background_location_permission_missing_title">バックグラウンドでの位置情報取得が無効です</string>
-    <string name="background_location_permission_missing_text">このアプリにはバックグラウンドでの位置情報取得の許可がありません。アプリが閉じている間にトラッカーがあなたを追跡しても警告されません。システム設定でバックグラウンド位置情報を有効にしてください。</string>
     <string name="chipolo_found">発見されたChipolo</string>
     <string name="feedback_location_not_found">トラッカーは見つかりませんでした</string>
     <string name="feedback_location_other">その他</string>
@@ -409,11 +383,7 @@
     <string name="google_found">発見されたGoogle Find Myデバイス</string>
     <string name="notification_observe_tracker_error">トラッカーの監視中にエラーが発生しました。もう一度お試しください。</string>
     <string name="notification_observe_tracker_negative">監視対象のトラッカーはあなたを追跡していません。</string>
-    <plurals name="notification_observe_tracker_positive">
-        <item quantity="other">監視対象のトラッカーはあなたを追跡しています。</item>
-    </plurals>
     <string name="notification_observe_tracker_title_base">監視中のトラッカー</string>
-    <string name="onboarding_notification_description">トラッカーがあなたを追跡していると判断した際に通知を送るために、通知の許可が必要です。</string>
     <string name="onboarding_notification_title">通知の送信</string>
     <string name="onboarding_setting_summary">次回起動時にアプリのオンボーディング手順を表示します</string>
     <string name="onboarding_setting_title">オンボーディングを表示</string>
@@ -462,7 +432,88 @@
     <string name="old_device_timeframe_2_months">2ヶ月</string>
     <string name="old_device_timeframe_3_months">3ヶ月</string>
     <string name="old_device_deactivate_title">自動削除の無効化の確認</string>
-    <string name="old_device_deactivate_text">古いトラッカーデータの自動削除を無効にしてもよろしいですか？無効化すると、時間の経過とともにアプリの動作が遅くなります。後でこの設定を元に戻す場合、最大24時間かかる場合があります。</string>
+    <string name="old_device_deactivate_text">古いトラッカーデータの自動削除を無効にしてもよろしいですか？無効化すると、時間の経過とともにアプリの動作が遅くなります。</string>
     <string name="old_device_deactivate_yes">はい、無効にする</string>
     <string name="old_device_deactivate_no">いいえ、有効のままにする</string>
+
+    <string name="save">保存</string>
+
+    <string name="locations_tracked">最近の場所</string>
+    <string name="all_devices_found">最近のすべてのデバイス</string>
+    <string name="times_seen">検知回数</string>
+    <string name="tracking_locate_at_subtitle">音でトラッカーを探す</string>
+    <string name="tracking_feedback_subtitle">研究にご協力ください</string>
+
+    <string name="title_tracking">ID: {deviceAddress} のデバイスがあなたを追跡している可能性があります</string>
+    <string name="settings_deactivate_scanning_summary">これにより、バックグラウンドでのAirGuardが無効になります。注意：トラッカーに追跡されても警告されなくなります。</string>
+    <string name="notification_permission_missing_text">このアプリの通知が無効になっています。トラッカーに追跡されても警告されません。変更するには、システム設定でこのアプリの通知を有効にしてください。</string>
+    <string name="background_location_permission_missing_text">このアプリにはバックグラウンド位置情報の権限が付与されていません。アプリを閉じている間にトラッカーに追跡されても警告されません。変更するには、システム設定でこのアプリのバックグラウンド位置情報を有効にしてください。</string>
+    <string name="export_trackers_following">トラッカーがあなたを追跡していた可能性があります</string>
+    <string name="tracking_observe_tracker_subtitle">このトラッカーがあなたを追跡しているか調べる</string>
+    <string name="airguard_detection_explanation">AirGuardは位置情報を利用して、トラッカーが複数の場所であなたを追跡しているかを検知します！</string>
+    <string name="airguard_notification_explanation">潜在的な追跡デバイスがあなたを追跡している可能性がある場合に通知を受け取ります！上のカードの色がオレンジまたは赤に変わります。</string>
+    <string name="onboarding_notification_description">トラッカーがあなたを追跡している可能性があると判断した場合に通知を送信するには、通知の送信権限が必要です。</string>
+    <plurals name="notification_text_base">
+        <item quantity="other">通知を開いて詳細を確認してください。トラッカーが少なくとも%d分間あなたを追跡していた可能性があります。</item>
+    </plurals>
+    <string name="notification_title_base">トラッカーがあなたを追跡している可能性があります</string>
+    <string name="notification_text_single">通知を開いて詳細を確認してください。%sが少なくとも%d分間あなたを追跡していた可能性があります。</string>
+    <string name="notification_text_multiple">通知を開いて詳細を確認してください。%sが少なくとも%d分間あなたを追跡していた可能性があります。</string>
+    <string name="notification_title_vocal">%sがあなたを追跡している可能性があります</string>
+    <string name="notification_title_consonant">%sがあなたを追跡している可能性があります</string>
+    <string name="notification_title_multiple">%sがあなたを追跡している可能性があります</string>
+    <string name="settings_device_filter_summary">AirGuardが無視するデバイスの種類を選択してください。選択されたデバイスの種類は手動スキャンに表示されず、そのようなデバイスが追跡していても通知されません。</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="other">あなたが監視したトラッカーが少なくとも%d時間あなたを追跡していた可能性があります。</item>
+    </plurals>
+    <string name="airguard_scan_explanation">AirGuardはBluetoothを使用して、あなたを追跡している可能性のあるデバイスをスキャンします。</string>
+    <string name="info_text_only_trackers">このリストには、過去14日間にあなたを追跡していた可能性のあるトラッカーのみが表示されます。すべてのデバイスを表示するには、右下のボタンを使用してフィルターを変更してください。</string>
+    <string name="confirm_deactivating_background_scan_text">バックグラウンドスキャンを無効にしてもよろしいですか？確認すると、あなたを追跡する可能性のあるトラッカーに関する通知を受け取らなくなります。</string>
+
+    <string name="dismiss_article">記事を閉じる</string>
+    <string name="navigate_to_details">詳細へ移動</string>
+    <string name="more_trackers_found">他に%d個のトラッカーが見つかりました</string>
+    <string name="title_device_map">最近見つかった場所</string>
+    <string name="found_at_location">場所で発見</string>
+    <string name="selected_types_count">%d種類</string>
+    <string name="sort_list">リストを並べ替え</string>
+    <string name="filter_sort_by_name">名前順</string>
+    <string name="filter_sort_by_last_seen">最終検知日時順</string>
+    <string name="filter_sort_by_first_discovered">初回発見日時順</string>
+    <string name="filter_sort_by_times_seen">検知回数順</string>
+    <string name="sort_check_times_seen_description">選択された並べ替え：検知回数順</string>
+    <string name="sort_check_name_description">選択された並べ替え：名前順</string>
+    <string name="sort_check_last_seen_description">選択された並べ替え：最終検知日時順</string>
+    <string name="sort_check_first_discovered_description">選択された並べ替え：初回発見日時順</string>
+    <string name="not_ignored">無視しない</string>
+    <string name="not_notified">通知なし</string>
+    <string name="empty_list_no_devices">デバイスは見つかりませんでした。AirGuardはバックグラウンドでBluetooth追跡デバイスをスキャンします。Bluetoothが有効になっており、アプリにデバイスをスキャンするために必要な権限があることを確認してください。</string>
+
+    <string name="filter_marked_headline">マーク済み</string>
+    <string name="filter_marked">マーク済み</string>
+    <string name="filter_not_marked_headline">未マーク</string>
+
+    <string name="forget_tracker">トラッカーを削除</string>
+    <string name="forget_tracker_dialog_title">トラッカーを削除しますか？</string>
+    <string name="forget_tracker_dialog_message">この操作により、このトラッカーに関するすべての情報が削除されます。続けてもよろしいですか？</string>
+    <string name="forget_tracker_success">トラッカーを削除しました</string>
+
+    <string name="open_map_description">全画面マップを開く</string>
+    <string name="error_connection">接続エラー</string>
+    <string name="active">アクティブ</string>
+    <string name="actions">アクション</string>
+
+    <string name="feedback_research_explanation">オプションを選択することで、検知アルゴリズムの改善と研究への支援に役立ちます。</string>
+    <string name="close">閉じる</string>
+
+    <string name="settings_use_dynamic_colors_title">Material Youを使用</string>
+    <string name="settings_use_dynamic_colors_summary">アプリの色を壁紙に合わせて動的に変更します</string>
+
+    <string name="load_all_occurrences">すべての発生を読み込む</string>
+    <string name="scroll_button">このビューの先頭または末尾にスクロールします</string>
+    <string name="empty_list_others">選択されたフィルターに該当するデバイスは見つかりませんでした。左上のボタンをクリックしてフィルターを変更するか、すべてのデバイスを表示してください。</string>
+    <string name="retrieve_owner_information_explanation_hama">所有者の情報を取得するには、トラッカーを物理的に見つけている必要があります。背面カバーを持ち上げてアクセサリーを開きます。電池を一度取り外してから、もう一度挿入してください。最後に背面カバーを元に戻します。その後、「次へ」を押してください。</string>
+    <string name="safe_tracker_map_warning">これは安全なトラッカーです。現在、または最近、所有者のデバイスに接続されていました。安全なトラッカーはあなたにとって脅威ではありません。</string>
+    <string name="no_locations_yet_hint">このデバイスは検出されましたが、位置データはまだ記録されていません。トラッカーが有効な場所で観測されると、ここに位置データが表示されます。</string>
+    <string name="safe_tracker_monitored_warning">これは安全なトラッカーです。現在、または最近、所有者のデバイスに接続されていました。一時的に監視されていますが、あなたにとって脅威ではありません。</string>
 </resources>

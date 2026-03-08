@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/fragment_risk_detail">
 
     <data>
-
         <variable
             name="viewModel"
             type="de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailViewModel" />
@@ -16,16 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!--                    Here the two small cards are placed -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_trackers_found"
-            style="?attr/materialCardViewElevatedStyle"
+            style="@style/Widget.Material3.CardView.Filled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/card_margin"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
             android:clickable="true"
             android:focusable="true"
-            app:cardBackgroundColor="@{viewModel.riskColor}"
+            app:riskColorRes="@{viewModel.riskColor}"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/card_tracked_locations"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,58 +32,69 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintVertical_bias="1.0">
-
-                <TextView
-                    android:id="@+id/trackers_found_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/card_margin"
-                    android:text="@string/tracker_detected"
-                    android:textColor="@color/white"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
 
                 <ImageView
                     android:id="@+id/dashboard_tile_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@id/trackers_found_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_chevron_right_24"
-                    app:tint="@color/white"
+                    app:tint="?attr/colorOnSurface"
                     tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/trackers_found_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tracker_detected"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:gravity="start|top"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="16sp"
+                    app:autoSizeMaxTextSize="22sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:layout_constraintEnd_toStartOf="@id/dashboard_tile_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{String.valueOf(viewModel.numberOfTrackersFound)}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
-                    android:textColor="@color/white"
+                    android:textAppearance="?attr/textAppearanceDisplayMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:includeFontPadding="false"
+                    app:layout_constraintVertical_bias="0.5"
+                    app:layout_constraintTop_toBottomOf="@id/trackers_found_text"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/trackers_found_text"
                     tools:text="5" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_tracked_locations"
-            style="?attr/materialCardViewElevatedStyle"
+            style="@style/Widget.Material3.CardView.Filled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/card_margin"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
             android:clickable="true"
             android:focusable="true"
-            app:cardBackgroundColor="@{viewModel.riskColor}"
+            app:riskColorRes="@{viewModel.riskColor}"
+            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintLeft_toRightOf="@id/card_trackers_found"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -92,40 +102,52 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintVertical_bias="1.0">
+                android:layout_height="match_parent"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
+
+                <ImageView
+                    android:id="@+id/locations_tile_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_baseline_chevron_right_24"
+                    app:tint="?attr/colorOnSurface"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/locations_tracked_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/locations_tracked"
-                    android:textColor="@color/white"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:gravity="start|top"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="16sp"
+                    app:autoSizeMaxTextSize="22sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:layout_constraintEnd_toStartOf="@id/locations_tile_icon"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@id/locations_tracked_text"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_chevron_right_24"
-                    app:tint="@color/white"
-                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{String.valueOf(viewModel.totalLocationsTrackedCount)}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
-                    android:textColor="@color/white"
+                    android:textAppearance="?attr/textAppearanceDisplayMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:includeFontPadding="false"
+                    app:layout_constraintVertical_bias="0.5"
+                    app:layout_constraintTop_toBottomOf="@id/locations_tracked_text"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/locations_tracked_text"
                     tools:text="21" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

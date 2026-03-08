@@ -4,31 +4,35 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.navigation.NavOptions
+import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.SharedPrefs
-import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import org.osmdroid.config.Configuration
 import timber.log.Timber
-import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -41,8 +45,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @Inject
     lateinit var backgroundWorkScheduler: BackgroundWorkScheduler
 
+    private var floatingNavHeight = 0
+    private lateinit var navView: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("MainActivity onCreate called")
+
+        enableEdgeToEdge()
 
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
@@ -52,27 +61,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         super.onCreate(savedInstanceState)
-
-        // Prevent Screenshots, if set in settings
         updateSecureFlag()
-
         setContentView(R.layout.activity_main)
 
-        configureSystemBars(this, edgeToEdge = true, applyRootPadding = false)
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
-        val configuration = Configuration.getInstance()
-        configuration.load(this, PreferenceManager.getDefaultSharedPreferences(this))
+        // Initialize osmdroid configuration
+        MapUtils.initializeOsmDroidConfiguration(this)
 
-        val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
-
-        configuration.userAgentValue = BuildConfig.APPLICATION_ID
-        // Create osmdroid folder
-        val osmDroidDir = File(filesDir, "osmDroid")
-        osmDroidDir.mkdir()
-        val tilesDir = File(osmDroidDir, "tiles")
-        configuration.osmdroidBasePath = osmDroidDir
-        configuration.osmdroidTileCache = tilesDir
+        navView = findViewById(R.id.main_nav_view)
 
         if (BuildConfig.DEBUG) {
             Configuration.getInstance().isDebugMode = true
@@ -81,17 +78,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarItems: Set<Int> = setOf(
-            R.id.navigation_dashboard,
-            R.id.navigation_manual_scan,
-            R.id.navigation_allDevicesFragment,
-            R.id.navigation_settings
-        )
-        if (BuildConfig.DEBUG) {
-            appBarItems.plus(R.id.navigation_debug)
-        }
+
+        navView.setupWithNavController(navController)
 
         if (!SharedPrefs.advancedMode) {
             val menu = navView.menu
@@ -99,22 +87,163 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             item.isVisible = false
         }
 
-        val appBarConfiguration = AppBarConfiguration(appBarItems)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        // Handle Floating Nav Bar Positioning
+        setupFloatingBottomNavigation(navView)
 
-        val navOptions = NavOptions.Builder().setPopUpTo(R.id.main_navigation, inclusive = true, saveState = false).setLaunchSingleTop(true).build()
+        // Automagically handle Padding for Content inside Fragments
+        setupFragmentContentPadding()
+
+        val navOptions = androidx.navigation.NavOptions.Builder()
+            .setPopUpTo(R.id.main_navigation, inclusive = true, saveState = false)
+            .setLaunchSingleTop(true)
+            .build()
 
         navView.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.navigation_dashboard -> navController.navigate(R.id.navigation_dashboard, args=null, navOptions = navOptions)
-                R.id.navigation_manual_scan -> navController.navigate(R.id.navigation_manual_scan, args=null, navOptions = navOptions)
-                R.id.navigation_allDevicesFragment -> navController.navigate(R.id.navigation_allDevicesFragment, args=null, navOptions = navOptions)
-                R.id.navigation_settings -> navController.navigate(R.id.navigation_settings, args=null, navOptions = navOptions)
-                R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, args=null, navOptions = navOptions)
+                R.id.navigation_dashboard -> navController.navigate(R.id.navigation_dashboard, null, navOptions)
+                R.id.navigation_manual_scan -> navController.navigate(R.id.navigation_manual_scan, null, navOptions)
+                R.id.navigation_allDevicesFragment -> navController.navigate(R.id.navigation_allDevicesFragment, null, navOptions)
+                R.id.navigation_settings -> navController.navigate(R.id.navigation_settings, null, navOptions)
+                R.id.navigation_debug -> navController.navigate(R.id.navigation_debug, null, navOptions)
             }
             return@setOnItemSelectedListener true
         }
+    }
+
+    /**
+     * Lifts the BottomNavigationView above the system gesture area.
+     * Also calculates the total height needed for content padding.
+     */
+    private fun setupFloatingBottomNavigation(navView: BottomNavigationView) {
+        val originalBottomMargin = (navView.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(navView) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Update bottom margin to clear system gestures
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = originalBottomMargin + bars.bottom
+            }
+
+            // Store total height immediately
+            floatingNavHeight = view.height + view.marginBottom
+            if (floatingNavHeight == 0) {
+                // Fallback estimate if not laid out yet: approx. 80dp + bars.bottom
+                // (56dp nav + 16dp margin + 8dp elevation/shadow approx)
+                val density = view.resources.displayMetrics.density
+                val approximateHeight = (88 * density).toInt()
+                floatingNavHeight = approximateHeight + bars.bottom
+            }
+            insets
+        }
+    }
+
+    /**
+     * Registers a lifecycle callback to intercept Fragments as they are created.
+     * It finds the scrollable view and applies padding.
+     * It finds FABs and applies margins.
+     */
+    private fun setupFragmentContentPadding() {
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
+
+                // Handle Scrolling Content (RecyclerView, etc.)
+                // DevicesFragment handles its own layering
+                if (f.javaClass.simpleName != "DevicesFragment") {
+                    val scrollingView = findScrollingView(v) ?: v
+
+                    // allows content to scroll behind the nav bar
+                    if (scrollingView is ViewGroup) {
+                        scrollingView.clipToPadding = false
+                    }
+
+                    ViewCompat.setOnApplyWindowInsetsListener(scrollingView) { view, insets ->
+                        val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+                        // Use the calculated floatingNavHeight or current height
+                        val currentNavHeight = if (navView.height > 0)
+                            navView.height + navView.marginBottom
+                        else
+                            floatingNavHeight
+
+                        view.updatePadding(
+                            top = bars.top,
+                            bottom = currentNavHeight
+                        )
+                        insets
+                    }
+
+                    // Fix for Articles behind the navbar (Race Condition)
+                    // waits for the NavView, forces one update, then removes itself
+                    if (navView.isLaidOut && navView.height > 0) {
+                        // If NavView is already ready, just trigger the update now
+                        ViewCompat.requestApplyInsets(scrollingView)
+                    } else {
+                        // wait for NavView to be ready
+                        navView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                            override fun onLayoutChange(
+                                v: View?, left: Int, top: Int, right: Int, bottom: Int,
+                                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+                            ) {
+                                // Remove itself
+                                navView.removeOnLayoutChangeListener(this)
+
+                                // Force scrolling view to update its padding
+                                ViewCompat.requestApplyInsets(scrollingView)
+                            }
+                        })
+                    }
+                }
+
+                // Handle Floating Action Buttons
+                // Exclude DeviceMapFragment because it manually manages its own Legend FAB positioning
+                if (f.javaClass.simpleName != "DeviceMapFragment") {
+                    val fabs = findFloatingActionButtons(v)
+                    fabs.forEach { fab ->
+                        val originalFabMargin = (fab.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+                        ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+                            val currentNavHeight = if (navView.height > 0)
+                                navView.height + navView.marginBottom
+                            else
+                                floatingNavHeight
+
+                            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                                // Ensure FAB floats above the Nav Bar
+                                bottomMargin = originalFabMargin + currentNavHeight
+                            }
+                            insets
+                        }
+                    }
+                }
+            }
+        }, true)
+    }
+
+    private fun findScrollingView(view: View): View? {
+        if (view is RecyclerView || view is NestedScrollView || view is ScrollView) {
+            return view
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val child = view.getChildAt(i)
+                val result = findScrollingView(child)
+                if (result != null) return result
+            }
+        }
+        return null
+    }
+
+    private fun findFloatingActionButtons(view: View): List<FloatingActionButton> {
+        val fabs = mutableListOf<FloatingActionButton>()
+        if (view is FloatingActionButton) {
+            fabs.add(view)
+        } else if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                fabs.addAll(findFloatingActionButtons(view.getChildAt(i)))
+            }
+        }
+        return fabs
     }
 
     private fun updateSecureFlag() {
@@ -130,24 +259,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onResume() {
         super.onResume()
-        Timber.d("MainActivity onResume called")
-
         try {
-            val success = BLEScanner.startBluetoothScan(this.applicationContext)
-            if (!success) {
+            if (!BLEScanner.startBluetoothScan(this.applicationContext)) {
                 Timber.e("Failed to start Bluetooth scan.")
             }
         } catch (e: Exception) {
             Timber.e(e, "Error starting Bluetooth scan")
         }
-
-        Timber.d("Scheduling an immediate background scan onResume of MainActivity")
         backgroundWorkScheduler.scheduleImmediateBackgroundScan()
     }
 
     override fun onPause() {
         super.onPause()
-        Timber.d("MainActivity onPause called")
         try {
             BLEScanner.stopBluetoothScan()
         } catch (e: Exception) {
@@ -157,8 +280,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onStart() {
         super.onStart()
-        Timber.d("MainActivity onStart called")
-
         if (ATTrackingDetectionApplication.getCurrentApp().showOnboarding() or !ATTrackingDetectionApplication.getCurrentApp().hasPermissions()) {
             ATTrackingDetectionApplication.getCurrentApp().startOnboarding()
         } else {
@@ -166,14 +287,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        Timber.d("MainActivity onWindowFocusChanged: $hasFocus")
-    }
-
     override fun onDestroy() {
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        SharedPrefs.lastTimeOpened = dateTime
+        SharedPrefs.lastTimeOpened = LocalDateTime.now(ZoneOffset.UTC)
         super.onDestroy()
     }
 
@@ -182,54 +298,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    companion object {
-        private val dateTime = LocalDateTime.now(ZoneOffset.UTC)
-
-        fun configureSystemBars(
-            activity: AppCompatActivity,
-            edgeToEdge: Boolean = true,
-            applyRootPadding: Boolean = true,
-        ) {
-            if (edgeToEdge) {
-                WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-            } else {
-                WindowCompat.setDecorFitsSystemWindows(activity.window, true)
-            }
-
-            val isDarkTheme = Utility.isActualThemeDark(activity)
-            val controller = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            controller.isAppearanceLightStatusBars = !isDarkTheme
-            controller.isAppearanceLightNavigationBars = !isDarkTheme
-
-            if (applyRootPadding) {
-                applySystemBarPadding(activity)
-            }
-        }
-
-        fun applySystemBarPadding(activity: AppCompatActivity) {
-            val content = activity.findViewById<ViewGroup>(android.R.id.content)
-            val root = content.getChildAt(0) ?: return
-            ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-                val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                v.setPadding(sysBars.left, sysBars.top, sysBars.right, sysBars.bottom)
-                insets
-            }
-            ViewCompat.requestApplyInsets(root)
-        }
-    }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        // Check if the changed preference is the advancedMode
         if (key == "advanced_mode") {
-            // Update the visibility of the All Devices fragment menu item
             val navView: BottomNavigationView = findViewById(R.id.main_nav_view)
             val menu = navView.menu
             val item = menu.findItem(R.id.navigation_allDevicesFragment)
             item.isVisible = sharedPreferences?.getBoolean(key, false) ?: false
         } else if (key == "prevent_screenshots") {
-            // Update the FLAG_SECURE when the setting changes
             updateSecureFlag()
+        } else if (key == "app_theme" || key == "use_dynamic_colors") {
+            recreate()
         }
     }
 }

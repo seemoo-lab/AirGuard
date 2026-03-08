@@ -1,66 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.dashboard.RiskCardViewModel" />
-
         <import type="android.view.View" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/risk_card"
-        style="?attr/materialCardViewElevatedStyle"
+        style="@style/Widget.Material3.CardView.Filled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin"
         android:clickable="@{vm.clickable}"
-        app:cardBackgroundColor="@{vm.riskColor}"
-        tools:cardBackgroundColor="@color/risk_low">
+        android:focusable="true"
+        app:riskColorRes="@{vm.riskColor}"
+        tools:cardBackgroundColor="@color/risk_high">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/card_margin">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/dashboard_tile_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="8dp"
                 android:maxLines="3"
+                android:ellipsize="end"
                 android:text="@{vm.riskLevel}"
                 android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                android:textColor="@color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
+                android:textColor="?attr/colorOnSurface"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dashboard_tile_icon"
                 tools:text="No risk" />
 
-            <!--            Arrow Tile icon -->
             <ImageView
                 android:id="@+id/dashboard_tile_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:visibility="@{vm.clickable ? View.VISIBLE : View.INVISIBLE}"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_baseline_chevron_right_24"
-                app:tint="@color/white"
+                app:tint="?attr/colorOnSurface"
                 tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="16dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -68,39 +63,96 @@
                 app:layout_constraintTop_toBottomOf="@id/dashboard_tile_title"
                 app:layout_constraintVertical_bias="0.0">
 
-                <include
+                <LinearLayout
                     android:id="@+id/risk_level_row"
-                    layout="@layout/item_icon_text_white"
-                    bind:iconDrawable="@{vm.trackersFoundModel.image}"
-                    bind:rowText="@{vm.trackersFoundModel.text}" />
-
-                <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@color/divider_line" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
 
-                <include
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@{vm.trackersFoundModel.image}"
+                        app:tint="?attr/colorOnSurface"
+                        tools:src="@drawable/ic_baseline_location_on_24"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{vm.trackersFoundModel.text}"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="No trackers found" />
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:alpha="0.2"
+                    app:dividerColor="?attr/colorOnSurface" />
+
+                <LinearLayout
                     android:id="@+id/last_detection_row"
-                    layout="@layout/item_icon_text_white"
-                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
-                    bind:iconDrawable="@{vm.lastDiscoveryModel.image}"
-                    bind:rowText="@{vm.lastDiscoveryModel.text}" />
-
-                <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@color/divider_line"
-                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}">
 
-                <include
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@{vm.lastDiscoveryModel.image}"
+                        app:tint="?attr/colorOnSurface"
+                        tools:src="@drawable/ic_clock"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{vm.lastDiscoveryModel.text}"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Last discovery: Today" />
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:visibility="@{vm.showLastDetection ? View.VISIBLE : View.GONE}"
+                    android:alpha="0.2"
+                    app:dividerColor="?attr/colorOnSurface" />
+
+                <LinearLayout
                     android:id="@+id/last_update_row"
-                    layout="@layout/item_icon_text_white"
-                    bind:iconDrawable="@{vm.lastUpdateModel.image}"
-                    bind:rowText="@{vm.lastUpdateModel.text}" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@{vm.lastUpdateModel.image}"
+                        app:tint="?attr/colorOnSurface"
+                        tools:src="@drawable/ic_last_update"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{vm.lastUpdateModel.text}"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Last scan: 12:00 PM" />
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

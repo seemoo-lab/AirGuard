@@ -19,11 +19,11 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
 import java.util.UUID
 
-class AppleFindMy(val id: Int) : Device(), Connectable {
+open class AppleFindMy(val id: Int) : Device(), Connectable {
 
     override val imageResource: Int
         @DrawableRes
@@ -33,9 +33,21 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
         get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device_apple)
             .format(id)
 
+
     override val deviceContext: DeviceContext
         get() = AppleFindMy
 
+    protected open val soundService: String
+        get() = FINDMY_SOUND_SERVICE
+
+    protected open val soundCharacteristic: UUID
+        get() = FINDMY_SOUND_CHARACTERISTIC
+
+    protected open val startSoundOpcode: ByteArray
+        get() = FINDMY_START_SOUND_OPCODE
+
+    protected open val stopSoundOpcode: ByteArray
+        get() = FINDMY_STOP_SOUND_OPCODE
 
     override val bluetoothGattCallback: BluetoothGattCallback
         get() = object : BluetoothGattCallback() {
@@ -49,7 +61,7 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
                                 gatt.discoverServices()
                             }
                             BluetoothProfile.STATE_DISCONNECTED -> {
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
+                                sendBluetoothEvent(BluetoothEvent.Disconnected)
                                 Timber.d("Disconnected from gatt device!")
                             }
                             else -> {
@@ -59,7 +71,7 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
                     }
                     else -> {
                         Timber.e("Failed to connect to bluetooth device! Status: $status")
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
             }
@@ -70,32 +82,31 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
                 Timber.d("Found UUIDS $uuids")
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                        FINDMY_SOUND_SERVICE.lowercase()
+                        soundService.lowercase()
                     )
                 }
 
                 if (service == null) {
                     Timber.e("Playing sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
-                val characteristic = service.getCharacteristic(FINDMY_SOUND_CHARACTERISTIC)
+                val characteristic = service.getCharacteristic(soundCharacteristic)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
-                        gatt.writeCharacteristic(it, FINDMY_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
-                    }else {
-                        // Deprecated since 33
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        gatt.writeCharacteristic(it, startSoundOpcode, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    } else {
                         @Suppress("DEPRECATION")
-                        it.value = FINDMY_START_SOUND_OPCODE
+                        it.value = startSoundOpcode
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                    sendBluetoothEvent(BluetoothEvent.EventRunning)
                 }
             }
 
@@ -104,7 +115,7 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
             fun stopSoundOnFindMyDevice(gatt: BluetoothGatt) {
                 val service = gatt.services.firstOrNull {
                     it.uuid.toString().lowercase().contains(
-                        FINDMY_SOUND_SERVICE
+                        soundService
                     )
                 }
 
@@ -113,17 +124,16 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
                     return
                 }
 
-                val uuid = FINDMY_SOUND_CHARACTERISTIC
+                val uuid = soundCharacteristic
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
-                        gatt.writeCharacteristic(it, FINDMY_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
-                    }else {
-                        // Deprecated since 33
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        gatt.writeCharacteristic(it, stopSoundOpcode, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                    } else {
                         @Suppress("DEPRECATION")
-                        it.value = FINDMY_STOP_SOUND_OPCODE
+                        it.value = stopSoundOpcode
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
@@ -140,23 +150,32 @@ class AppleFindMy(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(FINDMY_START_SOUND_OPCODE) && gatt != null) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnFindMyDevice(gatt)
-                        }, 5000)
-                    }
-
-                    if (characteristic?.value.contentEquals(FINDMY_STOP_SOUND_OPCODE)) {
-                        disconnect(gatt)
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                    if (gatt != null) {
+                        // Use getValueForComparison to get the last written value
+                        val lastWrittenValue = getLastWrittenValue(characteristic)
+                        if (lastWrittenValue.contentEquals(startSoundOpcode)) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stopSoundOnFindMyDevice(gatt)
+                            }, 5000)
+                        } else if (lastWrittenValue.contentEquals(stopSoundOpcode)) {
+                            disconnect(gatt)
+                            sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                        }
                     }
 
                 } else {
                     Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
+            }
+
+            private fun getLastWrittenValue(characteristic: BluetoothGattCharacteristic?): ByteArray {
+                return characteristic?.let {
+                    @Suppress("DEPRECATION")
+                    it.value ?: ByteArray(0)
+                } ?: ByteArray(0)
             }
         }
 

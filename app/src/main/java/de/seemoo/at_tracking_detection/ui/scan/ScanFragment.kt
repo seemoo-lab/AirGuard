@@ -2,20 +2,30 @@ package de.seemoo.at_tracking_detection.ui.scan
 
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.transition.AutoTransition
+import android.transition.TransitionManager
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,8 +90,37 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Handle Edge-to-Edge padding for include views
+        val emptyScanExplanation = view.findViewById<View>(R.id.include_scan_empty_explanation)
+        val bluetoothDisabled = view.findViewById<View>(R.id.include_bluetooth_disabled)
+        val locationDisabled = view.findViewById<View>(R.id.include_location_disabled)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navView = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav_view)
+            val navHeight = if (navView != null && navView.height > 0)
+                navView.height + navView.marginBottom
+            else
+                bars.bottom + (88 * resources.displayMetrics.density).toInt()
+
+            emptyScanExplanation.updatePadding(top = bars.top, bottom = navHeight)
+            bluetoothDisabled.updatePadding(top = bars.top, bottom = navHeight)
+            locationDisabled.updatePadding(top = bars.top, bottom = navHeight)
+
+            insets
+        }
+
         view.findViewById<Button>(R.id.open_ble_settings_button).setOnClickListener {
             context?.let { BLEScanner.openBluetoothSettings(it) }
+        }
+        view.findViewById<Button>(R.id.open_location_settings_button)?.setOnClickListener {
+            val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            try {
+                startActivity(settingsIntent)
+            } catch (_: Exception) {
+                // Fallback to general settings if location page is unavailable
+                try { startActivity(Intent(Settings.ACTION_SETTINGS)) } catch (_: Exception) {}
+            }
         }
 
         view.findViewById<FloatingActionButton>(R.id.button_start_stop_scan).setOnClickListener {
@@ -100,7 +139,8 @@ class ScanFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         scanViewModel.startMonitoringSystemToggles()
-        scanViewModel.bluetoothEnabled.postValue(BLEScanner.isBluetoothOn())
+        scanViewModel.refreshBluetoothState()
+        scanViewModel.refreshLocationState()
     }
 
     override fun onStop() {
@@ -109,49 +149,21 @@ class ScanFragment : Fragment() {
     }
 
     private fun readyToScan(): Boolean {
-        val btOn = scanViewModel.bluetoothEnabled.value == true
-        val locOn = scanViewModel.locationEnabled.value == true
-        return btOn && locOn
+        return scanViewModel.canScan.value == true
     }
 
     private fun toggleInfoLayoutVisibility(view: View) {
         val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
+        val parent = infoLayout.parent as ViewGroup
 
-        val duration = 200L
-        val density = view.context.resources.displayMetrics.density
-        val slidePx = (-10 * density)
-
-        if (infoLayout.isVisible) {
-            infoLayout.animate()
-                .alpha(0f)
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .translationY(slidePx)
-                .setDuration(duration)
-                .withEndAction {
-                    infoLayout.visibility = View.GONE
-                    // reset properties for next show
-                    infoLayout.alpha = 1f
-                    infoLayout.scaleX = 1f
-                    infoLayout.scaleY = 1f
-                    infoLayout.translationY = 0f
-                }
-                .start()
-        } else {
-            infoLayout.alpha = 0f
-            infoLayout.scaleX = 0.95f
-            infoLayout.scaleY = 0.95f
-            infoLayout.translationY = slidePx
-            infoLayout.visibility = View.VISIBLE
-
-            infoLayout.animate()
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .translationY(0f)
-                .setDuration(duration)
-                .start()
+        val transition = AutoTransition().apply {
+            duration = 250
+            interpolator = FastOutSlowInInterpolator()
         }
+
+        TransitionManager.beginDelayedTransition(parent, transition)
+
+        infoLayout.isVisible = !infoLayout.isVisible
     }
 
     private val scanCallback = object : ScanCallback() {
@@ -241,6 +253,7 @@ class ScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        scanViewModel.refreshBluetoothState()
         scanViewModel.refreshLocationState()
         if (scanViewModel.scanFinished.value == false) {
             startBluetoothScanIfNeeded()
