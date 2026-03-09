@@ -83,7 +83,7 @@
 
         Nebudeme sdílet <b>ŽÁDNÁ</b> data o poloze ani data, která by vás mohla identifikovat! Účast je zcela anonymní.</string>
 
-    <string name="onboarding_1_description">Tato aplikace vás upozorní, když se zdá, že vás sleduje AirTag, zařízení schopné Find My, zařízení schopné Google \"Find My Device\", SmartTag, Pebblebee, Chipolo nebo Tile.</string>
+    <string name="onboarding_1_description">Tato aplikace vás upozorní, když se zdá, že vás může sledovat AirTag, zařízení se službou Find My, zařízení kompatibilní s Google "Find My Device", SmartTag, Pebblebee, Chipolo nebo Tile / Life360.</string>
     <string name="location_permission_title">Oprávnění k poloze</string>
     <string name="location_permission_message">Tato aplikace potřebuje oprávnění k poloze, aby umožnila skenování Bluetooth pro AirTagy nebo jiné Bluetooth trackery, i když je aplikace zavřená nebo se nepoužívá. Navíc můžete volitelně povolit aplikaci zaznamenávat polohu, když jste byli sledováni.</string>
 
@@ -144,7 +144,7 @@
     <string name="device_icon">Ikona zařízení</string>
     <string name="location_sample_image">Ukázkový obrázek polohy</string>
     <string name="permissions_location_title">Poloha na pozadí</string>
-    <string name="permission_location_message">Toto oprávnění je potřeba k poskytnutí podrobnějších informací o sledování v případě, že vás sleduje AirTag, zařízení Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo nebo Tile. Toto oprávnění je volitelné.</string>
+    <string name="permission_location_message">Toto oprávnění je potřeba k poskytnutí podrobnějších informací o sledování v případě, že vás může sledovat AirTag, zařízení Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo nebo Tile / Life360. Toto oprávnění je volitelné.</string>
     <string name="onboarding_2_title">Oprávnění k poloze</string>
     <string name="onboarding_2_description">Tato aplikace potřebuje oprávnění k přístupu k vaší poloze, aby mohla vyhledávat okolní trackery pomocí Bluetooth Low Energy. Bez tohoto oprávnění aplikace nefunguje a nenajde žádná sledovací zařízení. Vaše údaje o poloze nikdy neopustí vaše zařízení.</string>
     <string name="devices_edit_title">Upravit název zařízení</string>
@@ -165,7 +165,7 @@
     <string name="website_description">Podívejte se na náš web</string>
     <string name="website">Webová stránka</string>
     <string name="scan_result_item_image_description">Položka výsledku skenování</string>
-    <string name="scan_result_no_devices">Nebyla nalezena žádná sledovací zařízení.\nSkenujeme pouze Apple Find My trackery (AirTagy), zařízení Google \"Find My Device\" a Galaxy SmartTagy, Pebblebee, Chipolo a Tile.</string>
+    <string name="scan_result_no_devices">Nebyla nalezena žádná sledovací zařízení.\nSkenujeme pouze Apple Find My trackery (AirTagy), zařízení Google "Find My Device" a Galaxy SmartTagy, Pebblebee, Chipolo a Tile / Life360.</string>
     <string name="ble_service_connection_error">Nepodařilo se připojit k zařízení</string>
     <string name="yes_button">Ano</string>
     <string name="scan_enable_bluetooth_message">Pro skenování bluetooth zařízení musí být zapnuto Bluetooth.</string>
@@ -247,7 +247,7 @@
     <string name="ignored_devices">Ignorovaná zařízení</string>
     <string name="airtags_found">Nalezeno AirTagů</string>
     <string name="findmy_found">Nalezeno zařízení Apple Find My</string>
-    <string name="tile_found">Nalezeno Tile</string>
+    <string name="tile_found">Nalezené Tiles / Life360</string>
     <string name="chipolo_found">Nalezeno Chipolo</string>
     <string name="pebblebee_found">Nalezeno Pebblebee</string>
     <string name="smarttag_found">Nalezeno SmartTagů</string>
@@ -365,7 +365,7 @@
 
     <string name="explanation_apple">Upozornění:\nZařízení Apple mění svůj identifikátor v průběhu času.\nAirTagy, AirPods, FindMy a další zařízení Apple jsou periodicky rozpoznávána jako nová zařízení a mohou být zobrazena vícekrát.</string>
     <string name="explanation_samsung">Upozornění:\nZařízení Samsung mění svůj identifikátor v průběhu času.\nSmartTagy a další zařízení Samsung SmartThings jsou periodicky rozpoznávána jako nová zařízení a mohou být zobrazena vícekrát.</string>
-    <string name="explanation_tile">Upozornění:\nZařízení Tile nemění svůj identifikátor.\nTo může vést k falešným varováním.\nV případě varování prosím zkontrolujte, zda zařízení nenese někdo ve vašem okolí (přátelé, rodina, kolegové, sousedé atd.).</string>
+    <string name="explanation_tile">Upozornění:\nZařízení Tile / Life360 nemění svůj identifikátor.\nTo může vést k falešným varováním.\nV případě varování prosím zkontrolujte, zda zařízení nenosí někdo z vašeho okolí (přátelé, rodina, kolegové, sousedé atd.).</string>
     <string name="explanation_chipolo">Upozornění:\nZařízení Chipolo nemění svůj identifikátor.\nTo může vést k falešným varováním.\nV případě varování prosím zkontrolujte, zda zařízení nenese někdo ve vašem okolí (přátelé, rodina, kolegové, sousedé atd.).</string>
     <string name="explanation_pebblebee">Upozornění:\nZařízení Pebblebee nemění svůj identifikátor.\nTo může vést k falešným varováním.\nV případě varování prosím zkontrolujte, zda zařízení nenese někdo ve vašem okolí (přátelé, rodina, kolegové, sousedé atd.).</string>
     <string name="explanation_unknown">Upozornění:\nNěkterá zařízení mění svůj identifikátor v průběhu času.\nTato zařízení jsou periodicky rozpoznávána jako nová zařízení a mohou být zobrazena vícekrát.</string>

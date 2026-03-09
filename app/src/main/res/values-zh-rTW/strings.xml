@@ -71,7 +71,7 @@
 
         我們<b>絕不會</b>分享任何位置資料或可能識別您的資料！參與完全是匿名的。</string>
 
-    <string name="onboarding_1_description">當這款應用程式偵測到 AirTag、具有 Find My 功能的裝置、SmartTag、Chipolo 或 Tile 似乎在追蹤您時，會提醒您。</string>
+    <string name="onboarding_1_description">當這款應用程式偵測到 AirTag、具有 Find My 功能的裝置、Google "Find My Device" 裝置、SmartTag、Pebblebee、Chipolo 或 Tile / Life360 似乎可能在追蹤您時，會提醒您。</string>
     <string name="location_permission_title">位置權限</string>
     <string name="location_permission_message">此應用程式需要位置權限才能允許即使在應用程式關閉或未使用時也能掃描 AirTags 或其他藍牙追蹤器。此外，您可以選擇允許應用程式在您被追蹤時記錄位置。</string>
 
@@ -125,7 +125,7 @@
     <string name="device_icon">裝置圖示</string>
     <string name="location_sample_image">位置樣本圖片</string>
     <string name="permissions_location_title">背景位置</string>
-    <string name="permission_location_message">需要此權限以提供在 AirTag，Find My 裝置，SmartTag，Chipolo 或 Tile 追蹤您時的一些更詳細的追蹤資訊。此權限是選擇性的。</string>
+    <string name="permission_location_message">需要此權限以提供在 AirTag，Find My 裝置，Samsung SmartTag，Google Find My Device，Pebblebee，Chipolo 或 Tile / Life360 可能跟蹤您時的一些更詳細的追蹤資訊。此權限是選擇性的。</string>
     <string name="onboarding_2_title">位置權限</string>
     <string name="onboarding_2_description">此應用程式需要權限來存取您的位置，以便透過藍牙低能量搜索周圍的追蹤器。沒有此權限，應用程式將無法運作，也將無法找到任何追蹤裝置。您的位置資料絕不會離開您的裝置。</string>
     <string name="devices_edit_title">編輯裝置名稱</string>
@@ -144,7 +144,7 @@
     <string name="onboarding_connect_description">如果找到追蹤裝置，AirGuard 可以讓您在其上播放音效。為此，我們需要連線到此裝置的權限。</string>
     <string name="onboarding_notification_title">發送通知</string>
     <string name="scan_result_item_image_description">掃描結果項目</string>
-    <string name="scan_result_no_devices">未找到追蹤裝置。您是安全的！\n我們只掃描 Apple Find My 追蹤器（AirTags），Galaxy SmartTags，Chipolos 和 Tiles。</string>
+    <string name="scan_result_no_devices">未找到追蹤裝置。您是安全的！\n我們只掃描 Apple Find My 追蹤器（AirTags）、Google "Find My Device" 裝置、Galaxy SmartTags、Pebblebees、Chipolos 和 Tiles / Life360。</string>
     <string name="ble_service_connection_error">無法連線到裝置</string>
     <string name="yes_button">是</string>
     <string name="scan_enable_bluetooth_message">必須開啟藍牙才能掃描藍牙裝置。</string>
@@ -223,7 +223,7 @@
     <string name="ignored_devices">已忽略的裝置</string>
     <string name="airtags_found">找到的 AirTag</string>
     <string name="findmy_found">找到的 Find My 裝置</string>
-    <string name="tile_found">找到的 Tile</string>
+    <string name="tile_found">找到的 Tiles / Life360</string>
     <string name="chipolo_found">找到的 Chipolo</string>
     <string name="smarttag_found">找到的 SmartTag</string>
     <string name="survey_card_title">我們正在進行調查</string>
@@ -365,7 +365,7 @@
     <string name="article_offline_text">您目前未連線至網際網路。當您連線至網際網路時，將可在此處找到協助您操作應用程式的文章。</string>
     <string name="explanation_apple">請注意：\nApple 裝置會隨時間變更其識別碼。\nAirTag、AirPods、「尋找」及其他 Apple 裝置會定期被視為新裝置，並可能多次顯示。</string>
     <string name="explanation_samsung">請注意：\nSamsung 裝置會隨時間變更其識別碼。\nSmartTag 和其他 Samsung SmartThings 裝置會定期被視為新裝置，並可能多次顯示。</string>
-    <string name="explanation_tile">請注意：\nTile 裝置不會變更其識別碼。\n這可能會導致錯誤警報。\n如果出現警告，請檢查該裝置是否由您身邊的人（朋友、家人、同事、鄰居等）所攜帶。</string>
+    <string name="explanation_tile">請注意：\nTile / Life360 裝置不會變更其識別碼。\n這可能會導致錯誤警報。\n如果出現警告，請檢查該裝置是否由您身邊的人（朋友、家人、同事、鄰居等）所攜帶。</string>
     <string name="explanation_chipolo">請注意：\nChipolo 裝置不會變更其識別碼。\n這可能會導致錯誤警報。\n如果出現警告，請檢查該裝置是否由您身邊的人（朋友、家人、同事、鄰居等）所攜帶。</string>
     <string name="explanation_pebblebee">請注意：\nPebblebee 裝置不會變更其識別碼。\n這可能會導致錯誤警報。\n如果出現警告，請檢查該裝置是否由您身邊的人（朋友、家人、同事、鄰居等）所攜帶。</string>
     <string name="explanation_unknown">請注意：\n部分裝置會隨時間變更其識別碼。\n這些裝置會定期被視為新裝置，並可能多次顯示。</string>

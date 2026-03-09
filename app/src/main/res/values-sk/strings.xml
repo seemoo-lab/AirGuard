@@ -83,7 +83,7 @@
 
         <b>NEBUDEME</b> zdieľať žiadne údaje o polohe ani údaje, ktoré by vás mohli identifikovať! Účasť je úplne anonymná.</string>
 
-    <string name="onboarding_1_description">Táto aplikácia vás upozorní, keď sa zdá, že vás sleduje AirTag, zariadenie schopné Find My, zariadenie schopné Google "Find My Device", SmartTag, Pebblebee, Chipolo alebo Tile.</string>
+    <string name="onboarding_1_description">Táto aplikácia vás upozorní, keď sa zdá, že vás môže sledovať AirTag, zariadenie podporujúce Find My, zariadenie podoprujúce Google "Find My Device", SmartTag, Pebblebee, Chipolo alebo Tile / Life360.</string>
     <string name="location_permission_title">Povolenie polohy</string>
     <string name="location_permission_message">Táto aplikácia potrebuje povolenie polohy, aby umožnila Bluetooth skenovanie pre AirTagy alebo iné Bluetooth Trackery, aj keď je aplikácia zatvorená alebo sa nepoužíva. Okrem toho môžete voliteľne povoliť aplikácii zaznamenávať polohu, keď ste boli sledovaní.</string>
 
@@ -144,7 +144,7 @@
     <string name="device_icon">Ikona zariadenia</string>
     <string name="location_sample_image">Ukážkový obrázok polohy</string>
     <string name="permissions_location_title">Poloha na pozadí</string>
-    <string name="permission_location_message">Toto povolenie je potrebné na poskytnutie podrobnejších informácií o sledovaní v prípade, že vás sleduje AirTag, zariadenie Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo alebo Tile. Toto povolenie je voliteľné.</string>
+    <string name="permission_location_message">Toto povolenie je potrebné na poskytnutie podrobnejších informácií o sledovaní v prípade, že vás môže sledovať AirTag, zariadenie Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo alebo Tile / Life360. Toto povolenie je voliteľné.</string>
     <string name="onboarding_2_title">Povolenie polohy</string>
     <string name="onboarding_2_description">Táto aplikácia potrebuje povolenie na prístup k vašej polohe na vyhľadávanie okolitých Trackerov cez Bluetooth Low Energy. Bez tohto povolenia aplikácia nefunguje a nenájde žiadne sledovacie zariadenia. Vaše údaje o polohe nikdy neopustia vaše zariadenie. </string>
     <string name="devices_edit_title">Upraviť názov zariadenia</string>
@@ -165,7 +165,7 @@
     <string name="website_description">Pozrite si našu webovú stránku</string>
     <string name="website">Webová stránka</string>
     <string name="scan_result_item_image_description">Položka výsledku skenovania</string>
-    <string name="scan_result_no_devices">Nenašli sa žiadne sledovacie zariadenia.\nSkenujeme iba Apple Find My Trackery (AirTagy), zariadenia Google "Find My Device" a Galaxy SmartTagy, Pebblebee, Chipolo a Tile.</string>
+    <string name="scan_result_no_devices">Nenašli sa žiadne sledovacie zariadenia.\nSkenujeme iba Apple Find My Trackery (AirTagy), zariadenia Google "Find My Device" a Galaxy SmartTagy, Pebblebee, Chipolo a Tiles / Life360.</string>
     <string name="ble_service_connection_error">Nepodarilo sa pripojiť k zariadeniu</string>
     <string name="yes_button">Áno</string>
     <string name="scan_enable_bluetooth_message">Bluetooth musí byť zapnutý, aby bolo možné skenovať bluetooth zariadenia.</string>
@@ -221,7 +221,7 @@
     <string name="settings_app_theme_summary">Vyberte si tému!</string>
     <string name="settings_metric_title">Metrický systém</string>
     <string name="settings_metric_summary">Použiť metrický systém na zobrazenie vzdialeností</string>
-    <string name="info_text_all_devices">Tento zoznam zobrazuje všetky zariadenia, ktoré boli objavené pomocou AirGuardu za posledných 14 dní. To zahŕňa aj zariadenia, ktoré vás nesledujú. Identifikované trackery sú označené výkričníkom. Zariadenia môžete filtrovať pomocou tlačidla vpravo dole</string>
+    <string name="info_text_all_devices">Tento zoznam zobrazuje všetky zariadenia, ktoré boli objavené pomocou AirGuardu za posledných 14 dní. To zahŕňa aj zariadenia, ktoré vás nesledovali. Identifikované trackery sú označené výkričníkom. Zariadenia môžete filtrovať pomocou tlačidla vpravo dole</string>
     <string name="info_text_all_locations">Toto zobrazenie ukazuje všetky miesta, na ktorých bolo nájdené zariadenie. To zahŕňa aj zariadenia, ktoré nesledujú vašu polohu.</string>
     <string name="empty_list_devices">Tento zoznam zobrazuje všetky zariadenia, ktoré boli nájdené pomocou AirGuardu za posledných 14 dní. Keďže je prázdny, nenašli sa žiadne zariadenia. Nezabudnite mať aktivovaný Bluetooth, pretože aplikácia dokáže nájsť potenciálne sledovacie zariadenia iba pomocou Bluetooth</string>
     <string name="empty_list_trackers">Tento zoznam zobrazuje iba zariadenia, ktoré sledovali vašu polohu za posledných 14 dní. Keďže je prázdny, žiadne zariadenie sa vás nepokúsilo sledovať a sledovať vašu polohu. Vždy, keď vás zariadenie sleduje, dostanete upozornenie. Nezabudnite mať aktivovaný Bluetooth, aby ste našli sledovacie zariadenia. Pomocou tlačidla nižšie si môžete zobraziť všetky zariadenia, aj tie, ktoré neboli identifikované ako tracker.</string>
@@ -248,7 +248,7 @@
     <string name="ignored_devices">Ignorované zariadenia</string>
     <string name="airtags_found">Nájdené AirTagy</string>
     <string name="findmy_found">Nájdené zariadenia Apple Find My</string>
-    <string name="tile_found">Nájdené Tile</string>
+    <string name="tile_found">Nájdené Tiles / Life360</string>
     <string name="chipolo_found">Nájdené Chipolo</string>
     <string name="pebblebee_found">Nájdené Pebblebee</string>
     <string name="smarttag_found">Nájdené SmartTagy</string>
@@ -366,9 +366,9 @@
 
     <string name="explanation_apple">Upozornenie:\nZariadenia Apple časom menia svoj identifikátor.\nAirTagy, AirPods, FindMy a ostatné zariadenia Apple sú periodicky rozpoznávané ako nové zariadenia a môžu sa zobrazovať viackrát.</string>
     <string name="explanation_samsung">Upozornenie:\nZariadenia Samsung časom menia svoj identifikátor.\nSmartTagy a ostatné zariadenia Samsung SmartThings sú periodicky rozpoznávané ako nové zariadenia a môžu sa zobrazovať viackrát.</string>
-    <string name="explanation_tile">Upozornenie:\nZariadenia Tile nemenia svoj identifikátor.\nMôže to viesť k falošným varovaniam.\nV prípade varovania skontrolujte, či zariadenie nenosí niekto okolo vás (priatelia, rodina, kolegovia, susedia atď.).</string>
+    <string name="explanation_tile">Upozornenie:\nZariadenia Tile / Life360 nemenia svoj identifikátor.\nTo môže viesť k falošným varovaniam.\nV prípade varovania skontrolujte, či zariadenie nenosí niekto vo vašom okolí (priatielia, rodina, kolegovia, susedia atď.).</string>
     <string name="explanation_chipolo">Upozornenie:\nZariadenia Chipolo nemenia svoj identifikátor.\nMôže to viesť k falošným varovaniam.\nV prípade varovania skontrolujte, či zariadenie nenosí niekto okolo vás (priatelia, rodina, kolegovia, susedia atď.).</string>
-    <string name="explanation_pebblebee">Upozornenie:\nZariadenia Pebblebee nemenia svoj identifikátor.\nMôže to viesť k falošným varovaniam.\nV prípade varovania skontrolujte, či zariadenie nenosí niekto okolo vás (priatelia, rodina, kolegovia, susedia atď.).</string>
+    <string name="explanation_pebblebee">Upozornenie:\nZariadenia Pebblebee nemenia svoj identifikátor.\nMôže to viesť k falošnym varovaniam.\nV prípade varovania skontrolujte, či zariadenie nenosí niekto okolo vás (priatelia, rodina, kolegovia, susedia atď.).</string>
     <string name="explanation_unknown">Upozornenie:\nNiektoré zariadenia časom menia svoj identifikátor.\nTieto zariadenia sú periodicky rozpoznávané ako nové zariadenia a môžu sa zobrazovať viackrát.</string>
 
     <string name="explanation_safe_trackers">Bezpečné trackery sú trackery okolo vás, ktoré sú momentálne pripojené alebo boli pripojené k svojim vlastníckym zariadeniam v posledných minútach. S najväčšou pravdepodobnosťou pre vás nepredstavujú hrozbu.\nOkrem toho všetky trackery označené ako ignorované budú považované za bezpečné.</string>

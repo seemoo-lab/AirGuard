@@ -37,7 +37,7 @@
     <string name="error_requesting_location_permission">Die Standortberechtigung konnte nicht angefragt werden</string>
     <string name="tracking_locate_at_title">Ton abspielen</string>
     <string name="permissions_location_title">Standort im Hintergrund</string>
-    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, Find My-Gerät, SmartTag, Google Mein Gerät finden-Gerät, Pebblebee, Chipolo oder Tile erhalten, welches dich verfolgt. Diese Berechtigung ist optional.</string>
+    <string name="permission_location_message">Wenn Du diese Berechtigung erteilst, kannst Du detailliertere Standortinformationen zu einem AirTag, Find My-Gerät, Samsung SmartTag, Google "Mein Gerät finden"-Gerät, Pebblebee, Chipolo oder Tile / Life360-Tracker erhalten, welches dich verfolgen könnte. Diese Berechtigung ist optional.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
     <string name="tracking_detail_scan_title">Gerät orten</string>
@@ -67,7 +67,7 @@
         - Wir werden einige Informationen über die entdeckten Geräte sammeln, wie den <b>Gerätetyp</b>, den <b>RSSI-Wert</b> (Signalstärke) und das <b>Datum und die Uhrzeit</b> der Entdeckung \n\n
         - Wie viele <b>Benachrichtigungen</b> angezeigt wurden, das <b>Datum und die Uhrzeit</b> der Benachrichtigung sowie das <b>Benutzerfeedback</b>, das gegeben werden kann \n\n
         Wir werden <b>KEINE</b> Standorte oder Daten teilen, die es uns ermöglichen könnten, dich zu identifizieren</string>
-    <string name="onboarding_1_description">AirGuard benachrichtigt dich, falls Du von einem Airtag, Find My-Gerät, Google "Mein Gerät finden"-Gerät, SmartTag, Pebblebee, Chipolo oder Tile verfolgt wirst.</string>
+    <string name="onboarding_1_description">AirGuard benachrichtigt dich, wenn es den Anschein hat, dass ein AirTag, ein Find My-fähiges Gerät, ein Google "Mein Gerät finden"-fähiges Gerät, ein SmartTag, Pebblebee, Chipolo oder ein Tile / Life360-Tracker dich verfolgen könnte.</string>
     <string name="onboarding_2_title">Standortberechtigung</string>
     <string name="onboarding_2_description">AirGuard benötigt die Berechtigung, auf Deinen Standort zuzugreifen, um über Bluetooth Low Energy (LE) nach umliegenden AirTags, SmartTags und Tiles suchen zu dürfen. Du musst diese Berechtigung erteilen, um AirGuard zu verwenden.</string>
     <string name="onboarding_ignore_battery_optimization_title">Batterie-Optimierung</string>
@@ -145,7 +145,7 @@
     <string name="notification_observe_tracker_error">Es ist ein Fehler aufgetreten. Versuche es nochmal.</string>
     <string name="onboarding_notification_title">Senden von Benachrichtigungen</string>
     <string name="scan_result_item_image_description">"Scanergebnis Element"</string>
-    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden.\nWir scannen nur nach Apple Find My Trackern (AirTags), Google "Mein Gerät finden" Trackern, Galaxy SmartTags, Pebblebee, Chipolo und Tile Trackern.</string>
+    <string name="scan_result_no_devices">Keine Tracking-Geräte wurden gefunden.\nWir scannen nur nach Apple Find My Trackern (AirTags), Google "Find My Device"-Geräten, Galaxy SmartTags, Pebblebees, Chipolos und Tile / Life360-Trackern.</string>
     <string name="ble_service_connection_error">Verbindung zum Gerät fehlgeschlagen!</string>
     <string name="yes_button">Ja</string>
     <string name="scan_enable_bluetooth_title">Bluetooth-Suche</string>
@@ -217,7 +217,7 @@
     <string name="ignored_devices">Ignorierte Geräte</string>
     <string name="airtags_found">Gefundene AirTags</string>
     <string name="findmy_found">Gefundene Find My Geräte</string>
-    <string name="tile_found">Gefundene Tiles</string>
+    <string name="tile_found">Gefundene Tiles / Life360</string>
     <string name="survey_card_title">Wir machen eine Umfrage</string>
     <string name="survey_card_info_text">Wir versuchen herauszufinden wie viele Menschen von Stalking und Location Tracking betroffen sind. Wir laden Sie ein an der Umfrage teilzunehmen. Dies gilt auch, wenn sie bis jetzt nicht von solchen Attacken betroffen waren. Diese Umfrage ist Teil des Forschungsprojekts an der TU Darmstadt.</string>
     <string name="participate">Teilnehmen</string>
@@ -359,9 +359,9 @@
 
     <string name="explanation_apple">Hinweis:\nApple Geräte ändern ihre Identität mindestens alle 24 Stunden.\nAirTags, AirPods, FindMy-Geräte und andere Apple Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
     <string name="explanation_samsung">Hinweis:\nSamsung Geräte ändern ihre Identität mindestens alle 24 Stunden.\nSmartTags und andere Samsung Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
-    <string name="explanation_tile">Hinweis:\nTile Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
-    <string name="explanation_chipolo">Hinweis:\nChipolo Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
-    <string name="explanation_pebblebee">Hinweis:\nPebblebee Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Pebblebee-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemanden aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
+    <string name="explanation_tile">Hinweis:\nTile / Life360 Geräte ändern ihre Identität nicht.\nDies kann zu falschen Warnungen führen.\nFalls Sie über ein Tile gewarnt werden, überprüfen Sie ob der Tracker von jemandem aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
+    <string name="explanation_chipolo">Hinweis:\nChipolo Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Chipolo-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemandem aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
+    <string name="explanation_pebblebee">Hinweis:\nPebblebee Geräte ändern ihre Identität nicht.\nDies kann zu mehr falschen Warnungen führen.\nFalls sie über einen Pebblebee-Tracker gewarnt werden, überprüfen Sie ob der Tracker von jemandem aus ihrer Umgebung (Freunde, Familie, Kollegen, Nachbarn etc.) stammt.</string>
     <string name="explanation_unknown">Hinweis:\nManche Geräte ändern ihre Identität regelmäßig.\nDies kann zu mehr falschen Warnungen führen.\nDiese Geräte werden daher periodisch als neue Geräte erkannt und könnten mehrfach angezeigt werden.</string>
 
     <string name="explanation_safe_trackers">Sichere Tracker sind Tracker in ihrer Umgebung, die entweder gerade oder kürzlich mit ihrem Besitzer verbunden waren und somit höchstwahrscheinlich keine Gefahr für Sie darstellen.\nEbenfalls werden alle Tracker, die sie ignorieren als sicher gewertet.</string>

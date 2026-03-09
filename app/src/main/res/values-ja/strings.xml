@@ -61,7 +61,7 @@
         • 送信された<b>通知</b>の数、アラートの<b>日時</b>、およびオプションで提供できる<b>フィードバック</b> \n\n
 
         位置情報やあなたを特定する可能性のあるデータは<b>共有しません</b>。参加は完全に匿名です！</string>
-    <string name="onboarding_1_description">このアプリは、AirTagまたはFind My対応デバイスがあなたを追跡している可能性があるときに通知します</string>
+    <string name="onboarding_1_description">このアプリは、AirTag、Find My対応デバイス、Google "Find My Device"対応デバイス、SmartTag、Pebblebee、Chipolo、またはTile / Life360があなたを追跡している可能性があるときに通知します。</string>
     <string name="location_permission_title">位置情報の許可</string>
     <string name="location_permission_message">このアプリは、アプリが閉じているか使用されていない場合でも、AirTagまたはその他のFindMyデバイスのBluetoothスキャンを許可するために位置情報の取得の許可が必要です。さらに、オプションで、追跡されたときにアプリが場所をログに記録できるようにすることができます。</string>
     <string name="onboarding_ignore_battery_optimization_title">バッテリーの最適化</string>
@@ -90,7 +90,7 @@
     <string name="device_icon">デバイスアイコン</string>
     <string name="location_sample_image">場所のサンプル画像</string>
     <string name="permissions_location_title">バックグラウンドでの位置情報</string>
-    <string name="permission_location_message">この許可は、AirTagまたはFindMyデバイスがあなたを追跡している場合に備えてより詳細な追跡情報を提供するために必要です。この許可はオプションです</string>
+    <string name="permission_location_message">この許可は、AirTag、Find Myデバイス、Samsung SmartTag、Google Find My Device、Pebblebee、Chipolo、またはTile / Life360があなたを追跡している可能性がある場合に、より詳細な追跡情報を提供するために必要です。この許可は任意です。</string>
     <string name="onboarding_2_title">位置情報の許可</string>
     <string name="onboarding_2_description">このアプリは、Bluetooth Low Energyを介して周囲のAirTagを検索するために、現在地にアクセスするための許可が必要です。この許可がないと、追跡デバイスは見つけられません。位置データがデバイスから外部に送信されることはありません </string>
     <string name="devices_edit_title">タグ名の編集</string>
@@ -109,7 +109,8 @@
     <string name="onboarding_connect_description">追跡デバイスが見つかった場合、AirGuardはその上でサウンドを再生する機能を提供します。このためには、このデバイスに接続するための許可が必要です。</string>
     <string name="title_scan">手動スキャン</string>
     <string name="scan_result_item_image_description">スキャン結果</string>
-    <string name="scan_result_no_devices">安心してください。タグは見つかりませんでした</string>
+    <string name="scan_result_no_devices">追跡デバイスは見つかりませんでした。
+私たちはApple Find Myトラッカー（AirTag）、Google "Find My Device" デバイス、Galaxy SmartTag、Pebblebee、Chipolo、およびTile / Life360をスキャンします。</string>
     <string name="ble_service_connection_error">デバイスとの接続に失敗しました</string>
     <string name="yes_button">はい</string>
     <string name="scan_enable_bluetooth_message">スキャンをするためにBluetoothをONにしてください</string>
@@ -182,7 +183,7 @@
     <string name="ignored_devices">無視するデバイス</string>
     <string name="airtags_found">発見されたAirTag</string>
     <string name="findmy_found">発見されたFind Myデバイス</string>
-    <string name="tile_found">発見されたTile</string>
+    <string name="tile_found">見つかったTile / Life360</string>
     <string name="survey_card_title">調査をしています</string>
     <string name="survey_card_info_text">私たちは、追跡されたことのある人の数を調べようとしています。これらの攻撃の被害者でなくても、すべてのユーザーに調査に参加することをお勧めします。この調査は、ダルムシュタット工科大学での研究プロジェクトの一部です。</string>
     <string name="participate">参加する</string>
@@ -307,7 +308,10 @@
     <string name="article_offline_text">現在インターネットに接続されていません。接続時にアプリの使い方を説明する記事が表示されます。</string>
     <string name="explanation_apple">注意:\nAppleデバイスは識別子を定期的に変更します。\nAirTag、AirPods、FindMyなどは新しいデバイスとして認識され複数回表示される場合があります。</string>
     <string name="explanation_samsung">注意:\nSamsungデバイスは識別子を定期的に変更します。\nSmartTagなどは新しいデバイスとして認識され複数回表示される場合があります。</string>
-    <string name="explanation_tile">注意:\nTileデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
+    <string name="explanation_tile">注意:
+Tile / Life360デバイスは識別子を変更しません。
+これは誤警報につながる可能性があります。
+警告が表示された場合は、そのデバイスが周囲の誰か（友人、家族、同僚、近隣の人など）が所持していないか確認してください。</string>
     <string name="explanation_chipolo">注意:\nChipoloデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
     <string name="explanation_pebblebee">注意:\nPebblebeeデバイスは識別子を変更しません。\n誤警告の可能性があります。警告時は周囲の人（友人、家族、同僚、隣人など）が持っていないか確認してください。</string>
     <string name="explanation_unknown">注意:\n一部のデバイスは識別子を定期的に変更します。\nこれらは新しいデバイスとして認識され複数回表示される場合があります。</string>
