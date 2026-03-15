@@ -11,7 +11,8 @@ class SetExactAlarmPermissionChangedReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED) {
             Timber.d("Received AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED")
-            ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.launch()
+            ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler?.launch()
+                ?: Timber.w("Application not yet initialized, skipping WorkScheduler launch")
         }
     }
 }

@@ -85,23 +85,27 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     val backgroundWorkScheduler: BackgroundWorkScheduler
         get() {
-            return ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler
+            return ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler
+                ?: error("ATTrackingDetectionApplication not initialized")
         }
 
     val notificationService: NotificationService
         get() {
-            return ATTrackingDetectionApplication.getCurrentApp().notificationService
+            return ATTrackingDetectionApplication.getCurrentApp()?.notificationService
+                ?: error("ATTrackingDetectionApplication not initialized")
         }
     private val locationProvider: LocationProvider
         get() {
-            return ATTrackingDetectionApplication.getCurrentApp().locationProvider
+            return ATTrackingDetectionApplication.getCurrentApp()?.locationProvider
+                ?: error("ATTrackingDetectionApplication not initialized")
         }
 
     private val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
 
     private val scanRepository: ScanRepository
         get() {
-            return ATTrackingDetectionApplication.getCurrentApp().scanRepository
+            return ATTrackingDetectionApplication.getCurrentApp()?.scanRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
         }
 
     private var isScanning = false

@@ -93,7 +93,8 @@ object MapUtils {
             .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
 
         val locationList = arrayListOf<Location>()
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+        val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+            ?: error("ATTrackingDetectionApplication not initialized")
 
         uniqueLocations.mapNotNullTo(locationList) {
             locationRepository.getLocationWithId(it.locationId!!)

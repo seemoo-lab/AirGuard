@@ -50,7 +50,8 @@ class ScanFragment : Fragment() {
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
     private val scanRepository: ScanRepository
-        get() = ATTrackingDetectionApplication.getCurrentApp().scanRepository
+        get() = ATTrackingDetectionApplication.getCurrentApp()?.scanRepository
+            ?: error("ATTrackingDetectionApplication not initialized")
     private var scanId: Long = 0
     private var hasActiveScan = false
 

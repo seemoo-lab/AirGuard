@@ -90,7 +90,8 @@ class ScanDistanceFragment : Fragment() {
                     latestWrappedScanResult = ScanResultWrapper(scanResult)
 
                     // Populate current device in ViewModel for sound playing
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
                     var device = deviceRepository.getDevice(filteredIdentifier)
                     viewModel.currentDevice.postValue(device)
 
@@ -329,7 +330,8 @@ class ScanDistanceFragment : Fragment() {
 
     private fun updateDeviceIcon() {
         latestWrappedScanResult?.let { wrappedScanResult ->
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
             val drawable = if (deviceFromDb != null) {
@@ -624,7 +626,8 @@ class ScanDistanceFragment : Fragment() {
                         subTypeSamsung!!
                     subTypeSamsung?.let { samsungDeviceType ->
                         val deviceRepository =
-                            ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                            ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                                ?: error("ATTrackingDetectionApplication not initialized")
                         val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
                         if (device != null) {
@@ -665,7 +668,8 @@ class ScanDistanceFragment : Fragment() {
 
                     if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
                         val deviceRepository =
-                            ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                            ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                                ?: error("ATTrackingDetectionApplication not initialized")
                         val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
                         val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
 
@@ -707,7 +711,8 @@ class ScanDistanceFragment : Fragment() {
                         ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
                     val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
 
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
                     if (device != null && deviceName != findMyDefaultString) {
@@ -737,7 +742,8 @@ class ScanDistanceFragment : Fragment() {
                         ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
                     val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
 
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
                     if (device != null && deviceName != pebblebeeDefaultString) {
@@ -765,7 +771,8 @@ class ScanDistanceFragment : Fragment() {
                 lifecycleScope.launch {
                     val deviceName = SamsungFindMyMobile.getSubTypeName(latestWrappedScanResult!!)
 
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
                     val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
 
                     if (device != null) {

@@ -22,8 +22,10 @@ class MarkerInfoPopUp(
 
     override fun onOpen(item: Any?) {
         val context = mView.context
-        val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+        val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+            ?: error("ATTrackingDetectionApplication not initialized")
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+            ?: error("ATTrackingDetectionApplication not initialized")
 
         // Get the most recent beacon at this location
         val beacon = beaconRepository.getMostRecentBeaconAtLocation(locationId)

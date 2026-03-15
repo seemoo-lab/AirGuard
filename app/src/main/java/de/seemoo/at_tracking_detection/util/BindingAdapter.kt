@@ -49,7 +49,8 @@ fun setSignalStrengthDrawable(imageView: ImageView, wrappedScanResult: ScanResul
 
 @BindingAdapter("setDeviceDrawable")
 fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper) {
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+        ?: error("ATTrackingDetectionApplication not initialized")
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
     val drawable = if (deviceFromDb != null) {
@@ -62,7 +63,8 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+        ?: error("ATTrackingDetectionApplication not initialized")
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
     textView.text = if (deviceFromDb != null) {

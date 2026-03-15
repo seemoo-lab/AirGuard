@@ -265,10 +265,10 @@ class BackgroundWorkScheduler @Inject constructor(
                 )
             } catch (exception: SecurityException) {
                 Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
-                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+                ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler?.legacyLaunch()
             } catch (exception: Exception) {
                 Timber.e("Failed to schedule any kind of alarm. $exception\nFalling back to old method.")
-                ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler.legacyLaunch()
+                ATTrackingDetectionApplication.getCurrentApp()?.backgroundWorkScheduler?.legacyLaunch()
             }
         }
     }

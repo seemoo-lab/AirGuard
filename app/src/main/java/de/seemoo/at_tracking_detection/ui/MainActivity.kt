@@ -280,8 +280,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onStart() {
         super.onStart()
-        if (ATTrackingDetectionApplication.getCurrentApp().showOnboarding() or !ATTrackingDetectionApplication.getCurrentApp().hasPermissions()) {
-            ATTrackingDetectionApplication.getCurrentApp().startOnboarding()
+        val app = ATTrackingDetectionApplication.getCurrentApp() ?: return
+        if (app.showOnboarding() or !app.hasPermissions()) {
+            app.startOnboarding()
         } else {
             backgroundWorkScheduler.launch()
         }

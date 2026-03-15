@@ -6,7 +6,8 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 
 class LocationFilter(private val locationId: Int) : Filter() {
     override fun apply(baseDevices: List<BaseDevice>): List<BaseDevice> {
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+            ?: error("ATTrackingDetectionApplication not initialized")
         val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
         val devicesAtLocation = deviceRepository.getDevicesAtLocation(locationId, relevantTrackingDate)
         val deviceAddresses = devicesAtLocation.map { it.address }.toSet()
