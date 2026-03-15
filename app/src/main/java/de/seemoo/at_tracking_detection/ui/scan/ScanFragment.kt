@@ -11,20 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.transition.AutoTransition
-import android.transition.TransitionManager
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -49,6 +44,7 @@ class ScanFragment : Fragment() {
     private val scanViewModel: ScanViewModel by viewModels()
     private val bluetoothDeviceAdapterHighRisk = BluetoothDeviceAdapter()
     private val bluetoothDeviceAdapterLowRisk = BluetoothDeviceAdapter()
+    private val separatorAdapter = ScanSeparatorAdapter()
     private val scanRepository: ScanRepository
         get() = ATTrackingDetectionApplication.getCurrentApp()?.scanRepository
             ?: error("ATTrackingDetectionApplication not initialized")
@@ -64,11 +60,17 @@ class ScanFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_scan, container, false)
 
         binding.apply {
-            adapterHighRisk = bluetoothDeviceAdapterHighRisk
-            adapterLowRisk = bluetoothDeviceAdapterLowRisk
             lifecycleOwner = viewLifecycleOwner
             vm = scanViewModel
         }
+
+        // Use a single ConcatAdapter: high-risk devices → separator → low-risk devices.
+        val concatAdapter = ConcatAdapter(
+            bluetoothDeviceAdapterHighRisk,
+            separatorAdapter,
+            bluetoothDeviceAdapterLowRisk
+        )
+        binding.scanResultRecycler.adapter = concatAdapter
 
         scanViewModel.apply {
             bluetoothDeviceListHighRisk.observe(viewLifecycleOwner) { newList ->
@@ -76,6 +78,10 @@ class ScanFragment : Fragment() {
             }
             bluetoothDeviceListLowRisk.observe(viewLifecycleOwner) { newList ->
                 bluetoothDeviceAdapterLowRisk.submitList(newList)
+            }
+            // Show the separator only when there are low-risk devices to separate from.
+            lowRiskIsEmpty.observe(viewLifecycleOwner) { isEmpty ->
+                separatorAdapter.setVisible(!isEmpty)
             }
             scanFinished.observe(viewLifecycleOwner) { isFinished ->
                 binding.buttonStartStopScan.setImageResource(
@@ -131,10 +137,6 @@ class ScanFragment : Fragment() {
                 stopBluetoothScan()
             }
         }
-
-        view.findViewById<ImageButton>(R.id.info_button).setOnClickListener {
-            toggleInfoLayoutVisibility(view)
-        }
     }
 
     override fun onStart() {
@@ -151,20 +153,6 @@ class ScanFragment : Fragment() {
 
     private fun readyToScan(): Boolean {
         return scanViewModel.canScan.value == true
-    }
-
-    private fun toggleInfoLayoutVisibility(view: View) {
-        val infoLayout = view.findViewById<LinearLayout>(R.id.info_layout)
-        val parent = infoLayout.parent as ViewGroup
-
-        val transition = AutoTransition().apply {
-            duration = 250
-            interpolator = FastOutSlowInInterpolator()
-        }
-
-        TransitionManager.beginDelayedTransition(parent, transition)
-
-        infoLayout.isVisible = !infoLayout.isVisible
     }
 
     private val scanCallback = object : ScanCallback() {

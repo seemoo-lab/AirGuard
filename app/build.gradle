@@ -36,8 +36,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdkVersion 28
         targetSdk = 36
-        versionCode 62
-        versionName "3.0.0"
+        versionCode 63
+        versionName "3.0.1"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -101,7 +101,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.github.bastienpaulfr:Treessence:1.1.2'
     implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.core:core-ktx:1.18.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
@@ -117,14 +117,14 @@ dependencies {
     implementation "androidx.profileinstaller:profileinstaller:1.4.1"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 
-    implementation "androidx.activity:activity-ktx:1.12.4"
+    implementation "androidx.activity:activity-ktx:1.13.0"
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:5.3.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.3.2'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation "androidx.work:work-testing:$work_version"
-    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.core:core-ktx:1.18.0'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:5.3.2'
 
     implementation "com.google.dagger:hilt-android:$hilt_compiler_version"
@@ -171,18 +171,18 @@ dependencies {
 
     //Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.12.4'
+    implementation 'androidx.activity:activity-compose:1.13.0'
     // Compose Material3 Design
     implementation 'androidx.compose.material3:material3:1.4.0'
     implementation 'androidx.compose.material3:material3-window-size-class:1.4.0'
     // Animations
-    implementation 'androidx.compose.animation:animation:1.10.4'
+    implementation 'androidx.compose.animation:animation:1.10.5'
     // Tooling support (Previews, etc.)
-    implementation 'androidx.compose.ui:ui-tooling:1.10.4'
+    implementation 'androidx.compose.ui:ui-tooling:1.10.5'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0'
     // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.10.4'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.10.5'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
 

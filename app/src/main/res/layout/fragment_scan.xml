@@ -8,14 +8,6 @@
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
 
-        <variable
-            name="adapter_low_risk"
-            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
-
-        <variable
-            name="adapter_high_risk"
-            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
-
         <import type="android.view.View" />
     </data>
 
@@ -33,104 +25,24 @@
             app:indicatorColor="?attr/colorPrimary"
             app:trackColor="?attr/colorSurfaceVariant"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scan_result_wrapper"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scan_result_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingBottom="88dp"
             android:clipToPadding="false"
+            android:scrollbars="vertical"
             android:visibility="@{vm.canScan ? (vm.scanFinished &amp;&amp; vm.isListEmpty ? View.GONE : View.VISIBLE) : View.GONE, default=gone}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/scan_result_recycler_high_risk"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:clipToPadding="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_high_risk}"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/item_scan_result" />
-
-                <RelativeLayout
-                    android:id="@+id/low_risk_trackers_wrapper"
-                    android:visibility="@{vm.lowRiskIsEmpty ? View.GONE : View.VISIBLE, default=visible}"
-                    android:layout_marginTop="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/md_theme_surfaceContainer">
-
-                    <TextView
-                        android:id="@+id/low_risk_trackers_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/low_risk_trackers"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <ImageButton
-                        android:id="@+id/info_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:contentDescription="@string/info_button_description"
-                        android:src="@drawable/ic_baseline_info_24"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        app:tint="?attr/colorOnSurfaceVariant" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/info_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:padding="16dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="8dp"
-                    android:background="@drawable/shape_rounded_rectangle"
-                    android:backgroundTint="@color/md_theme_surfaceContainerLow">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:text="@string/explanation_safe_trackers" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/scan_result_recycler_low_risk"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_low_risk}"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/item_scan_result" />
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_scan_result" />
 
         <include
             android:id="@+id/include_scan_empty_explanation"

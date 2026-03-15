@@ -5,7 +5,7 @@ buildscript {
     ext.hilt_version = '1.3.0'
     ext.room_version = '2.8.4'
     ext.compose_version = '1.7.3'
-    ext.about_libraries_version = '13.1.0'
+    ext.about_libraries_version = '13.2.1'
     ext.work_version = '2.11.1'
     ext.ksp_version = '2.3.2'
 
