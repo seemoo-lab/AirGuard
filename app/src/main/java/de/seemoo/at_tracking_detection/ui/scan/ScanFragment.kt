@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.ConcurrentHashMap
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
@@ -158,7 +159,9 @@ class ScanFragment : Fragment() {
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            SharedPrefs.showSamsungAndroid15BugNotification = false
+            if (SharedPrefs.showSamsungAndroid15BugNotification) {
+                SharedPrefs.showSamsungAndroid15BugNotification = false
+            }
             result?.let { scanViewModel.addScanResult(it) }
         }
 
@@ -192,7 +195,7 @@ class ScanFragment : Fragment() {
             BLEScanner.registerCallback(scanCallback)
         }
 
-        scanViewModel.scanFinished.postValue(false)
+        scanViewModel.scanFinished.value = false
 
         Handler(Looper.getMainLooper()).postDelayed({
             if (scanViewModel.isListEmpty.value == true) {
@@ -221,17 +224,18 @@ class ScanFragment : Fragment() {
             val scan = scanRepository.scanWithId(scanId.toInt())
             if (scan != null) {
                 val now = LocalDateTime.now()
+                val deviceCount = (scanViewModel.bluetoothDeviceListHighRisk.value?.size ?: 0) +
+                        (scanViewModel.bluetoothDeviceListLowRisk.value?.size ?: 0)
                 scan.apply {
                     endDate = now
                     duration = ChronoUnit.SECONDS.between(startDate, now).toInt()
-                    noDevicesFound = (scanViewModel.bluetoothDeviceListHighRisk.value?.size ?: 0) +
-                            (scanViewModel.bluetoothDeviceListLowRisk.value?.size ?: 0)
+                    noDevicesFound = deviceCount
                 }
                 scanRepository.update(scan)
             }
         }
 
-        scanViewModel.scanFinished.postValue(true)
+        scanViewModel.scanFinished.value = true
         hasActiveScan = false
     }
 
@@ -258,9 +262,9 @@ class ScanFragment : Fragment() {
 
     companion object {
         private const val SCAN_DURATION = 60_000L
-        val samsungSubDeviceTypeMap: MutableMap<String, SamsungTrackerType> = HashMap()
-        val googleSubDeviceTypeMap: MutableMap<String, GoogleFindMyNetworkType> = HashMap()
-        val googleExactTagDeterminedMap: MutableMap<String, Boolean> = HashMap()
-        val deviceNameMap: MutableMap<String, String> = HashMap()
+        val samsungSubDeviceTypeMap: MutableMap<String, SamsungTrackerType> = ConcurrentHashMap()
+        val googleSubDeviceTypeMap: MutableMap<String, GoogleFindMyNetworkType> = ConcurrentHashMap()
+        val googleExactTagDeterminedMap: MutableMap<String, Boolean> = ConcurrentHashMap()
+        val deviceNameMap: MutableMap<String, String> = ConcurrentHashMap()
     }
 }

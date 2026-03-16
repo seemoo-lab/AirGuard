@@ -82,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=gone}"
             />
 
         <include
@@ -94,7 +94,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.locationEnabled ? View.GONE : View.VISIBLE, default=gone}"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
