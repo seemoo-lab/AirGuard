@@ -64,7 +64,7 @@
                 tools:text="Samsung Galaxy SmartTag" />
 
             <TextView
-                android:id="@+id/card_number"
+                android:id="@+id/card_number_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{String.valueOf(cardNumber)}"
