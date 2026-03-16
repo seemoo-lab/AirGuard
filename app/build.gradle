@@ -2,9 +2,8 @@ import java.util.regex.Pattern
 
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
+    id 'com.android.legacy-kapt'
     id 'androidx.navigation.safeargs.kotlin'
-    id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'com.mikepenz.aboutlibraries.plugin.android'
@@ -28,13 +27,14 @@ android {
         dataBinding true
         compose true
         buildConfig true
+        resValues true
     }
 
     compileSdk = 36
 
     defaultConfig {
         applicationId "de.seemoo.at_tracking_detection"
-        minSdkVersion 28
+        minSdk = 28
         targetSdk = 36
         versionCode 63
         versionName "3.0.1"
@@ -185,6 +185,9 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.10.5'
     // When using a MDC theme
     implementation "com.google.android.material:compose-theme-adapter:1.2.1"
+
+    androidTestImplementation 'androidx.concurrent:concurrent-futures:1.3.0'
+    androidTestImplementation 'androidx.concurrent:concurrent-futures-ktx:1.3.0'
 
     // Google Review Handling (only active in Google Play Builds done from the googlePlyStore Branch)
     // implementation("com.google.android.play:review:2.0.2")

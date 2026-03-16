@@ -7,7 +7,7 @@ buildscript {
     ext.compose_version = '1.7.3'
     ext.about_libraries_version = '13.2.1'
     ext.work_version = '2.11.1'
-    ext.ksp_version = '2.3.2'
+    ext.ksp_version = '2.3.6'
 
     repositories {
         google()
@@ -20,6 +20,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:9.1.0'
+        classpath 'com.android.tools.build:gradle-kotlin:9.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_compiler_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.9.7"

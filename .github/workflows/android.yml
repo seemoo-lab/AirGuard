@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 17 with Gradle cache
-        uses: actions/setup-java@v3
+      - name: Set up JDK 21 with Gradle cache
+        uses: actions/setup-java@v4
         with:
+          java-version: 21
           distribution: temurin
-          java-version: 17
           cache: gradle
 
       - name: Grant execute permission for Gradle wrapper
