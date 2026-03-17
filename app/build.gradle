@@ -62,6 +62,12 @@ android {
             resValue "bool", "debug", "true"
         }
     }
+    testOptions {
+        unitTests.all {
+            it.failOnNoDiscoveredTests = false
+        }
+    }
+
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_21
