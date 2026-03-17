@@ -64,18 +64,21 @@ class ExportDeviceViewModel : ViewModel() {
         isLoadingRecentBeacons.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val device = deviceRepository.getDevice(deviceAddress)
             retrievedDevice.postValue(device)
 
             // Load only most recent 10 beacons here
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val recentBeacons = beaconRepository.getRecentDeviceBeacons(deviceAddress, 10)
 
             val totalCount = beaconRepository.getDeviceBeaconsCount(deviceAddress)
             totalBeaconCount.postValue(totalCount)
 
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val locations = locationRepository.getLocationsForBeacon(deviceAddress)
             retrievedLocations.postValue(locations)
 
@@ -132,13 +135,15 @@ class ExportDeviceViewModel : ViewModel() {
         isLoadingSecondaryBeacons.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp().beaconRepository
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val allBeacons = beaconRepository.getDeviceBeacons(deviceAddress)
 
             // The secondary list contains everything after the first 10 preview items
             val restBeacons = if (allBeacons.size > 10) allBeacons.subList(10, allBeacons.size) else emptyList()
 
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val locations = locationRepository.getLocationsForBeacon(deviceAddress)
             val locationMap = locations.associateBy { it.locationId }
 
@@ -174,7 +179,8 @@ class ExportDeviceViewModel : ViewModel() {
             val deviceRiskLevel = checkRiskLevelForDevice(device, useLocation)
 
             // This is the actual logic to determine if a tracker is following
-            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp().notificationRepository
+            val notificationRepository = ATTrackingDetectionApplication.getCurrentApp()?.notificationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val notificationExits = notificationRepository.existsNotificationForDevice(device.address)
             return notificationExits || (deviceRiskLevel != RiskLevel.LOW)
         }

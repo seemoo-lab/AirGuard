@@ -76,7 +76,7 @@
 
         Nous ne partagerons <b>PAS</b> de données de localisation ou de données qui pourraient vous identifier\u202f! Cette participation est totalement anonymre.</string>
 
-    <string name="onboarding_1_description">Cette application vous notifiera quand il semblera qu\u02bcun AirTag, un appareil supportant Find My, un appareil supportant Google "Find My Device", un SmartTag, un Pebblebee, un Chipolo ou un Tile est en train de vous suivre.</string>
+    <string name="onboarding_1_description">Cette application vous notifiera lorsqu\'il semblera qu\'un AirTag, un appareil compatible Find My, un appareil compatible Google "Find My Device", un SmartTag, un Pebblebee, un Chipolo ou un Tile / Life360 pourrait vous suivre.</string>
     <string name="location_permission_title">Permission de localisation</string>
     <string name="location_permission_message">Cette application a besoin de la permission de localisation pour utiliser le Bluetooth afin de chercher des AirTags ou d\u02bcantres balises Bluetooth quand l\u02bcapplication n\u02bcest pas utilisée. Vous pouvez également autoriser l\u02bcapplication à enregister la localisation quand vous êtes suivi.</string>
 
@@ -134,7 +134,7 @@
     <string name="device_icon">Icône de l\u02bcappareil</string>
     <string name="location_sample_image">Image d\u02bcexemple de localisation</string>
     <string name="permissions_location_title">Localisation en arrière-plan</string>
-    <string name="permission_location_message">Cette permission est nécessaire pour vous fournir des informations plus détaillées si un AirTag, un appareil Find My device, un Samsung SmartTag, un appareil Google Find My Device, un Pebblebee, un Chipolo ou un Tile vous suivent. Cette permission est optionnelle.</string>
+    <string name="permission_location_message">Cette permission est nécessaire pour fournir des informations de suivi plus détaillées au cas où un AirTag, un appareil Find My, un Samsung SmartTag, un appareil Google Find My Device, un Pebblebee, un Chipolo ou un Tile / Life360 pourrait vous suivre. Cette permission est optionnelle.</string>
     <string name="onboarding_2_title">Permission de localisation</string>
     <string name="onboarding_2_description">Cette application nécessite l\u02bcaccès à la localisation pour fouiller vos alentours avec du Bluetooth Low Energy. Sans cette permission, l\u02bcapplication ne fonctionnera pas et ne trouvera aucun traceur. Vos informations de localisaiton ne quittent jamais votre appareil. </string>
     <string name="devices_edit_title">Modifier le nom de l\u02bcappareil</string>
@@ -153,7 +153,7 @@
     <string name="onboarding_connect_description">Si un appareil est trouvé, AirGuard vous donne la possibilité de le faire sonner. Pour cela, nous avons besoin de la permission de se connecter à cet appareil.</string>
     <string name="onboarding_notification_title">Envoyer des notifications</string>
     <string name="scan_result_item_image_description">Résultat d\u02bcanalyse</string>
-    <string name="scan_result_no_devices">Aucun traceur n\u02bca été identifié.\nNous détectons seulement les appareils Find My (AirTags), Google "Find My Device" Devices, Galaxy SmartTags, Pebblebees, Chipolos et Tiles.</string>
+    <string name="scan_result_no_devices">Aucun traceur n\'a été identifié.\nNous ne scannons que les appareils Apple Find My (AirTags), les appareils Google "Find My Device", les Galaxy SmartTags, les Pebblebees, les Chipolos et les Tiles / Life360.</string>
     <string name="ble_service_connection_error">La connection à l\u02bcappareil a échoué</string>
     <string name="yes_button">Oui</string>
     <string name="scan_enable_bluetooth_message">Le Bluetooth doit être activé pour chercher des appareils Bluetooth.</string>
@@ -232,7 +232,7 @@
     <string name="ignored_devices">Appareils ignorés</string>
     <string name="airtags_found">AirTags trouvés</string>
     <string name="findmy_found">Apple Find My Devices trouvés</string>
-    <string name="tile_found">Tiles trouvés</string>
+    <string name="tile_found">Tiles / Life360 trouvés</string>
     <string name="chipolo_found">Chipolos trouvés</string>
     <string name="pebblebee_found">Pebblebees trouvés</string>
     <string name="smarttag_found">SmartTags trouvés</string>
@@ -343,7 +343,7 @@
 
     <string name="explanation_apple">Veuillez noter\u00a0:\nLes appareils Apple changent d\u02bcidentifiant au cours du temps.\nLes AirTags, AirPods, FindMy et autres appareils Apple sont identifiés régulièrement comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>
     <string name="explanation_samsung">Veuillez noter\u00a0:\nLes appareils Samsung changent d\u02bcidentifiant au cours du temps.\nLes SmartTags et autres appareils Samsung SmartThings devices sont identifiés de temps en temps comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>
-    <string name="explanation_tile">Veuillez noter\u00a0:\nLes appareils Tile ne changement pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.).</string>
+    <string name="explanation_tile">Veuillez noter:\nLes appareils Tile / Life360 ne changent pas leur identifiant.\nCela peut mener à de fausses alertes.\nEn cas d\'alerte, vérifiez que cet appareil n\'appartient pas à quelqu\'un autour de vous (amis, famille, collègues, voisins, etc.).</string>
     <string name="explanation_chipolo">Veuillez noter\u00a0:\nLes appareils Chipolo ne changent pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.).</string>
     <string name="explanation_pebblebee">Veuillez noter\u00a0:\nLes appareils Pebblebee ne changent pas d\u02bcidentifiants.\nCela peut mener à de fausses alertes.\nEn cas d\u02bcalerte, vérifiez que cet appareil n\u02bcappartienne pas à quelqu\u02bcun autour de vous (ami, famille, collègues, voisins etc.)..</string>
     <string name="explanation_unknown">Veuillez noter\u00a0:\nCertains appareils changent d\u02bcidentifiants au cours du temps.\nCes appareils sont identifiés de temps en temps comme de nouveaux appareils et peuvent apparaître plusieurs fois.</string>

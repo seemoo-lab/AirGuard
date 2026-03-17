@@ -14,8 +14,13 @@ class ObserveTrackerWorker(
 
     override suspend fun doWork(): Result {
         Timber.d("ObserveTrackerWorker doWork() called")
-        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
-        val notificationService = ATTrackingDetectionApplication.getCurrentApp().notificationService
+        val app = ATTrackingDetectionApplication.getCurrentApp()
+        if (app == null) {
+            Timber.e("ObserveTrackerWorker: Application not initialized, cannot proceed")
+            return Result.failure()
+        }
+        val deviceRepository = app.deviceRepository
+        val notificationService = app.notificationService
 
         val deviceAddress = inputData.getString(DEVICE_ADDRESS_PARAM)
         if (deviceAddress != null) {

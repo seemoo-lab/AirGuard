@@ -98,7 +98,8 @@ class DeviceCleanupWorker @AssistedInject constructor(
         }
 
         try {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val locationsToBeDeleted = locationRepository.getLocationsWithNoBeacons()
             if (locationsToBeDeleted.isNotEmpty()) {
                 Timber.d("Deleting ${locationsToBeDeleted.size} locations")

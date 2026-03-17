@@ -236,19 +236,19 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     }
 
     companion object {
-        private lateinit var instance: ATTrackingDetectionApplication
-        fun getAppContext(): Context = instance.applicationContext
+        private var instance: ATTrackingDetectionApplication? = null
+        fun getAppContext(): Context = instance?.applicationContext
+            ?: throw IllegalStateException("ATTrackingDetectionApplication has not been initialized yet")
         fun getCurrentActivity(): Activity? {
             return try {
-                instance.activityLifecycleCallbacks.currentActivity
-            }catch (e: UninitializedPropertyAccessException) {
+                instance?.activityLifecycleCallbacks?.currentActivity
+            } catch (e: Exception) {
                 Timber.e("Failed accessing current activity $e")
                 null
             }
         }
-        fun getCurrentApp(): ATTrackingDetectionApplication {
-            return instance
-        }
+        /** Returns the application instance, or null if it has not been fully initialized yet. */
+        fun getCurrentApp(): ATTrackingDetectionApplication? = instance
 
         const val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
         const val SURVEY_IS_RUNNING = false

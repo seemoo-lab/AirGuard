@@ -82,7 +82,7 @@
 
         We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous.</string>
 
-    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, Google "Find My Device" capable device, SmartTag, Pebblebee, Chipolo or a Tile is tracking you.</string>
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, Google "Find My Device" capable device, SmartTag, Pebblebee, Chipolo or a Tile / Life360 Tracker could be following you.</string>
     <string name="location_permission_title">Location Permission</string>
     <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Bluetooth Trackers even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
 
@@ -144,7 +144,7 @@
     <string name="device_icon">Device icon</string>
     <string name="location_sample_image">Location sample image</string>
     <string name="permissions_location_title">Background Location</string>
-    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo or Tile is tracking you. This permission is optional.</string>
+    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo or Tile / Life360 Tracker might follow you. This permission is optional.</string>
     <string name="onboarding_2_title">Location Permission</string>
     <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding Trackers via Bluetooth Low Energy. Without this permission, the app does not work and will not find any tracking devices. Your location data never leaves your device. </string>
     <string name="devices_edit_title">Edit device name</string>
@@ -165,7 +165,7 @@
     <string name="website_description">Check out our Website</string>
     <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles.</string>
+    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles / Life360 Trackers.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -252,7 +252,7 @@
     <string name="ignored_devices">Ignored devices</string>
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Apple Find My Devices found</string>
-    <string name="tile_found">Tiles found</string>
+    <string name="tile_found">Tiles / Life360 found</string>
     <string name="chipolo_found">Chipolos found</string>
     <string name="pebblebee_found">Pebblebees found</string>
     <string name="smarttag_found">SmartTags found</string>
@@ -380,7 +380,7 @@
 
     <string name="explanation_apple">Please note:\nApple devices change their identifier over time.\nAirTags, AirPods, FindMy and other Apple devices are recognized as new devices periodically and can be displayed multiple times.</string>
     <string name="explanation_samsung">Please note:\nSamsung devices change their identifier over time.\nSmartTags and other Samsung SmartThings devices are recognized as new devices periodically and can be displayed multiple times.</string>
-    <string name="explanation_tile">Please note:\nTile devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
+    <string name="explanation_tile">Please note:\nTile / Life360 devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_chipolo">Please note:\nChipolo devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_pebblebee">Please note:\nPebblebee devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_unknown">Please note:\nSome devices change their identifier over time.\nThese devices are recognized as new devices periodically and can be displayed multiple times.</string>

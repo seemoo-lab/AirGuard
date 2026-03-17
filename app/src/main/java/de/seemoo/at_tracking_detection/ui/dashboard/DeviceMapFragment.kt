@@ -109,7 +109,8 @@ class DeviceMapFragment : Fragment() {
         // MapUtils.enableMyLocationOverlay(map) // This enables the blue location dot on the map
 
         lifecycleScope.launch {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
             val locationList: List<Location> = if (!deviceAddress.isNullOrEmpty()) {
                 locationRepository.getLocationsForBeacon(deviceAddress!!)

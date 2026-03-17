@@ -177,7 +177,7 @@ class OldDeviceCleanupFragment : Fragment() {
     }
 
     private fun scheduleCleanupNow() {
-        val app = ATTrackingDetectionApplication.getCurrentApp()
+        val app = ATTrackingDetectionApplication.getCurrentApp() ?: return
         if (pendingDeleteOldDevices) {
             app.backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
             app.backgroundWorkScheduler.scheduleDeviceCleanupNow()

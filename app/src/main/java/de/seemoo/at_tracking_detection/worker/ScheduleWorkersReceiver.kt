@@ -26,7 +26,12 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
         Timber.d("Broadcast received ${intent?.action}")
 
         val action = intent?.action
-        val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler
+        val app = ATTrackingDetectionApplication.getCurrentApp()
+        if (app == null) {
+            Timber.w("Application not yet initialized, skipping broadcast handling for action: $action")
+            return
+        }
+        val backgroundWorkScheduler = app.backgroundWorkScheduler
 
         // Keep the broadcast short: schedule alarms inline; offload WorkManager to a separate thread and finish quickly.
         goAsync(Dispatchers.Default) {

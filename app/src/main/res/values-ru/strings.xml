@@ -86,7 +86,7 @@
     <string name="permissions_background_location_title">Определение местоположения в фоне</string>
     <string name="permission_background_location_message">Если предоставить это разрешение, информация о слежке будет более полной. Не обязательная настройка</string>
     <string name="permissions_location_title">Получение местоположения в фоне</string>
-    <string name="permission_location_message">Это разрешение нужно для получения более детальной информации при обнаружении следящих за вами AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo или Tile. Оно не обязательно</string>
+    <string name="permission_location_message">Это разрешение нужно для получения более детальной информации при обнаружении, если за вами может следить AirTag, устройство Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo или Tile / Life360. Оно не обязательно.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Обратная связь</string>
     <string name="tracking_detail_scan_title">Местопожение метки</string>
@@ -115,7 +115,7 @@
     <string name="onboarding_notification_title">Показ уведомлений</string>
     <string name="website">Сайт</string>
     <string name="scan_result_item_image_description">Результат проверки</string>
-    <string name="scan_result_no_devices">Меток не обнаружено.\nМы можем обнаруживать только Apple Find My, Apple AirTag, Google Find My, Galaxy SmartTags, Pebblebees, Chipolos и Tiles</string>
+    <string name="scan_result_no_devices">Метки не обнаружены.\nМы сканируем только Apple Find My, AirTag, Google Find My Device, Galaxy SmartTags, Pebblebee, Chipolo и Tile / Life360.</string>
     <string name="ble_service_connection_error">Не удалось подключиться к устройству</string>
     <string name="yes_button">Да</string>
     <string name="scan_enable_bluetooth_title">Bluetooth поиск</string>
@@ -192,7 +192,7 @@
 
         Мы <b>НЕ БУДЕМ</b> разглашать какие-либо данные о местоположении или данные, которые могут идентифицировать вас! Участие полностью
         анонимно.</string>
-    <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами следят с помощью таких устройств как AirTag, Find My от Apple, Find My Device от Google, SmartTag, Pebblebee, Chipolo и Tile</string>
+    <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами может следить AirTag, устройство Find My, устройство Google "Find My Device", SmartTag, Pebblebee, Chipolo или Tile / Life360.</string>
     <string name="settings_attributions_summary">Показать список свойств</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
     <string name="settings_privacy_policy_summary">Взглянуть нашу краткую и простую политику конфиденциальности</string>
@@ -225,7 +225,7 @@
     <string name="ignored_devices">Проигнорированные устройства</string>
     <string name="airtags_found">Найденные AirTag</string>
     <string name="findmy_found">Найденные Apple Find My</string>
-    <string name="tile_found">Найденные Tile</string>
+    <string name="tile_found">Найденные Tiles / Life360</string>
     <string name="chipolo_found">Найденные Chipolo</string>
     <string name="google_found">Найденные Google Find My</string>
     <string name="survey_card_title">Мы проводим опрос</string>
@@ -327,7 +327,7 @@
     <string name="article_offline_text">Сейчас вы не подключены к Интернету. Статьи помощи появятся в приложении позже, когда Интернет будет доступен</string>
     <string name="explanation_apple">Замечание:\nУстройства Apple время от времени меняют свои идентификаторы.\nAirTags, AirPods, FindMy и другие устройства Apple периодически будут обнаруживаться как новые и могут быть показаны несколько раз</string>
     <string name="explanation_samsung">Замечание:\nУстройства Samsung время от времени меняют свои идентификаторы.\nSmartTags и другие устройства Samsung SmartThings периодически будут обнаруживаться как новые и могут быть показаны несколько раз</string>
-    <string name="explanation_tile">Замечание:\nУстройства Tile не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае получения предупреждения, проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
+    <string name="explanation_tile">Замечание:\nУстройства Tile / Life360 не меняют свой идентификатор.\nЭто может приводить к ложным срабатываниям.\nВ случае предупреждения проверьте, не принадлежит ли устройство кому-то из окружающих (друзья, семья, коллеги, соседи и т.д.).</string>
     <string name="explanation_chipolo">Замечание:\nУстройства Chipolo не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
     <string name="explanation_pebblebee">Замечание:\nУстройства Pebblebee не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
     <string name="explanation_unknown">Замечание:\nНекоторые устройства время от времени меняют свой идентификатор.\nПериодически эти устройства будут обнаруживаться как новые и могут быть показаны несколько раз</string>
@@ -364,10 +364,10 @@
     <string name="retrieve_owner_information">Показать информацию о владельце</string>
     <string name="retrieve_owner_information_failed">Не удалось получить информацию о владельце</string>
     <string name="retrieve_owner_information_alert_title">Получить информацию о владельце</string>
-    <string name="retrieve_owner_information_explanation_unknown">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, её будет нужно перевести в специальный режим. Обычно это делается трёхкратным нажатимем на кнопку на метке или удержанием кнопки 30 секунд. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_pebblebee">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, трижды нажмите на кнопку на метке. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_chipolo">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 30 секунд и отпустите сразу после звукового сигланал. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_motorola">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 10 секунд и отпустите после звукового сигланал. После отпускания кнопки, немедленно нажмите &amp; и снова отпустите. После этого нажмите \"Далее\"</string>
+    <string name="retrieve_owner_information_explanation_unknown">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, её будет нужно перевести в специальный режим. Обычно это делается трёхкратным нажатимем на кнопку на метке или удержанием кнопки 30 секунд. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, трижды нажмите на кнопку на метке. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_chipolo">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 30 секунд и отпустите сразу после звукового сигланал. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_motorola">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 10 секунд и отпустите после звукового сигланал. После отпускания кнопки, немедленно нажмите &amp; и снова отпустите. После этого нажмите "Далее"</string>
     <string name="retrieve_owner_information_alert_next">Далее</string>
     <string name="retrieve_owner_information_alert_close">Закрыть</string>
     <string name="confirm_deactivating_background_scan_title">Подтверждение отключения поиска в фоне</string>

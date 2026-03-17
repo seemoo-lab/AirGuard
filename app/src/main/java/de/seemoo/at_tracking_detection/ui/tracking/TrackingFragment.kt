@@ -276,7 +276,8 @@ class TrackingFragment : Fragment() {
                         if (newName.isNotEmpty()) {
                             device.name = newName
                             lifecycleScope.launch {
-                                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                                    ?: error("ATTrackingDetectionApplication not initialized")
                                 deviceRepository.update(device)
                                 Timber.d("Renamed device to ${device.name}")
                             }
@@ -376,7 +377,8 @@ class TrackingFragment : Fragment() {
             if (device != null) {
                 device.hearted = !device.hearted
                 lifecycleScope.launch {
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
                     deviceRepository.update(device)
                     trackingViewModel.device.postValue(device)
                 }

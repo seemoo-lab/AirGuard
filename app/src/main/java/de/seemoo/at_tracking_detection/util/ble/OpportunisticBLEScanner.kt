@@ -31,7 +31,8 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
     init {
         if (notificationService == null) {
             notificationService =
-                ATTrackingDetectionApplication.getCurrentApp().notificationService
+                ATTrackingDetectionApplication.getCurrentApp()?.notificationService
+                    ?: error("ATTrackingDetectionApplication not initialized")
         }
 
         val context = ATTrackingDetectionApplication.getAppContext()

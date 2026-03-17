@@ -10,7 +10,8 @@ interface Connectable {
     val bluetoothGattCallback: BluetoothGattCallback
 
     fun sendBluetoothEvent(event: BluetoothEvent) {
-        val eventManager = ATTrackingDetectionApplication.getCurrentApp().bluetoothEventManager
+        val eventManager = ATTrackingDetectionApplication.getCurrentApp()?.bluetoothEventManager
+            ?: error("ATTrackingDetectionApplication not initialized")
         eventManager.trySendEvent(event)
     }
 
