@@ -132,16 +132,30 @@ class FilterDialogFragment : Fragment() {
                 devicesViewModel.addOrRemoveFilter(activeDeviceTypeFilter)
             }
             chip.filterDeviceTypeChip.setOnLongClickListener {
-                // Exclusively select only this device type
-                activeDeviceTypeFilter.deviceTypes.clear()
-                activeDeviceTypeFilter.add(device.deviceType)
+                val isOnlyOneSelected = activeDeviceTypeFilter.deviceTypes.size == 1 &&
+                        activeDeviceTypeFilter.contains(device.deviceType)
+
+                if (isOnlyOneSelected) {
+                    // If this is already the only selected type, select all types again
+                    DeviceManager.devices.forEach { d ->
+                        activeDeviceTypeFilter.add(d.deviceType)
+                    }
+                } else {
+                    // Exclusively select only this device type
+                    activeDeviceTypeFilter.deviceTypes.clear()
+                    activeDeviceTypeFilter.add(device.deviceType)
+                }
                 devicesViewModel.addOrRemoveFilter(activeDeviceTypeFilter)
 
                 // Update all chip checked states in the chip group
                 val chipGroup = binding.filterDeviceTypes
                 for (i in 0 until chipGroup.childCount) {
                     val childChip = chipGroup.getChildAt(i) as? com.google.android.material.chip.Chip
-                    childChip?.isChecked = childChip?.id == chip.filterDeviceTypeChip.id
+                    if (isOnlyOneSelected) {
+                        childChip?.isChecked = true
+                    } else {
+                        childChip?.isChecked = childChip.id == chip.filterDeviceTypeChip.id
+                    }
                 }
                 true
             }
