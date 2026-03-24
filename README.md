@@ -66,3 +66,10 @@ All this happens locally on your device and the private information, like locati
 ### Disclaimer
 AirTag, FindMy and iOS are trademarks of Apple Inc.
 We are not working together with Apple Inc.
+
+## Translate
+Please help to translate on the [Weblate](https://toolate.othing.xyz/projects/airguard)
+
+<a href="https://toolate.othing.xyz/projects/airguard">
+<img src="https://toolate.othing.xyz/widget/airguard/multi-auto.svg" alt="Translation status" />
+</a>
