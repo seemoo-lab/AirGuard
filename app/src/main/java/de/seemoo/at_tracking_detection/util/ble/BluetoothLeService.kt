@@ -9,17 +9,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BluetoothLeService : Service() {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
     private var bluetoothGatt: BluetoothGatt? = null
 
     private val binder = LocalBinder()
+
+    @Inject
+    lateinit var bluetoothEventManager: BluetoothEventManager
 
     inner class LocalBinder : Binder() {
         fun getService(): BluetoothLeService {
@@ -59,7 +64,7 @@ class BluetoothLeService : Service() {
             bluetoothGatt = null
         }
 
-        broadcastUpdate(BluetoothConstants.ACTION_GATT_CONNECTING)
+        bluetoothEventManager.trySendEvent(BluetoothEvent.Connecting)
 
         if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled) {
             Timber.w("Bluetooth adapter is not initialized or not enabled!")
@@ -83,7 +88,4 @@ class BluetoothLeService : Service() {
         gatt?.disconnect()
         gatt?.close()
     }
-
-    private fun broadcastUpdate(action: String) =
-        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(action))
 }

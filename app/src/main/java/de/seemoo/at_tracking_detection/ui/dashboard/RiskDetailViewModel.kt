@@ -1,16 +1,14 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
-import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.repository.LocationRepository
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
@@ -36,6 +34,7 @@ class RiskDetailViewModel @Inject constructor(
     }
 
     var riskColor: Int
+
     val numberOfTrackersFound = deviceRepository.trackingDevicesNotIgnoredSinceCount(RiskLevelEvaluator.relevantTrackingDateForRiskCalculation).asLiveData()
 
     val totalLocationsTrackedCount = locationRepository.locationsSinceCount(relevantDate).asLiveData()
@@ -57,12 +56,11 @@ class RiskDetailViewModel @Inject constructor(
     }
 
     init {
-        val context = ATTrackingDetectionApplication.getAppContext()
         riskColor = when (riskLevelEvaluator.evaluateRiskLevel()) {
-            RiskLevel.LOW -> ContextCompat.getColor(context, R.color.risk_low)
-            RiskLevel.MEDIUM -> ContextCompat.getColor(context, R.color.risk_medium)
-            RiskLevel.HIGH -> ContextCompat.getColor(context, R.color.risk_high)
+            RiskLevel.LOW -> R.color.risk_low
+            RiskLevel.MEDIUM -> R.color.risk_medium
+            RiskLevel.HIGH -> R.color.risk_high
         }
-        Timber.d("Risk Color: $riskColor")
+        Timber.d("Risk Color ID: $riskColor")
     }
 }

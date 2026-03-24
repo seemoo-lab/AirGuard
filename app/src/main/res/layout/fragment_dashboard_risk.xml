@@ -14,21 +14,20 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:orientation="vertical"
-                android:animateLayoutChanges="true"
-                >
+                android:paddingTop="16dp"
+                android:orientation="vertical">
 
                 <include
                     android:id="@+id/risk_card"
@@ -51,7 +50,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="85dp" />
+                    android:layout_height="32dp" />
 
             </LinearLayout>
 

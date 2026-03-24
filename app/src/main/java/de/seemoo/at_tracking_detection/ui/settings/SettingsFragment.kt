@@ -1,7 +1,6 @@
 package de.seemoo.at_tracking_detection.ui.settings
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -10,11 +9,10 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.navigation.findNavController
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
@@ -43,8 +41,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updatePermissionSettings()
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceListener)
 
-        val riskSensitivityPref = findPreference<ListPreference>("risk_sensitivity")
-        val devicesFilterPref = findPreference<MultiSelectListPreference>("devices_filter_unselected")
+        val riskSensitivityPref = findPreference<Material3ListPreference>("risk_sensitivity")
+        val devicesFilterPref = findPreference<Material3MultiSelectListPreference>("devices_filter_unselected")
 
         val updateDevicesFilter = { sensitivity: String ->
             val entries = resources.getStringArray(R.array.devicesFilter).toMutableList()
@@ -107,21 +105,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val deactivateBackgroundScanningPref = findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")
         deactivateBackgroundScanningPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
-                // Show confirmation dialog
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setTitle(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_title))
                     .setMessage(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_text))
                     .setPositiveButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_yes)) { _, _ ->
                         // User confirmed, allow the change
-                        if (deactivateBackgroundScanningPref != null) {
-                            deactivateBackgroundScanningPref.isChecked = true
-                        }
+                        deactivateBackgroundScanningPref.isChecked = true
                     }
                     .setNegativeButton(ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.confirm_deactivating_background_scan_no)) { _, _ ->
                         // User canceled, revert the change
-                        if (deactivateBackgroundScanningPref != null) {
-                            deactivateBackgroundScanningPref.isChecked = false
-                        }
+                        deactivateBackgroundScanningPref.isChecked = false
                     }
                     .show()
                 // Return false to prevent the change until user confirms
@@ -176,6 +169,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             )
             startActivity(intent)
             return@setOnPreferenceClickListener true
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            val dynamicColorPreference = findPreference<SwitchPreferenceCompat>("use_dynamic_colors")
+            dynamicColorPreference?.isVisible = false
         }
     }
 
@@ -248,6 +246,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
             findPreference<Preference>("old_device_cleanup")?.isVisible = true
+//            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         } else {
             Timber.d("Disabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = false
@@ -257,6 +256,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = SharedPrefs.deactivateBackgroundScanning
             findPreference<Preference>("old_device_cleanup")?.isVisible = false
+//            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = false
         }
     }
 

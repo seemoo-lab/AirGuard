@@ -4,18 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="vm"
             type="de.seemoo.at_tracking_detection.ui.scan.ScanViewModel" />
-
-        <variable
-            name="adapter_low_risk"
-            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
-
-        <variable
-            name="adapter_high_risk"
-            type="de.seemoo.at_tracking_detection.ui.scan.BluetoothDeviceAdapter" />
 
         <import type="android.view.View" />
     </data>
@@ -23,6 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground"
         tools:context=".ui.scan.ScanFragment">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -30,109 +22,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackColor="?attr/colorSurfaceVariant"
             android:visibility="@{!vm.scanFinished ? View.VISIBLE : View.GONE, default=visible}"
-            app:layout_constraintBottom_toTopOf="@id/scan_result_wrapper"
+            app:layout_constraintBottom_toTopOf="@id/scan_result_recycler"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scan_result_wrapper"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scan_result_recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="@{!vm.bluetoothEnabled || (vm.scanFinished &amp;&amp; vm.isListEmpty) ? View.GONE : View.VISIBLE, default=visible}"
+            android:paddingBottom="88dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:visibility="@{vm.canScan ? (vm.scanFinished &amp;&amp; vm.isListEmpty ? View.GONE : View.VISIBLE) : View.GONE, default=gone}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/scan_result_loading_bar"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- High-risk trackers label -->
-<!--                <TextView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/high_risk_trackers"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="18sp"-->
-<!--                    android:paddingStart="16dp"-->
-<!--                    android:paddingEnd="16dp"-->
-<!--                    android:paddingTop="8dp"-->
-<!--                    android:paddingBottom="4dp"-->
-<!--                    android:background="@android:color/darker_gray" />-->
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/scan_result_recycler_high_risk"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:clipToPadding="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_high_risk}" />
-
-                <!-- Low-risk trackers label -->
-                <RelativeLayout
-                    android:id="@+id/low_risk_trackers_wrapper"
-                    android:visibility="@{vm.lowRiskIsEmpty ? View.GONE : View.VISIBLE, default=visible}"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/low_risk_trackers_background_color">
-
-                    <TextView
-                        android:id="@+id/low_risk_trackers_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/low_risk_trackers"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="4dp"
-                        android:textColor="@color/low_risk_trackers_text_color" />
-
-                    <!-- Adjust the ImageButton position -->
-                    <ImageButton
-                        android:id="@+id/info_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:contentDescription="@string/info_button_description"
-                        android:src="@drawable/ic_baseline_info_24"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
-                        android:padding="8dp"
-                        android:background="@android:color/transparent" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/info_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:padding="16dp">
-
-                    <!-- Your information content here -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/explanation_safe_trackers" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/scan_result_recycler_low_risk"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:setAdapter="@{adapter_low_risk}" />
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_scan_result" />
 
         <include
             android:id="@+id/include_scan_empty_explanation"
@@ -155,10 +65,12 @@
             android:layout_marginBottom="16dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{!vm.bluetoothEnabled || !vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.canScan ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_stop_24"
+            app:backgroundTint="?attr/colorPrimaryContainer"
+            app:tint="?attr/colorOnPrimaryContainer"
             android:contentDescription="@string/scan_accessibility" />
 
         <include
@@ -170,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=gone}"
             />
 
         <include
@@ -182,7 +94,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.locationEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            android:visibility="@{vm.locationEnabled ? View.GONE : View.VISIBLE, default=gone}"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

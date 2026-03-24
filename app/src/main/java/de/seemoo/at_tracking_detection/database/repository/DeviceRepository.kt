@@ -16,6 +16,12 @@ import javax.inject.Inject
 class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     val devices: Flow<List<BaseDevice>> = deviceDao.getAll()
 
+    suspend fun toggleHeart(address: String, hearted: Boolean) {
+        val device = deviceDao.getByAddress(address) ?: return
+        device.hearted = hearted
+        deviceDao.update(device)
+    }
+
     fun trackingDevicesSince(since: LocalDateTime) = deviceDao.getAllNotificationSince(since)
 
     fun trackingDevicesNotIgnoredSince(since: LocalDateTime) = deviceDao.getAllTrackingDevicesNotIgnoredSince(since)
@@ -70,6 +76,10 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
     fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice? = deviceDao.getDeviceWithAlternativeIdentifier(alternativeIdentifier)
 
     fun getDeviceWithConnectableStateSince(deviceType: DeviceType, since: LocalDateTime, connectableState: Boolean): BaseDevice? = deviceDao.getDeviceWithConnectableStateSince(deviceType.name, since, connectableState)
+
+    fun getDeviceCountAtLocation(locationId: Int, since: LocalDateTime): Int = deviceDao.getDeviceCountAtLocation(locationId, since)
+
+    fun getDevicesAtLocation(locationId: Int, since: LocalDateTime): List<BaseDevice> = deviceDao.getDevicesAtLocation(locationId, since)
 
 //    @WorkerThread
 //    suspend fun getDeviceBeaconsSince(dateTime: String?): List<DeviceBeaconNotification> {

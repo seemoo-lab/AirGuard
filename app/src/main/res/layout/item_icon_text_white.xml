@@ -25,17 +25,16 @@
 
         <ImageView
             android:id="@+id/location_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_margin="5dp"
             android:src="@{iconDrawable}"
             app:layout_constraintBottom_toBottomOf="@id/risk_level_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/risk_level_text"
-            app:tint="@color/white"
+            app:tint="?attr/colorOnSurface"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_baseline_location_on_24"
-            />
+            tools:src="@drawable/ic_baseline_location_on_24" />
 
         <TextView
             android:id="@+id/risk_level_text"
@@ -45,7 +44,7 @@
             android:text="@{rowText}"
             android:textAlignment="textStart"
             android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

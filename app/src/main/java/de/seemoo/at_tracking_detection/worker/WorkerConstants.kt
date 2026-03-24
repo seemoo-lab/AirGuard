@@ -10,5 +10,8 @@ object WorkerConstants {
     const val TRACKING_DETECTION_WORKER = "TrackingDetectionWorker"
     const val IGNORE_DEVICE_WORKER = "IgnoreDeviceWorker"
     const val FALSE_ALARM_WORKER = "FalseAlarmWorker"
+    const val DEVICE_CLEANUP_WORKER = "DeviceCleanupWorker"
+    const val DEVICE_CLEANUP_WORKER_NOW = "DeviceCleanupWorker_NOW"
+    const val DEVICE_CLEANUP_INTERVAL_HOURS = 6L
     const val KIND_DELAY = 1L
 }

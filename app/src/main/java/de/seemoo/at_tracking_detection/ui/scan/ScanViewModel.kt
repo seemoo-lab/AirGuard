@@ -25,6 +25,7 @@ import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -42,6 +43,15 @@ class ScanViewModel @Inject constructor(
 
     val bluetoothEnabled = MutableLiveData(true)
     val locationEnabled = MutableLiveData(true)
+    val canScan: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        fun update() {
+            val bt = bluetoothEnabled.value == true
+            val loc = locationEnabled.value == true
+            this.value = bt && loc
+        }
+        addSource(bluetoothEnabled) { update() }
+        addSource(locationEnabled) { update() }
+    }
 
     private val btListener = object : de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor.Listener {
         override fun onBluetoothStateChanged(enabled: Boolean) {
@@ -67,6 +77,7 @@ class ScanViewModel @Inject constructor(
 
     fun startMonitoringSystemToggles() {
         de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor.addListener(btListener)
+        refreshBluetoothState()
         // Refresh location state whenever the view becomes visible
         locationEnabled.postValue(
             de.seemoo.at_tracking_detection.util.ble.LocationStateMonitor.isLocationEnabled()
@@ -87,6 +98,15 @@ class ScanViewModel @Inject constructor(
         }
     }
 
+    fun refreshBluetoothState() {
+        val btOn = de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor.isBluetoothEnabled()
+        val previous = bluetoothEnabled.value
+        bluetoothEnabled.postValue(btOn)
+        if (previous == true && !btOn) {
+            stopForegroundScanIfAny()
+        }
+    }
+
     private fun stopForegroundScanIfAny() {
         // Foreground BLEScanner is your UI-time scanner; stop via orchestrator safely
         try {
@@ -99,13 +119,7 @@ class ScanViewModel @Inject constructor(
 
 
     fun addScanResult(scanResult: ScanResult) = viewModelScope.launch(Dispatchers.IO) {
-        if (scanFinished.value == true) {
-            return@launch
-        }
         val wrappedScanResult = ScanResultWrapper(scanResult)
-
-        val bluetoothDeviceListHighRiskValue = bluetoothDeviceListHighRisk.value?.toMutableList() ?: mutableListOf()
-        val bluetoothDeviceListLowRiskValue = bluetoothDeviceListLowRisk.value?.toMutableList() ?: mutableListOf()
 
         val validDeviceTypes = getAllowedDeviceTypesFromSettings()
 
@@ -122,20 +136,18 @@ class ScanViewModel @Inject constructor(
         }
 
         val currentDate = LocalDateTime.now()
-        if (beaconRepository.getNumberOfBeaconsAddress(
-                deviceAddress = wrappedScanResult.uniqueIdentifier,
-                since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
-            ) == 0) {
-            val skipDevice = Utility.getSkipDevice(wrappedScanResult = wrappedScanResult)
-            if (skipDevice) {
-                Timber.d("Skipping device ${wrappedScanResult.uniqueIdentifier}")
-                return@launch
-            }
+        val beaconCountBefore = beaconRepository.getNumberOfBeaconsAddress(
+            deviceAddress = wrappedScanResult.uniqueIdentifier,
+            since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
+        )
 
-            // There was no beacon with the address saved in the last IME_BETWEEN_BEACONS minutes
+        if (beaconCountBefore == 0) {
+            val skipDevice = Utility.getSkipDevice(wrappedScanResult = wrappedScanResult)
+            if (skipDevice) return@launch
+
+            // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes
             LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
-            val location = locationProvider.getLastLocation() // if not working: checkRequirements = false
-            Timber.d("Got location $location in ScanViewModel")
+            val location = locationProvider.getLastLocation()
 
             if (location == null) {
                 LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
@@ -154,55 +166,46 @@ class ScanViewModel @Inject constructor(
         }
 
         val device: BaseDevice? = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
-
         val isElementHighRisk = isElementHighRisk(device, wrappedScanResult)
 
-        if (isElementHighRisk) {
-            val elementHighRisk: ScanResultWrapper? = bluetoothDeviceListHighRiskValue.find {
-                it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
-            }
+        withContext(Dispatchers.Main) {
+            if (scanFinished.value == true) return@withContext
 
-            if (elementHighRisk != null) {
-                elementHighRisk.rssi.set(wrappedScanResult.rssi.get())
-                elementHighRisk.rssiValue = wrappedScanResult.rssiValue
-                elementHighRisk.txPower = wrappedScanResult.txPower
-                elementHighRisk.isConnectable = wrappedScanResult.isConnectable
+            val highList = bluetoothDeviceListHighRisk.value?.toMutableList() ?: mutableListOf()
+            val lowList  = bluetoothDeviceListLowRisk.value?.toMutableList()  ?: mutableListOf()
+
+            if (isElementHighRisk) {
+                val existing = highList.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                if (existing != null) {
+                    existing.rssi.set(wrappedScanResult.rssi.get())
+                    existing.rssiValue = wrappedScanResult.rssiValue
+                    existing.txPower = wrappedScanResult.txPower
+                    existing.isConnectable = wrappedScanResult.isConnectable
+                } else {
+                    highList.add(wrappedScanResult)
+                }
             } else {
-                // only add possible devices to list
-                bluetoothDeviceListHighRiskValue.add(wrappedScanResult)
+                val existing = lowList.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                if (existing != null) {
+                    existing.rssi.set(wrappedScanResult.rssi.get())
+                    existing.rssiValue = wrappedScanResult.rssiValue
+                    existing.txPower = wrappedScanResult.txPower
+                    existing.isConnectable = wrappedScanResult.isConnectable
+                } else {
+                    lowList.add(wrappedScanResult)
+                }
             }
 
-        } else {
-            val elementLowRisk: ScanResultWrapper? = bluetoothDeviceListLowRiskValue.find {
-                it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier
-            }
-
-            if (elementLowRisk != null) {
-                elementLowRisk.rssi.set(wrappedScanResult.rssi.get())
-                elementLowRisk.rssiValue = wrappedScanResult.rssiValue
-                elementLowRisk.txPower = wrappedScanResult.txPower
-                elementLowRisk.isConnectable = wrappedScanResult.isConnectable
-            } else {
-                // only add possible devices to list
-                bluetoothDeviceListLowRiskValue.add(wrappedScanResult)
-            }
+            bluetoothDeviceListHighRisk.value = highList
+            bluetoothDeviceListLowRisk.value = lowList
         }
 
-        // Sorting list by detection date is not so restless
-//        bluetoothDeviceListHighRiskValue.sortByDescending { it.rssiValue }
-//        bluetoothDeviceListLowRiskValue.sortByDescending { it.rssiValue }
-
-        bluetoothDeviceListHighRisk.postValue(bluetoothDeviceListHighRiskValue)
-        bluetoothDeviceListLowRisk.postValue(bluetoothDeviceListLowRiskValue)
-
-        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier $wrappedScanResult.uniqueIdentifier")
+        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier ${wrappedScanResult.uniqueIdentifier}")
         Timber.d(
             "status bytes: ${
                 scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
             }"
         )
-        Timber.d("Device list (High Risk): ${bluetoothDeviceListHighRisk.value?.count()}")
-        Timber.d("Device list (Low Risk): ${bluetoothDeviceListLowRisk.value?.count()}")
     }
 
     val isListEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {

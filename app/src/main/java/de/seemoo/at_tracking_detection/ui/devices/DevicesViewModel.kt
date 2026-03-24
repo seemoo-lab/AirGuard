@@ -10,11 +10,16 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.FavoriteFilter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,22 +28,113 @@ class DevicesViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
-
-    fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
-        deviceRepository.setIgnoreFlag(deviceAddress, state)
-        updateDeviceList()
+    enum class SortOption {
+        NAME, LAST_SEEN, FIRST_DISCOVERED, TIMES_SEEN
     }
 
-    fun getDeviceBeaconsCount(deviceAddress: String): String =
-        beaconRepository.getDeviceBeaconsCount(deviceAddress).toString()
+    enum class FilterState {
+        UNSELECTED, INCLUDING, EXCLUDING
+    }
 
-    fun getDevice(deviceAddress: String): BaseDevice? = deviceRepository.getDevice(deviceAddress)
+    private var currentSort = SortOption.LAST_SEEN
+    private var rawDevicesList: List<BaseDevice> = emptyList()
 
-    fun getMarkerLocations(deviceAddress: String): List<Beacon> =
-        beaconRepository.getDeviceBeacons(deviceAddress)
+    val devices = MediatorLiveData<List<BaseDevice>>()
+    val activeFilter: MutableMap<String, Filter> = mutableMapOf()
 
-    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
-        deviceRepository.update(baseDevice)
+    // Track the state of Ignored and Notified filters
+    val ignoredFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
+    val notifiedFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
+    val favoriteFilterState: MutableLiveData<FilterState> = MutableLiveData(FilterState.UNSELECTED)
+
+    // UI State
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData(true) // Start loading
+    private var hasLoadedData = false
+    val showEmptyState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val showAllDevicesButton: MutableLiveData<Boolean> = MutableLiveData(false)
+    var emptyListText: MutableLiveData<String> = MutableLiveData()
+    var infoText: MutableLiveData<String> = MutableLiveData()
+    var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
+    var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
+
+    init {
+        isLoading.value = true
+        devices.addSource(deviceRepository.devices.asLiveData()) {
+            rawDevicesList = it
+            hasLoadedData = true
+            updateVisibleList()
+        }
+    }
+
+    fun setSortOption(option: SortOption) {
+        currentSort = option
+        updateVisibleList()
+    }
+
+    fun setFavoriteState(deviceAddress: String, hearted: Boolean) = viewModelScope.launch {
+        deviceRepository.toggleHeart(deviceAddress, hearted)
+    }
+
+    fun getCurrentSort(): SortOption = currentSort
+
+    fun cycleIgnoredFilterState() {
+        val currentState = ignoredFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        ignoredFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(IgnoredFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Ignored Filter State: $nextState")
+    }
+
+    fun cycleNotifiedFilterState() {
+        val currentState = notifiedFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        notifiedFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(NotifiedFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[NotifiedFilter::class.toString()] = NotifiedFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Notified Filter State: $nextState")
+    }
+
+    fun cycleFavoriteFilterState() {
+        val currentState = favoriteFilterState.value ?: FilterState.UNSELECTED
+        val nextState = when (currentState) {
+            FilterState.UNSELECTED -> FilterState.INCLUDING
+            FilterState.INCLUDING -> FilterState.EXCLUDING
+            FilterState.EXCLUDING -> FilterState.UNSELECTED
+        }
+        favoriteFilterState.value = nextState
+
+        when (nextState) {
+            FilterState.UNSELECTED -> activeFilter.remove(FavoriteFilter::class.toString())
+            FilterState.INCLUDING -> activeFilter[FavoriteFilter::class.toString()] = FavoriteFilter(filterFor = true)
+            FilterState.EXCLUDING -> activeFilter[FavoriteFilter::class.toString()] = FavoriteFilter(filterFor = false)
+        }
+
+        updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Favorite Filter State: $nextState")
     }
 
     fun addOrRemoveFilter(filter: Filter, remove: Boolean = false) {
@@ -48,79 +144,140 @@ class DevicesViewModel @Inject constructor(
         } else {
             activeFilter[filterName] = filter
         }
-        updateDeviceList()
-        Timber.d("Active Filter: $activeFilter")
         updateFilterSummaryText()
+        updateVisibleList()
+        Timber.d("Active Filter: $activeFilter")
     }
 
-    private fun updateDeviceList() {
-        devices.addSource(deviceRepository.devices.asLiveData()) {
-            var filteredDevices = it
-            activeFilter.forEach { (_, filter) ->
+    // applies Filters AND Sorting
+    fun updateVisibleList() {
+        val currentDevices = rawDevicesList
+        val currentFilters = activeFilter.toMap() // Snapshot for thread safety
+        val sort = currentSort
+
+        showEmptyState.value = false
+
+        viewModelScope.launch(Dispatchers.Default) {
+            var filteredDevices = currentDevices
+
+            // Apply Filters
+            currentFilters.forEach { (_, filter) ->
                 filteredDevices = filter.apply(filteredDevices)
             }
-            devices.value = filteredDevices
-        }
-    }
 
-    val devices = MediatorLiveData<List<BaseDevice>>()
+            // Apply Sorting
+            filteredDevices = when (sort) {
+                SortOption.NAME -> filteredDevices.sortedBy { it.getDeviceNameWithID() }
+                SortOption.LAST_SEEN -> filteredDevices.sortedByDescending { it.lastSeen }
+                SortOption.FIRST_DISCOVERED -> filteredDevices.sortedByDescending { it.firstDiscovery }
+                SortOption.TIMES_SEEN -> {
+                    val beaconCounts = filteredDevices.associate { it.address to getDeviceBeaconsCountInt(it.address) }
+                    filteredDevices.sortedByDescending { beaconCounts[it.address] ?: 0 }
+                }
+            }
 
-    init {
-        devices.addSource(deviceRepository.devices.asLiveData()) {
-            if (activeFilter.isEmpty()) {
-                devices.value = it
+            filteredDevices = filteredDevices.filter { it.hearted } + filteredDevices.filterNot { it.hearted }
+
+            withContext(Dispatchers.Main) {
+                devices.value = filteredDevices
+                isLoading.value = false // Done loading
+
+                if (hasLoadedData) {
+                    showEmptyState.value = filteredDevices.isEmpty()
+                    showAllDevicesButton.value = filteredDevices.isEmpty() && hasMeaningfulFilters()
+                }
             }
         }
     }
 
-    val activeFilter: MutableMap<String, Filter> = mutableMapOf()
+    private fun hasMeaningfulFilters(): Boolean {
+        // Check if we have filters that actually filter out devices (not just DeviceTypeFilter with all types)
+        return activeFilter.any { (filterName, _) ->
+            filterName == NotifiedFilter::class.toString() ||
+            filterName == IgnoredFilter::class.toString() ||
+            filterName == FavoriteFilter::class.toString() ||
+            filterName == DateRangeFilter::class.toString() ||
+            filterName == LocationFilter::class.toString()
+        }
+    }
 
-    val deviceListEmpty: LiveData<Boolean> = devices.map { it.isEmpty() }
+    fun setIgnoreFlag(deviceAddress: String, state: Boolean) = viewModelScope.launch {
+        deviceRepository.setIgnoreFlag(deviceAddress, state)
+    }
 
-    var emptyListText: MutableLiveData<String> = MutableLiveData()
-    var infoText: MutableLiveData<String> = MutableLiveData()
+    fun update(baseDevice: BaseDevice) = viewModelScope.launch {
+        deviceRepository.update(baseDevice)
+    }
 
-    var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
-    var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
+    fun getDeviceBeaconsCount(deviceAddress: String): String =
+        getDeviceBeaconsCountInt(deviceAddress).toString()
 
-    private fun updateFilterSummaryText() {
-        val filterStringBuilder = StringBuilder()
+    fun getDeviceBeaconsCountInt(deviceAddress: String): Int =
+        beaconRepository.getDeviceBeaconsCount(deviceAddress)
+
+    fun getDevice(deviceAddress: String): BaseDevice? = deviceRepository.getDevice(deviceAddress)
+
+    fun getMarkerLocations(deviceAddress: String): List<Beacon> =
+        beaconRepository.getDeviceBeacons(deviceAddress)
+
+    fun updateFilterSummaryText() {
         val context = ATTrackingDetectionApplication.getAppContext()
-        // No filters option
-        if (activeFilter.containsKey(IgnoredFilter::class.toString())) {
-            filterStringBuilder.append(context.getString(R.string.ignored_devices))
-            filterStringBuilder.append(", ")
+        val summaryParts = mutableListOf<String>()
+
+        // Check Location Filter
+        val hasLocationFilter = activeFilter.containsKey(LocationFilter::class.toString())
+        if (hasLocationFilter) {
+            summaryParts.add(context.getString(R.string.found_at_location))
         }
 
-        if (activeFilter.containsKey(NotifiedFilter::class.toString())) {
-            filterStringBuilder.append(context.getString(R.string.tracker_detected))
-            filterStringBuilder.append(", ")
+        // Check Status Filters
+        when (ignoredFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.ignored_devices))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.not_ignored))
+            else -> {}
         }
 
+        when (favoriteFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.filter_marked_headline))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.filter_not_marked_headline))
+            else -> {}
+        }
+
+        when (notifiedFilterState.value) {
+            FilterState.INCLUDING -> summaryParts.add(context.getString(R.string.tracker_detected))
+            FilterState.EXCLUDING -> summaryParts.add(context.getString(R.string.not_notified))
+            else -> {}
+        }
+
+        // Check Device Type Filters
         if (activeFilter.containsKey(DeviceTypeFilter::class.toString())) {
             val deviceTypeFilter = activeFilter[DeviceTypeFilter::class.toString()] as DeviceTypeFilter
+            val totalAvailableTypes = DeviceManager.devices.count()
+            val selectedCount = deviceTypeFilter.deviceTypes.count()
 
-            if (deviceTypeFilter.deviceTypes.count() == DeviceManager.devices.count()) {
-                filterStringBuilder.append(context.getString(R.string.title_device_map))
-            }else {
-
-                for (device in deviceTypeFilter.deviceTypes) {
-                    filterStringBuilder.append(DeviceType.userReadableNameDefault(device))
-                    filterStringBuilder.append(", ")
+            if (selectedCount == totalAvailableTypes) {
+                // If all are selected and no other status filters, show "All devices"
+                if (summaryParts.isEmpty()) {
+                    summaryParts.add(context.getString(R.string.all_devices))
                 }
-                if (deviceTypeFilter.deviceTypes.isNotEmpty()) {
-                    filterStringBuilder.delete(
-                        filterStringBuilder.length - 2,
-                        filterStringBuilder.length - 1
-                    )
+            } else {
+                // more than 2 types -> "X types", <= 2 -> list names
+                if (selectedCount > 2) {
+                    summaryParts.add(context.getString(R.string.selected_types_count, selectedCount))
+                } else if (selectedCount > 0) {
+                    val typeNames = deviceTypeFilter.deviceTypes.map {
+                        DeviceType.userReadableNameDefault(it)
+                    }
+                    summaryParts.addAll(typeNames)
                 }
             }
-        }else {
-            // All devices
-            filterStringBuilder.append(context.getString(R.string.title_device_map))
+        } else {
+            if (summaryParts.isEmpty()) {
+                summaryParts.add(context.getString(R.string.all_devices))
+            }
         }
 
-        filterSummaryText.postValue(filterStringBuilder.toString())
+        // Join with commas
+        filterSummaryText.postValue(summaryParts.joinToString(", "))
     }
-
 }

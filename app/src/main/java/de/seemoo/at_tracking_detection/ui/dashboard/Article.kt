@@ -14,6 +14,7 @@ data class Article(
     val readingTime: Int,
     val previewText: String,
     val cardColor: String,
+    val textColor: String? = null,
     val preview_image: String, // This has to be named like this because of the file format
     val filename: String
 )
@@ -79,7 +80,8 @@ fun loadArticlesJson(context: Context = ATTrackingDetectionApplication.getAppCon
             // Build a minimal fallback inline so UI still shows something.
             val offlineTitle = context.getString(R.string.article_offline_header)
             val offlineText = context.getString(R.string.article_offline_text)
-            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"blue_card_background","preview_image":"","filename":""}}"""
+            // MD3 Update: Use secondaryContainer instead of blue_card_background
+            """{"article0":{"title":"$offlineTitle","author":"System","readingTime":0,"previewText":"$offlineText","cardColor":"md_theme_secondaryContainer","preview_image":"","filename":""}}"""
         }
     }
 }

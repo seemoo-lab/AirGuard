@@ -12,14 +12,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -31,11 +29,8 @@ import com.google.android.material.snackbar.Snackbar
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
@@ -43,15 +38,6 @@ import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
-import org.osmdroid.bonuspack.utils.BonusPackHelper
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.BoundingBox
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.CopyrightOverlay
-import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 import java.net.HttpURLConnection
 import java.net.URL
@@ -61,12 +47,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.math.round
 
 object Utility {
-
-    private const val MAX_ZOOM_LEVEL = 18.0
-    private const val ZOOMED_OUT_LEVEL = 15.0
-    private const val CIRCLE_VISIBILITY_ZOOM_THRESHOLD = 16.0
-    private const val LOCATION_CLUSTER_RADIUS_METERS: Double = BackgroundBluetoothScanner.MAX_DISTANCE_UNTIL_NEW_LOCATION.toDouble()
-
     fun checkAndRequestPermission(permission: String): Boolean {
         val context = ATTrackingDetectionApplication.getCurrentActivity() ?: return false
         when {
@@ -114,236 +94,11 @@ object Utility {
         return ((value.toInt() shr position) and 1) == 1
     }
 
-    fun enableMyLocationOverlay(
-        map: MapView
-    ) {
-        val locationOverlay = MyLocationNewOverlay(map)
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val options = BitmapFactory.Options()
-        val bitmapPerson = BitmapFactory.decodeResource(context.resources, R.drawable.mylocation, options)
-        locationOverlay.setPersonIcon(bitmapPerson)
-        locationOverlay.setPersonHotspot((26.0 * 1.6).toFloat(), (26.0 * 1.6).toFloat())
-        locationOverlay.setDirectionArrow(bitmapPerson, bitmapPerson)
-        locationOverlay.enableMyLocation()
-        locationOverlay.enableFollowLocation()
-        map.overlays.add(locationOverlay)
-        map.controller.setZoom(ZOOMED_OUT_LEVEL)
-    }
-
-    fun basicMapSetup(map: MapView) {
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val copyrightOverlay = CopyrightOverlay(context)
-
-        map.setTileSource(TileSourceFactory.MAPNIK)
-        map.setUseDataConnection(true)
-        map.setMultiTouchControls(true)
-        map.maxZoomLevel = MAX_ZOOM_LEVEL
-
-        map.overlays.add(copyrightOverlay)
-    }
-
-    fun setGeoPointsFromListOfLocations(
-        locationList: List<Location>,
-        map: MapView,
-    ): Boolean {
-        val context = ATTrackingDetectionApplication.getAppContext()
-
-        val mapController = map.controller
-        val geoPointList = ArrayList<GeoPoint>()
-
-        val icon = R.drawable.ic_baseline_location_on_45_black
-        val iconDrawable = ContextCompat.getDrawable(
-            context, icon
-
-        )
-
-        // Remove previously added clusterer overlays to avoid performance issues
-        map.overlays.removeAll { it is RadiusMarkerClusterer }
-        // Remove previously added radius circles to avoid performance issues
-        map.overlays.removeAll { it is org.osmdroid.views.overlay.Polygon && it.subDescription == "LOCATION_RADIUS_CIRCLE" }
-
-        val clusterer = RadiusMarkerClusterer(context)
-        val clusterIcon = BonusPackHelper.getBitmapFromVectorDrawable(context, icon)
-        clusterer.setIcon(clusterIcon)
-        clusterer.setRadius(100)
-        clusterer.mAnchorU = Marker.ANCHOR_CENTER
-        clusterer.mAnchorV = Marker.ANCHOR_BOTTOM
-        clusterer.mTextAnchorV = 0.6f
-
-        // Store circles for dynamic visibility control based on zoom level
-        val circles = mutableListOf<org.osmdroid.views.overlay.Polygon>()
-
-        // Helper function to update circle visibility based on zoom level and viewport for efficiency
-        fun updateCircleVisibility() {
-            val currentZoom = map.zoomLevelDouble
-            val shouldShowCircles = currentZoom >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
-
-            // Trivial case: hide all circles
-            if (!shouldShowCircles) {
-                circles.forEach { circle ->
-                    circle.isEnabled = false
-                    circle.isVisible = false
-                }
-                return
-            }
-
-            // Get current bounding box with error margin
-            val boundingBox = map.boundingBox
-            val latMargin = (boundingBox.latNorth - boundingBox.latSouth) * 0.2 // 20% error margin, just to be safe
-            val lonMargin = (boundingBox.lonEast - boundingBox.lonWest) * 0.2 // 20% error margin, just to be safe
-
-            // Calculate error margin for bounding box, just to be safe
-            val expandedBoundingBox = BoundingBox(
-                boundingBox.latNorth + latMargin,
-                boundingBox.lonEast + lonMargin,
-                boundingBox.latSouth - latMargin,
-                boundingBox.lonWest - lonMargin
-            )
-
-            circles.forEach { circle ->
-                // Get the center point of the circle
-                val centerPoint = circle.actualPoints.firstOrNull()
-                // Only show circle if its center is within the current bounding box
-                // This is for optimization to not render too many circles at once
-                val isInCurrentFrame = centerPoint?.let {
-                    expandedBoundingBox.contains(it)
-                } ?: false
-
-                circle.isEnabled = isInCurrentFrame
-                circle.isVisible = isInCurrentFrame
-            }
-        }
-
-        // Create markers and circles on the main thread to avoid concurrency issues with MapView overlays
-        locationList
-            .filter { it.locationId != 0 }
-            .forEach { location ->
-                // Marker:
-                val marker = Marker(map)
-                val geoPoint = GeoPoint(location.latitude, location.longitude)
-                marker.position = geoPoint
-                marker.icon = iconDrawable
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                geoPointList.add(geoPoint)
-
-                marker.setOnMarkerClickListener { clickedMarker, _ ->
-                    clickedMarker.closeInfoWindow()
-                    false
-                }
-
-                clusterer.add(marker)
-
-                // Circles:
-                val circle = org.osmdroid.views.overlay.Polygon(map).apply {
-                    points = org.osmdroid.views.overlay.Polygon.pointsAsCircle(geoPoint, LOCATION_CLUSTER_RADIUS_METERS)
-                    fillColor = 0x2034A7FF
-                    strokeColor = 0x5534A7FF
-                    strokeWidth = 2f
-                    subDescription = "LOCATION_RADIUS_CIRCLE"
-                    // Only show circle if zoom level is at or above threshold
-                    isVisible = map.zoomLevelDouble >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
-                    isEnabled = map.zoomLevelDouble >= CIRCLE_VISIBILITY_ZOOM_THRESHOLD
-                    infoWindow = null
-                }
-
-                circles.add(circle)
-                map.overlays.add(circle)
-            }
-
-        // Add zoom change listener to toggle circle visibility
-        map.addMapListener(object : org.osmdroid.events.MapListener {
-            override fun onScroll(event: org.osmdroid.events.ScrollEvent?): Boolean {
-                updateCircleVisibility()
-                map.invalidate()
-                return false
-            }
-
-            override fun onZoom(event: org.osmdroid.events.ZoomEvent?): Boolean {
-                updateCircleVisibility()
-                map.invalidate()
-                return true
-            }
-        })
-
-        map.overlays.add(clusterer)
-        Timber.d("Added ${geoPointList.size} markers to the map!")
-
-        if (geoPointList.isEmpty()) {
-            mapController.setZoom(MAX_ZOOM_LEVEL)
-            runWhenMapReady(map) { map.invalidate() }
-            return false
-        }
-
-        val myLocationOverlay =
-            map.overlays.firstOrNull { it is MyLocationNewOverlay } as? MyLocationNewOverlay
-        myLocationOverlay?.disableFollowLocation()
-        val boundingBox = BoundingBox.fromGeoPointsSafe(geoPointList)
-
-        // Ensure the map has been loaded before attempting to zoom.
-        runWhenMapReady(map) {
-            try {
-                Timber.d("Zoom in to bounds -> $boundingBox (w=${map.width}, h=${map.height})")
-                map.zoomToBoundingBox(boundingBox, true, 100, MAX_ZOOM_LEVEL, 1)
-            } catch (e: IllegalArgumentException) {
-                mapController.setCenter(boundingBox.centerWithDateLine)
-                mapController.setZoom(10.0)
-                Timber.e("Failed to zoom to bounding box! ${e.message}")
-            } finally {
-                map.invalidate()
-            }
-        }
-
-        return true
-    }
-
-    // Helper to run actions only after the MapView is loaded (has non-zero size)
-    private fun runWhenMapReady(map: MapView, action: () -> Unit) {
-        if (map.width > 0 && map.height > 0) {
-            map.post { action() }
-            return
-        }
-        map.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                if (map.width > 0 && map.height > 0) {
-                    map.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    map.post { action() }
-                }
-            }
-        })
-    }
-
-    fun fetchLocationListFromBeaconList(locations: List<Beacon>): List<Location> {
-        val uniqueLocations = locations
-            .distinctBy { it.locationId } // Filter out duplicates based on locationId
-            .filter { it.locationId != null && it.locationId != 0 } // Filter out invalid locationId entries
-
-        val locationList = arrayListOf<Location>()
-        val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
-
-        uniqueLocations.mapNotNullTo(locationList) {
-            locationRepository.getLocationWithId(it.locationId!!)
-        }
-
-        return locationList
-    }
-
-
     fun setSelectedTheme(sharedPreferences: SharedPreferences) {
         when (sharedPreferences.getString("app_theme", "system_default")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system_default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        }
-    }
-
-    fun isActualThemeDark(context: Context): Boolean {
-        return when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_YES -> true // App theme explicitly set to Dark
-            AppCompatDelegate.MODE_NIGHT_NO -> false // App theme explicitly set to Light
-            else -> { // App theme set to Follow System or other modes (e.g., Battery Saver)
-                val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                currentNightMode == Configuration.UI_MODE_NIGHT_YES // Return true if the system configuration is currently dark
-            }
         }
     }
 
@@ -671,3 +426,5 @@ fun android.location.Location.privacyPrint(): String {
     }
     return "(${latitude.round(0)}, ${longitude.round(0)})"
 }
+
+

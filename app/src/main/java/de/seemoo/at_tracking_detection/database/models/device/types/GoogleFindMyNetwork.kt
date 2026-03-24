@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -29,7 +30,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMy
 import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
 import java.net.URL
 import java.util.UUID
@@ -61,7 +62,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                                 gatt.discoverServices()
                             }
                             BluetoothProfile.STATE_DISCONNECTED -> {
-                                broadcastUpdate(BluetoothConstants.ACTION_GATT_DISCONNECTED)
+                                sendBluetoothEvent(BluetoothEvent.Disconnected)
                                 Timber.d("Disconnected from gatt device!")
                             }
                             else -> {
@@ -71,7 +72,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     }
                     else -> {
                         Timber.e("Failed to connect to bluetooth device! Status: $status")
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
             }
@@ -89,7 +90,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 if (service == null) {
                     Timber.e("Playing sound service not found!")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
@@ -97,18 +98,17 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         gatt.writeCharacteristic(it, GOOGLE_START_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                     } else {
-                        // Deprecated since 33
                         @Suppress("DEPRECATION")
                         it.value = GOOGLE_START_SOUND_OPCODE
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
                     Timber.d("Playing sound on Find My device with ${it.uuid}")
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_RUNNING)
+                    sendBluetoothEvent(BluetoothEvent.EventRunning)
                 }
             }
 
@@ -129,13 +129,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 val characteristic = service.getCharacteristic(uuid)
                 characteristic.let {
                     gatt.setCharacteristicNotification(it, true)
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        it.writeType
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         gatt.writeCharacteristic(it, GOOGLE_STOP_SOUND_OPCODE, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                     } else {
-                        // Deprecated since 33
                         @Suppress("DEPRECATION")
                         it.value = GOOGLE_STOP_SOUND_OPCODE
+                        it.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                         @Suppress("DEPRECATION")
                         gatt.writeCharacteristic(it)
                     }
@@ -151,23 +150,32 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.d("Finished writing to characteristic")
-                    if (characteristic?.value.contentEquals(GOOGLE_START_SOUND_OPCODE) && gatt != null) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            stopSoundOnGoogleDevice(gatt)
-                        }, 5000)
-                    }
-
-                    if (characteristic?.value.contentEquals(GOOGLE_STOP_SOUND_OPCODE)) {
-                        disconnect(gatt)
-                        broadcastUpdate(BluetoothConstants.ACTION_EVENT_COMPLETED)
+                    if (gatt != null) {
+                        // Use internal tracking since characteristic.value is deprecated
+                        val lastWrittenValue = getLastWrittenValue(characteristic)
+                        if (lastWrittenValue.contentEquals(GOOGLE_START_SOUND_OPCODE)) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stopSoundOnGoogleDevice(gatt)
+                            }, 5000)
+                        } else if (lastWrittenValue.contentEquals(GOOGLE_STOP_SOUND_OPCODE)) {
+                            disconnect(gatt)
+                            sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                        }
                     }
 
                 } else {
                     Timber.d("Writing to characteristic failed ${characteristic?.uuid}")
                     disconnect(gatt)
-                    broadcastUpdate(BluetoothConstants.ACTION_EVENT_FAILED)
+                    sendBluetoothEvent(BluetoothEvent.EventFailed)
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
+            }
+
+            private fun getLastWrittenValue(characteristic: BluetoothGattCharacteristic?): ByteArray {
+                return characteristic?.let {
+                    @Suppress("DEPRECATION")
+                    it.value ?: ByteArray(0)
+                } ?: ByteArray(0)
             }
         }
 
@@ -213,8 +221,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
             val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(getSubType(wrappedScanResult))
-            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
             val context: Context = ATTrackingDetectionApplication.getAppContext()
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
 
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 Timber.e("Bluetooth adapter is null or not enabled")
@@ -245,8 +254,9 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
         }
 
         suspend fun getOwnerInformationURL(wrappedScanResult: ScanResultWrapper): URL? {
-            val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
             val context: Context = ATTrackingDetectionApplication.getAppContext()
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
 
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 Timber.e("Bluetooth adapter is null or not enabled")
@@ -323,8 +333,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
                         val descriptor = characteristic.getDescriptor(GOOGLE_DESCRIPTOR_UUID)
 
-                        // Write data to the descriptor
-                        if (Build.VERSION.SDK_INT >= 33) {
+                        // Write data to the descriptor using modern API
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)
                         } else {
                             @Suppress("DEPRECATION")
@@ -354,14 +364,14 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                             return
                         }
 
-                        if (Build.VERSION.SDK_INT >= 33) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             gatt.writeCharacteristic(characteristicToWrite, dataToSend, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
                         } else {
                             @Suppress("DEPRECATION")
                             characteristicToWrite.value = dataToSend
                             characteristicToWrite.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                             @Suppress("DEPRECATION")
-                            (gatt.writeCharacteristic(characteristicToWrite))
+                            gatt.writeCharacteristic(characteristicToWrite)
                         }
                     } else {
                         continuation.resume(null)
@@ -401,7 +411,8 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         fun nameReplacementLayer(name: String): String {
             return when {
-                name.contains("motorola", ignoreCase = true) -> "Motorola Moto Tag"
+                name.contains("motorola", ignoreCase = true) -> "Moto Tag"
+                name.contains("TBD-Gray", ignoreCase = false) -> "Moto Tag"
                 else -> name
             }
         }
@@ -412,10 +423,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 name.contains("pebblebee", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.PEBBLEBEE
                 name.contains("chipolo", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.CHIPOLO
                 name.contains("motorola", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
-                name.contains("moto", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("moto tag", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.MOTOROLA
+                name.contains("TBD-Gray", ignoreCase = false) -> GoogleFindMyNetworkManufacturer.MOTOROLA
                 name.contains("eufy", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.EUFY
                 name.contains("jio", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.JIO
                 name.contains("rolling square", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.ROLLING_SQUARE
+                name.contains("hama", ignoreCase = true) -> GoogleFindMyNetworkManufacturer.HAMA
                 else -> GoogleFindMyNetworkManufacturer.UNKNOWN
             }
         }
@@ -424,6 +437,10 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             return when {
                 name.contains("pebblebee clip", ignoreCase = true) -> R.drawable.ic_pebblebee_clip
                 name.contains("chipolo one", ignoreCase = true) -> R.drawable.ic_chipolo
+                name.contains("motorola", ignoreCase = true) -> R.drawable.ic_moto_tag
+                name.contains("moto tag", ignoreCase = true) -> R.drawable.ic_moto_tag
+                name.contains("TBD-Gray", ignoreCase = false) -> R.drawable.ic_moto_tag
+                name.contains("hama", ignoreCase = true) -> R.drawable.ic_hama_tracker
                 else -> R.drawable.ic_chipolo
             }
         }
@@ -434,6 +451,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 GoogleFindMyNetworkManufacturer.PEBBLEBEE -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_pebblebee)
                 GoogleFindMyNetworkManufacturer.CHIPOLO -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_chipolo)
                 GoogleFindMyNetworkManufacturer.MOTOROLA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_motorola)
+                GoogleFindMyNetworkManufacturer.HAMA -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_hama)
                 else -> ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.retrieve_owner_information_explanation_unknown)
             }
         }

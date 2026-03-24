@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -11,209 +13,217 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/md_theme_background">
+
+        <View
+            android:id="@+id/background_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-500dp"
+            android:background="?attr/colorPrimaryContainer"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:translationY="360dp" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/scan_result_loading_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
-        <View
-            android:id="@+id/background_bar"
+        <LinearLayout
+            android:id="@+id/info_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/blue_card_background"
-            android:alpha="0.75"
-            bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/device_type_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="32dp"
             bind:layout_constraintTop_toTopOf="parent"
-            bind:layout_constraintBottom_toTopOf="@id/connection_quality"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent">
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintBottom_toTopOf="@id/actions_container">
+
+            <ImageView
+                android:id="@+id/device_icon"
+                android:layout_width="86dp"
+                android:layout_height="86dp"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="@string/scan_result_item_image_description"
+                bind:tint="?android:attr/textColorPrimary"
+                tools:src="@drawable/ic_airtag" />
 
             <TextView
                 android:id="@+id/device_type_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{vm.displayName}"
-                android:textSize="30sp"
-                android:visibility="visible"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:maxLines="3"
-                android:ellipsize="end"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                bind:layout_constraintLeft_toLeftOf="parent"
-                bind:layout_constraintRight_toRightOf="parent"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"/>
-
-            <ProgressBar
-                android:id="@+id/progress_circular"
-                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:text="@{vm.displayName}"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+                android:textColor="?android:attr/textColorPrimary"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:layout_marginBottom="8dp"
+                tools:text="Apple AirTag" />
+
+            <TextView
+                android:id="@+id/connection_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.connectionQuality.toString() + ` %`}"
+                android:textAppearance="@style/TextAppearance.Material3.DisplayLarge"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="85 %" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/battery_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                bind:layout_constraintLeft_toLeftOf="parent"
-                bind:layout_constraintRight_toRightOf="parent"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:visibility="visible">
 
-        <TextView
-            android:id="@+id/connection_quality"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{vm.connectionQuality.toString() + ` %`}"
-            android:textSize="36sp"
-            bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/battery_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/battery_status_text"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_marginEnd="8dp"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/scan_explanation_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"
-            bind:layout_constraintTop_toBottomOf="@id/connection_quality"
-            bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent">
+                <ImageView
+                    android:id="@+id/battery_symbol"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    bind:srcCompat="@drawable/ic_battery_unknown_24"
+                    android:contentDescription="@string/scan_battery_icon_description"
+                    bind:tint="?attr/colorControlNormal" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/scan_explanation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/scan_explanation"
-                android:textSize="16sp"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toTopOf="parent"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constrainedWidth="true"
-                bind:layout_constraintHorizontal_bias="0.5"
-                bind:layout_constraintHorizontal_chainStyle="packed"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:id="@+id/battery_layout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"-->
-<!--            bind:layout_constraintBottom_toTopOf="@id/connection_state_layout"-->
-<!--            bind:layout_constraintLeft_toLeftOf="parent"-->
-<!--            bind:layout_constraintRight_toRightOf="parent">-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/battery_text"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/battery_status_text"-->
-<!--                android:textSize="16sp"-->
-<!--                bind:layout_constraintLeft_toLeftOf="parent"-->
-<!--                bind:layout_constraintRight_toLeftOf="@id/battery_symbol"-->
-<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--                bind:layout_constraintTop_toTopOf="parent"/>-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/battery_symbol"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                bind:srcCompat="@drawable/ic_battery_unknown_24"-->
-<!--                bind:layout_constraintRight_toRightOf="parent"-->
-<!--                bind:layout_constraintLeft_toRightOf="@id/battery_text"-->
-<!--                bind:layout_constraintBottom_toBottomOf="parent"-->
-<!--                bind:layout_constraintTop_toTopOf="parent"-->
-<!--                android:contentDescription="@string/scan_battery_icon_description"-->
-<!--                bind:tint="?attr/colorControlNormal" />-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/connection_state_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintTop_toBottomOf="@id/scan_explanation_layout"
-            bind:layout_constraintEnd_toEndOf="parent"
-            bind:layout_constraintStart_toStartOf="parent">
-
-            <Button
-                android:id="@+id/perform_action_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/samsung_determine_button"
-                android:visibility="gone"
-                bind:layout_constraintBottom_toTopOf="@id/retrieve_owner_information_button"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="parent" />
-
-            <Button
-                android:id="@+id/retrieve_owner_information_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/retrieve_owner_information"
-                android:visibility="gone"
-                bind:layout_constraintBottom_toTopOf="@id/connection_state"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@id/perform_action_button" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:id="@+id/connection_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{vm.connectionStateString}"
-                android:textSize="16sp"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:layout_constraintTop_toBottomOf="@id/retrieve_owner_information_button"
-                bind:layout_constraintEnd_toEndOf="parent"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constrainedWidth="true"
-                bind:layout_constraintHorizontal_bias="0.5"
-                bind:layout_constraintHorizontal_chainStyle="packed"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginBottom="24dp"
+                android:textAlignment="center"
+                android:gravity="center"
+                tools:text="@string/connection_state_offline_explanation" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actions_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/play_sound_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:paddingVertical="12dp"
+                android:enabled="@{!vm.connecting}"
+                android:text="@{vm.soundPlaying ? @string/tracking_locate_at_playing_sound : @string/tracking_locate_at_title}"
+                app:icon="@{vm.soundPlaying ? @drawable/ic_baseline_close_24 : @drawable/ic_baseline_play_circle_outline_24}"
+                app:iconGravity="textStart"
+                tools:text="Play Sound" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/perform_action_button"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/samsung_determine_button"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/retrieve_owner_information_button"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/retrieve_owner_information"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/button_action_loading"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:elevation="4dp"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/searching_for_device"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/searching_for_device"
-            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
             bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/device_not_found"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/scan_not_in_range"
-            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_marginHorizontal="32dp"
             android:visibility="gone"
-            android:maxLines="3"
             bind:layout_constraintBottom_toBottomOf="parent"
-            bind:layout_constraintLeft_toLeftOf="parent"
-            bind:layout_constraintRight_toRightOf="parent"
-            bind:layout_constraintTop_toTopOf="parent" />
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <include
             android:id="@+id/include_bluetooth_disabled"
@@ -224,8 +234,8 @@
             bind:layout_constraintBottom_toBottomOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}" />
-
+            android:visibility="@{vm.bluetoothEnabled ? View.GONE : View.VISIBLE, default=visible}"
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

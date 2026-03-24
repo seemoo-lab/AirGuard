@@ -2,48 +2,43 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/fragment_risk_detail"
-    >
+    tools:showIn="@layout/fragment_risk_detail">
 
     <data>
-
         <variable
             name="viewModel"
             type="de.seemoo.at_tracking_detection.ui.dashboard.RiskDetailViewModel" />
     </data>
 
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/last_scans"
-        style="?attr/materialCardViewElevatedStyle"
+        style="@style/Widget.Material3.CardView.Filled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        app:cardBackgroundColor="@color/blue_card_background" >
+        app:cardBackgroundColor="?attr/colorSecondaryContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/last_scans"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textColor="@color/white" />
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSecondaryContainer" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:text="@{viewModel.lastScans}"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorOnSecondaryContainer"
                 tools:text="20.01.2022 10:15\n12.12.2021 09:31\n11.12.2021 09:00" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
 </layout>

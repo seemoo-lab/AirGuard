@@ -2,6 +2,7 @@ package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,9 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -78,7 +82,9 @@ class DashboardRiskFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.loading_progress_bar)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            progressBar.visibility = View.VISIBLE
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.VISIBLE
+            }
 
             val articlesJSON = loadArticlesJson(requireContext())
             Timber.d("Articles JSON: %s", articlesJSON)
@@ -87,26 +93,15 @@ class DashboardRiskFragment : Fragment() {
                 var articles = parseArticles(articlesJSON)
                 Timber.d("Number of Articles: %s", articles.size)
 
-                // Show an error message if the Bluetooth scan bug on Android 15 is detected
-//                if (Build.VERSION.SDK_INT >= 35 && SharedPrefs.showSamsungAndroid15BugNotification) {
-//                    val bugArticle = Article(
-//                        title = getString(R.string.samsung_bug_notification_title),
-//                        author = "System",
-//                        readingTime = 0,
-//                        previewText = getString(R.string.samsung_bug_notification_text),
-//                        cardColor = "warning_light_red",
-//                        preview_image = "",
-//                        filename = ""
-//                    )
-//                    articles = listOf(bugArticle) + articles
-//                } else
+                // Error articles
                 if (SharedPrefs.showGenericBluetoothBugNotification || SharedPrefs.showSamsungAndroid15BugNotification) {
                     val bugArticle = Article(
                         title = getString(R.string.samsung_bug_notification_title),
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.generic_bluetooth_bug_notification_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -119,7 +114,8 @@ class DashboardRiskFragment : Fragment() {
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.notification_permission_missing_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -132,7 +128,8 @@ class DashboardRiskFragment : Fragment() {
                         author = "System",
                         readingTime = 0,
                         previewText = getString(R.string.background_location_permission_missing_text),
-                        cardColor = "warning_light_red",
+                        cardColor = "md_theme_error",
+                        textColor = "md_theme_onError",
                         preview_image = "",
                         filename = ""
                     )
@@ -145,13 +142,21 @@ class DashboardRiskFragment : Fragment() {
                 articleCardsLinearLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
                 for (article in articles) {
-                    val articleCard = MaterialCardView(context)
+                    val articleCard = MaterialCardView(requireContext())
+
+                    // Standard Corner Radius for MD3 Cards is 12dp
+                    val radiusPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12f, resources.displayMetrics)
+                    articleCard.radius = radiusPx
+                    // Standard Elevation for Filled Cards is 0dp (flat)
+                    articleCard.cardElevation = 0f
+                    articleCard.strokeWidth = 0
 
                     val layout = LayoutInflater.from(context).inflate(R.layout.include_article_card, null)
                     val textViewTitle = layout.findViewById<TextView>(R.id.card_title)
                     val textViewPreviewText = layout.findViewById<TextView>(R.id.card_text_preview)
                     val imageViewPreview = layout.findViewById<ImageView>(R.id.preview_image)
                     val materialCard = layout.findViewById<MaterialCardView>(R.id.material_card)
+                    val dismissButton = layout.findViewById<ImageView>(R.id.dismiss_button)
 
                     textViewTitle.text = article.title
                     if (article.previewText.isNotEmpty()){
@@ -160,8 +165,31 @@ class DashboardRiskFragment : Fragment() {
                         textViewPreviewText.visibility = View.GONE
                     }
 
-                    val colorResourceId = resources.getIdentifier(article.cardColor, "color", context?.packageName)
-                    materialCard.setCardBackgroundColor(resources.getColor(colorResourceId, null))
+                    // Safe Color Resolution for MD3 Migration
+                    val colorResId = resolveCardColor(article.cardColor)
+                    val backgroundColor = ContextCompat.getColor(requireContext(), colorResId)
+                    materialCard.setCardBackgroundColor(backgroundColor)
+
+                    // Ensure Text Color is Dark (onSurface) for Pastel Backgrounds
+                    val textColor = ContextCompat.getColor(requireContext(), resolveTextColor(article.textColor))
+                    textViewTitle.setTextColor(textColor)
+                    textViewPreviewText.setTextColor(textColor)
+                    dismissButton.setColorFilter(textColor)
+
+                    // Show dismiss button for error articles (aka articles without filenames)
+                    if (article.filename.isEmpty()) {
+                        dismissButton.visibility = View.VISIBLE
+                        dismissButton.setOnClickListener {
+                            articleCardsLinearLayout.removeView(articleCard)
+
+                            if (article.title == getString(R.string.samsung_bug_notification_title) && SharedPrefs.showGenericBluetoothBugNotification) {
+                                SharedPrefs.showGenericBluetoothBugNotification = false
+                            }
+                            if (article.title == getString(R.string.samsung_bug_notification_title) && SharedPrefs.showSamsungAndroid15BugNotification) {
+                                SharedPrefs.showSamsungAndroid15BugNotification = false
+                            }
+                        }
+                    }
 
                     articleCard.addView(layout)
                     Timber.tag("CardAdded").d("Article card added: %s", article.title)
@@ -211,16 +239,28 @@ class DashboardRiskFragment : Fragment() {
         // checkAndShowReview()
     }
 
-    // Google Play Review Controller: Only active in Google Play builds
-//    private fun checkAndShowReview() {
-//        Timber.d("Checking if review should be shown")
-//        if (BuildConfig.DEBUG) {
-//            reviewController.debugReviewStatus()
-//        }
-//        reviewController.requestReviewDialog(requireActivity()) {
-//            Timber.d("Review dialog request completed")
-//        }
-//    }
+    /**
+     * Maps legacy color names from JSON/Article objects to new Material 3 colors.
+     */
+    private fun resolveCardColor(colorName: String): Int {
+        return when (colorName) {
+            "warning_light_red" -> R.color.md_theme_error
+            "risk_high" -> R.color.risk_high
+            "blue_card_background", "md_theme_secondaryContainer" -> R.color.md_theme_secondaryContainer
+            "gray_card_background" -> R.color.md_theme_surfaceVariant
+            else -> {
+                // Try to find resource by name, fallback to secondaryContainer
+                val resId = resources.getIdentifier(colorName, "color", requireContext().packageName)
+                if (resId != 0) resId else R.color.md_theme_secondaryContainer
+            }
+        }
+    }
+
+    private fun resolveTextColor(colorName: String?): Int {
+        if (colorName.isNullOrBlank()) return R.color.md_theme_onSurface
+        val resId = resources.getIdentifier(colorName, "color", requireContext().packageName)
+        return if (resId != 0) resId else R.color.md_theme_onSurface
+    }
 
     override fun onStart() {
         super.onStart()

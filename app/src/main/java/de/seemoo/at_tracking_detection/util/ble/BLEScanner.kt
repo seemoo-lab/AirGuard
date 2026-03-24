@@ -104,7 +104,8 @@ object BLEScanner {
     }
 
     private fun fetchCurrentLocation() {
-        val locationProvider = ATTrackingDetectionApplication.getCurrentApp().locationProvider
+        val locationProvider = ATTrackingDetectionApplication.getCurrentApp()?.locationProvider
+            ?: error("ATTrackingDetectionApplication not initialized")
         val loc =
             locationProvider.lastKnownOrRequestLocationUpdates(locationRequester, timeoutMillis = null)
         if (loc != null) {

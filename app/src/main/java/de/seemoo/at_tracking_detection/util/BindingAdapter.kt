@@ -2,10 +2,12 @@ package de.seemoo.at_tracking_detection.util
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.Observable
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
@@ -47,7 +49,8 @@ fun setSignalStrengthDrawable(imageView: ImageView, wrappedScanResult: ScanResul
 
 @BindingAdapter("setDeviceDrawable")
 fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper) {
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+        ?: error("ATTrackingDetectionApplication not initialized")
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
     val drawable = if (deviceFromDb != null) {
@@ -60,7 +63,8 @@ fun setDeviceDrawable(imageView: ImageView, wrappedScanResult: ScanResultWrapper
 
 @BindingAdapter("setDeviceName", requireAll = true)
 fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
-    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+        ?: error("ATTrackingDetectionApplication not initialized")
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
 
     textView.text = if (deviceFromDb != null) {
@@ -101,3 +105,10 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     }
 }
 
+@BindingAdapter("riskColorRes")
+fun setCardBackgroundColor(view: MaterialCardView, @ColorRes colorRes: Int) {
+    if (colorRes != 0) {
+        val color = ContextCompat.getColor(view.context, colorRes)
+        view.setCardBackgroundColor(color)
+    }
+}

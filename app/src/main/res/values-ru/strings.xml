@@ -6,7 +6,6 @@
     <string name="title_settings">Настройки</string>
     <string name="title_debug">Отладка</string>
     <string name="title_feedback">Обратная связь</string>
-    <string name="title_tracking">За вами следует устройство с серийным номером {deviceAddress}</string>
     <string name="title_devices_tracking">Серийный номер устройства: {deviceAddress}</string>
     <string name="title_scan">Поиск</string>
     <string name="title_scan_detail">Обнаружение: {deviceAddress}</string>
@@ -19,7 +18,7 @@
     <string name="tip_airtag_testing"><b>Тестируете приложение?</b> Подключенные к iPhone/iPad устройства AirTag может быть обнаружены только если это разрешено в настройках. В этом случае устройства AirTag / SmartTag нужно отключить от Bluetooth и повторить поиск через 15 минут. AirGuard не сохраняет подключенные к устройствам владельцев устройства слежения</string>
     <string name="title_observe_tracker">Наблюдаемое устройство: {deviceAddress}</string>
     <string name="title_export_device">"Эспортировать данные устройства: "</string>
-    <string name="title_device_map">Все устройства</string>
+    <string name="all_devices">Все устройства</string>
     <string name="title_devices_map_device">Карта: %1$s</string>
     <string name="title_devices">Устройства</string>
     <string name="onboarding_4_description">Приложению нужен постоянный доступ к геолокации, чтобы получить подробную историю местоположений при обнаружении устройства слежки.</string>
@@ -44,7 +43,6 @@
     <string name="settings_delete_study_data_summary">Запросить удаление данных для исследований</string>
     <string name="settings_device_filter_title">Фильтр типов устройств</string>
     <string name="settings_device_filter_dialog_title">Игнорировать устройства по типам</string>
-    <string name="settings_device_filter_summary">Укажите, какие устройства AirGuard будет игнорировать. Отмеченные устройства не будут показаны при ручном сканировании и вы не будете получать уведомления, если эти устройства будут следовать за вами</string>
     <string name="settings_prevent_screenshots_summary">Запрет снятия скриншотов, записи видео и сокрытие приложение в списке недавних повышает приватность</string>
     <string name="settings_risk_sensitivity_title">Чувствительность обнаружения</string>
     <string name="settings_risk_sensitivity_summary">Эта настройка управляет чувствительностью обнаружения меток. На высокой чувствительности обнаружение будет быстрее, но могут быть ложные срабатывания</string>
@@ -76,24 +74,21 @@
     <string name="settings_permanent_scanning_summary">Включает постоянный поиск в фоне. Эта настройка даёт более точные результаты, но может негативно сказаться на стабильности приложения. Если будут проблемы, то отключите её</string>
     <string name="device_item_first_discovery">Обнаружено:</string>
     <string name="beacons">Маячки</string>
-    <string name="times_seen">Встречалось раз</string>
     <string name="devices_swipe">Смахнуть для удаления</string>
     <string name="devices_list_empty">Здесь будут перечислены обнаруженные AirTag и иные подобные устройства. В списке просто обнаруженные устройства, а не устройства слежки. Если же устройство будет именно следить за вами, вы получите уведомление</string>
-    <string name="ignored_device_list_empty">Всякий раз, когда вы получаете уведомление о слежке от известного устройства (например, вашего собственного AirTag), вы можете пометить его как ложное срабатывание. Устройства, которые не меняют собственный Bluetooth MAC-адрес (такие как Tile, Chipolo, Pebblebee), также можно игнорировать. Все эти устройства будут перечислены здесь. Помните: AirTag меняет собственный Bluetooth MAC-адрес каждый день, так что если вы отметили его как ложное срабатывание, он всё равно может быть обнаружен снова на следующий день</string>
+    <string name="ignored_device_list_empty">Всякий раз, когда вы получаете уведомление о слежке от известного устройства (например, вашего собственного AirTag), вы можете пометить его как ложное срабатывание. Устройства, которые не меняют собственный Bluetooth MAC-адрес (такие, как Tile, Chipolo, Pebblebee), также можно игнорировать. Все эти устройства будут перечислены здесь. Помните: AirTag меняет собственный Bluetooth MAC-адрес каждый день, так что если вы отметили его как ложное срабатывание, он всё равно может быть обнаружен снова на следующий день</string>
     <string name="settings_use_location_summary">Если включено, информация о слежке будет более полной</string>
     <string name="settings_use_location_title">Использовать местоположение</string>
     <string name="settings_show_connected_devices_title">Показать подключенные устройства</string>
     <string name="settings_show_connected_devices">Показывать на вкладке сканирования устройства, которые подключены к владельцам</string>
     <string name="error_requesting_location_permission">Ошибка получения разрешения на запрос местоположения в фоне</string>
     <string name="tracking_locate_at_title">Проиграть звук</string>
-    <string name="tracking_locate_at_subtitle">Обнаружение AirTag</string>
     <string name="permissions_background_location_title">Определение местоположения в фоне</string>
     <string name="permission_background_location_message">Если предоставить это разрешение, информация о слежке будет более полной. Не обязательная настройка</string>
     <string name="permissions_location_title">Получение местоположения в фоне</string>
-    <string name="permission_location_message">Это разрешение нужно для получения более детальной информации при обнаружении следящих за вами AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo или Tile. Оно не обязательно</string>
+    <string name="permission_location_message">Это разрешение нужно для получения более детальной информации при обнаружении, если за вами может следить AirTag, устройство Find My, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo или Tile / Life360. Оно не обязательно.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Обратная связь</string>
-    <string name="tracking_feedback_subtitle">Поделитесь мыслями</string>
     <string name="tracking_detail_scan_title">Местопожение метки</string>
     <string name="tracking_detail_scan_subtitle">Показать больше информации об этой метке</string>
     <string name="tracking_ignore_device_title">Игнорировать устройство</string>
@@ -118,10 +113,9 @@
     <string name="notification_observe_tracker_negative">Устройство, за которым вы наблюдали, не следует за вами</string>
     <string name="notification_observe_tracker_error">Возникла ошибка при наблюдении за этим устройством. Пожалуйста, попробуйте ещё</string>
     <string name="onboarding_notification_title">Показ уведомлений</string>
-    <string name="onboarding_notification_description">Чтобы показывать вам уведомления при обнаружении следующих за вами меток, нам нужно разрешение на показ уведомлений</string>
     <string name="website">Сайт</string>
     <string name="scan_result_item_image_description">Результат проверки</string>
-    <string name="scan_result_no_devices">Меток не обнаружено.\nМы можем обнаруживать только Apple Find My, Apple AirTag, Google Find My, Galaxy SmartTags, Pebblebees, Chipolos и Tiles</string>
+    <string name="scan_result_no_devices">Метки не обнаружены.\nМы сканируем только Apple Find My, AirTag, Google Find My Device, Galaxy SmartTags, Pebblebee, Chipolo и Tile / Life360.</string>
     <string name="ble_service_connection_error">Не удалось подключиться к устройству</string>
     <string name="yes_button">Да</string>
     <string name="scan_enable_bluetooth_title">Bluetooth поиск</string>
@@ -136,9 +130,6 @@
     <string name="i_got_a_notification_what_should_i_do">Я получил уведомление. Что нужно предпринять?</string>
     <string name="how_does_airguard_work">Как работает AirGuard?</string>
     <string name="i_cannot_find_the_tracker">Я не смог найти жучок</string>
-    <string name="airguard_scan_explanation">"Чтобы обнаруживать устройства, следующие за вами, AirGuard использует Bluetooth "</string>
-    <string name="airguard_detection_explanation">С помощью информации о местоположении, AirGuard может обнаружить метку, которая следовала за вами в разных местах</string>
-    <string name="airguard_notification_explanation">Вы получите уведомление, когда будет обнаружена возможная слежка. Карткочка изменит цвет на оранжевый или красный</string>
     <string name="find_sound">Проиграть звук и найти</string>
     <string name="find_manual_scan">Определить местонахождения через принудительный поиск</string>
     <string name="find_battery">Извлеките батарейку</string>
@@ -146,7 +137,6 @@
     <string name="title_risk_detail">Оценка риска</string>
     <string name="show_all">Показать всё</string>
     <string name="tracker_detected">Обнаружена метка</string>
-    <string name="locations_tracked">Все места</string>
     <string name="filter">Открыть фильтр</string>
     <string name="filter_ignored">игнорируемые</string>
     <string name="filter_notified">распознанные метки</string>
@@ -160,13 +150,11 @@
     <string name="app_theme_system_default">Как в системе</string>
     <string name="settings_metric_title">Метрическая система</string>
     <string name="settings_metric_summary">Использовать метрическую систему для показа расстояний</string>
-    <string name="info_text_only_trackers">В этом списке перечислены только те метки, которые следовали за вами за последние 14 дней. Чтобы увидеть все устройства, измените фильтры кнопкой в нижнем правом углу</string>
     <string name="info_text_all_devices">В этом списке перечислено всё, что AirGuard обнаружил за последине 14 дней, включая метки, которые за вами не следовали. То, что определено как следящая метка, помечено восклицательным знаком. Вы можете отфильтровать эти устройства кнопкой в правом нижнем углу</string>
     <string name="empty_list_devices">В этом списке перечислено всё, что AirGuard обнаружил за последние 14 дней. Поскольку он пуст, никаких устройств не найдено. Не забывайте, что не нужно выключать Bluetooth, посколько приложение через него обнаруживает возможные устройства слежки</string>
     <string name="empty_list_trackers">В этом списке перечислены только те устройства, которые следовали за вами за последние 14 дней. И поскольку список пуст, никакое устройства за вами не следовало. Но, как бы то ни было, если таковое будет обнаружено, вы получите уведомление об этом. Не выключайте Bluetooth, чтобы обнаруживать устройства слежки. Кнопка внизу покажет все устройства, даже те, которые не определены как устройства слежки</string>
     <string name="show_all_button">Показать все устройства</string>
     <string name="empty_image_content_description">Изображение пустого списка</string>
-    <string name="notification_title_multiple">%s следуют за вами</string>
     <string name="notification_title_ble_error">Сбой поиска через BLE</string>
     <string name="beacon_locations">Местоположение маячков</string>
     <string name="other_devices_found">Найдены другие устройства</string>
@@ -204,7 +192,7 @@
 
         Мы <b>НЕ БУДЕМ</b> разглашать какие-либо данные о местоположении или данные, которые могут идентифицировать вас! Участие полностью
         анонимно.</string>
-    <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами следят с помощью таких устройств как AirTag, Find My от Apple, Find My Device от Google, SmartTag, Pebblebee, Chipolo и Tile</string>
+    <string name="onboarding_1_description">Это приложение будет уведомлять вас, если посчитает, что за вами может следить AirTag, устройство Find My, устройство Google "Find My Device", SmartTag, Pebblebee, Chipolo или Tile / Life360.</string>
     <string name="settings_attributions_summary">Показать список свойств</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
     <string name="settings_privacy_policy_summary">Взглянуть нашу краткую и простую политику конфиденциальности</string>
@@ -231,18 +219,13 @@
     </string>
     <string name="settings_notification_priority_high_title">Уведомления высокого приоритета</string>
     <string name="settings_attributions_title">Свойства</string>
-    <string name="notification_title_base">Устройство следовало за вами</string>
-    <string name="notification_text_single">Откройте уведомление, чтобы получить больше информации. %s следовал за вами как минимум %d минут</string>
-    <string name="notification_text_multiple">Откройте уведомление, чтобы получить больше информации. %s следовали за вами как минимум %d минут</string>
-    <string name="notification_title_vocal">%s следует за вами</string>
-    <string name="notification_title_consonant">%s следует за вами</string>
     <string name="device_name_samsung_device">Устройство Samsung %s</string>
     <string name="none">Нет</string>
     <string name="settings_send_bluetooth_error_messages">Показывать сообщения об ошибках Bluetooth</string>
     <string name="ignored_devices">Проигнорированные устройства</string>
     <string name="airtags_found">Найденные AirTag</string>
     <string name="findmy_found">Найденные Apple Find My</string>
-    <string name="tile_found">Найденные Tile</string>
+    <string name="tile_found">Найденные Tiles / Life360</string>
     <string name="chipolo_found">Найденные Chipolo</string>
     <string name="google_found">Найденные Google Find My</string>
     <string name="survey_card_title">Мы проводим опрос</string>
@@ -325,7 +308,6 @@
     <string name="observe_tracker_stop_observation_explanation">Эта метка уже под наблюдением</string>
     <string name="observe_tracker_explanation">Если вы не уверены, следует ли эта метка за вами, вы можете сами следить за ней. \n\nВ течение часа AirGuard будет следить за этой меткой и сообщит вам состояние этой метки: видна ли она или исчезла</string>
     <string name="observe_tracker_changing_id">Учтите, что эта метка может менять свой идентификатор. Это позволит ей следовать за вами в обход нашего механизма наблюдения</string>
-    <string name="tracking_observe_tracker_subtitle">Понять, следует ли эта метка за вами</string>
     <string name="observe_tracker_success">Наблюдение началось</string>
     <string name="observe_tracker_stopped">Наблюдение прекращено</string>
     <string name="observe_tracker_failure">Эта метка уже под наблюдением</string>
@@ -345,11 +327,11 @@
     <string name="article_offline_text">Сейчас вы не подключены к Интернету. Статьи помощи появятся в приложении позже, когда Интернет будет доступен</string>
     <string name="explanation_apple">Замечание:\nУстройства Apple время от времени меняют свои идентификаторы.\nAirTags, AirPods, FindMy и другие устройства Apple периодически будут обнаруживаться как новые и могут быть показаны несколько раз</string>
     <string name="explanation_samsung">Замечание:\nУстройства Samsung время от времени меняют свои идентификаторы.\nSmartTags и другие устройства Samsung SmartThings периодически будут обнаруживаться как новые и могут быть показаны несколько раз</string>
-    <string name="explanation_tile">Замечание:\nУстройства Tile не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае получения предупреждения, проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
+    <string name="explanation_tile">Замечание:\nУстройства Tile / Life360 не меняют свой идентификатор.\nЭто может приводить к ложным срабатываниям.\nВ случае предупреждения проверьте, не принадлежит ли устройство кому-то из окружающих (друзья, семья, коллеги, соседи и т.д.).</string>
     <string name="explanation_chipolo">Замечание:\nУстройства Chipolo не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
     <string name="explanation_pebblebee">Замечание:\nУстройства Pebblebee не меняет своего идентификатора.\nЭто может приводить к ложным срабатываниям.\nВ этом случае проверьте, не носит ли кто-то из окружающих такие устройства: друзья, члены семьи, коллеги, соседи и т.д.</string>
     <string name="explanation_unknown">Замечание:\nНекоторые устройства время от времени меняют свой идентификатор.\nПериодически эти устройства будут обнаруживаться как новые и могут быть показаны несколько раз</string>
-    <string name="explanation_safe_trackers">Безопасные метки - это окружающие  вас метки, которые подключены сейчас или были подключены к устройствам их владельцев несколько минут назад. Практически никогда такие метки не представляют угрозы для вас.\nКроме того, все метки, помеченные как игнорируемые, также считаются безопасными</string>
+    <string name="explanation_safe_trackers">Безопасные метки - это окружающие вас метки, которые подключены сейчас или были подключены к устройствам их владельцев несколько минут назад. Практически никогда такие метки не представляют угрозы для вас.\nКроме того, все метки, помеченные как игнорируемые, также считаются безопасными</string>
     <string name="device_name_cannot_be_empty">Имя устройства не может быть пустым</string>
     <string name="copyright">Авторские права</string>
     <string name="developer">Разработчик: %s</string>
@@ -369,12 +351,10 @@
     <string name="language_french">Французский</string>
     <string name="language_traditional_chinese">Традиционный китайский</string>
     <string name="settings_deactivate_scanning_title">Выключить поиск в фоне</string>
-    <string name="settings_deactivate_scanning_summary">Это действие выключит работу AirGuard в фоне. Пожалуйста, имейте в виду, что теперь вы не получите уведомление, если трекер будет следовать за вами</string>
     <string name="settings_permanent_scanning_title">Постоянный поиск</string>
     <string name="settings_export_found_trackers_title">Экспортировать обнаруженные метки</string>
     <string name="website_description">Заглянуть на наш сайт</string>
     <string name="settings_prevent_screenshots_title">Запретить скриншоты</string>
-    <string name="all_devices_found">Все найденные устройства</string>
     <string name="samsung_tracker">Метки Samsung</string>
     <string name="samsung_tracker_name">Метка Samsung</string>
     <string name="google_find_my_tag_name">Метка Find My Device</string>
@@ -384,14 +364,13 @@
     <string name="retrieve_owner_information">Показать информацию о владельце</string>
     <string name="retrieve_owner_information_failed">Не удалось получить информацию о владельце</string>
     <string name="retrieve_owner_information_alert_title">Получить информацию о владельце</string>
-    <string name="retrieve_owner_information_explanation_unknown">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, её  будет нужно перевести в специальный режим. Обычно это делается трёхкратным нажатимем на кнопку на метке или удержанием кнопки 30 секунд. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_pebblebee">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, трижды нажмите на кнопку на метке. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_chipolo">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 30 секунд и отпустите сразу после звукового сигланал. Если всё получится, вы услышите подтверждающий звук. После этого нажмите \"Далее\"</string>
-    <string name="retrieve_owner_information_explanation_motorola">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 10 секунд и отпустите после звукового сигланал. После отпускания кнопки, немедленно нажмите &amp; и снова отпустите. После этого нажмите \"Далее\"</string>
+    <string name="retrieve_owner_information_explanation_unknown">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, её будет нужно перевести в специальный режим. Обычно это делается трёхкратным нажатимем на кнопку на метке или удержанием кнопки 30 секунд. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_pebblebee">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, трижды нажмите на кнопку на метке. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_chipolo">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 30 секунд и отпустите сразу после звукового сигланал. Если всё получится, вы услышите подтверждающий звук. После этого нажмите "Далее"</string>
+    <string name="retrieve_owner_information_explanation_motorola">Чтобы получить информацию о владельце, вам нужно физически найти метку. Как только вы её найдёте, зажмите кнопку на ней на 10 секунд и отпустите после звукового сигланал. После отпускания кнопки, немедленно нажмите &amp; и снова отпустите. После этого нажмите "Далее"</string>
     <string name="retrieve_owner_information_alert_next">Далее</string>
     <string name="retrieve_owner_information_alert_close">Закрыть</string>
     <string name="confirm_deactivating_background_scan_title">Подтверждение отключения поиска в фоне</string>
-    <string name="confirm_deactivating_background_scan_text">Вы уверены, что хотите отключить поиск в фоне? Если вы подтвердите это действия, вы не сможете получать уведомления о метках, которые могут следить за вами</string>
     <string name="confirm_deactivating_background_scan_yes">Да, отключить</string>
     <string name="confirm_deactivating_background_scan_no">Нет, мне нужна защита</string>
     <string name="last_seen_times_title">Последнее обнаружение метки:</string>
@@ -402,7 +381,6 @@
     <string name="export_trackers_label">Эспортировать метки</string>
     <string name="export_trackers_explanation">Нажав на кнопку ниже, вы запустите формирование PDF документа, содержащего информацию обо всех распознанных следящих метках. Это может занять много времени</string>
     <string name="export_trackers_create_document">Создать документ</string>
-    <string name="export_trackers_following">Метки, которые следовали за вами</string>
     <string name="export_trackers_not_following">Метки, которые не следовали за вами</string>
     <string name="export_trackers_ignored">Метки, которые были проигнорированы</string>
     <string name="export_trackers_location_unknown">Местоположение: Не известно</string>
@@ -432,9 +410,7 @@
     <string name="generic_bluetooth_bug_notification_text">Во время поиска по Bluetooth произошла ошибка. Убедитесь, что вы предоставили AirGuard все необходимые разрешения и что Bluetooth включен. Если ошибка не уйдет, попробуйте перезагрузить устройство</string>
     <string name="device_comment_hint">Добавить комментарий</string>
     <string name="notification_permission_missing_title">Нет разрешения на показ уведомлений</string>
-    <string name="notification_permission_missing_text">Приложения не может показывать уведомления. Оно не сможет сообщать об обнаруженных следящих метках. Чтобы исправить ситуацию, включите показ уведомлений для приложения в настройках системы</string>
     <string name="background_location_permission_missing_title">Определение местоположения в фоне. Разрешение не предоставлено</string>
-    <string name="background_location_permission_missing_text">У приложения нет разрешения на определение местоположения в фоне. Вы не будете предупреждены о следящих метках, когда приложение закрыто. Чтобы исправить это, предоставьте разрешение на определение местоположения из фона в настройках системы</string>
     <string name="map_footer_all_devices">На карте показаны все места за последние %d дня(-ей)</string>
     <string name="map_footer_device">Эта карта показывает все места, где были найдены устройства</string>
     <string name="title_old_device_cleanup">Автоматически удалять старые устройства</string>
@@ -453,21 +429,93 @@
     <string name="old_device_timeframe_2_months">2 месяца</string>
     <string name="old_device_timeframe_3_months">3 месяца</string>
     <string name="old_device_deactivate_title">Подтверждение отключения автоматического удаления</string>
-    <string name="old_device_deactivate_text">Вы уверены, что хотите отключить автоматическое удаление старых меток? Если вы подтвердите это, приложение со временем будет работать медленнее. Изменение этой настройки позже, может занять до 24 часов</string>
+    <string name="old_device_deactivate_text">Вы уверены, что хотите отключить автоматическое удаление старых меток? Если вы подтвердите это, приложение со временем будет работать медленнее.</string>
     <string name="old_device_deactivate_yes">Да, отключить</string>
     <string name="old_device_deactivate_no">Нет, оставить включенной</string>
+    <string name="save">Сохранить</string>
 
-    <plurals name="notification_observe_tracker_positive">
-        <item quantity="one">Отслеживаемый трекер преследует вас как минимум %d час.</item>
-        <item quantity="few">Отслеживаемый трекер преследует вас как минимум %d часа.</item>
-        <item quantity="many">Отслеживаемый трекер преследует вас как минимум %d часов.</item>
-        <item quantity="other">Отслеживаемый трекер преследует вас как минимум %d часов.</item>
-    </plurals>
+    <string name="locations_tracked">Недавние места</string>
+    <string name="all_devices_found">Все недавние устройства</string>
+    <string name="times_seen">Замечено</string>
+    <string name="tracking_locate_at_subtitle">Найти трекер с помощью звука</string>
+    <string name="tracking_feedback_subtitle">Помогите нам с нашим исследованием</string>
 
+    <string name="title_tracking">Устройство с ID: {deviceAddress} может следить за вами</string>
+    <string name="settings_deactivate_scanning_summary">Это отключает работу AirGuard в фоновом режиме. Внимание: вы больше не будете предупреждены, если трекер будет следить за вами.</string>
+    <string name="notification_permission_missing_text">Уведомления для этого приложения отключены. Вы не будете предупреждены, когда трекер может следовать за вами. Чтобы изменить это, включите уведомления для этого приложения в настройках системы.</string>
+    <string name="background_location_permission_missing_text">Разрешение на определение местоположения в фоновом режиме не предоставлено. Вы не будете предупреждены, если трекер будет следовать за вами, когда приложение закрыто. Включите фоновое местоположение в настройках системы.</string>
+    <string name="export_trackers_following">Трекер мог следовать за вами</string>
+    <string name="tracking_observe_tracker_subtitle">Узнайте, может ли этот трекер следить за вами</string>
+    <string name="airguard_detection_explanation">С помощью информации о местоположении AirGuard может обнаружить, если трекер следует за вами в несколько мест!</string>
+    <string name="airguard_notification_explanation">Вы получите уведомление, когда потенциальное устройство слежения может следовать за вами! Карточка выше изменит цвет на оранжевый или красный.</string>
+    <string name="onboarding_notification_description">Чтобы отправлять вам уведомления, когда мы обнаружим, что трекер может следовать за вами, нам нужно разрешение на отправку уведомлений.</string>
     <plurals name="notification_text_base">
-        <item quantity="one">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минуту.</item>
-        <item quantity="few">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минуты.</item>
-        <item quantity="many">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минут.</item>
-        <item quantity="other">Откройте уведомление, чтобы узнать больше. Трекер преследует вас как минимум %d минут.</item>
+        <item quantity="one">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минуты.</item>
+        <item quantity="few">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минут.</item>
+        <item quantity="many">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минут.</item>
+        <item quantity="other">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минут.</item>
     </plurals>
+    <string name="notification_title_base">Трекер может следить за вами</string>
+    <string name="notification_text_single">Откройте уведомление для подробностей. %s мог следовать за вами не менее %d минут.</string>
+    <string name="notification_text_multiple">Откройте уведомление для подробностей. %s могли следовать за вами не менее %d минут.</string>
+    <string name="notification_title_vocal">%s может следить за вами</string>
+    <string name="notification_title_consonant">%s может следить за вами</string>
+    <string name="notification_title_multiple">%s могут следить за вами</string>
+    <string name="settings_device_filter_summary">Выберите, какие типы устройств AirGuard должен игнорировать. Выбранные типы не будут отображаться при ручном сканировании, и вы не будете уведомлены, если такое устройство будет следить за вами.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">Трекер, за которым вы наблюдали, мог следовать за вами не менее %d часа.</item>
+        <item quantity="few">Трекер, за которым вы наблюдали, мог следовать за вами не менее %d часов.</item>
+        <item quantity="many">Трекер, за которым вы наблюдали, мог следовать за вами не менее %d часов.</item>
+        <item quantity="other">Трекер, за которым вы наблюдали, мог следовать за вами не менее %d часов.</item>
+    </plurals>
+    <string name="airguard_scan_explanation">AirGuard использует Bluetooth для поиска устройств, которые могут следить за вами.</string>
+    <string name="info_text_only_trackers">Этот список показывает только трекеры, которые могли следовать за вами за последние 14 дней. Чтобы просмотреть все устройства, измените фильтр с помощью кнопки в правом нижнем углу.</string>
+    <string name="confirm_deactivating_background_scan_text">Вы уверены, что хотите отключить фоновое сканирование? Если вы подтвердите, вы больше не будете получать уведомления о потенциальных трекерах, которые могут следить за вами.</string>
+
+    <string name="dismiss_article">Закрыть статью</string>
+    <string name="navigate_to_details">Перейти к деталям</string>
+    <string name="more_trackers_found">Найдено еще +%d трекеров</string>
+    <string name="title_device_map">Недавно найденные места</string>
+    <string name="found_at_location">Найден в месте</string>
+    <string name="selected_types_count">%d типов</string>
+    <string name="sort_list">Сортировать список</string>
+    <string name="filter_sort_by_name">По имени</string>
+    <string name="filter_sort_by_last_seen">По "Недавно замеченным"</string>
+    <string name="filter_sort_by_first_discovered">По "Впервые обнаруженным"</string>
+    <string name="filter_sort_by_times_seen">По количеству обнаружений</string>
+    <string name="sort_check_times_seen_description">Выбрана сортировка: по количеству обнаружений</string>
+    <string name="sort_check_name_description">Выбрана сортировка: по имени</string>
+    <string name="sort_check_last_seen_description">Выбрана сортировка: по "Недавно замеченным"</string>
+    <string name="sort_check_first_discovered_description">Выбрана сортировка: по "Впервые обнаруженным"</string>
+    <string name="not_ignored">Не игнорируется</string>
+    <string name="not_notified">Не уведомлен</string>
+    <string name="empty_list_no_devices">Устройства не найдены. AirGuard сканирует Bluetooth-трекеры в фоновом режиме. Убедитесь, что Bluetooth включен, а у приложения есть необходимые разрешения для сканирования.</string>
+
+    <string name="filter_marked_headline">Отмечено</string>
+    <string name="filter_marked">отмечено</string>
+    <string name="filter_not_marked_headline">Не отмечено</string>
+
+    <string name="forget_tracker">Забыть трекер</string>
+    <string name="forget_tracker_dialog_title">Забыть трекер?</string>
+    <string name="forget_tracker_dialog_message">Эта операция удалит всю информацию об этом трекере. Вы уверены, что хотите продолжить?</string>
+    <string name="forget_tracker_success">Трекер удален</string>
+
+    <string name="open_map_description">Открыть карту на весь экран</string>
+    <string name="error_connection">Ошибка соединения</string>
+    <string name="active">Активен</string>
+    <string name="actions">Действия</string>
+
+    <string name="feedback_research_explanation">Выбирая вариант, вы помогаете нам улучшать алгоритмы обнаружения и поддерживать наши исследования.</string>
+    <string name="close">закрыть</string>
+
+    <string name="settings_use_dynamic_colors_title">Использовать Material You</string>
+    <string name="settings_use_dynamic_colors_summary">Динамически подстраивает цвета приложения под ваши обои</string>
+
+    <string name="load_all_occurrences">Загрузить все совпадения</string>
+    <string name="scroll_button">Прокручивает в начало или конец этого вида</string>
+    <string name="empty_list_others">Устройства для выбранных фильтров не найдены. Вы можете изменить фильтры, нажав кнопку в левом верхнем углу, или показать все устройства.</string>
+    <string name="retrieve_owner_information_explanation_hama">Для получения информации о владельце вы должны физически найти трекер. Откройте аксессуар, подняв заднюю крышку. Извлеките аккумулятор и просто вставьте его снова. Наконец, установите заднюю крышку на место. После этого нажмите «Далее».</string>
+    <string name="safe_tracker_map_warning">Это безопасный трекер. Он в данный момент или недавно был подключен к устройству владельца. Безопасные трекеры не представляют для вас угрозы.</string>
+    <string name="no_locations_yet_hint">Это устройство было обнаружено, но данные о местоположении еще не записаны. Данные о местоположении появятся здесь, если трекер будет замечен в допустимом месте.</string>
+    <string name="safe_tracker_monitored_warning">Это безопасный трекер. Он в данный момент или недавно был подключен к устройству владельца. За ним временно ведется наблюдение, но он не представляет для вас угрозы.</string>
 </resources>

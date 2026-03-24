@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import dagger.hilt.android.HiltAndroidApp
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
@@ -28,6 +29,7 @@ import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 import de.seemoo.at_tracking_detection.util.ATTDLifecycleCallbacks
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.ble.BluetoothEventManager
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
 import fr.bipi.treessence.file.FileLoggerTree
@@ -74,6 +76,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var scanRepository: ScanRepository
 
+    @Inject
+    lateinit var bluetoothEventManager: BluetoothEventManager
+
     private val activityLifecycleCallbacks = ATTDLifecycleCallbacks()
 
     override val workManagerConfiguration: Configuration
@@ -107,7 +112,14 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             Timber.v("File tree planted")
         }
 
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        DynamicColors.applyToActivitiesIfAvailable(
+            this,
+            DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ ->
+                    SharedPrefs.useDynamicColors
+                }
+                .build()
+        )
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
 
@@ -147,6 +159,19 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         // Initiate the permanent background scan
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && SharedPrefs.usePermanentBluetoothScanner) {
             PermanentBluetoothScanner.scan()
+        }
+
+        // Schedule periodic device cleanup independent of tracking detection
+        GlobalScope.launch(Dispatchers.Default) {
+            try {
+                if (SharedPrefs.deleteOldDevices) {
+                    backgroundWorkScheduler.scheduleDeviceCleanupPeriodic()
+                } else {
+                    backgroundWorkScheduler.cancelDeviceCleanupPeriodic()
+                }
+            } catch (t: Throwable) {
+                Timber.w(t, "Failed scheduling device cleanup on startup")
+            }
         }
 
         Timber.d("Application onCreate completed")
@@ -211,19 +236,19 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     }
 
     companion object {
-        private lateinit var instance: ATTrackingDetectionApplication
-        fun getAppContext(): Context = instance.applicationContext
+        private var instance: ATTrackingDetectionApplication? = null
+        fun getAppContext(): Context = instance?.applicationContext
+            ?: throw IllegalStateException("ATTrackingDetectionApplication has not been initialized yet")
         fun getCurrentActivity(): Activity? {
             return try {
-                instance.activityLifecycleCallbacks.currentActivity
-            }catch (e: UninitializedPropertyAccessException) {
+                instance?.activityLifecycleCallbacks?.currentActivity
+            } catch (e: Exception) {
                 Timber.e("Failed accessing current activity $e")
                 null
             }
         }
-        fun getCurrentApp(): ATTrackingDetectionApplication {
-            return instance
-        }
+        /** Returns the application instance, or null if it has not been fully initialized yet. */
+        fun getCurrentApp(): ATTrackingDetectionApplication? = instance
 
         const val SURVEY_URL = "https://survey.seemoo.tu-darmstadt.de/index.php/117478?G06Q39=AirGuardAppAndroid&newtest=Y&lang=en"
         const val SURVEY_IS_RUNNING = false

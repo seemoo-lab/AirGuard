@@ -75,4 +75,9 @@ class NotificationRepository @Inject constructor(
     suspend fun setClicked(notificationId: Int, state: Boolean) {
         notificationDao.setClicked(notificationId, state)
     }
+
+    @WorkerThread
+    suspend fun deleteForDevice(deviceAddress: String) {
+        notificationDao.deleteForDevice(deviceAddress)
+    }
 }

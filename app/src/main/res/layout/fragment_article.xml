@@ -8,6 +8,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,8 +18,8 @@
             android:id="@+id/markdown_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:padding="16dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

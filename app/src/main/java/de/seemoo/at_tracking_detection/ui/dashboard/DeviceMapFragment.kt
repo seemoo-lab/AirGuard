@@ -1,6 +1,8 @@
 package de.seemoo.at_tracking_detection.ui.dashboard
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -8,19 +10,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Location
 import de.seemoo.at_tracking_detection.databinding.FragmentDeviceMapBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
@@ -35,7 +41,8 @@ class DeviceMapFragment : Fragment() {
     private lateinit var binding: FragmentDeviceMapBinding
 
     private var deviceAddress: String? = null
-    private var isLegendExpanded = false
+
+    private var isLegendVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,51 +71,46 @@ class DeviceMapFragment : Fragment() {
 
         setTitle()
 
-        binding.legendContent.visibility = View.INVISIBLE
-        binding.legendContainer.post {
-            val widthSpec = View.MeasureSpec.makeMeasureSpec(binding.legendContainer.width - binding.legendContainer.paddingStart - binding.legendContainer.paddingEnd, View.MeasureSpec.EXACTLY)
-            val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            binding.legendContent.measure(widthSpec, heightSpec)
-            val contentHeight = binding.legendContent.measuredHeight
-            // Shift container down by content height so only header remains visible
-            binding.legendContainer.translationY = contentHeight.toFloat()
-            isLegendExpanded = false
-            // Set arrow to up
-            binding.legendCollapseButton.rotation = 270f
-            binding.legendContent.visibility = View.INVISIBLE
+        // Setup initial state for legend
+        binding.legendFab.visibility = View.VISIBLE
+        binding.legendContainer.visibility = View.INVISIBLE
+        isLegendVisible = false
 
-            val footerText = if (deviceAddress.isNullOrEmpty()) {
-                getString(R.string.map_footer_all_devices, RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)
-            } else {
-                getString(R.string.map_footer_device)
-            }
-            binding.legendFooterText.text = footerText
+        val footerText = if (deviceAddress.isNullOrEmpty()) {
+            getString(R.string.map_footer_all_devices, RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)
+        } else {
+            getString(R.string.map_footer_device)
         }
+        binding.legendFooterText.text = footerText
 
-        // Setup legend toggle functionality
-        setupLegendToggle()
+        setupLegendInteractions()
 
+        // Handle Edge-to-Edge and Insets
+        handleWindowInsets()
+
+        // Connectivity Check
         val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
         if (networkCapabilities == null || !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
             viewModel.isMapLoading.postValue(false)
             viewModel.hideMapShowNoInternetInstead.postValue(true)
-
+            binding.legendFab.visibility = View.GONE
             return
         }
 
         ViewCompat.setTranslationZ(view, 100f)
         val map: MapView = view.findViewById(R.id.map)
 
-        Utility.basicMapSetup(map)
+        MapUtils.basicMapSetup(map)
 
         Utility.checkAndRequestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         viewModel.isMapLoading.postValue(true)
-        // Utility.enableMyLocationOverlay(map) // This enables the blue location dot on the map
+        // MapUtils.enableMyLocationOverlay(map) // This enables the blue location dot on the map
 
         lifecycleScope.launch {
-            val locationRepository = ATTrackingDetectionApplication.getCurrentApp().locationRepository
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
             val relevantTrackingDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
             val locationList: List<Location> = if (!deviceAddress.isNullOrEmpty()) {
                 locationRepository.getLocationsForBeacon(deviceAddress!!)
@@ -118,68 +120,162 @@ class DeviceMapFragment : Fragment() {
             }
 
             try {
-                Utility.setGeoPointsFromListOfLocations(locationList, map)
+                // Only show device info popup when viewing all devices (aka deviceAddress is null or empty)
+                val showDeviceInfoOnClick = deviceAddress.isNullOrEmpty()
+                MapUtils.setGeoPointsFromListOfLocations(
+                    locationList,
+                    map, 
+                    showDeviceInfoOnClick,
+                    onMarkerClick = { deviceAddress ->
+                        // Navigate to tracking fragment when marker info window is clicked
+                        val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToTrackingFragment(deviceAddress)
+                        findNavController().navigate(action)
+                    },
+                    onMoreTrackersClick = { locationId ->
+                        // Navigate to devices fragment with location filter
+                        val action = DeviceMapFragmentDirections.actionDeviceMapFragmentToDevicesFound(
+                            showDevicesFound = true,
+                            showAllDevices = true,
+                            locationId = locationId
+                        )
+                        findNavController().navigate(action)
+                    },
+                    onMapClick = {
+                        // Close legend if map is clicked
+                        if (isLegendVisible) {
+                            hideLegend()
+                        }
+                    }
+                )
             } finally {
                 viewModel.isMapLoading.postValue(false)
             }
         }
     }
 
-    private fun setupLegendToggle() {
-        // Toggle when tapping header title or arrow
-        binding.legendHeaderTitle.setOnClickListener {
-            if (isLegendExpanded) hideLegend() else showLegend()
+    private fun handleWindowInsets() {
+        // Prevent double padding on root view from MainActivity's global listener
+        binding.root.post {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+                insets
+            }
         }
-        binding.legendCollapseButton.setOnClickListener {
-            if (isLegendExpanded) hideLegend() else showLegend()
+
+        val legendCard = binding.legendContainer
+        val fab = binding.legendFab
+
+        // Define a standard margin (16dp)
+        val standardMargin = android.util.TypedValue.applyDimension(
+            android.util.TypedValue.COMPLEX_UNIT_DIP,
+            16f,
+            resources.displayMetrics
+        ).toInt()
+
+        // Apply ONLY the standard margin.
+        ViewCompat.setOnApplyWindowInsetsListener(legendCard) { view, insets ->
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = standardMargin
+            }
+            insets
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = standardMargin
+            }
+            insets
+        }
+    }
+
+    private fun setupLegendInteractions() {
+        binding.legendFab.setOnClickListener { showLegend() }
+        binding.legendCollapseButton.setOnClickListener { hideLegend() }
+        binding.scrimOverlay.setOnClickListener { hideLegend() }
     }
 
     private fun showLegend() {
-        if (isLegendExpanded) return
-        isLegendExpanded = true
+        if (isLegendVisible) return
+        isLegendVisible = true
 
-        binding.legendContent.visibility = View.VISIBLE
+        // Material3 emphasized interpolator for smooth motion
+        val emphasizedInterpolator = android.view.animation.PathInterpolator(0.2f, 0f, 0f, 1f)
 
-        // Animate the whole container upward to reveal content. translationY -> 0
-        binding.legendContainer.animate()
-            .translationY(0f)
-            .setDuration(300)
-            .setInterpolator(AccelerateDecelerateInterpolator())
+        // Show scrim overlay
+        binding.scrimOverlay.visibility = View.VISIBLE
+        binding.scrimOverlay.animate()
+            .alpha(0.32f)
+            .setDuration(200)
+            .setInterpolator(emphasizedInterpolator)
             .start()
 
-        // Rotate arrow to point down
-        binding.legendCollapseButton.animate()
-            .rotation(90f)
-            .setDuration(300)
+        // Animation: Fade out FAB
+        binding.legendFab.animate()
+            .alpha(0f)
+            .scaleX(0.8f)
+            .scaleY(0.8f)
+            .setDuration(200)
+            .setInterpolator(emphasizedInterpolator)
+            .withEndAction { binding.legendFab.visibility = View.INVISIBLE }
             .start()
+
+        // Animation: Reveal Card with slide-up effect
+        binding.legendContainer.apply {
+            visibility = View.VISIBLE
+            alpha = 0f
+            translationY = 100f  // Slide up from bottom
+            animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(300)
+                .setInterpolator(emphasizedInterpolator)
+                .setListener(null)
+                .start()
+        }
     }
 
     private fun hideLegend() {
-        if (!isLegendExpanded) return
-        isLegendExpanded = false
+        if (!isLegendVisible) return
+        isLegendVisible = false
 
-        // Re-measure in case layout changed
-        val widthSpec = View.MeasureSpec.makeMeasureSpec(binding.legendContainer.width - binding.legendContainer.paddingStart - binding.legendContainer.paddingEnd, View.MeasureSpec.EXACTLY)
-        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        binding.legendContent.measure(widthSpec, heightSpec)
-        val contentHeight = binding.legendContent.measuredHeight
+        // Material3 emphasized interpolator
+        val emphasizedInterpolator = android.view.animation.PathInterpolator(0.2f, 0f, 0f, 1f)
 
-        // Animate container back down so only header is visible
+        // Hide scrim overlay
+        binding.scrimOverlay.animate()
+            .alpha(0f)
+            .setDuration(250)
+            .setInterpolator(emphasizedInterpolator)
+            .withEndAction { binding.scrimOverlay.visibility = View.GONE }
+            .start()
+
+        // Animation: Hide Card with slide-down effect
         binding.legendContainer.animate()
-            .translationY(contentHeight.toFloat())
-            .setDuration(300)
-            .setInterpolator(AccelerateDecelerateInterpolator())
-            .withEndAction {
-                binding.legendContent.visibility = View.INVISIBLE
-            }
+            .alpha(0f)
+            .translationY(100f)  // Slide down
+            .setDuration(250)
+            .setInterpolator(emphasizedInterpolator)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.legendContainer.visibility = View.INVISIBLE
+                    binding.legendContainer.translationY = 0f  // Reset for next show
+                }
+            })
             .start()
 
-        // Rotate arrow to point up
-        binding.legendCollapseButton.animate()
-            .rotation(270f)
-            .setDuration(300)
-            .start()
+        // Animation: Fade in FAB
+        binding.legendFab.apply {
+            visibility = View.VISIBLE
+            alpha = 0f
+            scaleX = 0.8f
+            scaleY = 0.8f
+            animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(250)
+                .setInterpolator(emphasizedInterpolator)
+                .start()
+        }
     }
 
     override fun onResume() {

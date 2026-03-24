@@ -47,10 +47,9 @@ class BluetoothDeviceAdapter:
                         deviceAddress = deviceAddress,
                         deviceTypeAsString = deviceTypeString
                     )
-                    holder.itemView.findNavController()
-                        .navigate(directions)
+                    holder.itemView.findNavController().navigate(directions)
                 } catch (e: Exception) {
-                    Timber.e(e)
+                    Timber.e(e, "Navigation to TrackingFragment failed for uid=${wrappedScanResult.uniqueIdentifier}")
                 }
             }
     }

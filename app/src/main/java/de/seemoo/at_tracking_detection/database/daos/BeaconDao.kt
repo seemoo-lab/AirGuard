@@ -35,6 +35,9 @@ interface BeaconDao {
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun getDeviceBeacons(deviceAddress: String): List<Beacon>
 
+    @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC LIMIT :limit")
+    fun getDeviceBeaconsLimit(deviceAddress: String, limit: Int): List<Beacon>
+
     @Query("SELECT * FROM beacon WHERE deviceAddress LIKE :deviceAddress ORDER BY receivedAt DESC")
     fun observeDeviceBeacons(deviceAddress: String): Flow<List<Beacon>>
 
@@ -78,4 +81,7 @@ interface BeaconDao {
 
     @Query("SELECT * FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL AND beacon.deviceAddress IS NOT NULL AND beacon.deviceAddress <> ''")
     fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon>
+
+    @Query("SELECT * FROM beacon WHERE locationId = :locationId ORDER BY receivedAt DESC LIMIT 1")
+    fun getMostRecentBeaconAtLocation(locationId: Int): Beacon?
 }

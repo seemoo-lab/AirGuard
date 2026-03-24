@@ -7,13 +7,11 @@
     <string name="title_settings">Settings</string>
     <string name="title_debug">Debug</string>
     <string name="title_feedback">Feedback</string>
-    <string name="title_tracking">A device with this ID: {deviceAddress} is following you</string>
     <string name="title_devices_tracking">Device ID: {deviceAddress}</string>
     <string name="title_scan">Scan</string>
     <string name="title_scan_detail">Locate: {deviceAddress}</string>
     <string name="title_observe_tracker">Observe tracker: {deviceAddress}</string>
     <string name="title_export_device">Export device data: {deviceAddress}</string>
-    <string name="title_device_map">All Devices</string>
     <string name="title_devices_map_device">Map: %1$s</string>
     <string name="title_devices">Devices</string>
     <string name="title_data_deletion">Data deletion request</string>
@@ -34,12 +32,10 @@
     <string name="settings_advanced_mode_summary">Adds more options to AirGuard. These options are meant for advanced users.</string>
     <string name="settings_advanced_mode_title">Expert Mode</string>
     <string name="settings_deactivate_scanning_title">Deactivate background scan</string>
-    <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker is following you anymore.</string>
     <string name="settings_permanent_scanning_title">Permanent scanning</string>
     <string name="settings_permanent_scanning_summary">Use a permanent background scanner. Enabling this feature results in more accurate results, but it might affect the stability of the app. When in doubt: leave this option disabled.</string>
     <string name="device_item_first_discovery">Discovered:</string>
     <string name="beacons">Beacons</string>
-    <string name="times_seen">Times seen</string>
     <string name="devices_swipe">Swipe to remove</string>
     <string name="devices_list_empty">Whenever the app detects an AirTag or another tracking device, they will be listed here. The list will likely contain devices that did not track you. For devices that track you, you will receive a notification.</string>
     <string name="ignored_device_list_empty">Whenever you receive a notification for being tracked by a known device (e.g. an AirTag you own), you can mark them as a false alarm. Devices which do not change their Bluetooth address (e.g. Tile, Chipolo, Pebblebee) can also be ignored. These devices will be listed here. Remember: An AirTag changes its Bluetooth address once a day, so even if you mark it as a false alarm it becomes a new entry after a day.</string>
@@ -47,14 +43,12 @@
     <string name="settings_use_location_title">Use Location</string>
     <string name="error_requesting_location_permission">Error requesting background Location permission</string>
     <string name="tracking_locate_at_title">Play Sound</string>
-    <string name="tracking_locate_at_subtitle">Locate AirTag</string>
     <string name="permissions_background_location_title">Background Location</string>
     <string name="permission_background_location_message">By granting this permission, more detailed tracking information can be provided when being tracked. This is an optional feature.</string>
     <string name="ok_button">OK</string>
     <string name="tracking_feedback_title">Feedback</string>
-    <string name="tracking_feedback_subtitle">Provide some insights</string>
     <string name="tracking_detail_scan_title">Locate Tracker</string>
-    <string name="tracking_detail_scan_subtitle">Shows live Information about this tracker</string>
+    <string name="tracking_detail_scan_subtitle">Shows live information about this tracker</string>
     <string name="tracking_ignore_device_title">Ignore Device</string>
     <string name="tracking_ignore_device_subtitle">Mute notifications for this device</string>
     <string name="tracking_false_alarm_title">False Alarm</string>
@@ -88,7 +82,7 @@
 
         We will <b>NOT</b> share any location data or data which might identify you! The participation is completely anonymous.</string>
 
-    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, Google "Find My Device" capable device, SmartTag, Pebblebee, Chipolo or a Tile is tracking you.</string>
+    <string name="onboarding_1_description">This App will notify you when it seems like an AirTag, Find My capable device, Google "Find My Device" capable device, SmartTag, Pebblebee, Chipolo or a Tile / Life360 Tracker could be following you.</string>
     <string name="location_permission_title">Location Permission</string>
     <string name="location_permission_message">This app needs the Location permission to allow Bluetooth scanning for AirTags or other Bluetooth Trackers even when the app is closed or not in use. Additionally, you can optionally allow the app to log the location when you have been tracked.</string>
 
@@ -133,8 +127,6 @@
 
     <string name="settings_device_filter_title">Filter out device types</string>
     <string name="settings_device_filter_dialog_title">Ignore device types</string>
-    <string name="settings_device_filter_summary">Choose which device types AirGuard should ignore. Selected device types will not show up in the manual scan and you will not be notified if such a device follows you.</string>
-
 
     <string name="onboarding_share_data_no">No</string>
     <string name="onboarding_share_data_yes">Yes</string>
@@ -144,29 +136,15 @@
     <string name="device_name_find_my_device_google">Google "Find My Device" %s</string>
 
     <string name="notification_observe_tracker_title_base">Your observed tracker</string>
-    <plurals name="notification_observe_tracker_positive">
-        <item quantity="one">A tracker you observed has been following you for at least one hour.</item>
-        <item quantity="other">A tracker you observed has been following you for at least %d hours.</item>
-    </plurals>
     <string name="notification_observe_tracker_negative">A tracker you observed is not following you.</string>
     <string name="notification_observe_tracker_error">An error occurred while observing this tracker. Please try again.</string>
 
-    <plurals name="notification_text_base">
-        <item quantity="one">Open the notification to get more info. A tracker has followed you for at least one minute.</item>
-        <item quantity="other">Open the notification to get more info. A tracker has followed you for at least %d minutes.</item>
-    </plurals>
-    <string name="notification_title_base">A tracker has been following you</string>
-    <string name="notification_text_single">Open the notification to get more info. The %s has followed you for at least %d minutes.</string>
-    <string name="notification_text_multiple">Open the notification to get more info. The %s have followed you for at least %d minutes.</string>
-    <string name="notification_title_vocal">An %s follows you</string>
-    <string name="notification_title_consonant">A %s follows you</string>
-    <string name="notification_title_multiple">%s follow you</string>
     <string name="notification_title_ble_error">BLE Scanning failed</string>
     <string name="alert_sent_icon">Alert sent icon</string>
     <string name="device_icon">Device icon</string>
     <string name="location_sample_image">Location sample image</string>
     <string name="permissions_location_title">Background Location</string>
-    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo or Tile is tracking you. This permission is optional.</string>
+    <string name="permission_location_message">This permission is needed to provide some more detailed tracking information in case an AirTag, Find My device, Samsung SmartTag, Google Find My Device, Pebblebee, Chipolo or Tile / Life360 Tracker might follow you. This permission is optional.</string>
     <string name="onboarding_2_title">Location Permission</string>
     <string name="onboarding_2_description">This app needs permission to access your location to search for surrounding Trackers via Bluetooth Low Energy. Without this permission, the app does not work and will not find any tracking devices. Your location data never leaves your device. </string>
     <string name="devices_edit_title">Edit device name</string>
@@ -184,11 +162,10 @@
     <string name="onboarding_connect_title">Bluetooth Connect</string>
     <string name="onboarding_connect_description">If a tracking device is found, AirGuard gives you the ability to play a sound on it. For this we need the permission to connect to this device.</string>
     <string name="onboarding_notification_title">Sending Notifications</string>
-    <string name="onboarding_notification_description">To send you notifications when we identified that a tracker is following you, we need the permission to send notifications.</string>
     <string name="website_description">Check out our Website</string>
     <string name="website">Website</string>
     <string name="scan_result_item_image_description">Scan Result Item</string>
-    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles.</string>
+    <string name="scan_result_no_devices">No tracking devices were found.\nWe only scan for Apple Find My Trackers (AirTags), Google "Find My Device" Devices and Galaxy SmartTags, Pebblebees, Chipolos and Tiles / Life360 Trackers.</string>
     <string name="ble_service_connection_error">Failed to connect to device</string>
     <string name="yes_button">Yes</string>
     <string name="scan_enable_bluetooth_message">Bluetooth must be turned on to scan for bluetooth devices.</string>
@@ -214,9 +191,6 @@
         • If you receive multiple notifications at different days, make sure to use the Play sound feature!
     </string>
     <string name="i_cannot_find_the_tracker">I cannot find the tracker</string>
-    <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that follow you.</string>
-    <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker is following you to multiple locations!</string>
-    <string name="airguard_notification_explanation">You get a notification when a potential tracking device is following you! The card above will then change its color to orange or red.</string>
 
     <string name="find_sound">Play a sound and find it</string>
     <string name="find_manual_scan">Perform a manual scan and locate it</string>
@@ -225,7 +199,6 @@
     <string name="title_risk_detail">Risk evaluation</string>
     <string name="show_all">Show All</string>
     <string name="tracker_detected">Tracker detected</string>
-    <string name="locations_tracked">All locations</string>
     <string name="dates_detected">Dates detected</string>
     <string name="filter">Open Filter</string>
     <string name="filter_ignored">ignored</string>
@@ -248,16 +221,15 @@
     <string name="settings_app_theme_summary">Choose a theme!</string>
     <string name="settings_metric_title">Metric System</string>
     <string name="settings_metric_summary">Use the metric system to display distances</string>
-    <string name="info_text_only_trackers">This list only shows trackers that have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
     <string name="info_text_all_devices">This list shows all devices that have been discovered with AirGuard in the last 14 days. This includes devices that are not tracking you. Identified trackers are marked with a exclamation mark. You can filter the devices by using the button in the bottom-right corner</string>
     <string name="info_text_all_locations">This view shows all locations at which a device has been found. This does include devices, which are not tracking your location.</string>
     <string name="empty_list_devices">This list shows all devices that have been found with AirGuard in the past 14 days. Since it is empty no devices have been found. Remember to keep Bluetooth activated, because the app can only find potential tracking devices by using Bluetooth</string>
     <string name="empty_list_trackers">This list shows only devices that were tracking your location in the past 14 days. Since it is empty no device has attempted to follow you and track your location. Whenever a device is tracking your location, you will receive a notification. Remember to keep Bluetooth activated to find tracking devices. With the button below you can view all devices, even those which have not been identified as a tracker.</string>
+    <string name="empty_list_others">There are no devices that have been identified for the selected filters. You can change filters by clicking the button in the top-left corner or by showing all devices.</string>
     <string name="show_all_button">Show all devices</string>
     <string name="empty_image_content_description">Image showing an empty list</string>
     <string name="beacon_locations">Beacon locations</string>
     <string name="other_devices_found">Other devices found</string>
-    <string name="all_devices_found">All devices found</string>
     <string name="device_name_tile" translatable="false">Tile %s</string>
     <string name="device_name_pebblebee" translatable="false">Pebblebee %s</string>
     <string name="device_name_samsung_device">Samsung Device %s</string>
@@ -280,7 +252,7 @@
     <string name="ignored_devices">Ignored devices</string>
     <string name="airtags_found">AirTags found</string>
     <string name="findmy_found">Apple Find My Devices found</string>
-    <string name="tile_found">Tiles found</string>
+    <string name="tile_found">Tiles / Life360 found</string>
     <string name="chipolo_found">Chipolos found</string>
     <string name="pebblebee_found">Pebblebees found</string>
     <string name="smarttag_found">SmartTags found</string>
@@ -382,8 +354,7 @@
     <string name="observe_tracker_stop_observation">Stop Observation</string>
     <string name="observe_tracker_stop_observation_explanation">This tracker is currently being observed.</string>
     <string name="observe_tracker_explanation">If you are not sure if this tracker follows you, you can manually observe it. \n\nIn one hour, AirGuard will search for this tracker and deliver a notification immediately, even if you did not move with this tracker. If the tracker is not around anymore, you will receive a notification about that as well.</string>
-    <string name="observe_tracker_changing_id">Please be aware that this tracker could change its identifier. Therefore it may still follow you even if we cannot detect it.</string>
-    <string name="tracking_observe_tracker_subtitle">Find out if this tracker is following you</string>
+    <string name="observe_tracker_changing_id">Please be aware that this tracker could change its identifier. Therefore, it may still follow you even if we cannot detect it.</string>
     <string name="observe_tracker_success">Observation started</string>
     <string name="observe_tracker_stopped">Observation stopped</string>
     <string name="observe_tracker_failure">You are already observing this tracker</string>
@@ -409,12 +380,15 @@
 
     <string name="explanation_apple">Please note:\nApple devices change their identifier over time.\nAirTags, AirPods, FindMy and other Apple devices are recognized as new devices periodically and can be displayed multiple times.</string>
     <string name="explanation_samsung">Please note:\nSamsung devices change their identifier over time.\nSmartTags and other Samsung SmartThings devices are recognized as new devices periodically and can be displayed multiple times.</string>
-    <string name="explanation_tile">Please note:\nTile devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
+    <string name="explanation_tile">Please note:\nTile / Life360 devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_chipolo">Please note:\nChipolo devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_pebblebee">Please note:\nPebblebee devices do not change their identifier.\nThis can lead to false warnings.\nIn case of a warning, please check if the device is not carried by someone around you (friends, family, colleges, neighbours etc.).</string>
     <string name="explanation_unknown">Please note:\nSome devices change their identifier over time.\nThese devices are recognized as new devices periodically and can be displayed multiple times.</string>
 
     <string name="explanation_safe_trackers">Safe Trackers are trackers around you that are currently connected or have been connected to their owner devices in the last minutes. They most likely do not pose a threat to you.\nAdditionally all tracker marked as ignored will be considered to be safe.</string>
+    <string name="safe_tracker_map_warning">This is a safe tracker. It is currently or was recently connected to its owner\'s device. Safe trackers do not pose a threat to you.</string>
+    <string name="no_locations_yet_hint">This device has been detected, but no location data has been recorded yet. Location data will appear here if the tracker is observed at a valid location.</string>
+    <string name="safe_tracker_monitored_warning">This is a safe tracker. It is currently or was recently connected to its owner\'s device. It is being temporarily observed, but it does not pose a threat to you.</string>
     <string name="device_name_cannot_be_empty">The device name cannot be empty</string>
 
     <string name="translation_supporters">Translation supporters</string>
@@ -446,12 +420,12 @@
     <string name="retrieve_owner_information_explanation_unknown">To get information about the owner you have to physically have found the Tracker. Once you have found it you have to get it in a special mode. This can be something like pressing the button three times or holding the button for 30 seconds. If successful this will be confirmed by a sound. Afterwards press \"next\".</string>
     <string name="retrieve_owner_information_explanation_pebblebee">To get information about the owner you have to physically have found the Tracker. Once you have found it press the button on the tracker three times. This will be confirmed by a sound. Afterwards press \"next\".</string>
     <string name="retrieve_owner_information_explanation_chipolo">To get information about the owner you have to physically have found the Tracker. Once you have found it press the button on the tracker for 30 seconds and release the button exactly after the second beep. This will be confirmed by a sound indicating success. Afterwards press \"next\".</string>
-    <string name="retrieve_owner_information_explanation_motorola">To get information about the owner you have to physically have found the Tracker. Once you have found it press and hold the button for 10 seconds until you hear a beep. Afterward, release the button and press &amp; release again immediately. Afterwards press \"next\".</string>
+    <string name="retrieve_owner_information_explanation_motorola">To get information about the owner you have to physically have found the Tracker. Locate the \"M\" button on the front of the tracker. Press and hold it for 10 seconds until you hear a beep. Release the button, then immediately press and release it again. You will hear a second beep to confirm. Afterwards press \"next\".</string>
+    <string name="retrieve_owner_information_explanation_hama">To get information about the owner you have to physically have found the Tracker. Open the accessory by lifting the back cover. Remove the battery and simply insert it again. Finally, put the back cover back on. Afterward press \"next\".</string>
     <string name="retrieve_owner_information_alert_next">Next</string>
     <string name="retrieve_owner_information_alert_close">Close</string>
 
     <string name="confirm_deactivating_background_scan_title">Confirm deactivating the background scan</string>
-    <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that are following you anymore.</string>
     <string name="confirm_deactivating_background_scan_yes">Yes, deactivate</string>
     <string name="confirm_deactivating_background_scan_no">No, stay protected</string>
 
@@ -466,7 +440,6 @@
     <string name="export_trackers_label">Export Trackers</string>
     <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
     <string name="export_trackers_create_document">Create document</string>
-    <string name="export_trackers_following">The tracker has been following you</string>
     <string name="export_trackers_not_following">The tracker has not been following you</string>
     <string name="export_trackers_ignored">The tracker has been ignored</string>
     <string name="export_trackers_location_unknown">Location: Unknown</string>
@@ -499,12 +472,7 @@
 
     <string name="device_comment_hint">Add a comment</string>
     <string name="notification_permission_missing_title">Notification Permission disabled</string>
-    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker has been following you. To change this enable notifications for this app in your system settings.</string>
-    <string name="background_location_permission_missing_title">Background Location Permission disabled</string>
-    <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker has been following you while this app is closed. To change this enable background locations for this app in your system settings.</string>
-
-    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
-    <string name="map_footer_device">This map shows all locations where this device was found.</string>
+    <string name="background_location_permission_missing_title">Background location permission disabled</string>
 
     <string name="title_old_device_cleanup">Auto delete old devices</string>
     <string name="settings_old_device_cleanup_title">Auto delete old devices</string>
@@ -522,9 +490,91 @@
     <string name="old_device_timeframe_2_months">2 months</string>
     <string name="old_device_timeframe_3_months">3 months</string>
     <string name="old_device_deactivate_title">Confirm deactivating automatic deletion</string>
-    <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time. Reverting this setting at a later point may take up to 24 hours.</string>
+    <string name="old_device_deactivate_text">Are you sure that you want to deactivate the automatic deletion of old tracker data? If you confirm than this app will slow down over time.</string>
     <string name="old_device_deactivate_yes">Yes, deactivate</string>
     <string name="old_device_deactivate_no">No, keep activated</string>
 
     <string name="article_load_error" translatable="false">Article Load Error</string>
+    <string name="map_footer_all_devices">This map shows all locations from the last %d days.</string>
+    <string name="map_footer_device">This map shows all locations ever found for this device.</string>
+    <string name="all_devices">All devices</string>
+    <string name="save">Save</string>
+
+    <!-- TODO: Changed: Require Translation -->
+    <string name="locations_tracked">Recent locations</string>
+    <string name="all_devices_found">All recent devices</string>
+    <string name="times_seen">Seen</string>
+    <string name="tracking_locate_at_subtitle">Locate Tracker via Audio</string>
+    <string name="tracking_feedback_subtitle">Help us with our research</string>
+
+    <string name="title_tracking">A device with this ID: {deviceAddress} could be following you</string>
+    <string name="settings_deactivate_scanning_summary">This deactivates AirGuard running in the background. Please be aware: You will not be warned if a tracker might be following you anymore.</string>
+    <string name="notification_permission_missing_text">Notifications are disabled for this app. You will not be warned when a tracker might follow you. To change this enable notifications for this app in your system settings.</string>
+    <string name="background_location_permission_missing_text">The background locations permission has not been granted for this app. You will not be warned when a tracker might follow you while this app is closed. To change this enable background locations for this app in your system settings.</string>
+    <string name="export_trackers_following">The tracker might have been following you</string>
+    <string name="tracking_observe_tracker_subtitle">Find out if this tracker could be following you</string>
+    <string name="airguard_detection_explanation">With the help of location information AirGuard can detect if a tracker might be following you to multiple locations!</string>
+    <string name="airguard_notification_explanation">You get a notification when a potential tracking device could be following you! The card above will then change its color to orange or red.</string>
+    <string name="onboarding_notification_description">To send you notifications when we identified that a tracker might be following you, we need the permission to send notifications.</string>
+    <plurals name="notification_text_base">
+        <item quantity="one">Open the notification to get more info. A tracker could have followed you for at least one minute.</item>
+        <item quantity="other">Open the notification to get more info. A tracker could have followed you for at least %d minutes.</item>
+    </plurals>
+    <string name="notification_title_base">A tracker could be following you</string>
+    <string name="notification_text_single">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_text_multiple">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_title_vocal">%s might follow you</string>
+    <string name="notification_title_consonant">A %s might follow you</string>
+    <string name="notification_title_multiple">%s might follow you</string>
+    <string name="settings_device_filter_summary">Choose which device types AirGuard should ignore. Selected device types will not show up in the manual scan and you will not be notified if such a device might follow you.</string>
+    <plurals name="notification_observe_tracker_positive">
+        <item quantity="one">A tracker you observed could have been following you for at least one hour.</item>
+        <item quantity="other">A tracker you observed could have been following you for at least %d hours.</item>
+    </plurals>
+    <string name="airguard_scan_explanation">AirGuard uses Bluetooth to scan for devices that might follow you.</string>
+    <string name="info_text_only_trackers">This list only shows trackers that might have been following you around in the last 14 days. To view all devices you can change the filter by using the button on the bottom-right corner</string>
+    <string name="confirm_deactivating_background_scan_text">Are you sure that you want to deactivate the background scan? If you confirm than you won\'t get notified about potential trackers that could follow you anymore.</string>
+
+    <!-- TODO: New: Require Translation -->
+    <string name="dismiss_article">Dismiss article</string>
+    <string name="navigate_to_details">Navigate to details</string>
+    <string name="more_trackers_found">+%d more trackers found</string>
+    <string name="title_device_map">Recently found locations</string>
+    <string name="found_at_location">Found at location</string>
+    <string name="selected_types_count">%d types</string>
+    <string name="sort_list">Sort list</string>
+    <string name="filter_sort_by_name">Sort by Name</string>
+    <string name="filter_sort_by_last_seen">Sort by Last Seen</string>
+    <string name="filter_sort_by_first_discovered">Sort by First Discovered</string>
+    <string name="filter_sort_by_times_seen">Sort by Times Seen</string>
+    <string name="sort_check_times_seen_description">Selected sorting order: sort by times seen</string>
+    <string name="sort_check_name_description">Selected sorting order: sort by name</string>
+    <string name="sort_check_last_seen_description">Selected sorting order: sort by last seen</string>
+    <string name="sort_check_first_discovered_description">Selected sorting order: sort by first discovered</string>
+    <string name="not_ignored">Not ignored</string>
+    <string name="not_notified">Not notified</string>
+    <string name="empty_list_no_devices">No devices have been found. AirGuard scans for Bluetooth tracking devices in the background. Make sure Bluetooth is enabled and the app has the necessary permissions to scan for devices.</string>
+
+    <string name="filter_marked_headline">Marked</string>
+    <string name="filter_marked">marked</string>
+    <string name="filter_not_marked_headline">Not Marked</string>
+
+    <string name="forget_tracker">Forget Tracker</string>
+    <string name="forget_tracker_dialog_title">Forget tracker?</string>
+    <string name="forget_tracker_dialog_message">This operation will delete all information about this tracker. Are you sure you want to continue?</string>
+    <string name="forget_tracker_success">Tracker deleted</string>
+
+    <string name="open_map_description">Open full screen map</string>
+    <string name="error_connection">Connection error</string>
+    <string name="active">Active</string>
+    <string name="actions">Actions</string>
+
+    <string name="feedback_research_explanation">By selecting an option, you help us improve our detection algorithms and support our research.</string>
+    <string name="close">close</string>
+
+    <string name="settings_use_dynamic_colors_title">Use Material You</string>
+    <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
+
+    <string name="load_all_occurrences">Load all occurrences</string>
+    <string name="scroll_button">Scrolls to the top or bottom of this view</string>
 </resources>

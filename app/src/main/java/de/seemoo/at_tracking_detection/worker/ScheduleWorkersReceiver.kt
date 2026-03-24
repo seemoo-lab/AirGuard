@@ -26,7 +26,12 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
         Timber.d("Broadcast received ${intent?.action}")
 
         val action = intent?.action
-        val backgroundWorkScheduler = ATTrackingDetectionApplication.getCurrentApp().backgroundWorkScheduler
+        val app = ATTrackingDetectionApplication.getCurrentApp()
+        if (app == null) {
+            Timber.w("Application not yet initialized, skipping broadcast handling for action: $action")
+            return
+        }
+        val backgroundWorkScheduler = app.backgroundWorkScheduler
 
         // Keep the broadcast short: schedule alarms inline; offload WorkManager to a separate thread and finish quickly.
         goAsync(Dispatchers.Default) {
@@ -90,24 +95,46 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
         const val OBSERVATION_DURATION = 1L // in hours
         const val OBSERVATION_DELTA = 30L // in minutes
 
+        /**
+         * Tag for both the scan and the ObserveTrackerWorker so they can be canceled together.
+         */
+        fun observeTrackerTag(deviceAddress: String) = "observe_tracker_$deviceAddress"
+
         fun scheduleWorker(context: Context, deviceAddress: String) {
-            val inputData = Data.Builder()
+            val tag = observeTrackerTag(deviceAddress)
+
+            // First cancel any previously scheduled workers for this device
+            WorkManager.getInstance(context).cancelAllWorkByTag(tag)
+
+            val observeTrackerInputData = Data.Builder()
                 .putString(ObserveTrackerWorker.DEVICE_ADDRESS_PARAM, deviceAddress)
                 .build()
 
-            val workRequestObserveTracker = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
-                .setInputData(inputData)
-                .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
+            val scanInputData = Data.Builder()
+                .putBoolean(ScanBluetoothWorker.IGNORE_DEACTIVATED_SETTING_PARAM, true)
                 .build()
 
             val workRequestBluetoothScan = OneTimeWorkRequestBuilder<ScanBluetoothWorker>()
-                .setInitialDelay(OBSERVATION_DURATION*60-5, TimeUnit.MINUTES) // make a scan 5 minutes before the observation ends
+                .setInputData(scanInputData)
+                .setInitialDelay(OBSERVATION_DURATION, TimeUnit.HOURS)
+                .addTag(tag)
                 .build()
 
-            WorkManager.getInstance(context).enqueue(workRequestBluetoothScan)
-            WorkManager.getInstance(context).enqueue(workRequestObserveTracker)
+            val workRequestObserveTracker = OneTimeWorkRequestBuilder<ObserveTrackerWorker>()
+                .setInputData(observeTrackerInputData)
+                .addTag(tag)
+                .build()
+
+            // Chain: scan finishes → ObserveTrackerWorker checks lastSeen
+            WorkManager.getInstance(context)
+                .beginWith(workRequestBluetoothScan)
+                .then(workRequestObserveTracker)
+                .enqueue()
         }
 
+        fun cancelWorker(context: Context, deviceAddress: String) {
+            WorkManager.getInstance(context).cancelAllWorkByTag(observeTrackerTag(deviceAddress))
+        }
     }
 }
 

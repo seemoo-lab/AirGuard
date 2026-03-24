@@ -1,7 +1,8 @@
 package de.seemoo.at_tracking_detection
 
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.*
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -67,10 +68,10 @@ class DevicesTabUITest {
         onView(withId(R.id.devices_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
         Thread.sleep(1000)
         //Back to the list
-        onView(withId(R.id.tracking_tiles)).perform(ViewActions.pressBack())
+        Espresso.pressBack()
         Thread.sleep(500)
         //Back to devices tab
-        onView(withId(R.id.filter_fragment)).perform(ViewActions.pressBack())
+        Espresso.pressBack()
     }
 
     @Test
@@ -81,7 +82,7 @@ class DevicesTabUITest {
         onView(withId(R.id.all_devices_card))
             .perform(click())
 
-        onView(withId(R.id.filter_button))
+        onView(withId(R.id.filter_expand_button))
             .perform(click())
 
         onView(allOf(withText("Device Types"))).check(matches(isDisplayed()))
@@ -111,10 +112,8 @@ class DevicesTabUITest {
         onView(withText("ignored")).perform(click())
         onView(withText("ignored")).perform(click())
 
-        onView(withId(R.id.filter_button))
+        onView(withId(R.id.filter_expand_button))
             .perform(click())
-
-//        Thread.sleep(500)
 //        onView(allOf(withText("Device Types"))).check(doesNotExist())
 
     }

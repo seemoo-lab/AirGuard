@@ -1,35 +1,38 @@
 package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
+import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.IBinder
 import android.text.InputFilter
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.cardview.widget.CardView
-import androidx.core.graphics.toColorInt
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -38,8 +41,8 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.databinding.FragmentTrackingBinding
+import de.seemoo.at_tracking_detection.util.MapUtils
 import de.seemoo.at_tracking_detection.util.Utility
-import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapListener
@@ -61,8 +64,6 @@ class TrackingFragment : Fragment() {
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     lateinit var mapView: MapView
-
-    private var isReceiverRegistered = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,40 +98,26 @@ class TrackingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        zoomToMarkers()
+        checkAndUpdateInternetAvailability()
 
-        val activity = ATTrackingDetectionApplication.getCurrentActivity() ?: return
-
-        LocalBroadcastManager.getInstance(activity)
-            .registerReceiver(gattUpdateReceiver, DeviceManager.gattIntentFilter)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.registerReceiver(
-                gattUpdateReceiver,
-                DeviceManager.gattIntentFilter,
-                Context.RECEIVER_NOT_EXPORTED
-            )
-        } else {
-            activity.registerReceiver(
-                gattUpdateReceiver,
-                DeviceManager.gattIntentFilter
-            )
+        if (shouldShowMap()) {
+            zoomToMarkers()
         }
-        isReceiverRegistered = true
 
         mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (isReceiverRegistered) {
-            context?.unregisterReceiver(gattUpdateReceiver)
-            isReceiverRegistered = false
-        }
         mapView.onPause()
     }
 
+    private fun shouldShowMap(): Boolean {
+        return trackingViewModel.showMap.value ?: false
+    }
+
     private fun initializeMap() {
-        Utility.basicMapSetup(mapView)
+        MapUtils.basicMapSetup(mapView)
 
         mapView.addMapListener(object : MapListener {
             override fun onZoom(event: ZoomEvent?): Boolean {
@@ -144,17 +131,24 @@ class TrackingFragment : Fragment() {
             }
         })
 
-        if (trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
+        if (shouldShowMap() && trackingViewModel.markerLocations.value != null && !trackingViewModel.isMapLoading.value!!) {
             zoomToMarkers()
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val commentEditText = view.findViewById<EditText>(R.id.device_comment)
+
         // Register OnBackPressedCallback
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (safeArgs.notificationId != -1) {
+            if (commentEditText.hasFocus()) {
+                commentEditText.clearFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            } else if (safeArgs.notificationId != -1) {
                 // Check if the activity is not finishing before calling finish()
                 if (!requireActivity().isFinishing) {
                     requireActivity().finish()
@@ -165,7 +159,33 @@ class TrackingFragment : Fragment() {
             }
         }
 
+        // Handle clicking outside the edit text to clear focus
+        view.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (commentEditText.hasFocus()) {
+                    val outRect = Rect()
+                    commentEditText.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                        commentEditText.clearFocus()
+                        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                    }
+                }
+            }
+            false
+        }
+
+        trackingViewModel.showMap.observe(viewLifecycleOwner) { showMap ->
+            if (showMap) {
+                mapView.post {
+                    zoomToMarkers()
+                }
+            }
+        }
+
         mapView = view.findViewById(R.id.map)
+
+        checkAndUpdateInternetAvailability()
 
         view.post {
             initializeMap()
@@ -178,6 +198,10 @@ class TrackingFragment : Fragment() {
 
         view.findViewById<View>(R.id.manufacturer_website).setOnClickListener {
             trackingViewModel.clickOnWebsite(requireContext())
+        }
+
+        view.findViewById<View>(R.id.forget_tracker_button).setOnClickListener {
+            showForgetTrackerDialog()
         }
 
         view.findViewById<CardView>(R.id.tracking_feedback).setOnClickListener {
@@ -206,14 +230,16 @@ class TrackingFragment : Fragment() {
             handlePlaySound()
         }
 
-        // Utility.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
+        // MapUtils.enableMyLocationOverlay(mapView) // This enables the blue location dot on the map
 
         trackingViewModel.markerLocations.observe(viewLifecycleOwner) { beacons ->
-            lifecycleScope.launch {
-                trackingViewModel.isMapLoading.postValue(true)
-                val locationList = Utility.fetchLocationListFromBeaconList(beacons)
-                Utility.setGeoPointsFromListOfLocations(locationList, mapView)
-                trackingViewModel.isMapLoading.postValue(false)
+            if (shouldShowMap()) {
+                lifecycleScope.launch {
+                    trackingViewModel.isMapLoading.postValue(true)
+                    val locationList = MapUtils.fetchLocationListFromBeaconList(beacons)
+                    MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
+                    trackingViewModel.isMapLoading.postValue(false)
+                }
             }
         }
 
@@ -250,7 +276,8 @@ class TrackingFragment : Fragment() {
                         if (newName.isNotEmpty()) {
                             device.name = newName
                             lifecycleScope.launch {
-                                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp().deviceRepository
+                                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                                    ?: error("ATTrackingDetectionApplication not initialized")
                                 deviceRepository.update(device)
                                 Timber.d("Renamed device to ${device.name}")
                             }
@@ -261,20 +288,6 @@ class TrackingFragment : Fragment() {
                     }
                     .show()
             }
-        }
-
-        val commentEditText = view.findViewById<EditText>(R.id.device_comment)
-
-        // Set colors of the EditText for the comment based on the selected theme
-        // Hint: In the future this should be replaced with the new color, theme system
-        if (Utility.isActualThemeDark(requireContext())) {
-            commentEditText.setBackgroundColor(resources.getColor(R.color.light_black))
-            commentEditText.setTextColor("#FFFFFF".toColorInt())
-            commentEditText.setHintTextColor(resources.getColor(R.color.light_grey))
-        } else {
-            commentEditText.setBackgroundColor("#FFFFFF".toColorInt())
-            commentEditText.setTextColor("#222222".toColorInt())
-            commentEditText.setHintTextColor(resources.getColor(R.color.grey))
         }
 
         trackingViewModel.deviceComment.observe(viewLifecycleOwner) { comment ->
@@ -291,11 +304,20 @@ class TrackingFragment : Fragment() {
         })
     }
 
+    private fun checkAndUpdateInternetAvailability() {
+        val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+        val hasInternet = caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        // Use the new setter which updates UI states instantly
+        trackingViewModel.setInternetAvailable(hasInternet)
+    }
+
     private fun zoomToMarkers() {
+        if (!shouldShowMap()) return
         lifecycleScope.launch {
             trackingViewModel.isMapLoading.postValue(true)
-            val locationList = Utility.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
-            Utility.setGeoPointsFromListOfLocations(locationList, mapView)
+            val locationList = MapUtils.fetchLocationListFromBeaconList(trackingViewModel.markerLocations.value ?: emptyList())
+            MapUtils.setGeoPointsFromListOfLocations(locationList, mapView)
             trackingViewModel.isMapLoading.postValue(false)
         }
     }
@@ -307,8 +329,9 @@ class TrackingFragment : Fragment() {
     }
 
     private fun navigateToScanDistance(deviceAddress: String) {
+        val connectable = trackingViewModel.connectable.value ?: false
         val directions: NavDirections =
-            TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress)
+            TrackingFragmentDirections.actionTrackingToScanDistance(deviceAddress, connectable)
         findNavController().navigate(directions)
     }
 
@@ -343,10 +366,23 @@ class TrackingFragment : Fragment() {
 
     private fun addInteractions(view: View) {
         val button = view.findViewById<ImageButton>(R.id.open_map_button)
-
         button.setOnClickListener {
             val direction = TrackingFragmentDirections.actionTrackingFragmentToDeviceMapFragment(showAllDevices = false, deviceAddress = trackingViewModel.deviceAddress.value)
             findNavController().navigate(direction)
+        }
+
+        val favoriteButton = view.findViewById<FloatingActionButton>(R.id.favorite_button)
+        favoriteButton.setOnClickListener {
+            val device = trackingViewModel.device.value
+            if (device != null) {
+                device.hearted = !device.hearted
+                lifecycleScope.launch {
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                        ?: error("ATTrackingDetectionApplication not initialized")
+                    deviceRepository.update(device)
+                    trackingViewModel.device.postValue(device)
+                }
+            }
         }
 
         val overlay = view.findViewById<View>(R.id.map_overlay)
@@ -372,31 +408,6 @@ class TrackingFragment : Fragment() {
         }
     }
 
-    private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothConstants.ACTION_EVENT_RUNNING -> {
-                    trackingViewModel.soundPlaying.postValue(
-                        true
-                    )
-                    trackingViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_GATT_DISCONNECTED -> {
-                    trackingViewModel.soundPlaying.postValue(false)
-                    trackingViewModel.connecting.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_FAILED -> {
-                    trackingViewModel.error.postValue(true)
-                    trackingViewModel.connecting.postValue(false)
-                    trackingViewModel.soundPlaying.postValue(false)
-                }
-                BluetoothConstants.ACTION_EVENT_COMPLETED -> trackingViewModel.soundPlaying.postValue(
-                    false
-                )
-            }
-        }
-    }
-
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Timber.d("Trying to connect to ble device!")
@@ -419,6 +430,40 @@ class TrackingFragment : Fragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
+        }
+    }
+
+    private fun showForgetTrackerDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.forget_tracker_dialog_title))
+            .setMessage(getString(R.string.forget_tracker_dialog_message))
+            .setNegativeButton(R.string.cancel_button, null)
+            .setPositiveButton(R.string.yes_button) { _, _ ->
+                lifecycleScope.launch {
+                    val deleted = trackingViewModel.deleteDeviceAndRelatedData()
+                    if (deleted) {
+                        Toast.makeText(requireContext(), R.string.forget_tracker_success, Toast.LENGTH_SHORT).show()
+                        navigateAfterDeletion()
+                    } else {
+                        Snackbar.make(requireView(), R.string.delete_data_error, Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun navigateAfterDeletion() {
+        val navController = findNavController()
+        val popped = navController.popBackStack()
+        if (!popped) {
+            navController.navigate(
+                R.id.navigation_dashboard,
+                null,
+                NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, inclusive = false)
+                    .setLaunchSingleTop(true)
+                    .build()
+            )
         }
     }
 

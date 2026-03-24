@@ -26,9 +26,10 @@ class RiskCardViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
-    var riskLevel: String = "No risk"
-    var riskColor: Int = 0
-    var showLastDetection: Boolean = true
+    var riskLevel: MutableLiveData<String> = MutableLiveData("No risk")
+    var riskColor: MutableLiveData<Int> = MutableLiveData(R.color.risk_low)
+    var showLastDetection: MutableLiveData<Boolean> = MutableLiveData(true)
+
     var clickable: Boolean = true
     var trackersFoundModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
     var lastUpdateModel: MutableLiveData<RiskRowViewModel> = MutableLiveData()
@@ -42,15 +43,15 @@ class RiskCardViewModel @Inject constructor(
                 "last_scan" -> {
                     lastScan = SharedPrefs.lastScanDate
                     updateLastUpdateModel()
-                    }
                 }
+            }
 
             when (key) {
                 "dismiss_survey_information" -> {
                     dismissSurveyInformation.postValue(SharedPrefs.dismissSurveyInformation)
                 }
             }
-            }
+        }
 
 
     init {
@@ -62,11 +63,11 @@ class RiskCardViewModel @Inject constructor(
 
         val lastScanString = if (lastScan != null) {
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(lastScan)
-        }else {
+        } else {
             ATTrackingDetectionApplication.getAppContext().getString(R.string.none)
         }
 
-        lastUpdateModel.postValue ( RiskRowViewModel(
+        lastUpdateModel.postValue(RiskRowViewModel(
             context.getString(R.string.last_scan_info, lastScanString),
             ContextCompat.getDrawable(context, R.drawable.ic_last_update)!!
         ))
@@ -88,8 +89,8 @@ class RiskCardViewModel @Inject constructor(
 
         when (riskLevelEvaluator.evaluateRiskLevel()) {
             RiskLevel.LOW -> {
-                riskLevel = context.getString(R.string.risk_level_low)
-                riskColor = ContextCompat.getColor(context, R.color.risk_low)
+                riskLevel.postValue(context.getString(R.string.risk_level_low))
+                riskColor.postValue(R.color.risk_low)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(R.string.no_trackers_found, earliestTrackingDateString),
@@ -100,12 +101,11 @@ class RiskCardViewModel @Inject constructor(
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
                 ))
 
-                showLastDetection = false
-
+                showLastDetection.postValue(false)
             }
             RiskLevel.MEDIUM -> {
-                riskLevel = context.getString(R.string.risk_level_medium)
-                riskColor = ContextCompat.getColor(context, R.color.risk_medium)
+                riskLevel.postValue(context.getString(R.string.risk_level_medium))
+                riskColor.postValue(R.color.risk_medium)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(
@@ -121,13 +121,12 @@ class RiskCardViewModel @Inject constructor(
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
                 ))
 
-
+                showLastDetection.postValue(true)
             }
             else -> {
-                //High risk
-                riskLevel = context.getString(R.string.risk_level_high)
-                riskColor = ContextCompat.getColor(context, R.color.risk_high)
-
+                // High risk
+                riskLevel.postValue(context.getString(R.string.risk_level_high))
+                riskColor.postValue(R.color.risk_high)
 
                 trackersFoundModel.postValue(RiskRowViewModel(
                     context.getString(
@@ -142,6 +141,8 @@ class RiskCardViewModel @Inject constructor(
                     context.getString(R.string.last_discovery, lastDiscoveryDateString),
                     ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
                 ))
+
+                showLastDetection.postValue(true)
             }
         }
     }
