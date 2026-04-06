@@ -36,6 +36,7 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -43,7 +44,6 @@ import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -348,7 +348,7 @@ object BackgroundBluetoothScanner {
             return true
         }
 
-        return suspendCoroutine { cont ->
+        return suspendCancellableCoroutine { cont ->
             var coroutineFinished = false
 
             val handler = Handler(Looper.getMainLooper())
@@ -479,6 +479,8 @@ object BackgroundBluetoothScanner {
                     since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
                 ) // sorted by newest first
 
+                // adding the beacons[0].locationId != locId check results in more than 1 beacon per 15 minutes if location is different
+                // if (beacons.isEmpty()) {
                 if (beacons.isEmpty() || beacons[0].locationId != locId) {
                     Timber.d("Add new Beacon to the database!")
 
