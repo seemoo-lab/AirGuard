@@ -1,0 +1,9 @@
+NEW: Complete UI redesign with Material You & edge-to-edge support
+NEW: Clickable map locations to reveal last trackers
+NEW: Advanced sorting & location filtering
+NEW: Trackers can be marked
+NEW: "Forget Tracker" & detail scan "Play Sound" options
+IMPROVED: Moto Tag & Hama Finder support
+IMPROVED: Battery view & auto-delete settings (Expert)
+IMPROVED: Observe option saves battery
+IMPROVED: Better offline handling, faster loading, smaller app size & bugfixes

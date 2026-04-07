@@ -32,13 +32,18 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
 import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.S)
 object PermanentBluetoothScanner: LocationHistoryListener {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    private var executor = Executors.newSingleThreadExecutor()
+    private val daemonThreadFactory = ThreadFactory { r ->
+        Thread(r, "PermanentBleScanner").apply { isDaemon = true }
+    }
+
+    private var executor = Executors.newSingleThreadExecutor(daemonThreadFactory)
     @Volatile private var keepRunning = false
 
     private var pendingFoundDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> =
@@ -174,7 +179,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         executor.shutdown()
         // Optionally, replace the executor with a new one if you need to start again later
         if (executor.isShutdown || executor.isTerminated) {
-            executor = Executors.newSingleThreadExecutor()
+            executor = Executors.newSingleThreadExecutor(daemonThreadFactory)
         }
         // Ask orchestrator to stop only if we are the current callback
         try {

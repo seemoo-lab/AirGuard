@@ -53,13 +53,13 @@
     <string name="feedback_location_bike">Fahrrad</string>
     <string name="feedback_location_other">Woanders</string>
     <string name="feedback_location_not_found">Tracker nicht gefunden</string>
-    <string name="feedback_success">Feedback wurde übermittel</string>
+    <string name="feedback_success">Feedback wurde übermittelt</string>
     <string name="feedback_close">Schließen</string>
     <string name="tracking_locate_at_playing_sound">Ton wird abgespielt…</string>
     <string name="permission_required">Berechtigung erforderlich</string>
     <string name="permission_required_message">Die Berechtigung muss erteilt werden, damit man die App verwenden kann.</string>
     <string name="rssi">RSSI</string>
-    <string name="device_item_last_seen">Zuletzt gesehen</string>
+    <string name="device_item_last_seen">Zuletzt:</string>
     <string name="onboarding_share_data_title">Statistikdaten teilen?</string>
     <string name="onboarding_share_data_switch">Statistikdaten teilen</string>
     <string name="onboarding_share_data_description">

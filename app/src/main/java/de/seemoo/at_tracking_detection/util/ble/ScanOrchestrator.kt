@@ -33,7 +33,7 @@ object ScanOrchestrator {
         appContext.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
     }
 
-    private val handlerThread = HandlerThread("BleScanOrchestrator")
+    private val handlerThread = HandlerThread("BleScanOrchestrator").apply { isDaemon = true }
     private val handler: Handler
 
     @Volatile private var currentCallback: ScanCallback? = null

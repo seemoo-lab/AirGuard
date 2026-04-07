@@ -1,0 +1,9 @@
+NEU: Komplettes UI-Redesign
+NEU: Klickbare Kartenorte zeigen die letzten Tracker
+NEU: Erweiterte Sortierung & Standortfilterung
+NEU: Tracker können markiert werden
+NEU: Optionen "Tracker vergessen" & "Ton abspielen" im Detail-Scan
+VERBESSERT: Unterstützung für Moto Tag & Hama Finder
+VERBESSERT: Batterieanzeige & Auto-Löschen-Einstellungen (Experte)
+VERBESSERT: Option "Beobachten" spart Akku
+VERBESSERT: Besseres Offline-Handling, schnelleres Laden, kleinere App-Größe & Bugfixes
