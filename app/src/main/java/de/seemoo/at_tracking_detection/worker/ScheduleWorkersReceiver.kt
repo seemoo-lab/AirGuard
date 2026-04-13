@@ -50,7 +50,7 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
                         } finally {
                             BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
                         }
-                    }.start()
+                    }.apply { isDaemon = true }.start()
                 }
 
                 // Our exact/alarm fired to perform a scan: enqueue work, don't run the scan inline.
@@ -64,7 +64,7 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
                         } catch (t: Throwable) {
                             Timber.w(t, "Failed to enqueue immediate scan from receiver")
                         }
-                    }.start()
+                    }.apply { isDaemon = true }.start()
                 }
 
                 // System broadcasts: keep receiver fast; just (re)establish lightweight schedules.

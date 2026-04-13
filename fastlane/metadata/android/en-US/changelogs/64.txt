@@ -1,0 +1,4 @@
+IMPROVED: Fix Visual Bugs in Filter Dialog
+IMPROVED: Optimize Background scanning behavior
+IMPROVED: Improve translations
+IMPROVED: Bugfixes
