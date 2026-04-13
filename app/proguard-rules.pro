@@ -155,3 +155,70 @@
     void onScanResult(...);
     void onScanFailed(...);
 }
+
+# --- PermanentScanReceiver ---
+# BroadcastReceiver for PendingIntent-based BLE scan results (Android 15+).
+# The system instantiates it by name when delivering PendingIntent broadcasts,
+# even after the app process has been killed. Although the default Android rules
+# already keep BroadcastReceiver subclasses, an explicit rule guarantees that
+# the class and all its members survive R8 full-mode shrinking/obfuscation.
+-keep class de.seemoo.at_tracking_detection.detection.PermanentScanReceiver { *; }
+
+# --- PermanentBluetoothScanner ---
+# Kotlin object singleton called from PermanentScanReceiver.onReceive() and
+# ATTrackingDetectionApplication.onCreate(). Contains critical suspend functions
+# (foundTracker, insertPendingDevices), implements LocationHistoryListener, and
+# holds the anonymous BluetoothStateMonitor.Listener callback.
+-keep class de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner { *; }
+
+# --- BackgroundBluetoothScanner ---
+# Kotlin object providing the shared insertScanResult() suspend function used by
+# PermanentBluetoothScanner. DiscoveredDevice is a public inner data class
+# constructed directly inside PermanentScanReceiver.onReceive().
+-keep class de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner { *; }
+-keep class de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner$DiscoveredDevice { *; }
+
+# --- LocationHistoryController ---
+# Kotlin object implementing android.location.LocationListener; receives location
+# callbacks from LocationProvider via direct call and dispatches them to registered
+# LocationHistoryListeners. Accessed statically from PermanentBluetoothScanner.
+-keep class de.seemoo.at_tracking_detection.detection.LocationHistoryController { *; }
+
+# --- LocationHistoryListener ---
+# Interface whose methods are dispatched dynamically from a HashSet<LocationHistoryListener>
+# in LocationHistoryController. PermanentBluetoothScanner implements this interface.
+# In R8 full mode, overrides of interface methods called through a collection may be
+# incorrectly removed if the concrete type is not statically visible at the call site.
+-keep interface de.seemoo.at_tracking_detection.detection.LocationHistoryListener
+-keepclassmembers class * implements de.seemoo.at_tracking_detection.detection.LocationHistoryListener {
+    public void receivedNewLocation(android.location.Location);
+    public void locationHistoryChanged(de.seemoo.at_tracking_detection.detection.LocationHistoryController, java.util.ArrayList);
+}
+
+# --- BluetoothStateMonitor.Listener implementations ---
+# Anonymous implementations (in PermanentBluetoothScanner and ScanOrchestrator) are
+# stored in a MutableSet<Listener> inside BluetoothStateMonitor and dispatched via
+# listeners.forEach { it.onBluetoothStateChanged(enabled) }. The anonymous classes
+# live outside the already-kept util.ble package, so their overrides need explicit
+# protection against R8 interface-devirtualization in full mode.
+-keepclassmembers class * implements de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor$Listener {
+    public void onBluetoothStateChanged(boolean);
+}
+
+# --- ScanResultWrapper ---
+# Data class wrapping android.bluetooth.le.ScanResult. Fields (uniqueIdentifier,
+# deviceType, connectionState, deviceAddress, …) and methods (deviceIsTracking())
+# are accessed at runtime by PermanentScanReceiver and PermanentBluetoothScanner.
+-keep class de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper { *; }
+
+# --- Utility nested logger objects ---
+# BLELogger and LocationLogger are nested Kotlin objects inside Utility that are
+# referenced by name throughout the scanning pipeline. Keep their fields (the
+# FileLoggerTree instance) and all logging methods.
+-keep class de.seemoo.at_tracking_detection.util.Utility$BLELogger { *; }
+-keep class de.seemoo.at_tracking_detection.util.Utility$LocationLogger { *; }
+
+# --- kotlin-reflect ---
+# kotlin-reflect is pulled in as a compile/runtime dependency. Suppress R8 warnings
+# about its internal implementation classes that are not reachable from app code.
+-dontwarn kotlin.reflect.jvm.internal.**
