@@ -1,11 +1,14 @@
 package de.seemoo.at_tracking_detection.detection
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
@@ -19,6 +22,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.BLELogger
+import de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor
 import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -39,6 +43,7 @@ import kotlin.math.abs
 object PermanentBluetoothScanner: LocationHistoryListener {
     private var bluetoothAdapter: BluetoothAdapter? = null
 
+    /** Daemon thread factory so the executor thread won't block JVM shutdown (DestroyJavaVM). */
     private val daemonThreadFactory = ThreadFactory { r ->
         Thread(r, "PermanentBleScanner").apply { isDaemon = true }
     }
@@ -115,6 +120,42 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     private var isScanning = false
 
+    // ── PendingIntent-based scanning for Android 15+ ──────────────────────
+
+    private const val ACTION_PERMANENT_SCAN =
+        "de.seemoo.at_tracking_detection.PERMANENT_BLE_SCAN"
+    private const val REQUEST_CODE_PERMANENT_SCAN = -200
+
+    @Volatile private var pendingIntentScanActive = false
+
+    /** Guard against re-entrant calls to [startPendingIntentScan]. */
+    @Volatile private var pendingIntentScanInProgress = false
+
+    /**
+     * Listener that re-registers the PendingIntent scan after Bluetooth is
+     * toggled off→on. PendingIntent scans are cleared by the system when
+     * Bluetooth turns off.
+     */
+    private val bluetoothStateListener = object : BluetoothStateMonitor.Listener {
+        override fun onBluetoothStateChanged(enabled: Boolean) {
+            // Skip if we are already inside startPendingIntentScan() (re-entrant call
+            // from BluetoothStateMonitor.addListener's immediate callback).
+            if (pendingIntentScanInProgress) return
+
+            if (enabled
+                && pendingIntentScanActive
+                && SharedPrefs.usePermanentBluetoothScanner
+                && !SharedPrefs.deactivateBackgroundScanning
+            ) {
+                BLELogger.d("Bluetooth re-enabled, re-registering PendingIntent scan")
+                startPendingIntentScan()
+            }
+        }
+    }
+    private var bluetoothListenerRegistered = false
+
+    // ── Public API ────────────────────────────────────────────────────────
+
     fun scan() {
         if (SharedPrefs.deactivateBackgroundScanning) {
             BLELogger.d("Background scanning is deactivated")
@@ -124,6 +165,124 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             return
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // Android 15+: PendingIntent-based scanning (system-managed, survives
+            // process death, not subject to callback-based scan duration limits)
+            startPendingIntentScan()
+        } else {
+            // Android 12-14: callback-based scanning via ScanOrchestrator
+            startCallbackScan()
+        }
+    }
+
+    fun stopPermanentScan() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            stopPendingIntentScan()
+        } else {
+            stopCallbackScan()
+        }
+    }
+
+    // ── PendingIntent scan (Android 15+) ──────────────────────────────────
+
+    @SuppressLint("MissingPermission")
+    fun startPendingIntentScan() {
+        if (SharedPrefs.deactivateBackgroundScanning) return
+        if (!Utility.checkBluetoothPermission()) return
+
+        // Prevent re-entrant calls (BluetoothStateMonitor.addListener fires
+        // the listener synchronously, which would re-enter this method).
+        if (pendingIntentScanInProgress) return
+        pendingIntentScanInProgress = true
+
+        try {
+            val manager = applicationContext
+                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val adapter = manager.adapter ?: run {
+                BLELogger.d("PendingIntent scan: adapter null")
+                return
+            }
+            if (!adapter.isEnabled) {
+                BLELogger.d("PendingIntent scan: Bluetooth disabled")
+                return
+            }
+            val scanner = try { adapter.bluetoothLeScanner } catch (_: Throwable) { null }
+            if (scanner == null) {
+                BLELogger.d("PendingIntent scan: scanner null")
+                return
+            }
+
+            val intent = Intent(applicationContext, PermanentScanReceiver::class.java).apply {
+                action = ACTION_PERMANENT_SCAN
+            }
+            val pi = PendingIntent.getBroadcast(
+                applicationContext,
+                REQUEST_CODE_PERMANENT_SCAN,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+
+            val scanSettings = ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build()
+
+            val errorCode = scanner.startScan(DeviceManager.scanFilter, scanSettings, pi)
+            if (errorCode == 0) {
+                pendingIntentScanActive = true
+                BLELogger.i("PendingIntent BLE scan started successfully")
+            } else {
+                BLELogger.e("PendingIntent BLE scan failed with error: $errorCode")
+            }
+
+            // Register the Bluetooth state listener so we re-register after BT toggles.
+            // Set the flag BEFORE addListener because addListener fires the callback
+            // synchronously; the re-entrancy guard above will block that callback.
+            if (!bluetoothListenerRegistered) {
+                bluetoothListenerRegistered = true
+                BluetoothStateMonitor.addListener(bluetoothStateListener)
+            }
+        } catch (t: Throwable) {
+            BLELogger.e("PendingIntent scan start failed: ${t.message}")
+        } finally {
+            pendingIntentScanInProgress = false
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun stopPendingIntentScan() {
+        pendingIntentScanActive = false
+        try {
+            val manager = applicationContext
+                .getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val scanner = manager.adapter?.bluetoothLeScanner
+            if (scanner != null && Utility.checkBluetoothPermission()) {
+                val intent = Intent(applicationContext, PermanentScanReceiver::class.java).apply {
+                    action = ACTION_PERMANENT_SCAN
+                }
+                val pi = PendingIntent.getBroadcast(
+                    applicationContext,
+                    REQUEST_CODE_PERMANENT_SCAN,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+                )
+                if (pi != null) {
+                    scanner.stopScan(pi)
+                    pi.cancel()
+                }
+            }
+        } catch (_: Throwable) {
+            // Best-effort stop
+        }
+
+        if (bluetoothListenerRegistered) {
+            BluetoothStateMonitor.removeListener(bluetoothStateListener)
+            bluetoothListenerRegistered = false
+        }
+    }
+
+    // ── Callback-based scan (Android 12-14) ───────────────────────────────
+
+    private fun startCallbackScan() {
         keepRunning = true
 
         // Avoid creating multiple loops
@@ -157,12 +316,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     Thread.sleep(3000)
 
                 } catch (ie: InterruptedException) {
-                    // If the app wants to stop, executor shutdown will interrupt; exit cleanly
                     BLELogger.d("Permanent scanning loop interrupted")
                     break
                 } catch (t: Throwable) {
                     BLELogger.e("Permanent scanning loop error: ${t.message}")
-                    // Back off a little to avoid tight loops
                     try { Thread.sleep(1500) } catch (_: InterruptedException) { break }
                 }
             }
@@ -173,15 +330,12 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         }
     }
 
-    fun stopPermanentScan() {
+    private fun stopCallbackScan() {
         keepRunning = false
-        // Do NOT call shutdownNow; it interrupts threads mid-call and can trigger InterruptedException in the framework.
         executor.shutdown()
-        // Optionally, replace the executor with a new one if you need to start again later
         if (executor.isShutdown || executor.isTerminated) {
             executor = Executors.newSingleThreadExecutor(daemonThreadFactory)
         }
-        // Ask orchestrator to stop only if we are the current callback
         try {
             ScanOrchestrator.stopScan("PermanentBluetoothScanner", leScanCallback)
         } catch (_: Throwable) {

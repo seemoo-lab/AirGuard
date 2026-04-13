@@ -112,6 +112,10 @@
         </receiver>
 
         <receiver
+            android:name=".detection.PermanentScanReceiver"
+            android:exported="false"/>
+
+        <receiver
             android:name=".notifications.ScheduledNotificationReceiver"
             android:exported="false"/>
 
