@@ -18,12 +18,14 @@ import java.time.LocalDateTime
 /**
  * BroadcastReceiver for PendingIntent-based BLE scan results.
  *
- * Used by [PermanentBluetoothScanner] on Android 15+ where callback-based
- * background scanning is restricted by the system. The system delivers scan
+ * Used by PermanentBluetoothScanner on Android 15+ where callback-based
+ * background scanning is restricted by the system.
+ *
+ * The system delivers scan
  * results via this receiver even if the app process has been killed, ensuring
  * continuous tracker detection.
  *
- * On Android 12-14 the callback-based approach in [PermanentBluetoothScanner]
+ * On Android 12-14 the callback-based approach in PermanentBluetoothScanner
  * is used instead.
  */
 class PermanentScanReceiver : BroadcastReceiver() {
