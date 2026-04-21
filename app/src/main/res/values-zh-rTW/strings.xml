@@ -518,7 +518,10 @@
     <string name="forget_tracker_dialog_title">忘記追蹤器？</string>
     <string name="forget_tracker_dialog_message">此操作將刪除有關此追蹤器的所有資訊。您確定要繼續嗎？</string>
     <string name="forget_tracker_success">追蹤器已刪除</string>
-
+    <string name="forget_trackers_dialog_title">刪除追蹤器？</string>
+    <string name="forget_trackers_dialog_message">此操作將刪除有關這 %d 個選定追蹤器的所有資訊。此操作無法撤銷。您確定要繼續嗎？</string>
+    <string name="forget_trackers_success">追蹤器已刪除</string>
+    <string name="selected_devices_count">已選擇 %d個</string>
     <string name="open_map_description">開啟全螢幕地圖</string>
     <string name="error_connection">連線錯誤</string>
     <string name="active">啟用</string>

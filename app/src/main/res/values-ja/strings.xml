@@ -501,7 +501,10 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="forget_tracker_dialog_title">トラッカーを削除しますか？</string>
     <string name="forget_tracker_dialog_message">この操作により、このトラッカーに関するすべての情報が削除されます。続けてもよろしいですか？</string>
     <string name="forget_tracker_success">トラッカーを削除しました</string>
-
+    <string name="forget_trackers_dialog_title">トラッカーを削除しますか？</string>
+    <string name="forget_trackers_dialog_message">選択した%d個のトラッカーに関するすべての情報を削除します。この操作は取り消せません。続行してもよろしいですか？</string>
+    <string name="forget_trackers_success">トラッカーを削除しました</string>
+    <string name="selected_devices_count">%d個選択中</string>
     <string name="open_map_description">全画面マップを開く</string>
     <string name="error_connection">接続エラー</string>
     <string name="active">アクティブ</string>

@@ -528,8 +528,11 @@
     <string name="forget_tracker">Oublier le traqueur</string>
     <string name="forget_tracker_dialog_title">Oublier le traqueur ?</string>
     <string name="forget_tracker_dialog_message">Cette opération supprimera toutes les informations sur ce traqueur. Êtes-vous sûr de vouloir continuer ?</string>
-    <string name="forget_tracker_success">Traqueur supprimé</string>
-
+    <string name="forget_tracker_success">Tracker supprimé</string>
+    <string name="forget_trackers_dialog_title">Oublier les traqueurs ?</string>
+    <string name="forget_trackers_dialog_message">Cette opération supprimera toutes les informations sur les %d traqueurs sélectionnés. Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?</string>
+    <string name="forget_trackers_success">Traqueurs supprimés</string>
+    <string name="selected_devices_count">%d sélectionnés</string>
     <string name="open_map_description">Ouvrir la carte en plein écran</string>
     <string name="error_connection">Erreur de connexion</string>
     <string name="active">Actif</string>

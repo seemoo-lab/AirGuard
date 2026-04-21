@@ -519,6 +519,10 @@
     <string name="forget_tracker_dialog_title">Tracker vergessen?</string>
     <string name="forget_tracker_dialog_message">Dieser Vorgang löscht alle Informationen zu diesem Tracker. Bist du sicher, dass du fortfahren möchtest?</string>
     <string name="forget_tracker_success">Tracker gelöscht</string>
+    <string name="forget_trackers_dialog_title">Tracker vergessen?</string>
+    <string name="forget_trackers_dialog_message">Dieser Vorgang löscht alle Informationen zu den %d ausgewählten Trackern. Dieser Vorgang kann nicht rückgängig gemacht werden. Bist du sicher, dass du fortfahren möchtest?</string>
+    <string name="forget_trackers_success">Tracker gelöscht</string>
+    <string name="selected_devices_count">%d ausgewählt</string>
 
     <string name="open_map_description">Vollbildkarte öffnen</string>
     <string name="error_connection">Verbindungsfehler</string>

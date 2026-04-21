@@ -630,7 +630,11 @@
     <string name="forget_tracker">Dimentica tracker</string>
     <string name="forget_tracker_dialog_title">Dimenticare tracker?</string>
     <string name="forget_tracker_dialog_message">Questa operazione eliminerà tutte le informazioni su questo tracker. Sei sicuro di voler continuare?</string>
-    <string name="forget_tracker_success">Tracker eliminato</string>
+    <string name="forget_tracker_success">Tracker rimosso</string>
+    <string name="forget_trackers_dialog_title">Dimenticare i tracker?</string>
+    <string name="forget_trackers_dialog_message">Questa operazione eliminerà tutte le informazioni sui %d tracker selezionati. L\'azione è irreversibile. Sei sicuro di voler continuare?</string>
+    <string name="forget_trackers_success">Tracker rimossi</string>
+    <string name="selected_devices_count">%d selezionati</string>
 
     <string name="open_map_description">Apri mappa a schermo intero</string>
     <string name="error_connection">Errore di connessione</string>

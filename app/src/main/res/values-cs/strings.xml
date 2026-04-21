@@ -541,8 +541,11 @@
     <string name="forget_tracker">Zapomenout tracker</string>
     <string name="forget_tracker_dialog_title">Zapomenout tracker?</string>
     <string name="forget_tracker_dialog_message">Tato operace vymaže všechny informace o tomto trackeru. Opravdu chcete pokračovat?</string>
-    <string name="forget_tracker_success">Tracker smazán</string>
-
+    <string name="forget_tracker_success">Tracker odstraněn</string>
+    <string name="forget_trackers_dialog_title">Zapomenout trackery?</string>
+    <string name="forget_trackers_dialog_message">Tato operace vymaže všechny informace o %d vybraných trackerech. Tuto akci nelze vrátit zpět. Opravdu chcete pokračovat?</string>
+    <string name="forget_trackers_success">Trackery odstraněny</string>
+    <string name="selected_devices_count">%d vybráno</string>
     <string name="open_map_description">Otevřít mapu na celou obrazovku</string>
     <string name="error_connection">Chyba připojení</string>
     <string name="active">Aktivní</string>

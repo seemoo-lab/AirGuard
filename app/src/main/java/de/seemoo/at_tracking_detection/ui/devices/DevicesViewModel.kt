@@ -10,6 +10,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
+import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.Filter
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
     private val beaconRepository: BeaconRepository,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
     enum class SortOption {
         NAME, LAST_SEEN, FIRST_DISCOVERED, TIMES_SEEN
@@ -56,6 +58,44 @@ class DevicesViewModel @Inject constructor(
     var infoText: MutableLiveData<String> = MutableLiveData()
     var filterIsExpanded: MutableLiveData<Boolean> = MutableLiveData(false)
     var filterSummaryText: MutableLiveData<String> = MutableLiveData("")
+
+    // Selection mode (e.g. for mass deletion)
+    val selectedDevices: MutableLiveData<MutableSet<String>> = MutableLiveData(mutableSetOf())
+    val isSelectionMode: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    fun toggleDeviceSelection(deviceAddress: String) {
+        val current = selectedDevices.value ?: mutableSetOf()
+        if (current.contains(deviceAddress)) {
+            current.remove(deviceAddress)
+        } else {
+            current.add(deviceAddress)
+        }
+        selectedDevices.value = current
+        isSelectionMode.value = current.isNotEmpty()
+    }
+
+    fun clearSelection() {
+        selectedDevices.value = mutableSetOf()
+        isSelectionMode.value = false
+    }
+
+    fun deleteSelectedDevices() = viewModelScope.launch(Dispatchers.IO) {
+        val addresses = selectedDevices.value?.toList() ?: return@launch
+        for (address in addresses) {
+            val device = deviceRepository.getDevice(address) ?: continue
+            val beacons = beaconRepository.getDeviceBeacons(address)
+            try {
+                beaconRepository.deleteBeacons(beacons)
+                notificationRepository.deleteForDevice(address)
+                deviceRepository.delete(device)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to delete device $address")
+            }
+        }
+        withContext(Dispatchers.Main) {
+            clearSelection()
+        }
+    }
 
     init {
         isLoading.value = true

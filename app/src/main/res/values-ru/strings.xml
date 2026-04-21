@@ -499,7 +499,10 @@
     <string name="forget_tracker_dialog_title">Забыть трекер?</string>
     <string name="forget_tracker_dialog_message">Эта операция удалит всю информацию об этом трекере. Вы уверены, что хотите продолжить?</string>
     <string name="forget_tracker_success">Трекер удален</string>
-
+    <string name="forget_trackers_dialog_title">Забыть трекеры?</string>
+    <string name="forget_trackers_dialog_message">Эта операция удалит всю информацию о %d выбранных трекерах. Это действие нельзя отменить. Вы уверены, что хотите продолжить?</string>
+    <string name="forget_trackers_success">Трекеры удалены</string>
+    <string name="selected_devices_count">%d выбрано</string>
     <string name="open_map_description">Открыть карту на весь экран</string>
     <string name="error_connection">Ошибка соединения</string>
     <string name="active">Активен</string>

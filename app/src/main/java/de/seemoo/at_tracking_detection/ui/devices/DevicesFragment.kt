@@ -1,6 +1,7 @@
 package de.seemoo.at_tracking_detection.ui.devices
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.os.Bundle
 import android.text.InputFilter
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -19,11 +21,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -31,6 +35,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +53,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 
@@ -72,6 +78,7 @@ class DevicesFragment : Fragment() {
     private lateinit var deviceAdapter: DeviceAdapter
 
     private var swipeDirs: Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+    private var swipeCallback: ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Initialize properties from SafeArgs
@@ -153,8 +160,9 @@ class DevicesFragment : Fragment() {
 
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback(swipeDirs))
         itemTouchHelper.attachToRecyclerView(binding.root.findViewById(R.id.devices_recycler_view))
+        swipeCallback = itemTouchHelper
 
-        deviceAdapter = DeviceAdapter(devicesViewModel, deviceItemListener)
+        deviceAdapter = DeviceAdapter(devicesViewModel, deviceItemListener, DeviceAdapter.OnLongClickListener { _ -> })
         binding.lifecycleOwner = viewLifecycleOwner
         binding.adapter = deviceAdapter
         binding.vm = devicesViewModel
@@ -166,6 +174,7 @@ class DevicesFragment : Fragment() {
         postponeEnterTransition()
         val recyclerView = view.findViewById<RecyclerView>(R.id.devices_recycler_view)
         val filterContainer = view.findViewById<View>(R.id.filter_fragment)
+        val selectionActionBar = view.findViewById<View>(R.id.selection_action_bar)
         val emptyListInclude = view.findViewById<View>(R.id.include_list_empty_explanation)
 
         recyclerView.doOnPreDraw { startPostponedEnterTransition() }
@@ -174,6 +183,11 @@ class DevicesFragment : Fragment() {
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
             v.updatePadding(top = bars.top)
+
+            // Inset handling
+            selectionActionBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = bars.top
+            }
 
             val navView = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav_view)
             val navHeight = if (navView != null && navView.height > 0)
@@ -192,13 +206,61 @@ class DevicesFragment : Fragment() {
                 emptyListInclude.updatePadding(top = filterHeight)
             }
 
-            // Stop system from adding unnecessary padding to te dialog filter
+            // When selection bar is visible, sync its post-layout height to recycler top padding (Inset handling)
+            selectionActionBar.post {
+                if (devicesViewModel.isSelectionMode.value == true) {
+                    val selectionBarHeight = selectionActionBar.height + selectionActionBar.marginBottom
+                    recyclerView.updatePadding(top = selectionBarHeight)
+                    emptyListInclude.updatePadding(top = selectionBarHeight)
+                }
+            }
+
+            // Stop system from adding unnecessary padding to the dialog filter
             WindowInsetsCompat.CONSUMED
         }
 
         devicesViewModel.devices.observe(viewLifecycleOwner) {
             deviceAdapter.submitList(it)
             updateTexts()
+        }
+
+        // Selection action bar
+        val tvSelectionCount = view.findViewById<TextView>(R.id.tv_selection_count)
+        val btnClearSelection = view.findViewById<MaterialButton>(R.id.btn_clear_selection)
+        val btnDeleteSelected = view.findViewById<MaterialButton>(R.id.btn_delete_selected)
+
+        @SuppressLint("NotifyDataSetChanged") // This is only executed once when devices are deleted so its okay
+        devicesViewModel.selectedDevices.observe(viewLifecycleOwner) { selected ->
+            tvSelectionCount.text = getString(R.string.selected_devices_count, selected.size)
+            deviceAdapter.notifyDataSetChanged()
+        }
+
+        devicesViewModel.isSelectionMode.observe(viewLifecycleOwner) { inSelectionMode ->
+            if (inSelectionMode) {
+                swipeCallback?.attachToRecyclerView(null)
+            } else {
+                swipeCallback?.attachToRecyclerView(recyclerView)
+            }
+        }
+
+        btnClearSelection.setOnClickListener {
+            devicesViewModel.clearSelection()
+        }
+
+        btnDeleteSelected.setOnClickListener {
+            val count = devicesViewModel.selectedDevices.value?.size ?: 0
+            if (count == 0) return@setOnClickListener
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.forget_trackers_dialog_title))
+                .setMessage(getString(R.string.forget_trackers_dialog_message, count))
+                .setNegativeButton(R.string.cancel_button, null)
+                .setPositiveButton(R.string.yes_button) { _, _ ->
+                    lifecycleScope.launch {
+                        devicesViewModel.deleteSelectedDevices()
+                        Toast.makeText(context, R.string.forget_trackers_success, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .show()
         }
 
         val showAllButton = view.findViewById<Button>(R.id.show_all_devices_button)
