@@ -56,6 +56,7 @@ import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class DevicesFragment : Fragment() {
@@ -106,11 +107,11 @@ class DevicesFragment : Fragment() {
                 )
             )
         } else {
-            val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation.toLocalDate()
+            val relevantTrackingStartDate = RiskLevelEvaluator.relevantTrackingDateForRiskCalculation
             devicesViewModel.addOrRemoveFilter(
                 DateRangeFilter(
                     relevantTrackingStartDate,
-                    LocalDate.now()
+                    LocalDateTime.now()
                 )
             )
             // If we show all devices immediately, we set the correct strings here
