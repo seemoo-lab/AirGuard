@@ -60,6 +60,7 @@
         android:theme="@style/Theme.ATTrackingDetection"
         android:localeConfig="@xml/locales_config"
         android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:hardwareAccelerated="true"
@@ -122,6 +123,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:allowTaskReparenting="true"
             android:exported="true">
             <intent-filter>

@@ -11,7 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -308,7 +307,7 @@ object Utility {
     fun openBrowser(context: Context, url: String, view: View) {
         Timber.d("Opening browser with URL: $url")
         val finalUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            "http://$url"
+            "https://$url" // force https (required from Android 17+)
         } else {
             url
         }
