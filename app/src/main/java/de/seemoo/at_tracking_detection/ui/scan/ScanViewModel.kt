@@ -142,7 +142,7 @@ class ScanViewModel @Inject constructor(
         )
 
         if (beaconCountBefore == 0) {
-            val skipDevice = Utility.getSkipDevice(wrappedScanResult = wrappedScanResult)
+            val skipDevice = Utility.getSkipDevice(wrappedScanResult.deviceType)
             if (skipDevice) return@launch
 
             // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes

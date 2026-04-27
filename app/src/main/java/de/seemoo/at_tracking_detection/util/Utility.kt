@@ -31,7 +31,6 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
-import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.Dispatchers
@@ -327,8 +326,7 @@ object Utility {
         }
     }
 
-    fun getSkipDevice(wrappedScanResult: ScanResultWrapper) : Boolean {
-        val deviceType = wrappedScanResult.deviceType
+    fun getSkipDevice(deviceType: DeviceType): Boolean {
         val securityLevel = SharedPrefs.riskSensitivity
 
         // Skip Samsung Find My Mobile and Apple devices if security level is set to high as this causes a lot of false positives

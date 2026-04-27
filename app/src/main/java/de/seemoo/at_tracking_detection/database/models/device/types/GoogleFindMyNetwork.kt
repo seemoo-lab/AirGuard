@@ -211,12 +211,16 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
         val offlineFindingServiceUUID: ParcelUuid = ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB")
 
-        fun getSubType(wrappedScanResult: ScanResultWrapper): GoogleFindMyNetworkType {
-            return when (wrappedScanResult.advertisementFlags) {
+        fun getSubType(advertisementFlags: Int?): GoogleFindMyNetworkType {
+            return when (advertisementFlags) {
                 0x02 -> SMARTPHONE
                 0x06 -> TAG
                 else -> UNKNOWN
             }
+        }
+
+        fun getSubType(wrappedScanResult: ScanResultWrapper): GoogleFindMyNetworkType {
+            return getSubType(wrappedScanResult.advertisementFlags)
         }
 
         suspend fun getDeviceName(wrappedScanResult: ScanResultWrapper): String {
