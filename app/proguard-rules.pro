@@ -82,6 +82,13 @@
 # R8 full mode strips generic signatures from return types if not kept.
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
+# Keep Article data class used for Gson deserialization from JSON assets
+# Without this, R8 obfuscates field names and Gson cannot map JSON keys to fields.
+-keep class de.seemoo.at_tracking_detection.ui.dashboard.Article { *; }
+-keepclassmembers class de.seemoo.at_tracking_detection.ui.dashboard.Article {
+    <fields>;
+}
+
 # Keep Gson classes
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class com.google.gson.Gson { *; }
