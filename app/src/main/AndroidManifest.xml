@@ -122,7 +122,6 @@
         <activity
             android:name=".ui.MainActivity"
             android:windowSoftInputMode="adjustResize"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:allowTaskReparenting="true"
             android:exported="true">
             <intent-filter>

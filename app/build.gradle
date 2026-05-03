@@ -30,14 +30,14 @@ android {
         resValues true
     }
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId "de.seemoo.at_tracking_detection"
         minSdk = 28
-        targetSdk = 36
-        versionCode 64
-        versionName "3.0.2"
+        targetSdk = 37
+        versionCode 66
+        versionName "3.1.0"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -102,8 +102,6 @@ aboutLibraries {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.github.bastienpaulfr:Treessence:1.1.2'
     implementation "androidx.work:work-runtime-ktx:$work_version"
