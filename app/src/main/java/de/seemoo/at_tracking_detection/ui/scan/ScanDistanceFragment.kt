@@ -173,7 +173,7 @@ class ScanDistanceFragment : Fragment() {
         binding.scanResultLoadingBar.visibility = View.GONE
         binding.searchingForDevice.visibility = View.GONE
         binding.infoContainer.visibility = View.VISIBLE
-        binding.batteryLayout.visibility = if (SharedPrefs.advancedMode) View.VISIBLE else View.GONE
+        // Battery layout visibility is managed by setBattery()
         binding.deviceNotFound.visibility = View.GONE
         binding.actionsContainer.visibility = View.VISIBLE
         binding.playSoundButton.visibility = if (safeArgs.connectable) View.VISIBLE else View.GONE
@@ -344,6 +344,9 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun setBattery(batteryState: BatteryState) {
+        binding.batteryLayout.visibility =
+            if (SharedPrefs.advancedMode && batteryState != BatteryState.UNKNOWN) View.VISIBLE else View.GONE
+
         when(batteryState) {
             BatteryState.FULL -> {
                 binding.batterySymbol.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_battery_full_24))
