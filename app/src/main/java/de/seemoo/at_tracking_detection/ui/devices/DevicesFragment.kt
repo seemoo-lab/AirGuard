@@ -50,6 +50,7 @@ import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.LocationFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
+import de.seemoo.at_tracking_detection.ui.devices.filter.models.SafeTrackerFilter
 import de.seemoo.at_tracking_detection.ui.tracking.TrackingFragment
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -139,6 +140,9 @@ class DevicesFragment : Fragment() {
         if (locationId > 0) {
             devicesViewModel.addOrRemoveFilter(LocationFilter(locationId))
         }
+
+        // Always hide safe trackers from all device lists
+        devicesViewModel.addOrRemoveFilter(SafeTrackerFilter(filterFor = false))
 
         // Apply preselected filter states if provided
         applyPreselectFilters()
@@ -439,6 +443,8 @@ class DevicesFragment : Fragment() {
             "INCLUDING" -> {
                 devicesViewModel.ignoredFilterState.value = DevicesViewModel.FilterState.INCLUDING
                 devicesViewModel.activeFilter[IgnoredFilter::class.toString()] = IgnoredFilter(filterFor = true)
+                devicesViewModel.activeFilter.remove(NotifiedFilter::class.toString())
+                devicesViewModel.notifiedFilterState.value = DevicesViewModel.FilterState.UNSELECTED
             }
             "EXCLUDING" -> {
                 devicesViewModel.ignoredFilterState.value = DevicesViewModel.FilterState.EXCLUDING
