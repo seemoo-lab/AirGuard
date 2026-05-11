@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
@@ -38,6 +39,14 @@ class ScanViewModel @Inject constructor(
 ) : ViewModel() {
     val bluetoothDeviceListHighRisk = MutableLiveData<MutableList<ScanResultWrapper>>()
     val bluetoothDeviceListLowRisk = MutableLiveData<MutableList<ScanResultWrapper>>()
+
+    val advancedMode = MutableLiveData<Boolean>(SharedPrefs.advancedMode)
+
+    // Unsorted list, visible list gets calculated from this
+    private val _highRiskBase = mutableListOf<ScanResultWrapper>()
+    private val _lowRiskBase = mutableListOf<ScanResultWrapper>()
+
+    val sortOrder = MutableLiveData(ScanSortOrder.BY_APPEARANCE)
 
     val scanFinished = MutableLiveData(false)
 
@@ -118,6 +127,23 @@ class ScanViewModel @Inject constructor(
     }
 
 
+    // Return sorted list
+    private fun applySort(list: List<ScanResultWrapper>): MutableList<ScanResultWrapper> {
+        return when (sortOrder.value ?: ScanSortOrder.BY_APPEARANCE) {
+            ScanSortOrder.BY_APPEARANCE -> list.toMutableList()
+            ScanSortOrder.BY_NAME -> list.sortedBy {
+                it.advertisedName ?: it.deviceName ?: DeviceType.userReadableNameDefault(it.deviceType)
+            }.toMutableList()
+            ScanSortOrder.BY_SIGNAL_STRENGTH -> list.sortedByDescending { it.rssiValue }.toMutableList()
+        }
+    }
+
+    fun setSortOrder(order: ScanSortOrder) {
+        sortOrder.value = order
+        bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
+        bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
+    }
+
     fun addScanResult(scanResult: ScanResult) = viewModelScope.launch(Dispatchers.IO) {
         val wrappedScanResult = ScanResultWrapper(scanResult)
 
@@ -171,33 +197,30 @@ class ScanViewModel @Inject constructor(
         withContext(Dispatchers.Main) {
             if (scanFinished.value == true) return@withContext
 
-            val highList = bluetoothDeviceListHighRisk.value?.toMutableList() ?: mutableListOf()
-            val lowList  = bluetoothDeviceListLowRisk.value?.toMutableList()  ?: mutableListOf()
-
             if (isElementHighRisk) {
-                val existing = highList.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                val existing = _highRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
                 if (existing != null) {
                     existing.rssi.set(wrappedScanResult.rssi.get())
                     existing.rssiValue = wrappedScanResult.rssiValue
                     existing.txPower = wrappedScanResult.txPower
                     existing.isConnectable = wrappedScanResult.isConnectable
                 } else {
-                    highList.add(wrappedScanResult)
+                    _highRiskBase.add(wrappedScanResult)
                 }
             } else {
-                val existing = lowList.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                val existing = _lowRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
                 if (existing != null) {
                     existing.rssi.set(wrappedScanResult.rssi.get())
                     existing.rssiValue = wrappedScanResult.rssiValue
                     existing.txPower = wrappedScanResult.txPower
                     existing.isConnectable = wrappedScanResult.isConnectable
                 } else {
-                    lowList.add(wrappedScanResult)
+                    _lowRiskBase.add(wrappedScanResult)
                 }
             }
 
-            bluetoothDeviceListHighRisk.value = highList
-            bluetoothDeviceListLowRisk.value = lowList
+            bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
+            bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
         }
 
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier ${wrappedScanResult.uniqueIdentifier}")

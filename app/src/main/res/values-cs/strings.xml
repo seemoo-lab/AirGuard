@@ -294,6 +294,8 @@
     <string name="connection_state_unknown_explanation">Stav připojení trackeru nelze určit</string>
 
     <string name="scan_accessibility">Spustí nebo zastaví skenování</string>
+    <string name="scan_sort_accessibility">Seřadit výsledky skenování</string>
+    <string name="scan_sort_dialog_title">Seřadit podle</string>
     <string name="scan_sorting_by_rssi">podle síly signálu</string>
     <string name="scan_sorting_by_recently">podle nedávno detekovaných</string>
     <string name="scan_sorting_by_address">podle MAC adresy</string>

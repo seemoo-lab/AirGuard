@@ -278,6 +278,8 @@
     <string name="connection_state_unknown_explanation">L\u02bcétat de connexion de l\u02bcappareil ne peut pas être déterminé</string>
 
     <string name="scan_accessibility">Commencer ou arrêter le scan</string>
+    <string name="scan_sort_accessibility">Trier les résultats du scan</string>
+    <string name="scan_sort_dialog_title">Trier par</string>
     <string name="scan_sorting_by_rssi">par intensité du signal</string>
     <string name="scan_sorting_by_recently">par date de détection</string>
     <string name="scan_sorting_by_address">par adresse MAC</string>

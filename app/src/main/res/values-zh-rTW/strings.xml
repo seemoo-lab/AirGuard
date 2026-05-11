@@ -264,6 +264,8 @@
 
 
     <string name="scan_accessibility">開始或停止掃描</string>
+    <string name="scan_sort_accessibility">排序掃描結果</string>
+    <string name="scan_sort_dialog_title">排序方式</string>
     <string name="scan_sorting_by_rssi">依訊號強度</string>
     <string name="scan_sorting_by_recently">依最近偵測到</string>
     <string name="scan_sorting_by_address">依 MAC-地址</string>

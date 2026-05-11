@@ -268,6 +268,8 @@
     <string name="connection_state_premature_offline_explanation_chipolo">Gerät war in den letzten 30 Minuten mit Besitzer verbunden</string>
     <string name="connection_state_unknown">Unbekannt</string>
     <string name="scan_accessibility">Startet oder Stoppt den Scan</string>
+    <string name="scan_sort_accessibility">Scan Ergebnisse sortieren</string>
+    <string name="scan_sort_dialog_title">Sortieren nach</string>
     <string name="scan_sorting_by_rssi">nach Signalstärke</string>
     <string name="scan_sorting_by_recently">zuletzt gesehen</string>
     <string name="scan_sorting_by_address">nach MAC-Adresse</string>

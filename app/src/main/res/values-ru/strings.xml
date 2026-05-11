@@ -272,6 +272,8 @@
     <string name="connection_state_content_description">Информация о статус подключения устройства</string>
     <string name="connection_state_unknown_explanation">Не получилось определить статус подключения устройства слежки</string>
     <string name="scan_accessibility">Запускает или останавливает сканирование</string>
+    <string name="scan_sort_accessibility">Сортировать результаты сканирования</string>
+    <string name="scan_sort_dialog_title">Сортировать по</string>
     <string name="scan_sorting_by_rssi">по уровню сигнала</string>
     <string name="scan_sorting_by_recently">по времени обнаружения</string>
     <string name="scan_sorting_by_address">по MAC адресам</string>

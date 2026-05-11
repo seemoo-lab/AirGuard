@@ -246,6 +246,8 @@
     <string name="connection_state_content_description">デバイスの接続状態に関する情報</string>
     <string name="connection_state_unknown_explanation">トラッカーの接続状態を判定できません</string>
     <string name="scan_accessibility">スキャン開始/停止</string>
+    <string name="scan_sort_accessibility">スキャン結果を並べ替え</string>
+    <string name="scan_sort_dialog_title">並べ替え</string>
     <string name="scan_sorting_by_rssi">信号強度順</string>
     <string name="scan_sorting_by_recently">最近検知順</string>
     <string name="scan_sorting_by_address">MACアドレス順</string>

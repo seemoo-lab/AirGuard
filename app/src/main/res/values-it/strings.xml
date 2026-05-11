@@ -359,6 +359,8 @@
     <string name="connection_state_unknown_explanation">Impossibile determinare lo stato di connessione del tracker</string>
 
     <string name="scan_accessibility">Avvia o arresta la scansione</string>
+    <string name="scan_sort_accessibility">Ordina i risultati della scansione</string>
+    <string name="scan_sort_dialog_title">Ordina per</string>
     <string name="scan_sorting_by_rssi">per intensità segnale</string>
     <string name="scan_sorting_by_recently">per rilevati di recente</string>
     <string name="scan_sorting_by_address">per indirizzo MAC</string>

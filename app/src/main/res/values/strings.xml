@@ -300,6 +300,8 @@
     <string name="connection_state_unknown_explanation">Connection state of the tracker cannot be determined</string>
 
     <string name="scan_accessibility">Starts or Stops the Scan</string>
+    <string name="scan_sort_accessibility">Sort scan results</string>
+    <string name="scan_sort_dialog_title">Sort by</string>
     <string name="scan_sorting_by_rssi">by Signal Strength</string>
     <string name="scan_sorting_by_recently">by recently detected</string>
     <string name="scan_sorting_by_address">by MAC-Address</string>
