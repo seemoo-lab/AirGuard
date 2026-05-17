@@ -119,7 +119,7 @@
     <string name="risk_level_medium">注意</string>
     <string name="risk_level_high">危険</string>
     <string name="no_trackers_found">それ以来、トラッカーは見つかっていない：%s</string>
-    <string name="found_x_trackers">過去 %d 日間に %d つのタグが検出されました</string>
+    <string name="found_x_trackers">過去 %1$d 日間に %2$d つのタグが検出されました</string>
     <string name="last_scan_info">最後のスキャン日時: %s</string>
     <string name="last_discovery">最後に見つかったタグは %s です</string>
     <string name="how_does_airguard_work">AirGuardの仕組みは?</string>
@@ -149,7 +149,7 @@
     <string name="filter_notified">あなたの場所を追跡する</string>
     <string name="filter_title_device_attributes">デバイス属性</string>
     <string name="filter_apply">申し込む</string>
-    <string name="filter_from_until_text">%s それまで %s</string>
+    <string name="filter_from_until_text">%1$s それまで %2$s</string>
     <string name="filter_date_range_picker_title">最後に見たのは</string>
     <string name="app_theme_dark">ダーク</string>
     <string name="app_theme_light">ライト</string>
@@ -362,7 +362,7 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="export_trackers_detections">検知回数: %d</string>
     <string name="export_trackers_unique_locations">ユニークな場所: %d</string>
     <string name="export_trackers_time">時間: %s</string>
-    <string name="export_trackers_location">場所: 緯度: %s, 経度: %s</string>
+    <string name="export_trackers_location">場所: 緯度: %1$s, 経度: %2$s</string>
     <string name="export_trackers_map">マップ: %s</string>
     <string name="export_trackers_map_still_loading">マップを読み込み中…</string>
     <string name="export_trackers_signal_strength">信号強度: %d</string>
@@ -371,7 +371,7 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="export_trackers_map_title">マップ:</string>
     <string name="export_trackers_detections_title">このトラッカーは以下で検知されました:</string>
     <string name="export_trackers_detections_title_continued">このトラッカーは以下でも検知されました（続き）:</string>
-    <string name="export_page_number">ページ %d/%d</string>
+    <string name="export_page_number">ページ %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">警告: このエントリは推定値に基づいています。誤検知の可能性があります。</string>
     <string name="export_trackers_no_internet">マップを読み込めません。インターネット接続を確認してください。</string>
     <string name="export_trackers_algo_warning_text">このデバイスは、まれに誤りを生じる可能性のあるアルゴリズムで検出されました。本書類の取り扱いにはご注意ください。</string>
@@ -463,8 +463,8 @@ Tile / Life360デバイスは識別子を変更しません。
         <item quantity="other">通知を開いて詳細を確認してください。トラッカーが少なくとも%d分間あなたを追跡していた可能性があります。</item>
     </plurals>
     <string name="notification_title_base">トラッカーがあなたを追跡している可能性があります</string>
-    <string name="notification_text_single">通知を開いて詳細を確認してください。%sが少なくとも%d分間あなたを追跡していた可能性があります。</string>
-    <string name="notification_text_multiple">通知を開いて詳細を確認してください。%sが少なくとも%d分間あなたを追跡していた可能性があります。</string>
+    <string name="notification_text_single">通知を開いて詳細を確認してください。%1$sが少なくとも%2$d分間あなたを追跡していた可能性があります。</string>
+    <string name="notification_text_multiple">通知を開いて詳細を確認してください。%1$sが少なくとも%2$d分間あなたを追跡していた可能性があります。</string>
     <string name="notification_title_vocal">%sがあなたを追跡している可能性があります</string>
     <string name="notification_title_consonant">%sがあなたを追跡している可能性があります</string>
     <string name="notification_title_multiple">%sがあなたを追跡している可能性があります</string>

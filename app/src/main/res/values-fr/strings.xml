@@ -162,7 +162,7 @@
     <string name="risk_level_medium">Risque moyen</string>
     <string name="risk_level_high">Risque élevé</string>
     <string name="no_trackers_found">Pas de traceur identifié depuis\u00a0: %s</string>
-    <string name="found_x_trackers">%d traceur(s) identifié(s) durant les %d derniers jours</string>
+    <string name="found_x_trackers">%1$d traceur(s) identifié(s) durant les %2$d derniers jours</string>
     <string name="last_scan_info">Dernier scan\u00a0: %s</string>
     <string name="last_discovery">Dernier traceur découvert à %s</string>
     <string name="how_does_airguard_work">Comment fonctionne AirGuard\u202f?</string>
@@ -193,7 +193,7 @@
     <string name="filter_notified">traceurs identifiés</string>
     <string name="filter_title_device_attributes">Caractéristiques de l\u02bcappareil</string>
     <string name="filter_apply">Appliquer</string>
-    <string name="filter_from_until_text">%s jusqu\u02bcà %s</string>
+    <string name="filter_from_until_text">%1$s jusqu\u02bcà %2$s</string>
     <string name="filter_date_range_picker_title">Vu pour la dernière fois</string>
     <string name="app_theme_dark">Sombre</string>
     <string name="app_theme_light">Clair</string>
@@ -425,7 +425,7 @@
     <string name="export_trackers_detections">Détections : %d</string>
     <string name="export_trackers_unique_locations">Emplacements uniques : %d</string>
     <string name="export_trackers_time">Heure : %s"</string>
-    <string name="export_trackers_location">Localisation : Latitude : %s, Longitude : %s"</string>
+    <string name="export_trackers_location">Localisation : Latitude : %1$s, Longitude : %2$s"</string>
     <string name="export_trackers_map">Carte : %s</string>
     <string name="export_trackers_map_still_loading">Carte en cours de chargement…</string>
     <string name="export_trackers_signal_strength">Force du signal : %d"</string>
@@ -434,7 +434,7 @@
     <string name="export_trackers_map_title">Carte :</string>
     <string name="export_trackers_detections_title">Ce traceur a été trouvé à :</string>
     <string name="export_trackers_detections_title_continued">Ce traceur a été trouvé à (suite) :</string>
-    <string name="export_page_number">Page %d/%d</string>
+    <string name="export_page_number">Page %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Attention : cette entrée a été associée sur la base de probabilités. Il pourrait s\'agir d\'un faux positif.</string>
     <string name="export_trackers_no_internet">Impossible de charger la carte. Veuillez vous assurer d\'avoir une connexion Internet active.</string>
     <string name="export_trackers_algo_warning_text">Cet appareil a été détecté à l\'aide d\'un algorithme pouvant produire des erreurs dans de rares cas. Utilisez ce document avec prudence.</string>
@@ -489,8 +489,8 @@
         <item quantity="other">Ouvrez la notification pour plus d\'infos. Un traqueur pourrait vous avoir suivi pendant au moins %d minutes.</item>
     </plurals>
     <string name="notification_title_base">Un traqueur pourrait vous suivre</string>
-    <string name="notification_text_single">Ouvrez la notification pour plus d\'infos. Le %s pourrait vous avoir suivi pendant au moins %d minutes.</string>
-    <string name="notification_text_multiple">Ouvrez la notification pour plus d\'infos. Les %s pourraient vous avoir suivi pendant au moins %d minutes.</string>
+    <string name="notification_text_single">Ouvrez la notification pour plus d\'infos. Le %1$s pourrait vous avoir suivi pendant au moins %2$d minutes.</string>
+    <string name="notification_text_multiple">Ouvrez la notification pour plus d\'infos. Les %1$s pourraient vous avoir suivi pendant au moins %2$d minutes.</string>
     <string name="notification_title_vocal">Un %s pourrait vous suivre</string>
     <string name="notification_title_consonant">Un %s pourrait vous suivre</string>
     <string name="notification_title_multiple">Des %s pourraient vous suivre</string>

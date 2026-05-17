@@ -213,7 +213,7 @@
     <string name="risk_level_high">Rischio alto</string>
 
     <string name="no_trackers_found">Nessun tracker trovato da: %s</string>
-    <string name="found_x_trackers">Rilevati %d tracker negli ultimi %d giorni</string>
+    <string name="found_x_trackers">Rilevati %1$d tracker negli ultimi %2$d giorni</string>
     <string name="last_scan_info">Ultima scansione: %s</string>
     <string name="last_discovery">Ultimo tracker scoperto alle %s</string>
 
@@ -242,7 +242,7 @@
     <string name="filter_notified">tracker identificati</string>
     <string name="filter_title_device_attributes">Attributi dispositivo</string>
     <string name="filter_apply">Applica</string>
-    <string name="filter_from_until_text">%s fino a %s</string>
+    <string name="filter_from_until_text">%1$s fino a %2$s</string>
     <string name="filter_date_range_picker_title">Ultimo avvistamento</string>
 
     <string name="app_theme_dark">Scuro</string>
@@ -505,7 +505,7 @@
     <string name="export_trackers_detections">Rilevamenti: %d</string>
     <string name="export_trackers_unique_locations">Posizioni uniche: %d</string>
     <string name="export_trackers_time">Ora: %s</string>
-    <string name="export_trackers_location">Posizione: Latitudine: %s, Longitudine: %s</string>
+    <string name="export_trackers_location">Posizione: Latitudine: %1$s, Longitudine: %2$s</string>
     <string name="export_trackers_map">Mappa: %s</string>
     <string name="export_trackers_map_still_loading">Mappa ancora in caricamento…</string>
     <string name="export_trackers_signal_strength">Intensità segnale: %d</string>
@@ -515,7 +515,7 @@
     <string name="export_trackers_detections_title">Questo tracker è stato trovato presso:</string>
     <string name="export_trackers_detections_title_continued">Questo tracker è stato trovato presso (continuazione):</string>
 
-    <string name="export_page_number">Pagina %d/%d</string>
+    <string name="export_page_number">Pagina %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Attenzione: questa voce è stata associata in base alle probabilità. Potrebbe trattarsi di un falso positivo.</string>
     <string name="export_trackers_no_internet">Impossibile caricare la mappa. Assicurati di avere una connessione Internet attiva.</string>
 
@@ -592,8 +592,8 @@
         <item quantity="many">Apri la notifica per maggiori informazioni. Un tracker potrebbe averti seguito per almeno %d minuti.</item>
     </plurals>
     <string name="notification_title_base">Un tracker potrebbe seguirti</string>
-    <string name="notification_text_single">Apri la notifica per maggiori informazioni. Il %s potrebbe averti seguito per almeno %d minuti.</string>
-    <string name="notification_text_multiple">Apri la notifica per maggiori informazioni. I %s potrebbero averti seguito per almeno %d minuti.</string>
+    <string name="notification_text_single">Apri la notifica per maggiori informazioni. Il %1$s potrebbe averti seguito per almeno %2$d minuti.</string>
+    <string name="notification_text_multiple">Apri la notifica per maggiori informazioni. I %1$s potrebbero averti seguito per almeno %2$d minuti.</string>
     <string name="notification_title_vocal">%s potrebbe seguirti</string>
     <string name="notification_title_consonant">Un %s potrebbe seguirti</string>
     <string name="notification_title_multiple">%s potrebbero seguirti</string>

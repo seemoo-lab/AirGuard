@@ -124,7 +124,7 @@
     <string name="risk_level_medium">Средний риск</string>
     <string name="risk_level_high">Высокий риск</string>
     <string name="no_trackers_found">Слежки не было с: %s</string>
-    <string name="found_x_trackers">Обнаружено меток %d за последние %d дней(-я)</string>
+    <string name="found_x_trackers">Обнаружено меток %1$d за последние %2$d дней(-я)</string>
     <string name="last_scan_info">Последняя проверка: %s</string>
     <string name="last_discovery">В последний раз метка обнаружена %s</string>
     <string name="i_got_a_notification_what_should_i_do">Я получил уведомление. Что нужно предпринять?</string>
@@ -142,7 +142,7 @@
     <string name="filter_notified">распознанные метки</string>
     <string name="filter_title_device_attributes">Свойства устройства</string>
     <string name="filter_apply">Применить</string>
-    <string name="filter_from_until_text">с %s по %s</string>
+    <string name="filter_from_until_text">с %1$s по %2$s</string>
     <string name="filter_date_range_picker_title">Последнее обнаружение</string>
     <string name="dates_detected">Даты обнаружения</string>
     <string name="app_theme_dark">Тёмная</string>
@@ -393,7 +393,7 @@
     <string name="export_trackers_detections">Обнаружений: %d</string>
     <string name="export_trackers_unique_locations">Уникальных местоположений: %d</string>
     <string name="export_trackers_time">Время: %s</string>
-    <string name="export_trackers_location">Местоположение: широта: %s, долгота: %s</string>
+    <string name="export_trackers_location">Местоположение: широта: %1$s, долгота: %2$s</string>
     <string name="export_trackers_map">Карта: %s</string>
     <string name="export_trackers_map_still_loading">Карта всё ещё загружается…</string>
     <string name="export_trackers_signal_strength">Уровень сигнала: %d</string>
@@ -402,7 +402,7 @@
     <string name="export_trackers_map_title">Карта:</string>
     <string name="export_trackers_detections_title">Эти метки были найдены в:</string>
     <string name="export_trackers_detections_title_continued">Эти метки были найдены в (продолжение):</string>
-    <string name="export_page_number">Страница %d/%d</string>
+    <string name="export_page_number">Страница %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Предупреждение: это срабатывание произошло на основе вероястностей. Оно может быть ложноположительным</string>
     <string name="export_trackers_no_internet">Не удалось загрузить карту. Пожалуйста, убедитесь, что с Интернетом всё в порядке</string>
     <string name="export_trackers_algo_warning_text">Это устройство было обнаружено алгоритмом, который может изредка ошибаться. Используйте этот документ с осторожностью</string>
@@ -458,8 +458,8 @@
         <item quantity="other">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минут.</item>
     </plurals>
     <string name="notification_title_base">Трекер может следить за вами</string>
-    <string name="notification_text_single">Откройте уведомление для подробностей. %s мог следовать за вами не менее %d минут.</string>
-    <string name="notification_text_multiple">Откройте уведомление для подробностей. %s могли следовать за вами не менее %d минут.</string>
+    <string name="notification_text_single">Откройте уведомление для подробностей. %1$s мог следовать за вами не менее %2$d минут.</string>
+    <string name="notification_text_multiple">Откройте уведомление для подробностей. %1$s могли следовать за вами не менее %2$d минут.</string>
     <string name="notification_title_vocal">%s может следить за вами</string>
     <string name="notification_title_consonant">%s может следить за вами</string>
     <string name="notification_title_multiple">%s могут следить за вами</string>

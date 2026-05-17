@@ -154,7 +154,7 @@
     <string name="risk_level_medium">Mittleres Risiko</string>
     <string name="risk_level_high">Hohes Risiko</string>
     <string name="no_trackers_found">Keine Tracker gefunden seit: %s</string>
-    <string name="found_x_trackers">%d Tracker gefunden in den letzten %d Tagen</string>
+    <string name="found_x_trackers">%1$d Tracker gefunden in den letzten %2$d Tagen</string>
     <string name="last_scan_info">Letzter Scan: %s</string>
     <string name="last_discovery">Letzter Tracker gefunden am %s</string>
     <string name="notification_help">
@@ -183,7 +183,7 @@
     <string name="filter_notified">Tracker die dir folgen</string>
     <string name="filter_title_device_attributes">Geräteeigenschaften</string>
     <string name="filter_apply">Anwenden</string>
-    <string name="filter_from_until_text">%s bis %s</string>
+    <string name="filter_from_until_text">%1$s bis %2$s</string>
     <string name="filter_date_range_picker_title">Zuletzt gesehen</string>
     <string name="dates_detected">Entdeckt an Tagen</string>
     <string name="app_theme_dark">Dunkel</string>
@@ -414,7 +414,7 @@
     <string name="export_trackers_detections">Wie oft erkannt: %d</string>
     <string name="export_trackers_unique_locations">Erkannt an Standorten: %d</string>
     <string name="export_trackers_time">Uhrzeit: %s</string>
-    <string name="export_trackers_location">Standort: Latitude: %s, Longitude: %s</string>
+    <string name="export_trackers_location">Standort: Latitude: %1$s, Longitude: %2$s</string>
     <string name="export_trackers_map">Karte: %s</string>
     <string name="export_trackers_map_still_loading">Karte ist noch nicht geladen…</string>
     <string name="export_trackers_signal_strength">Signalstärke: %d</string>
@@ -423,7 +423,7 @@
     <string name="export_trackers_map_title">Karte:</string>
     <string name="export_trackers_detections_title">Dieser Tracker wurde gefunden am:</string>
     <string name="export_trackers_detections_title_continued">Dieser Tracker wurde gefunden am (Fortsetzung):</string>
-    <string name="export_page_number">Seite %d/%d</string>
+    <string name="export_page_number">Seite %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Hinweis: Dieser Eintrag ist eine Schätzung. Es könnte sich um eine falsch positive Zuordnung handeln.</string>
 
     <string name="export_trackers_no_internet">Die Karte konnte nicht laden. überprüfe, ob du eine aktive Internetverbindung hast.</string>
@@ -480,8 +480,8 @@
         <item quantity="other">Öffne die Benachrichtigung für mehr Informationen. Ein Tracker könnte dich für mindestens %d Minuten verfolgt haben.</item>
     </plurals>
     <string name="notification_title_base">Ein Tracker könnte dich verfolgen</string>
-    <string name="notification_text_single">Öffne die Benachrichtigung für mehr Informationen. Das %s könnte dich für mindestens %d Minuten verfolgt haben.</string>
-    <string name="notification_text_multiple">Öffne die Benachrichtigung für mehr Informationen. Die %s könnten dich für mindestens %d Minuten verfolgt haben.</string>
+    <string name="notification_text_single">Öffne die Benachrichtigung für mehr Informationen. Das %1$s könnte dich für mindestens %2$d Minuten verfolgt haben.</string>
+    <string name="notification_text_multiple">Öffne die Benachrichtigung für mehr Informationen. Die %1$s könnten dich für mindestens %2$d Minuten verfolgt haben.</string>
     <string name="notification_title_vocal">%s könnte dich verfolgen</string>
     <string name="notification_title_consonant">Ein %s könnte dich verfolgen</string>
     <string name="notification_title_multiple">%s könnten dich verfolgen</string>

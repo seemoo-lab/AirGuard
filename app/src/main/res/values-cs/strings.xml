@@ -174,7 +174,7 @@
     <string name="risk_level_medium">Střední riziko</string>
     <string name="risk_level_high">Vysoké riziko</string>
     <string name="no_trackers_found">Nenalezeny žádné trackery od: %s</string>
-    <string name="found_x_trackers">Detekováno %d trackerů během posledních %d dní</string>
+    <string name="found_x_trackers">Detekováno %1$d trackerů během posledních %2$d dní</string>
     <string name="last_scan_info">Poslední skenování: %s</string>
     <string name="last_discovery">Poslední tracker objeven v %s</string>
     <string name="how_does_airguard_work">Jak AirGuard funguje?</string>
@@ -205,7 +205,7 @@
     <string name="filter_notified">identifikované trackery</string>
     <string name="filter_title_device_attributes">Atributy zařízení</string>
     <string name="filter_apply">Použít</string>
-    <string name="filter_from_until_text">%s až %s</string>
+    <string name="filter_from_until_text">%1$s až %2$s</string>
     <string name="filter_date_range_picker_title">Naposledy spatřeno</string>
     <string name="app_theme_dark">Tmavý</string>
     <string name="app_theme_light">Světlý</string>
@@ -433,7 +433,7 @@
     <string name="export_trackers_detections">Detekcí: %d</string>
     <string name="export_trackers_unique_locations">Unikátních poloh: %d</string>
     <string name="export_trackers_time">Čas: %s"</string>
-    <string name="export_trackers_location">Poloha: Zem. šířka: %s, Zem. délka: %s"</string>
+    <string name="export_trackers_location">Poloha: Zem. šířka: %1$s, Zem. délka: %2$s"</string>
     <string name="export_trackers_map">Mapa: %s</string>
     <string name="export_trackers_map_still_loading">Mapa se stále načítá…</string>
     <string name="export_trackers_signal_strength">Síla signálu: %d"</string>
@@ -442,7 +442,7 @@
     <string name="export_trackers_map_title">Mapa:</string>
     <string name="export_trackers_detections_title">Tento tracker byl nalezen v:</string>
     <string name="export_trackers_detections_title_continued">Tento tracker byl nalezen v (pokračování):</string>
-    <string name="export_page_number">Strana %d/%d</string>
+    <string name="export_page_number">Strana %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Varování: Tato položka byla spárována na základě pravděpodobnosti. Může se jednat o falešně pozitivní výsledek.</string>
     <string name="export_trackers_no_internet">Mapu se nepodařilo načíst. Ujistěte se, že máte aktivní připojení k internetu.</string>
 
@@ -502,8 +502,8 @@
         <item quantity="many">Otevřete oznámení pro více informací. Tracker vás mohl sledovat alespoň %d minut.</item>
     </plurals>
     <string name="notification_title_base">Tracker by vás mohl sledovat</string>
-    <string name="notification_text_single">Otevřete oznámení pro více informací. %s vás mohl sledovat alespoň %d minut.</string>
-    <string name="notification_text_multiple">Otevřete oznámení pro více informací. %s vás mohli sledovat alespoň %d minut.</string>
+    <string name="notification_text_single">Otevřete oznámení pro více informací. %1$s vás mohl sledovat alespoň %2$d minut.</string>
+    <string name="notification_text_multiple">Otevřete oznámení pro více informací. %1$s vás mohli sledovat alespoň %2$d minut.</string>
     <string name="notification_title_vocal">%s vás může sledovat</string>
     <string name="notification_title_consonant">%s vás může sledovat</string>
     <string name="notification_title_multiple">%s vás mohou sledovat</string>
