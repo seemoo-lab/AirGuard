@@ -16,7 +16,11 @@ import de.seemoo.at_tracking_detection.detection.LocationRequester
 import de.seemoo.at_tracking_detection.hilt.DatabaseModule
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import kotlinx.coroutines.runBlocking
-import org.junit.*
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.util.concurrent.Executor

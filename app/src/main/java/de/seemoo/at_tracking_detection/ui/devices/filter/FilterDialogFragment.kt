@@ -1,18 +1,18 @@
 package de.seemoo.at_tracking_detection.ui.devices.filter
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.animation.ValueAnimator
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.util.Pair
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -24,9 +24,6 @@ import de.seemoo.at_tracking_detection.databinding.IncludeFilterChipBinding
 import de.seemoo.at_tracking_detection.ui.devices.DevicesViewModel
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DateRangeFilter
 import de.seemoo.at_tracking_detection.ui.devices.filter.models.DeviceTypeFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.IgnoredFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.NotifiedFilter
-import de.seemoo.at_tracking_detection.ui.devices.filter.models.FavoriteFilter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

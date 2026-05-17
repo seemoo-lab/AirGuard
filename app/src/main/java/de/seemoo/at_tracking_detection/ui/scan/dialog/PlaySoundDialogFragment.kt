@@ -1,7 +1,10 @@
 package de.seemoo.at_tracking_detection.ui.scan.dialog
 
 import android.bluetooth.le.ScanResult
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder

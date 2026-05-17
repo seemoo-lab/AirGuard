@@ -11,12 +11,16 @@ import android.os.Build
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.BatteryState
+import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.*
+import java.util.UUID
 
 class AirTag(val id: Int) : Device(), Connectable {
 

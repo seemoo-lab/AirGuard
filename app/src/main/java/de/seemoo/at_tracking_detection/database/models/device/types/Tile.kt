@@ -5,7 +5,9 @@ import android.os.ParcelUuid
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
-import de.seemoo.at_tracking_detection.database.models.device.*
+import de.seemoo.at_tracking_detection.database.models.device.Device
+import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 
 class Tile(val id: Int) : Device(){
     override val imageResource: Int
