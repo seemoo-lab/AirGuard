@@ -246,6 +246,8 @@
     <string name="connection_state_content_description">デバイスの接続状態に関する情報</string>
     <string name="connection_state_unknown_explanation">トラッカーの接続状態を判定できません</string>
     <string name="scan_accessibility">スキャン開始/停止</string>
+    <string name="scan_sort_accessibility">スキャン結果を並べ替え</string>
+    <string name="scan_sort_dialog_title">並べ替え</string>
     <string name="scan_sorting_by_rssi">信号強度順</string>
     <string name="scan_sorting_by_recently">最近検知順</string>
     <string name="scan_sorting_by_address">MACアドレス順</string>
@@ -501,7 +503,10 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="forget_tracker_dialog_title">トラッカーを削除しますか？</string>
     <string name="forget_tracker_dialog_message">この操作により、このトラッカーに関するすべての情報が削除されます。続けてもよろしいですか？</string>
     <string name="forget_tracker_success">トラッカーを削除しました</string>
-
+    <string name="forget_trackers_dialog_title">トラッカーを削除しますか？</string>
+    <string name="forget_trackers_dialog_message">選択した%d個のトラッカーに関するすべての情報を削除します。この操作は取り消せません。続行してもよろしいですか？</string>
+    <string name="forget_trackers_success">トラッカーを削除しました</string>
+    <string name="selected_devices_count">%d個選択中</string>
     <string name="open_map_description">全画面マップを開く</string>
     <string name="error_connection">接続エラー</string>
     <string name="active">アクティブ</string>

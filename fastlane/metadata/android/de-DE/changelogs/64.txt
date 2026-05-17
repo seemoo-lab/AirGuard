@@ -1,0 +1,4 @@
+VERBESSERT: Visuelle Fehler im Filterdialog behoben
+VERBESSERT: Verhalten vom Hintergrundscan optimiert
+VERBESSERT: Übersetzungen verbessert
+VERBESSERT: allgemeine Fehlerbehebungen

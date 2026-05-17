@@ -3,6 +3,8 @@ package de.seemoo.at_tracking_detection.util
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
+import de.seemoo.at_tracking_detection.ui.OnboardingActivity
 
 class ATTDLifecycleCallbacks : Application.ActivityLifecycleCallbacks {
     lateinit var currentActivity: Activity
@@ -17,6 +19,14 @@ class ATTDLifecycleCallbacks : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityResumed(activity: Activity) {
         currentActivity = activity
+
+        // Necessary for API 37+
+        if (activity !is OnboardingActivity) {
+            val app = ATTrackingDetectionApplication.getCurrentApp() ?: return
+            if (app.showOnboarding()) {
+                app.startOnboarding()
+            }
+        }
     }
 
     override fun onActivityPaused(activity: Activity) {

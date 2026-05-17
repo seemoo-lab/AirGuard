@@ -213,7 +213,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "use_permanent_bluetooth_scanner" -> {
                     if (SharedPrefs.usePermanentBluetoothScanner) {
                         Timber.d("Enabled permanent bluetooth scanner!")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             try {
                                 GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                                     PermanentBluetoothScanner.scan()
@@ -240,7 +240,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (SharedPrefs.advancedMode) {
             Timber.d("Enabled advanced mode!")
             findPreference<SwitchPreferenceCompat>("use_location")?.isVisible = true
-            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+            findPreference<SwitchPreferenceCompat>("use_permanent_bluetooth_scanner")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             findPreference<SwitchPreferenceCompat>("use_low_power_ble")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("notification_priority_high")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true

@@ -82,6 +82,13 @@
 # R8 full mode strips generic signatures from return types if not kept.
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
+# Keep Article data class used for Gson deserialization from JSON assets
+# Without this, R8 obfuscates field names and Gson cannot map JSON keys to fields.
+-keep class de.seemoo.at_tracking_detection.ui.dashboard.Article { *; }
+-keepclassmembers class de.seemoo.at_tracking_detection.ui.dashboard.Article {
+    <fields>;
+}
+
 # Keep Gson classes
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class com.google.gson.Gson { *; }
@@ -94,13 +101,6 @@
 # Also preserve generic signatures so Gson can read the type parameter at runtime.
 -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
 -keep class * extends com.google.gson.reflect.TypeToken { *; }
-
-# Keep Article data class used for Gson deserialization in DashboardRiskFragment
--keep class de.seemoo.at_tracking_detection.ui.dashboard.Article { *; }
--keepclassmembers class de.seemoo.at_tracking_detection.ui.dashboard.Article {
-    <fields>;
-    <init>(...);
-}
 
 # Ensure that the DeviceType class is not stripped or obfuscated
 -keep class de.seemoo.at_tracking_detection.database.models.device.DeviceType { *; }
@@ -155,3 +155,38 @@
     void onScanResult(...);
     void onScanFailed(...);
 }
+
+# --- PermanentScanReceiver ---
+-keep class de.seemoo.at_tracking_detection.detection.PermanentScanReceiver { *; }
+
+# --- PermanentBluetoothScanner ---
+-keep class de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner { *; }
+
+# --- BackgroundBluetoothScanner ---
+-keep class de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner { *; }
+-keep class de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner$DiscoveredDevice { *; }
+
+# --- LocationHistoryController ---
+-keep class de.seemoo.at_tracking_detection.detection.LocationHistoryController { *; }
+
+# --- LocationHistoryListener ---
+-keep interface de.seemoo.at_tracking_detection.detection.LocationHistoryListener
+-keepclassmembers class * implements de.seemoo.at_tracking_detection.detection.LocationHistoryListener {
+    public void receivedNewLocation(android.location.Location);
+    public void locationHistoryChanged(de.seemoo.at_tracking_detection.detection.LocationHistoryController, java.util.ArrayList);
+}
+
+# --- BluetoothStateMonitor.Listener implementations ---
+-keepclassmembers class * implements de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor$Listener {
+    public void onBluetoothStateChanged(boolean);
+}
+
+# --- ScanResultWrapper ---
+-keep class de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper { *; }
+
+# --- Utility nested logger objects ---
+-keep class de.seemoo.at_tracking_detection.util.Utility$BLELogger { *; }
+-keep class de.seemoo.at_tracking_detection.util.Utility$LocationLogger { *; }
+
+# --- kotlin-reflect ---
+-dontwarn kotlin.reflect.jvm.internal.**

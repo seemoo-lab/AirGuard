@@ -23,7 +23,7 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY hearted DESC, lastSeen DESC")
     fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 AND safeTracker == 0")
     fun getAllTrackingDevicesNotIgnoredSinceCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1")
@@ -47,10 +47,10 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device WHERE safeTracker == 0")
     fun getTotalCount(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0 AND safeTracker == 0")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND safeTracker == 0")
     fun getCountNotTracking(since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1")
+    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1 AND safeTracker == 0")
     fun getCountIgnored(): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since AND safeTracker == 0")

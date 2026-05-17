@@ -11,7 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -32,7 +31,6 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.ui.OnboardingActivity
-import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.DbmToPercent
 import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.Dispatchers
@@ -308,7 +306,7 @@ object Utility {
     fun openBrowser(context: Context, url: String, view: View) {
         Timber.d("Opening browser with URL: $url")
         val finalUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            "http://$url"
+            "https://$url" // force https (required from Android 17+)
         } else {
             url
         }
@@ -328,8 +326,7 @@ object Utility {
         }
     }
 
-    fun getSkipDevice(wrappedScanResult: ScanResultWrapper) : Boolean {
-        val deviceType = wrappedScanResult.deviceType
+    fun getSkipDevice(deviceType: DeviceType): Boolean {
         val securityLevel = SharedPrefs.riskSensitivity
 
         // Skip Samsung Find My Mobile and Apple devices if security level is set to high as this causes a lot of false positives

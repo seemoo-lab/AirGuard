@@ -103,8 +103,15 @@ class TrackingDetectorWorker @AssistedInject constructor(
         var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(relevantHours)
 
         val lastNotificationSent = device.lastNotificationSent
-        if (lastNotificationSent != null && lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
-            considerDetectionEventSince = lastNotificationSent
+        if (lastNotificationSent != null) {
+            // For subsequent notifications, enforce a minimum wait time between notifications (for the same tracker)
+            val minHoursBetweenNotifications: Long = RiskLevelEvaluator.getHoursBetweenNotifications()
+            if (Duration.between(lastNotificationSent, LocalDateTime.now()).toHours() < minHoursBetweenNotifications) {
+                return false
+            }
+            if (lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
+                considerDetectionEventSince = lastNotificationSent
+            }
         }
 
         val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)

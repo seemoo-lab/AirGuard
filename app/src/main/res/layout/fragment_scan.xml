@@ -73,6 +73,23 @@
             app:tint="?attr/colorOnPrimaryContainer"
             android:contentDescription="@string/scan_accessibility" />
 
+        <!-- layout_marginBottom: 16dp margin + 56dp fab size + 16dp margin = 88 dp -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/button_sort_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="88dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="@{vm.canScan &amp;&amp; !vm.isListEmpty &amp;&amp; vm.advancedMode ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/button_start_stop_scan"
+            app:layout_constraintStart_toStartOf="@id/button_start_stop_scan"
+            app:srcCompat="@drawable/ic_baseline_filter_list_24"
+            app:backgroundTint="?attr/colorPrimaryContainer"
+            app:tint="?attr/colorOnPrimaryContainer"
+            android:contentDescription="@string/scan_sort_accessibility" />
+
         <include
             android:id="@+id/include_bluetooth_disabled"
             layout="@layout/include_bluetooth_disabled"

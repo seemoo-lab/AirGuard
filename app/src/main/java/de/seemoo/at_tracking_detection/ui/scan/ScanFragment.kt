@@ -21,6 +21,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -138,6 +139,37 @@ class ScanFragment : Fragment() {
                 stopBluetoothScan()
             }
         }
+
+        view.findViewById<FloatingActionButton>(R.id.button_sort_scan).setOnClickListener {
+            showSortDialog()
+        }
+    }
+
+    private fun showSortDialog() {
+        val options = arrayOf(
+            getString(R.string.scan_sorting_by_recently),
+            getString(R.string.scan_sorting_by_name),
+            getString(R.string.scan_sorting_by_rssi)
+        )
+        val currentIndex = when (scanViewModel.sortOrder.value) {
+            ScanSortOrder.BY_APPEARANCE -> 0
+            ScanSortOrder.BY_NAME -> 1
+            ScanSortOrder.BY_SIGNAL_STRENGTH -> 2
+            null -> 0
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.scan_sort_dialog_title)
+            .setSingleChoiceItems(options, currentIndex) { dialog, which ->
+                val order = when (which) {
+                    0 -> ScanSortOrder.BY_APPEARANCE
+                    1 -> ScanSortOrder.BY_NAME
+                    2 -> ScanSortOrder.BY_SIGNAL_STRENGTH
+                    else -> ScanSortOrder.BY_APPEARANCE
+                }
+                scanViewModel.setSortOrder(order)
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onStart() {

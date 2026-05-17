@@ -2,8 +2,10 @@ package de.seemoo.at_tracking_detection
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.Application
+import android.app.ApplicationExitInfo
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -97,6 +99,10 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
             Timber.d("Tree planted")
         }
 
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            checkPreviousExitReasons()
+        }
+
         if (BuildConfig.DEBUG) {
             // We use this to access our logs from a file for on device debugging
             File(filesDir.path + "/logs.log").createNewFile()
@@ -157,7 +163,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         // Initiate the permanent background scan
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && SharedPrefs.usePermanentBluetoothScanner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
             PermanentBluetoothScanner.scan()
         }
 
@@ -178,6 +184,29 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
     }
 
     fun showOnboarding(): Boolean = !SharedPrefs.onBoardingCompleted or SharedPrefs.showOnboarding
+
+    @androidx.annotation.RequiresApi(Build.VERSION_CODES.R)
+    private fun checkPreviousExitReasons() {
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val exitReasons = activityManager.getHistoricalProcessExitReasons(packageName, 0, 5)
+        for (reason in exitReasons) {
+            val description = reason.description ?: "(no description)"
+            val tag = "ExitReasonMonitor"
+            if (reason.reason == ApplicationExitInfo.REASON_OTHER &&
+                description.contains("MemoryLimiter", ignoreCase = true)
+            ) {
+                Timber.tag(tag).e(
+                    "Previous process was killed by Android 17 memory limiter! " +
+                        "PID=${reason.pid}, importance=${reason.importance}"
+                )
+            } else {
+                Timber.tag(tag).d(
+                    "Previous exit: reason=${reason.reason}, description=$description, " +
+                        "PID=${reason.pid}, importance=${reason.importance}"
+                )
+            }
+        }
+    }
 
     fun hasPermissions(): Boolean {
         val requiredPermissions = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)

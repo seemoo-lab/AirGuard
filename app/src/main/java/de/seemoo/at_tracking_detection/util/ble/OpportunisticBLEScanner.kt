@@ -61,7 +61,7 @@ class OpportunisticBLEScanner(var notificationService: NotificationService?) {
             val bluetoothAdapter = bluetoothManager.adapter
 
             val scanFilter = DeviceManager.scanFilter
-            bluetoothAdapter.bluetoothLeScanner.startScan(scanFilter, scanSettings, leScanCallback)
+            bluetoothAdapter.bluetoothLeScanner?.startScan(scanFilter, scanSettings, leScanCallback)
             this.bluetoothAdapter = bluetoothAdapter
 
             Timber.d("Starting an opportunistic BLE Scanner. Not stopping it :D ")

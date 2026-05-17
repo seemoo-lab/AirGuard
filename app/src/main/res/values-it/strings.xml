@@ -359,6 +359,8 @@
     <string name="connection_state_unknown_explanation">Impossibile determinare lo stato di connessione del tracker</string>
 
     <string name="scan_accessibility">Avvia o arresta la scansione</string>
+    <string name="scan_sort_accessibility">Ordina i risultati della scansione</string>
+    <string name="scan_sort_dialog_title">Ordina per</string>
     <string name="scan_sorting_by_rssi">per intensità segnale</string>
     <string name="scan_sorting_by_recently">per rilevati di recente</string>
     <string name="scan_sorting_by_address">per indirizzo MAC</string>
@@ -630,7 +632,11 @@
     <string name="forget_tracker">Dimentica tracker</string>
     <string name="forget_tracker_dialog_title">Dimenticare tracker?</string>
     <string name="forget_tracker_dialog_message">Questa operazione eliminerà tutte le informazioni su questo tracker. Sei sicuro di voler continuare?</string>
-    <string name="forget_tracker_success">Tracker eliminato</string>
+    <string name="forget_tracker_success">Tracker rimosso</string>
+    <string name="forget_trackers_dialog_title">Dimenticare i tracker?</string>
+    <string name="forget_trackers_dialog_message">Questa operazione eliminerà tutte le informazioni sui %d tracker selezionati. L\'azione è irreversibile. Sei sicuro di voler continuare?</string>
+    <string name="forget_trackers_success">Tracker rimossi</string>
+    <string name="selected_devices_count">%d selezionati</string>
 
     <string name="open_map_description">Apri mappa a schermo intero</string>
     <string name="error_connection">Errore di connessione</string>
