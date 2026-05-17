@@ -229,8 +229,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             SharedPrefs.showMissingBackgroundLocationPermissionWarning = !backgroundLocationPermission
-            if (backgroundLocationPermission) {
-                SharedPrefs.useLocationInTrackingDetection = true
+            // Only force off when permission is missing. Never auto-enable.
+            if (!backgroundLocationPermission) {
+                SharedPrefs.useLocationInTrackingDetection = false
             }
         }
 
