@@ -116,10 +116,6 @@ class PlaySoundDialogFragment(scanResult: ScanResult) : BottomSheetDialogFragmen
                                     is DialogViewModel.ConnectionState.Success -> {
                                         binding.imageSuccess.visibility = View.VISIBLE
                                     }
-
-                                    else -> {
-                                        Timber.d("Reached unknown state $it!")
-                                    }
                                 }
                             }
                         }

@@ -84,7 +84,7 @@ interface BeaconDao {
     @Delete
     suspend fun deleteBeacons(beacons: List<Beacon>)
 
-    @Query("SELECT * FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL AND beacon.deviceAddress IS NOT NULL AND beacon.deviceAddress <> ''")
+    @Query("SELECT beacon.* FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL AND beacon.deviceAddress IS NOT NULL AND beacon.deviceAddress <> ''")
     fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon>
 
     @Query("SELECT * FROM beacon WHERE locationId = :locationId ORDER BY receivedAt DESC LIMIT 1")
