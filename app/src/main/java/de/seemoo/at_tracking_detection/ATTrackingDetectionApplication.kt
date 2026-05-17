@@ -36,13 +36,13 @@ import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import de.seemoo.at_tracking_detection.worker.SetExactAlarmPermissionChangedReceiver
 import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 @HiltAndroidApp
@@ -229,8 +229,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             SharedPrefs.showMissingBackgroundLocationPermissionWarning = !backgroundLocationPermission
-            if (backgroundLocationPermission) {
-                SharedPrefs.useLocationInTrackingDetection = true
+            // Only force off when permission is missing. Never auto-enable.
+            if (!backgroundLocationPermission) {
+                SharedPrefs.useLocationInTrackingDetection = false
             }
         }
 

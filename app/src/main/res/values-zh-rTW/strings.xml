@@ -153,7 +153,7 @@
     <string name="risk_level_medium">中風險</string>
     <string name="risk_level_high">高風險</string>
     <string name="no_trackers_found">自 %s 起未找到追蹤器</string>
-    <string name="found_x_trackers">檢測到 %d 個追蹤器（在過去的 %d 天內）</string>
+    <string name="found_x_trackers">檢測到 %1$d 個追蹤器（在過去的 %2$d 天內）</string>
     <string name="last_scan_info">最後掃描：%s</string>
     <string name="last_discovery">最後在 %s 發現追蹤器</string>
     <string name="how_does_airguard_work">AirGuard 如何運作？</string>
@@ -184,7 +184,7 @@
     <string name="filter_notified">已識別的追蹤器</string>
     <string name="filter_title_device_attributes">裝置屬性</string>
     <string name="filter_apply">套用</string>
-    <string name="filter_from_until_text">%s 到 %s</string>
+    <string name="filter_from_until_text">%1$s 到 %2$s</string>
     <string name="filter_date_range_picker_title">最後看到</string>
     <string name="app_theme_dark">深色</string>
     <string name="app_theme_light">淺色</string>
@@ -418,7 +418,7 @@
     <string name="export_trackers_detections">偵測次數：%d</string>
     <string name="export_trackers_unique_locations">獨特位置數量：%d</string>
     <string name="export_trackers_time">時間：%s</string>
-    <string name="export_trackers_location">位置：緯度：%s，經度：%s</string>
+    <string name="export_trackers_location">位置：緯度：%1$s，經度：%2$s</string>
     <string name="export_trackers_map">地圖：%s</string>
     <string name="export_trackers_map_still_loading">地圖仍在載入中…</string>
     <string name="export_trackers_signal_strength">訊號強度：%d</string>
@@ -427,7 +427,7 @@
     <string name="export_trackers_map_title">地圖：</string>
     <string name="export_trackers_detections_title">發現此追蹤器的地點：</string>
     <string name="export_trackers_detections_title_continued">發現此追蹤器的地點（續）：</string>
-    <string name="export_page_number">第 %d/%d 頁</string>
+    <string name="export_page_number">第 %1$d/%2$d 頁</string>
     <string name="export_trackers_15_minute_warning">警告：此項目是基於可能性進行匹配。這可能是誤報。</string>
     <string name="export_trackers_no_internet">地圖無法載入。請確認您有有效的網際網路連線。</string>
     <string name="export_trackers_algo_warning_text">此裝置是使用演算法偵測到的，在極少數情況下可能會產生錯誤。請謹慎使用此文件。</string>
@@ -480,8 +480,8 @@
         <item quantity="other">打開通知以獲取更多資訊。一個追蹤器可能已經跟蹤您至少 %d 分鐘。</item>
     </plurals>
     <string name="notification_title_base">有追蹤器可能正在跟蹤您</string>
-    <string name="notification_text_single">打開通知以獲取更多資訊。%s 可能已經跟蹤您至少 %d 分鐘。</string>
-    <string name="notification_text_multiple">打開通知以獲取更多資訊。%s 可能已經跟蹤您至少 %d 分鐘。</string>
+    <string name="notification_text_single">打開通知以獲取更多資訊。%1$s 可能已經跟蹤您至少 %2$d 分鐘。</string>
+    <string name="notification_text_multiple">打開通知以獲取更多資訊。%1$s 可能已經跟蹤您至少 %2$d 分鐘。</string>
     <string name="notification_title_vocal">%s 可能會跟蹤您</string>
     <string name="notification_title_consonant">%s 可能會跟蹤您</string>
     <string name="notification_title_multiple">%s 可能會跟蹤您</string>

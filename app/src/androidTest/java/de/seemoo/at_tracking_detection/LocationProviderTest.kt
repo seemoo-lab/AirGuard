@@ -6,13 +6,11 @@ import androidx.core.content.getSystemService
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.detection.LocationRequester
-import de.seemoo.at_tracking_detection.util.DefaultBuildVersionProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 

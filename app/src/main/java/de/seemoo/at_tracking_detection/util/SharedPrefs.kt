@@ -1,13 +1,13 @@
 package de.seemoo.at_tracking_detection.util
 
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
-import androidx.core.content.edit
+import java.util.Locale
 
 object SharedPrefs {
 

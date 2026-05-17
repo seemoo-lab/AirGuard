@@ -1,6 +1,11 @@
 package de.seemoo.at_tracking_detection.database.daos
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -79,7 +84,7 @@ interface BeaconDao {
     @Delete
     suspend fun deleteBeacons(beacons: List<Beacon>)
 
-    @Query("SELECT * FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL AND beacon.deviceAddress IS NOT NULL AND beacon.deviceAddress <> ''")
+    @Query("SELECT beacon.* FROM beacon LEFT JOIN notification ON beacon.deviceAddress = notification.deviceAddress WHERE receivedAt < :deleteEverythingBefore AND notification.deviceAddress IS NULL AND beacon.deviceAddress IS NOT NULL AND beacon.deviceAddress <> ''")
     fun getBeaconsOlderThanWithoutNotifications(deleteEverythingBefore: LocalDateTime): List<Beacon>
 
     @Query("SELECT * FROM beacon WHERE locationId = :locationId ORDER BY receivedAt DESC LIMIT 1")

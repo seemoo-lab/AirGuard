@@ -6,7 +6,7 @@ import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import java.util.*
+import java.util.UUID
 
 class AirPods(id: Int) : AppleFindMy(id) {
 

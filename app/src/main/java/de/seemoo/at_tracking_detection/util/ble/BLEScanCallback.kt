@@ -1,6 +1,10 @@
 package de.seemoo.at_tracking_detection.util.ble
 
-import android.bluetooth.le.*
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import de.seemoo.at_tracking_detection.util.Utility
 import timber.log.Timber
 import java.lang.ref.WeakReference

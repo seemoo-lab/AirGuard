@@ -1,7 +1,12 @@
 package de.seemoo.at_tracking_detection.database.models
 
 import androidx.annotation.Keep
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import de.seemoo.at_tracking_detection.database.Converters
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter

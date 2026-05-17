@@ -18,6 +18,7 @@ import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
 import de.seemoo.at_tracking_detection.detection.LocationProvider
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
@@ -29,7 +30,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
-import de.seemoo.at_tracking_detection.util.SharedPrefs
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(

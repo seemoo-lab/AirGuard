@@ -273,6 +273,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 
-        SharedPrefs.useLocationInTrackingDetection = locationPermissionState && backgroundPermissionState
+        // Only force the pref to false if a required permission is missing.ssio
+        if (!locationPermissionState || !backgroundPermissionState) {
+            SharedPrefs.useLocationInTrackingDetection = false
+        }
     }
 }

@@ -174,7 +174,7 @@
     <string name="risk_level_medium">Medium risk</string>
     <string name="risk_level_high">High risk</string>
     <string name="no_trackers_found">No trackers found since: %s</string>
-    <string name="found_x_trackers">Detected %d tracker during the last %d days</string>
+    <string name="found_x_trackers">Detected %1$d tracker during the last %2$d days</string>
     <string name="last_scan_info">Last scan: %s</string>
     <string name="last_discovery">Last tracker discovered at %s</string>
     <string name="how_does_airguard_work">How does AirGuard work?</string>
@@ -205,7 +205,7 @@
     <string name="filter_notified">identified trackers</string>
     <string name="filter_title_device_attributes">Device Attributes</string>
     <string name="filter_apply">Apply</string>
-    <string name="filter_from_until_text">%s until %s</string>
+    <string name="filter_from_until_text">%1$s until %2$s</string>
     <string name="filter_date_range_picker_title">Last Seen</string>
     <string name="app_theme_dark">Dark</string>
     <string name="app_theme_light">Light</string>
@@ -452,7 +452,7 @@
     <string name="export_trackers_detections">Detections: %d</string>
     <string name="export_trackers_unique_locations">Unique Locations: %d</string>
     <string name="export_trackers_time">Time: %s"</string>
-    <string name="export_trackers_location">Location: Latitude: %s, Longitude: %s"</string>
+    <string name="export_trackers_location">Location: Latitude: %1$s, Longitude: %2$s"</string>
     <string name="export_trackers_map">Map: %s</string>
     <string name="export_trackers_map_still_loading">Map still loading…</string>
     <string name="export_trackers_signal_strength">Signal Strength: %d"</string>
@@ -461,7 +461,7 @@
     <string name="export_trackers_map_title">Map:</string>
     <string name="export_trackers_detections_title">This tracker was found at:</string>
     <string name="export_trackers_detections_title_continued">This tracker was found at (continuation):</string>
-    <string name="export_page_number">Page %d/%d</string>
+    <string name="export_page_number">Page %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
 
@@ -523,8 +523,8 @@
         <item quantity="other">Open the notification to get more info. A tracker could have followed you for at least %d minutes.</item>
     </plurals>
     <string name="notification_title_base">A tracker could be following you</string>
-    <string name="notification_text_single">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
-    <string name="notification_text_multiple">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_text_single">Open the notification to get more info. The %1$s could have followed you for at least %2$d minutes.</string>
+    <string name="notification_text_multiple">Open the notification to get more info. The %1$s could have followed you for at least %2$d minutes.</string>
     <string name="notification_title_vocal">%s might follow you</string>
     <string name="notification_title_consonant">A %s might follow you</string>
     <string name="notification_title_multiple">%s might follow you</string>
