@@ -56,6 +56,9 @@ class NotificationRepository @Inject constructor(
 
     fun getAllNotifications(): List<Notification> = notificationDao.getAllNotifications()
 
+    fun getNotificationsInRange(from: LocalDateTime, to: LocalDateTime): List<Notification> =
+        notificationDao.getNotificationsInRange(from, to)
+
     @WorkerThread
     suspend fun insert(notification: Notification): Long {
         return notificationDao.insert(notification)

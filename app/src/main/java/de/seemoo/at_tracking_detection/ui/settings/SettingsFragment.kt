@@ -152,6 +152,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreference<Preference>("raw_data_export")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view?.findNavController()?.navigate(R.id.action_settings_to_raw_data_export)
+                true
+            }
+
         findPreference<Preference>("privacy_policy")?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 val intent = Intent(
@@ -246,6 +252,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = true
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = true
             findPreference<Preference>("old_device_cleanup")?.isVisible = true
+            findPreference<Preference>("raw_data_export")?.isVisible = true
 //            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         } else {
             Timber.d("Disabled advanced mode!")
@@ -256,6 +263,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<SwitchPreferenceCompat>("show_onboarding")?.isVisible = false
             findPreference<SwitchPreferenceCompat>("deactivate_background_scanning")?.isVisible = SharedPrefs.deactivateBackgroundScanning
             findPreference<Preference>("old_device_cleanup")?.isVisible = false
+            findPreference<Preference>("raw_data_export")?.isVisible = false
 //            findPreference<SwitchPreferenceCompat>("use_dynamic_colors")?.isVisible = false
         }
     }

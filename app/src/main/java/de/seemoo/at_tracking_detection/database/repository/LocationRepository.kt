@@ -10,9 +10,10 @@ import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 class LocationRepository @Inject constructor(
     private val locationDao: LocationDao
 ){
-    val totalCount: Int = locationDao.getTotalLocationCount()
-
     val locations: Flow<List<LocationModel>> = locationDao.getAll()
+
+    fun getLocationsForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<LocationModel> =
+        locationDao.getLocationsForBeaconsInRange(from, to)
 
     fun locationsSince(since: LocalDateTime): List<LocationModel> = locationDao.getLocationsSince(since)
 

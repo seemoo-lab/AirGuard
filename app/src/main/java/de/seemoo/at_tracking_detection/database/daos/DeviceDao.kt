@@ -42,6 +42,15 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getIgnoredSync(): List<BaseDevice>
 
+    @Query("SELECT * FROM device ORDER BY hearted DESC, lastSeen DESC")
+    fun getAllSync(): List<BaseDevice>
+
+    @Query("SELECT DISTINCT d.* FROM device d INNER JOIN beacon b ON d.address = b.deviceAddress WHERE b.receivedAt >= :from AND b.receivedAt <= :to ORDER BY d.lastSeen DESC")
+    fun getDevicesForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<BaseDevice>
+
+    @Query("SELECT MIN(firstDiscovery) FROM device")
+    fun getEarliestDeviceDate(): String?
+
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
     fun getByAddress(address: String): BaseDevice?
 

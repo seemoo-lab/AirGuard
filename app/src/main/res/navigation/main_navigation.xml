@@ -84,6 +84,10 @@
             android:id="@+id/action_settings_to_old_device_cleanup"
             app:destination="@id/old_device_cleanup"
             />
+        <action
+            android:id="@+id/action_settings_to_raw_data_export"
+            app:destination="@id/raw_data_export"
+            />
     </fragment>
 
     <!-- Old Device Cleanup -->
@@ -92,6 +96,14 @@
         android:name="de.seemoo.at_tracking_detection.ui.settings.OldDeviceCleanupFragment"
         android:label="@string/title_old_device_cleanup"
         tools:layout="@layout/fragment_old_device_cleanup">
+    </fragment>
+
+    <!-- Raw Data Export -->
+    <fragment
+        android:id="@+id/raw_data_export"
+        android:name="de.seemoo.at_tracking_detection.ui.settings.RawDataExportFragment"
+        android:label="@string/raw_data_export_label"
+        tools:layout="@layout/fragment_raw_data_export">
     </fragment>
 
     <!-- Data Deletion -->

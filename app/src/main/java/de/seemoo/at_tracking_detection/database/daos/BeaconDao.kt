@@ -15,6 +15,21 @@ interface BeaconDao {
     @Query("SELECT * FROM beacon ORDER BY receivedAt DESC")
     fun getAllBeacons(): List<Beacon>
 
+    @Query("SELECT * FROM beacon WHERE receivedAt >= :from AND receivedAt <= :to ORDER BY receivedAt DESC")
+    fun getBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<Beacon>
+
+    @Query("SELECT MIN(receivedAt) FROM beacon")
+    fun getEarliestBeaconDate(): String?
+
+    /** Gets minimum data in any table of the raw export data*/
+    @Query("SELECT MIN(dt) FROM (" +
+        "SELECT MIN(receivedAt) AS dt FROM beacon " +
+        "UNION ALL SELECT MIN(createdAt) FROM notification " +
+        "UNION ALL SELECT MIN(firstDiscovery) FROM device " +
+        "UNION ALL SELECT MIN(firstDiscovery) FROM location" +
+        ")")
+    fun getEarliestAnyDate(): String?
+
     // @Query("SELECT mfg FROM beacon WHERE mfg LIKE :Key LIMIT 1")
     @Query("SELECT * FROM beacon WHERE mfg LIKE :serviceData")
     fun getBeaconsWithDataLike(serviceData: String): List<Beacon>

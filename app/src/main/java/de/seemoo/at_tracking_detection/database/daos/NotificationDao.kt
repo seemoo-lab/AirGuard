@@ -20,6 +20,12 @@ interface NotificationDao {
     @Query("SELECT * FROM notification")
     fun getAllNotifications(): List<Notification>
 
+    @Query("SELECT * FROM notification WHERE createdAt >= :from AND createdAt <= :to ORDER BY createdAt DESC")
+    fun getNotificationsInRange(from: LocalDateTime, to: LocalDateTime): List<Notification>
+
+    @Query("SELECT MIN(createdAt) FROM notification")
+    fun getEarliestNotificationDate(): String?
+
     @Query("UPDATE notification SET falseAlarm = :state WHERE :id Like notificationId")
     suspend fun setFalseAlarm(id: Int, state: Boolean)
 
