@@ -216,7 +216,7 @@ data class BaseDevice(
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
-                DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.APPLE -> AppleFindMy.getConnectionState(scanResult)
                 DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.getConnectionState(scanResult)
                 else -> ConnectionState.UNKNOWN
             }
@@ -227,7 +227,7 @@ data class BaseDevice(
                 DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getBatteryState(scanResult)
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
-                DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)
+                DeviceType.AIRPODS -> AppleFindMy.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
             }
         }

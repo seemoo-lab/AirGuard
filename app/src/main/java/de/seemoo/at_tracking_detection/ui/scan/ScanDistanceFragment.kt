@@ -499,9 +499,13 @@ class ScanDistanceFragment : Fragment() {
         }
     }
 
+    private var bluetoothService: BluetoothLeService? = null
+    private var serviceBound = false
+
     private fun toggleSound() {
         viewModel.error.postValue(false)
-        if (viewModel.soundPlaying.value == false) {
+        if (viewModel.soundPlaying.value == false && viewModel.connecting.value == false) {
+            Timber.d("ScanDistanceFragment: starting sound playback — binding BluetoothLeService")
             viewModel.connecting.postValue(true)
             val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
             requireContext().bindService(
@@ -510,29 +514,51 @@ class ScanDistanceFragment : Fragment() {
                 Context.BIND_AUTO_CREATE
             )
         } else {
-            Timber.d("Sound already playing! Stopping sound...")
+            Timber.d("ScanDistanceFragment: stopping sound — calling stopSound() and unbinding service")
+            bluetoothService?.stopSound()
+            unbindBleService()
             viewModel.soundPlaying.postValue(false)
+            viewModel.connecting.postValue(false)
+        }
+    }
+
+    private fun unbindBleService() {
+        if (serviceBound) {
+            try {
+                requireContext().unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                Timber.w("ScanDistanceFragment: tried to unbind an already-unbound service")
+            }
+            serviceBound = false
+            bluetoothService = null
         }
     }
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Timber.d("Trying to connect to ble device!")
-            val bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
-            bluetoothService.let {
-                if (!it.init()) {
-                    Timber.e("Unable to init bluetooth")
-                    viewModel.error.postValue(true)
+            Timber.d("ScanDistanceFragment: BluetoothLeService connected")
+            bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
+            serviceBound = true
+            val it = bluetoothService ?: return
+            if (!it.init()) {
+                Timber.e("ScanDistanceFragment: unable to init Bluetooth")
+                viewModel.error.postValue(true)
+            } else {
+                val baseDevice = viewModel.currentDevice.value
+                if (baseDevice != null) {
+                    Timber.d("ScanDistanceFragment: connecting to device ${baseDevice.address} (${baseDevice.deviceType})")
+                    it.connect(baseDevice)
                 } else {
-                    Timber.d("Device is ready to connect!")
-                    viewModel.currentDevice.value?.let { baseDevice ->
-                        it.connect(baseDevice)
-                    }
+                    Timber.e("ScanDistanceFragment: currentDevice is null — cannot connect")
+                    viewModel.error.postValue(true)
                 }
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            Timber.d("ScanDistanceFragment: BluetoothLeService disconnected unexpectedly")
+            serviceBound = false
+            bluetoothService = null
             viewModel.soundPlaying.postValue(false)
             viewModel.connecting.postValue(false)
         }
@@ -821,13 +847,11 @@ class ScanDistanceFragment : Fragment() {
         showSearchMessage()
         stopBluetoothScan()
 
-        // Stop sound if playing
+        // Stop sound if playing or connecting when fragment is paused
         if (viewModel.soundPlaying.value == true || viewModel.connecting.value == true) {
-            try {
-                requireContext().unbindService(serviceConnection)
-            } catch (e: IllegalArgumentException) {
-                Timber.e("Tried to unbind an unbound service!")
-            }
+            Timber.d("ScanDistanceFragment.onPause: stopping active sound/connection")
+            bluetoothService?.stopSound()
+            unbindBleService()
             viewModel.soundPlaying.postValue(false)
             viewModel.connecting.postValue(false)
         }
