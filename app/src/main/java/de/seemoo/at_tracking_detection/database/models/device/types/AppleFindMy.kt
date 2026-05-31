@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -35,7 +36,25 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
     // FindMy: Apple's normal Find My protocol (fd44 service) for most devices (Third Party Trackers, Airpods, etc.)
     // AirTag: the original AirTag protocol, used by first gen AirTags
     enum class SoundProtocol { DULT, FINDMY, AIRTAG }
-    private var selectedSoundProtocol: SoundProtocol? = null
+
+    // Protocol selected for the current GATT session
+    @Volatile private var selectedSoundProtocol: SoundProtocol? = null
+    // True once the sound-start command has actually been written to the peripheral.
+    @Volatile private var soundStarted: Boolean = false
+    // Set to true when we intentionally disconnect the GATT link (e.g. after stopping sound or on error)
+    @Volatile private var intentionalDisconnect: Boolean = false
+    // Record the last value written to the characteristic so we can identify it in onCharacteristicWrite (needed for API < 33 where write callbacks don't include the value)
+    private var lastWrittenValue: ByteArray = ByteArray(0)
+
+    // Timers
+    private val handler = Handler(Looper.getMainLooper())
+    private var stopSoundRunnable: Runnable? = null
+    private var discoveryTimeoutRunnable: Runnable? = null
+
+    // Pending CCD State (for async notification/indication setup)
+    private var pendingGatt: BluetoothGatt? = null
+    private var pendingCharacteristic: BluetoothGattCharacteristic? = null
+    private var pendingValue: ByteArray? = null
 
     // Priority order of which sound service is used if multiple are present
     // This gets overwritten by subtypes (AirPods and AirTags)
@@ -52,80 +71,42 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
         }
         val detected = soundProtocolPriority.firstOrNull { proto ->
             when (proto) {
-                SoundProtocol.DULT    -> DULT_SOUND_SERVICE_UUID in advertisedUuids
-                SoundProtocol.FINDMY  -> advertisedUuids.any { it.toString().lowercase().contains(FINDMY_SOUND_SERVICE.lowercase()) }
-                SoundProtocol.AIRTAG  -> AIRTAG_SOUND_SERVICE_UUID in advertisedUuids
+                SoundProtocol.DULT   -> DULT_SOUND_SERVICE_UUID in advertisedUuids
+                SoundProtocol.FINDMY -> advertisedUuids.any { it.toString().lowercase().contains(FINDMY_SOUND_SERVICE.lowercase()) }
+                SoundProtocol.AIRTAG -> AIRTAG_SOUND_SERVICE_UUID in advertisedUuids
             }
         }
         if (detected != null) {
-            Timber.d("preConnectHint: pre-selecting protocol $detected from advertised UUIDs $advertisedUuids")
+            Timber.d("preConnectHint: pre-selecting $detected from advertised UUIDs")
             selectedSoundProtocol = detected
         } else {
-            Timber.d("preConnectHint: advertised UUIDs $advertisedUuids matched no known sound service — will use priority list")
+            Timber.d("preConnectHint: no match in advertised UUIDs --> use priority list")
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun tryStartProtocol(gatt: BluetoothGatt, protocol: SoundProtocol): Boolean {
-        Timber.d("tryStartProtocol: trying $protocol")
-        return when (protocol) {
-            SoundProtocol.DULT -> {
-                val service = gatt.getService(DULT_SOUND_SERVICE_UUID)
-                Timber.d("DULT service ($DULT_SOUND_SERVICE_UUID) found=${service != null}")
-                val characteristic = service?.getCharacteristic(DULT_SOUND_CHARACTERISTIC)
-                Timber.d("DULT characteristic ($DULT_SOUND_CHARACTERISTIC) found=${characteristic != null}")
-                if (characteristic == null) return false
-                selectedSoundProtocol = SoundProtocol.DULT
-                Timber.i("▶ Sound protocol selected: DULT (Sound_Start 0x0300 LE)")
-                writeCharacteristic(gatt, characteristic, DULT_START_SOUND_OPCODE, enableNotifications = true)
-                sendBluetoothEvent(BluetoothEvent.EventRunning)
-                true
-            }
-            SoundProtocol.FINDMY -> {
-                val service = gatt.services.firstOrNull {
-                    it.uuid.toString().lowercase().contains(FINDMY_SOUND_SERVICE.lowercase())
-                }
-                Timber.d("FindMy service (contains '$FINDMY_SOUND_SERVICE') found=${service != null}${if (service != null) ", uuid=${service.uuid}" else ""}")
-                val characteristic = service?.getCharacteristic(FINDMY_SOUND_CHARACTERISTIC)
-                Timber.d("FindMy characteristic ($FINDMY_SOUND_CHARACTERISTIC) found=${characteristic != null}")
-                if (characteristic == null) return false
-                selectedSoundProtocol = SoundProtocol.FINDMY
-                Timber.i("▶ Sound protocol selected: Apple FindMy (fd44)")
-                writeCharacteristic(gatt, characteristic, FINDMY_START_SOUND_OPCODE, enableNotifications = true)
-                sendBluetoothEvent(BluetoothEvent.EventRunning)
-                true
-            }
-            SoundProtocol.AIRTAG -> {
-                val service = gatt.getService(AIRTAG_SOUND_SERVICE_UUID)
-                Timber.d("AirTag service ($AIRTAG_SOUND_SERVICE_UUID) found=${service != null}")
-                val characteristic = service?.getCharacteristic(AIRTAG_SOUND_CHARACTERISTIC)
-                Timber.d("AirTag characteristic (%s) found=%b%s",
-                    AIRTAG_SOUND_CHARACTERISTIC, characteristic != null,
-                    if (characteristic != null) ", properties=0x${characteristic.properties.toString(16)}" else ""
-                )
-                if (characteristic == null) return false
-                selectedSoundProtocol = SoundProtocol.AIRTAG
-                val value = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(175.toByte()).array()
-                Timber.i("▶ Sound protocol selected: AirTag proprietary — writing 0xAF to ${characteristic.uuid}")
-                // No setCharacteristicNotification for AirTag
-                writeCharacteristic(gatt, characteristic, value, enableNotifications = false)
-                sendBluetoothEvent(BluetoothEvent.EventRunning)
-                true
-            }
-        }
+    // Reset all per-session state and cancel any pending timers or runnables.
+    private fun resetSessionState() {
+        selectedSoundProtocol = null
+        soundStarted = false
+        intentionalDisconnect = false
+        lastWrittenValue = ByteArray(0)
+        stopSoundRunnable?.let { handler.removeCallbacks(it) }; stopSoundRunnable        = null
+        discoveryTimeoutRunnable?.let { handler.removeCallbacks(it) }; discoveryTimeoutRunnable = null
+        pendingGatt = null
+        pendingCharacteristic = null
+        pendingValue = null
     }
 
-    override val imageResource: Int
-        @DrawableRes
-        get() = R.drawable.ic_chipolo
+    // Called when the start-sound command has been sent to the peripheral, either directly (AirTag) or after CCCD setup (DULT/FindMy).
+    private fun onSoundCommandSent() {
+        soundStarted = true
+        sendBluetoothEvent(BluetoothEvent.EventRunning)
+    }
 
-    override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_find_my_device_apple)
-            .format(id)
-
-    override val deviceContext: DeviceContext
-        get() = AppleFindMy
-
+    // Writes the given value to the characteristic
+    // optionally setting up notifications/indications first if the characteristic supports it
+    // For DULT and FindMy protocols, notifications are required to know when to send the stop command, so they are enabled by default
+    // For AirTag, no notifications are used and the completion signal is the remote disconnect (status 19)
     @SuppressLint("MissingPermission")
     private fun writeCharacteristic(
         gatt: BluetoothGatt,
@@ -136,8 +117,45 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
         if (enableNotifications) {
             val notifOk = gatt.setCharacteristicNotification(characteristic, true)
             Timber.d("setCharacteristicNotification for ${characteristic.uuid}: $notifOk")
-        }
 
+            val cccd = characteristic.getDescriptor(CCCD_UUID)
+            if (cccd != null) {
+                val cccdValue = if ((characteristic.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0)
+                    BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                else
+                    BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+
+                pendingGatt           = gatt
+                pendingCharacteristic = characteristic
+                pendingValue          = value
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val result = gatt.writeDescriptor(cccd, cccdValue)
+                    Timber.d("writeDescriptor CCCD (API33+) → result=$result, cccdValue=${cccdValue.toHexString()}")
+                } else {
+                    @Suppress("DEPRECATION")
+                    cccd.value = cccdValue
+                    @Suppress("DEPRECATION")
+                    val queued = gatt.writeDescriptor(cccd)
+                    Timber.d("writeDescriptor CCCD (legacy) → queued=$queued, cccdValue=${cccdValue.toHexString()}")
+                }
+                return // continued in onDescriptorWrite
+            }
+            Timber.w("No CCCD descriptor on ${characteristic.uuid} — writing characteristic directly")
+        }
+        writeCharacteristicRaw(gatt, characteristic, value)
+        // For the no-CCCD fallback path, signal EventRunning here since onDescriptorWrite won't fire
+        if (enableNotifications) onSoundCommandSent()
+    }
+
+    // Writes the given value to the characteristic without any CCCD setup (for AirTag or if CCCD is missing)
+    @SuppressLint("MissingPermission")
+    private fun writeCharacteristicRaw(
+        gatt: BluetoothGatt,
+        characteristic: BluetoothGattCharacteristic,
+        value: ByteArray
+    ) {
+        lastWrittenValue = value
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val result = gatt.writeCharacteristic(
                 characteristic, value, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
@@ -164,7 +182,7 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
             SoundProtocol.FINDMY ->
                 Triple(FINDMY_SOUND_SERVICE, FINDMY_SOUND_CHARACTERISTIC, FINDMY_STOP_SOUND_OPCODE)
             else -> {
-                Timber.d("stopSound: AirTag protocol — no explicit stop command, will rely on disconnect")
+                Timber.d("stopSound: AirTag — no explicit stop, relies on remote disconnect")
                 return
             }
         }
@@ -172,17 +190,68 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
         val service = gatt.services.firstOrNull {
             it.uuid.toString().lowercase().contains(serviceKey.lowercase())
         } ?: run {
-            Timber.w("stopSound: sound service not found (key=$serviceKey)")
+            Timber.w("stopSound: service not found (key=$serviceKey)")
             return
         }
 
         val characteristic = service.getCharacteristic(charUUID) ?: run {
-            Timber.w("stopSound: sound characteristic not found ($charUUID)")
+            Timber.w("stopSound: characteristic not found ($charUUID)")
             return
         }
 
         Timber.d("stopSound: writing stop opcode ${stopOpcode.toHexString()} to ${characteristic.uuid}")
         writeCharacteristic(gatt, characteristic, stopOpcode, enableNotifications = true)
+    }
+
+    // Attempt to start the given protocol by finding the corresponding service and characteristic, writing the start opcode, and enabling notifications if needed.
+    @SuppressLint("MissingPermission")
+    private fun tryStartProtocol(gatt: BluetoothGatt, protocol: SoundProtocol): Boolean {
+        Timber.d("tryStartProtocol: trying $protocol")
+        return when (protocol) {
+
+            SoundProtocol.DULT -> {
+                val service = gatt.getService(DULT_SOUND_SERVICE_UUID)
+                Timber.d("DULT service ($DULT_SOUND_SERVICE_UUID) found=${service != null}")
+                val characteristic = service?.getCharacteristic(DULT_SOUND_CHARACTERISTIC)
+                Timber.d("DULT characteristic ($DULT_SOUND_CHARACTERISTIC) found=${characteristic != null}")
+                if (characteristic == null) return false
+                selectedSoundProtocol = SoundProtocol.DULT
+                Timber.i("Sound protocol selected: DULT")
+                // EventRunning is deferred until after CCCD is confirmed in onDescriptorWrite
+                writeCharacteristic(gatt, characteristic, DULT_START_SOUND_OPCODE, enableNotifications = true)
+                true
+            }
+
+            SoundProtocol.FINDMY -> {
+                val service = gatt.services.firstOrNull {
+                    it.uuid.toString().lowercase().contains(FINDMY_SOUND_SERVICE.lowercase())
+                }
+                Timber.d("FindMy service found=${service != null}${if (service != null) ", uuid=${service.uuid}" else ""}")
+                val characteristic = service?.getCharacteristic(FINDMY_SOUND_CHARACTERISTIC)
+                Timber.d("FindMy characteristic ($FINDMY_SOUND_CHARACTERISTIC) found=${characteristic != null}")
+                if (characteristic == null) return false
+                selectedSoundProtocol = SoundProtocol.FINDMY
+                Timber.i("Sound protocol selected: FindMy (fd44)")
+                writeCharacteristic(gatt, characteristic, FINDMY_START_SOUND_OPCODE, enableNotifications = true)
+                true
+            }
+
+            SoundProtocol.AIRTAG -> {
+                val service = gatt.getService(AIRTAG_SOUND_SERVICE_UUID)
+                Timber.d("AirTag service ($AIRTAG_SOUND_SERVICE_UUID) found=${service != null}")
+                val characteristic = service?.getCharacteristic(AIRTAG_SOUND_CHARACTERISTIC)
+                Timber.d("null%s", if (characteristic != null) ", properties=0x${characteristic.properties.toString(16)}" else "")
+                if (characteristic == null) return false
+                selectedSoundProtocol = SoundProtocol.AIRTAG
+                Timber.i("Sound protocol selected: AirTag")
+                // AirTag uses no notifications — write the trigger byte (0xAF) directly.
+                // Completion is signaled by the device closing the connection (status 19).
+                val value = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(175.toByte()).array()
+                writeCharacteristicRaw(gatt, characteristic, value)
+                onSoundCommandSent()
+                true
+            }
+        }
     }
 
     override val bluetoothGattCallback: BluetoothGattCallback
@@ -199,24 +268,58 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
 
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> when (newState) {
+
                         BluetoothProfile.STATE_CONNECTED -> {
-                            Timber.d("GATT connected — discovering services")
-                            gatt.discoverServices()
+                            Timber.d("GATT connected — starting service discovery")
+                            val started = gatt.discoverServices()
+                            if (!started) {
+                                Timber.e("discoverServices() returned false — aborting")
+                                intentionalDisconnect = true
+                                disconnect(gatt)
+                                sendBluetoothEvent(BluetoothEvent.EventFailed)
+                                return
+                            }
+                            // 10-second timeout so the UI never hangs if discovery stalls
+                            discoveryTimeoutRunnable = Runnable {
+                                Timber.e("Service discovery timed out after 10 s")
+                                intentionalDisconnect = true
+                                disconnect(gatt)
+                                resetSessionState()
+                                sendBluetoothEvent(BluetoothEvent.EventFailed)
+                            }.also { handler.postDelayed(it, 10_000) }
                         }
+
                         BluetoothProfile.STATE_DISCONNECTED -> {
-                            Timber.d("GATT disconnected cleanly")
-                            sendBluetoothEvent(BluetoothEvent.Disconnected)
+                            gatt.close()
+                            val wasIntentional = intentionalDisconnect
+                            resetSessionState()
+                            if (!wasIntentional) {
+                                Timber.d("GATT disconnected unexpectedly — notifying UI")
+                                sendBluetoothEvent(BluetoothEvent.Disconnected)
+                            } else {
+                                Timber.d("GATT disconnected after intentional session end — suppressing Disconnected event")
+                            }
                         }
+
                         else -> Timber.d("Unhandled connection state: $newState")
                     }
+
                     19 -> {
-                        // 0x13 = remote device closed connection
-                        // For AirTag this is the normal "sound done" signal
-                        Timber.d("Remote device terminated connection (status 19) — treating as completion")
-                        sendBluetoothEvent(BluetoothEvent.EventCompleted)
+                        gatt.close()
+                        val wasAirTagCompletion = selectedSoundProtocol == SoundProtocol.AIRTAG && soundStarted
+                        Timber.d("Status 19 — AirTag completion=$wasAirTagCompletion " +
+                            "(protocol=$selectedSoundProtocol, soundStarted=$soundStarted)")
+                        resetSessionState()
+                        sendBluetoothEvent(
+                            if (wasAirTagCompletion) BluetoothEvent.EventCompleted
+                            else BluetoothEvent.EventFailed
+                        )
                     }
+
                     else -> {
-                        Timber.e("GATT connection failed with status=$status")
+                        Timber.e("GATT connection error: status=$status")
+                        gatt.close()
+                        resetSessionState()
                         sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
@@ -224,21 +327,25 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
 
             @SuppressLint("MissingPermission")
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+                // Cancel the discovery timeout regardless of outcome
+                discoveryTimeoutRunnable?.let { handler.removeCallbacks(it) }
+                discoveryTimeoutRunnable = null
+
                 if (status != BluetoothGatt.GATT_SUCCESS) {
                     Timber.e("onServicesDiscovered failed with status=$status")
+                    intentionalDisconnect = true
                     disconnect(gatt)
                     sendBluetoothEvent(BluetoothEvent.EventFailed)
                     return
                 }
 
                 val uuids = gatt.services.map { it.uuid.toString() }
-                Timber.d("onServicesDiscovered: ${uuids.size} services found: $uuids")
+                Timber.d("onServicesDiscovered: ${uuids.size} services: $uuids")
 
-                // Build effective priority: if preConnectHint already identified a protocol,
-                // put it first; then append the remaining entries from soundProtocolPriority.
+                // Build effective priority: pre-hinted protocol (from preConnectHint)
                 val hint = selectedSoundProtocol
                 val effectivePriority = if (hint != null) {
-                    Timber.d("Pre-hint active ($hint) — trying it first, then: ${soundProtocolPriority.filter { it != hint }}")
+                    Timber.d("Pre-hint active ($hint) — trying it first")
                     listOf(hint) + soundProtocolPriority.filter { it != hint }
                 } else {
                     Timber.d("No pre-hint — using device priority: $soundProtocolPriority")
@@ -250,8 +357,36 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
                 }
 
                 Timber.e("No compatible sound service found among: $uuids")
+                intentionalDisconnect = true
                 disconnect(gatt)
                 sendBluetoothEvent(BluetoothEvent.EventFailed)
+            }
+
+            @SuppressLint("MissingPermission")
+            override fun onDescriptorWrite(
+                gatt: BluetoothGatt,
+                descriptor: BluetoothGattDescriptor,
+                status: Int
+            ) {
+                if (descriptor.uuid != CCCD_UUID) return // only care about CCCD writes
+
+                val pg = pendingGatt
+                val pc = pendingCharacteristic
+                val pv = pendingValue
+                pendingGatt           = null
+                pendingCharacteristic = null
+                pendingValue          = null
+
+                if (pg == null || pc == null || pv == null) {
+                    Timber.w("onDescriptorWrite: CCCD ack but no pending characteristic write — ignoring")
+                    return
+                }
+                if (status != BluetoothGatt.GATT_SUCCESS) {
+                    Timber.w("CCCD write failed (status=$status) — proceeding with characteristic write anyway")
+                }
+                Timber.d("CCCD confirmed — writing start opcode to ${pc.uuid}")
+                writeCharacteristicRaw(pg, pc, pv)
+                onSoundCommandSent()
             }
 
             @SuppressLint("MissingPermission")
@@ -260,57 +395,50 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
                 characteristic: BluetoothGattCharacteristic?,
                 status: Int
             ) {
-                val lastWritten = getLastWrittenValue(characteristic)
-                Timber.d("onCharacteristicWrite: status=$status, characteristic=${characteristic?.uuid}, " +
-                    "writtenValue=${lastWritten.toHexString()}, protocol=$selectedSoundProtocol")
+                Timber.d("onCharacteristicWrite: status=$status, uuid=${characteristic?.uuid}, " +
+                    "writtenValue=${lastWrittenValue.toHexString()}, protocol=$selectedSoundProtocol")
 
                 when {
                     status == BluetoothGatt.GATT_SUCCESS && gatt != null -> {
                         when (selectedSoundProtocol) {
-                            // DULT and FindMy: start → wait 5 s → stop → disconnect
+
                             SoundProtocol.DULT, SoundProtocol.FINDMY -> {
-                                val (startOpcode, stopOpcode, protocolName) =
+                                val (startOpcode, stopOpcode, name) =
                                     if (selectedSoundProtocol == SoundProtocol.DULT)
                                         Triple(DULT_START_SOUND_OPCODE, DULT_STOP_SOUND_OPCODE, "DULT")
                                     else
                                         Triple(FINDMY_START_SOUND_OPCODE, FINDMY_STOP_SOUND_OPCODE, "FindMy")
 
                                 when {
-                                    lastWritten.contentEquals(startOpcode) -> {
-                                        Timber.d("$protocolName: start-sound write confirmed — scheduling stop in 5 s")
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            Timber.d("$protocolName: 5 s elapsed, sending stop-sound command")
+                                    lastWrittenValue.contentEquals(startOpcode) -> {
+                                        Timber.d("$name: start confirmed — scheduling stop in 5 s")
+                                        val runnable = Runnable {
+                                            Timber.d("$name: 5 s elapsed, sending stop command")
                                             stopSound(gatt)
-                                        }, 5000)
+                                        }
+                                        stopSoundRunnable = runnable
+                                        handler.postDelayed(runnable, 5_000)
                                     }
-                                    lastWritten.contentEquals(stopOpcode) -> {
-                                        Timber.d("$protocolName: stop-sound write confirmed — disconnecting")
+                                    lastWrittenValue.contentEquals(stopOpcode) -> {
+                                        Timber.d("$name: stop confirmed — completing session")
+                                        intentionalDisconnect = true
                                         disconnect(gatt)
                                         sendBluetoothEvent(BluetoothEvent.EventCompleted)
                                     }
-                                    else -> {
-                                        Timber.w("$protocolName: unrecognised written value ${lastWritten.toHexString()}")
-                                    }
+                                    else ->
+                                        Timber.w("$name: unrecognised write value ${lastWrittenValue.toHexString()}")
                                 }
                             }
 
-                            // AirTag: completion signaled by a property flag OR by remote disconnect (status 19)
-                            SoundProtocol.AIRTAG -> {
-                                val props = characteristic?.properties ?: 0
-                                val callbackMatch = (props and AIRTAG_EVENT_CALLBACK) == AIRTAG_EVENT_CALLBACK
-                                Timber.d("AirTag: write confirmed, characteristic.properties=0x${props.toString(16)}, " +
-                                    "AIRTAG_EVENT_CALLBACK=0x${AIRTAG_EVENT_CALLBACK.toString(16)}, match=$callbackMatch")
-                                if (callbackMatch) {
-                                    Timber.d("AirTag: event-callback flag matched — completing")
-                                    sendBluetoothEvent(BluetoothEvent.EventCompleted)
-                                    disconnect(gatt)
-                                } else {
-                                    Timber.d("AirTag: event-callback flag NOT matched — waiting for remote disconnect (status 19)")
-                                }
-                            }
+                            // AirTag: write was accepted by the device; the actual completion
+                            // signal is the device closing the link (status 19 in
+                            // onConnectionStateChange). Nothing further needed here.
+                            SoundProtocol.AIRTAG ->
+                                Timber.d("AirTag: write confirmed — waiting for remote disconnect (status 19)")
 
                             null -> {
-                                Timber.e("onCharacteristicWrite: selectedSoundProtocol is null — this should not happen")
+                                Timber.e("onCharacteristicWrite: no protocol selected — aborting")
+                                intentionalDisconnect = true
                                 disconnect(gatt)
                                 sendBluetoothEvent(BluetoothEvent.EventFailed)
                             }
@@ -318,47 +446,33 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
                     }
 
                     status == 133 -> {
-                        // GATT_ERROR / connection timeout
-                        Timber.e("GATT error 133 (timeout) writing characteristic ${characteristic?.uuid}")
-                        sendBluetoothEvent(BluetoothEvent.EventFailed)
+                        Timber.e("GATT error 133 (timeout) on ${characteristic?.uuid}")
+                        intentionalDisconnect = true
                         disconnect(gatt)
+                        sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
 
                     else -> {
                         Timber.e("Characteristic write failed: status=$status, uuid=${characteristic?.uuid}")
+                        intentionalDisconnect = true
                         disconnect(gatt)
                         sendBluetoothEvent(BluetoothEvent.EventFailed)
                     }
                 }
                 super.onCharacteristicWrite(gatt, characteristic, status)
             }
-
-            /** Called for AirTag when the device sends back a read result post-sound. */
-            override fun onCharacteristicRead(
-                gatt: BluetoothGatt,
-                characteristic: BluetoothGattCharacteristic,
-                value: ByteArray,
-                status: Int
-            ) {
-                val props = characteristic.properties
-                Timber.d("onCharacteristicRead: status=$status, uuid=${characteristic.uuid}, " +
-                    "properties=0x${props.toString(16)}, protocol=$selectedSoundProtocol")
-                if (status == BluetoothGatt.GATT_SUCCESS &&
-                    selectedSoundProtocol == SoundProtocol.AIRTAG &&
-                    (props and AIRTAG_EVENT_CALLBACK) == AIRTAG_EVENT_CALLBACK) {
-                    Timber.d("AirTag: read confirmed event-callback flag — completing")
-                    sendBluetoothEvent(BluetoothEvent.EventCompleted)
-                    disconnect(gatt)
-                }
-            }
-
-            private fun getLastWrittenValue(characteristic: BluetoothGattCharacteristic?): ByteArray {
-                return characteristic?.let {
-                    @Suppress("DEPRECATION")
-                    it.value ?: ByteArray(0)
-                } ?: ByteArray(0)
-            }
         }
+
+    override val imageResource: Int
+        @DrawableRes
+        get() = R.drawable.ic_chipolo
+
+    override val defaultDeviceNameWithId: String
+        get() = ATTrackingDetectionApplication.getAppContext().resources
+            .getString(R.string.device_name_find_my_device_apple).format(id)
+
+    override val deviceContext: DeviceContext
+        get() = AppleFindMy
 
     companion object : DeviceContext {
         // DULT sound service
@@ -382,7 +496,10 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
             UUID.fromString("7DFC9000-7D1C-4951-86AA-8D9728F8D66C")
         internal val AIRTAG_SOUND_CHARACTERISTIC: UUID =
             UUID.fromString("7DFC9001-7D1C-4951-86AA-8D9728F8D66C")
-        internal const val AIRTAG_EVENT_CALLBACK = 0x302
+
+        // Standard CCCD descriptor UUID
+        internal val CCCD_UUID: UUID =
+            UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
 
         private val GATT_GENERIC_ACCESS_SERVICE =
             UUID.fromString("87290102-3C51-43B1-A1A9-11B9DC38478B")
@@ -465,7 +582,7 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
                 .getString(R.string.apple_find_my_default_name)
         }
 
-        private fun ByteArray.toHexString(): String =
+        internal fun ByteArray.toHexString(): String =
             joinToString(separator = " ") { "0x%02X".format(it) }
     }
 }
