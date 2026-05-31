@@ -14,6 +14,9 @@ class AirPods(id: Int) : AppleFindMy(id) {
         @DrawableRes
         get() = R.drawable.ic_airpods
 
+    override val soundProtocolPriority: List<SoundProtocol>
+        get() = listOf(SoundProtocol.FINDMY, SoundProtocol.DULT, SoundProtocol.AIRTAG)
+
     override val defaultDeviceNameWithId: String
         get() = ATTrackingDetectionApplication.getAppContext().resources
             .getString(R.string.device_name_airpods).format(id)

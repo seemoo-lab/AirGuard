@@ -10,9 +10,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.bluetooth.le.ScanResult
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,7 +54,7 @@ class BluetoothLeService : Service() {
     }
 
     @SuppressLint("MissingPermission")
-    fun connect(baseDevice: BaseDevice): Boolean {
+    fun connect(baseDevice: BaseDevice, scanResult: ScanResult? = null): Boolean {
         if (baseDevice.device !is Connectable) {
             Timber.d("Device type ${baseDevice.deviceType} is not Connectable — cannot play sound")
             return false
@@ -70,6 +72,11 @@ class BluetoothLeService : Service() {
         if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled) {
             Timber.w("Bluetooth adapter is not initialised or not enabled")
             return false
+        }
+
+        // Calculate connection hint for apple find my devices
+        if (scanResult != null) {
+            (baseDevice.device as? AppleFindMy)?.preConnectHint(scanResult)
         }
 
         return try {
