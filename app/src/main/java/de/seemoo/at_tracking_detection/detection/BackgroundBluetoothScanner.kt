@@ -744,6 +744,17 @@ object BackgroundBluetoothScanner {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
                     deviceRepository.update(device)
+
+                    // Upgrade identified Find My Device to AirTag if already determined in the past
+                    if (device.deviceType == DeviceType.AIRTAG &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRTAG)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirTag " +
+                            "(DB=AIRTAG, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
                 }
 
                 if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {

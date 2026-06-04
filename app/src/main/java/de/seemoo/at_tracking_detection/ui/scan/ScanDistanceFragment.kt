@@ -97,6 +97,14 @@ class ScanDistanceFragment : Fragment() {
 
                     if (deviceType == null) {
                         deviceType = DeviceManager.getDeviceType(scanResult)
+
+                        // 2nd-gen AirTags advertise with the same status byte as FIND_MY devices.
+                        // Check if device has already been upgraded
+                        if (deviceType == DeviceType.FIND_MY && device?.deviceType == DeviceType.AIRTAG) {
+                            deviceType = DeviceType.AIRTAG
+                            DeviceManager.overrideDeviceType(filteredIdentifier, DeviceType.AIRTAG)
+                            Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRTAG from DB (2nd gen AirTag)")
+                        }
                         determineDeviceTypeButtonVisible()
                     }
 
@@ -746,7 +754,21 @@ class ScanDistanceFragment : Fragment() {
 
                     if (device != null && deviceName != findMyDefaultString) {
                         device.name = deviceName
-                        deviceRepository.update(device)
+
+                        // AirTag 2nd Gen advertise exactly as Apple Find My
+                        // Allows to upgrade Find My Device to AirTag
+                        if (deviceName.take(6) == "AirTag" && deviceType == DeviceType.FIND_MY) {
+                            val upgradedDevice = device.copy(deviceType = DeviceType.AIRTAG)
+                            deviceRepository.update(upgradedDevice)
+                            DeviceManager.overrideDeviceType(
+                                latestWrappedScanResult!!.uniqueIdentifier,
+                                DeviceType.AIRTAG
+                            )
+                            deviceType = DeviceType.AIRTAG
+                            Timber.d("Upgrade Apple Find My Device to AirTag for %s", latestWrappedScanResult!!.uniqueIdentifier)
+                        } else {
+                            deviceRepository.update(device)
+                        }
                     }
 
                     if (deviceName == findMyDefaultString || deviceName == "") {
