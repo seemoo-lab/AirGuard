@@ -562,6 +562,9 @@
     <string name="settings_use_dynamic_colors_title">Použiť Material You</string>
     <string name="settings_use_dynamic_colors_summary">Dynamicky prispôsobí farby aplikácie vašej tapete</string>
 
+    <string name="settings_auto_detect_device_types_title">Automatická detekcia typu trackera</string>
+    <string name="settings_auto_detect_device_types_summary">Automaticky sa pripojiť k potenciálnym trackerom na určenie ich presného typu počas manuálneho skenovania. Ak je táto možnosť vypnutá, AirGuard sa nikdy nepripojí k trackeru bez vašej požiadavky. Zapnutie tejto funkcie zvýši spotrebu batérie.</string>
+
     <string name="load_all_occurrences">Načítať všetky výskyty</string>
     <string name="scroll_button">Posunie na začiatok alebo koniec tohto zobrazenia</string>
     <string name="retrieve_owner_information_explanation_hama">Ak chcete získať informácie o majiteľovi, musíte Tracker fyzicky nájsť. Otvorte príslušenstvo zdvihnutím zadného krytu. Vyberte batériu a jednoducho ju znova vložte. Nakoniec nasaďte zadný kryt späť. Potom stlačte „ďalej“.</string>

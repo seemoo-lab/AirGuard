@@ -26,6 +26,14 @@
         app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_bluetooth_24"
+        android:key="auto_detect_device_types"
+        android:summary="@string/settings_auto_detect_device_types_summary"
+        android:title="@string/settings_auto_detect_device_types_title"
+        app:iconTint="?attr/colorPrimary" />
+
+    <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="use_permanent_bluetooth_scanner"
         android:summary="@string/settings_permanent_scanning_summary"

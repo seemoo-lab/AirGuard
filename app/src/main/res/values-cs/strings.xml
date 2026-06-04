@@ -559,6 +559,9 @@
     <string name="settings_use_dynamic_colors_title">Použít Material You</string>
     <string name="settings_use_dynamic_colors_summary">Dynamicky přizpůsobí barvy aplikace vaší tapetě</string>
 
+    <string name="settings_auto_detect_device_types_title">Automatická detekce typu trackeru</string>
+    <string name="settings_auto_detect_device_types_summary">Automaticky se připojit k potenciálním trackerům pro určení jejich přesného typu během ručního skenování. Pokud je tato možnost vypnuta, AirGuard se nikdy nepřipojí k trackeru bez vašeho požadavku. Zapnutí této funkce zvýší spotřebu baterie.</string>
+
     <string name="load_all_occurrences">Načíst všechny výskyty</string>
     <string name="scroll_button">Posune na začátek nebo konec tohoto zobrazení</string>
     <string name="empty_list_others">Pro vybrané filtry nebyla nalezena žádná zařízení. Filtry můžete změnit kliknutím na tlačítko v levém horním rohu nebo zobrazením všech zařízení.</string>

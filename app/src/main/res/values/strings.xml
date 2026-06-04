@@ -611,6 +611,9 @@
     <string name="settings_use_dynamic_colors_title">Use Material You</string>
     <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
 
+    <string name="settings_auto_detect_device_types_title">Automatic tracker detection</string>
+    <string name="settings_auto_detect_device_types_summary">Automatically connect to potential trackers to determine their exact type during manual scan. If this is turned off then AirGuard will never connect to a tracker without your request. Turning this on will increase battery usage.</string>
+
     <string name="load_all_occurrences">Load all occurrences</string>
     <string name="scroll_button">Scrolls to the top or bottom of this view</string>
 </resources>

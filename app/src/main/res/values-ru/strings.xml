@@ -516,6 +516,9 @@
     <string name="settings_use_dynamic_colors_title">Использовать Material You</string>
     <string name="settings_use_dynamic_colors_summary">Динамически подстраивает цвета приложения под ваши обои</string>
 
+    <string name="settings_auto_detect_device_types_title">Автоматическое определение типа трекера</string>
+    <string name="settings_auto_detect_device_types_summary">Автоматически подключаться к потенциальным трекерам для определения их точного типа во время ручного сканирования. Если эта функция отключена, AirGuard никогда не будет подключаться к трекеру без вашего запроса. Включение этой функции увеличит расход заряда батареи.</string>
+
     <string name="load_all_occurrences">Загрузить все совпадения</string>
     <string name="scroll_button">Прокручивает в начало или конец этого вида</string>
     <string name="empty_list_others">Устройства для выбранных фильтров не найдены. Вы можете изменить фильтры, нажав кнопку в левом верхнем углу, или показать все устройства.</string>

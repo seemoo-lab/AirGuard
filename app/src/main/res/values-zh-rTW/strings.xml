@@ -535,6 +535,9 @@
     <string name="settings_use_dynamic_colors_title">使用 Material You</string>
     <string name="settings_use_dynamic_colors_summary">將應用程式顏色動態匹配您的桌布</string>
 
+    <string name="settings_auto_detect_device_types_title">自動偵測追蹤器類型</string>
+    <string name="settings_auto_detect_device_types_summary">在手動掃描期間自動連接到潛在的追蹤器，以確定其確切類型。如果關閉此選項，AirGuard 將永遠不會在未經您要求的情況下連接到追蹤器。開啟此選項會增加電池消耗。</string>
+
     <string name="load_all_occurrences">載入所有出現記錄</string>
     <string name="scroll_button">捲動到此視圖的頂部或底部</string>
     <string name="empty_list_others">沒有符合所選篩選條件的裝置。您可以點擊左上角的按鈕更改篩選條件，或顯示所有裝置。</string>

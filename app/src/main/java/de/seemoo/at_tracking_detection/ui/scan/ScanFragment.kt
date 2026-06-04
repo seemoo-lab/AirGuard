@@ -28,13 +28,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.Companion.subTypeToString
+import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.getScanMode
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -52,6 +62,12 @@ class ScanFragment : Fragment() {
             ?: error("ATTrackingDetectionApplication not initialized")
     private var scanId: Long = 0
     private var hasActiveScan = false
+
+    // Automatic Detection of Devices / Subdevices through connection
+    // Tracks addresses already enqueued
+    private val detectionAttempted: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    // Detection Queue
+    private val detectionQueue = Channel<ScanResultWrapper>(Channel.UNLIMITED)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,6 +114,9 @@ class ScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Start the sequential detection queue processor
+        startDetectionQueueProcessor()
 
         // Handle Edge-to-Edge padding for include views
         val emptyScanExplanation = view.findViewById<View>(R.id.include_scan_empty_explanation)
@@ -194,7 +213,16 @@ class ScanFragment : Fragment() {
             if (SharedPrefs.showSamsungAndroid15BugNotification) {
                 SharedPrefs.showSamsungAndroid15BugNotification = false
             }
-            result?.let { scanViewModel.addScanResult(it) }
+            result?.let { scanResult ->
+                scanViewModel.addScanResult(scanResult)
+                // Enqueue for GATT subtype detection (when enabled)
+                if (SharedPrefs.autoDetectDeviceTypes) {
+                    val wrapper = ScanResultWrapper(scanResult)
+                    if (needsDetection(wrapper) && detectionAttempted.add(wrapper.uniqueIdentifier)) {
+                        detectionQueue.trySend(wrapper)
+                    }
+                }
+            }
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -213,6 +241,9 @@ class ScanFragment : Fragment() {
         if (!hasActiveScan) {
             createNewScanRecord()
             hasActiveScan = true
+
+            // For connection to device Reset detection state so every new scan session starts fresh
+            detectionAttempted.clear()
         }
 
         if (!BLEScanner.isScanning) {
@@ -292,8 +323,178 @@ class ScanFragment : Fragment() {
         }
     }
 
+    private fun startDetectionQueueProcessor() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (wrapper in detectionQueue) {
+                if (!SharedPrefs.autoDetectDeviceTypes) continue
+                try {
+                    processDetection(wrapper)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    // Drop all other errors
+                }
+            }
+        }
+    }
+
+    // Returns true when input device supports GATT-based subtype detection and detection has not already been completed for the identifier
+    // This mirrors exactly the button pressing behaviour of ScanDistanceFragment
+    // TODO: Check if it is possible to reduce code duplication between here and ScanDistanceFragment
+    private fun needsDetection(wrapper: ScanResultWrapper): Boolean {
+        val uid = wrapper.uniqueIdentifier
+        return when (wrapper.deviceType) {
+            DeviceType.SAMSUNG_TRACKER -> {
+                val subType = samsungSubDeviceTypeMap[uid]
+                subType == null || subType == SamsungTrackerType.UNKNOWN
+            }
+            DeviceType.GOOGLE_FIND_MY_NETWORK -> {
+                // getSubType() reads only advertisement flags (no GATT needed).
+                // getDeviceName() is the GATT step we're deferring to the queue.
+                val subType = GoogleFindMyNetwork.getSubType(wrapper)
+                subType == GoogleFindMyNetworkType.TAG
+                    && wrapper.connectionState in DeviceManager.unsafeConnectionState
+                    && googleExactTagDeterminedMap[uid] != true
+            }
+            in DeviceManager.appleDevicesWithInfoService -> {
+                val deviceName = deviceNameMap[uid]
+                val findMyDefault = ATTrackingDetectionApplication.getAppContext()
+                    .resources.getString(R.string.apple_find_my_default_name)
+                deviceName.isNullOrEmpty() || deviceName == findMyDefault
+            }
+            DeviceType.PEBBLEBEE -> {
+                val deviceName = deviceNameMap[uid]
+                val pebblebeeDefault = ATTrackingDetectionApplication.getAppContext()
+                    .resources.getString(R.string.pebblebee_default_name)
+                deviceName.isNullOrEmpty() || deviceName == pebblebeeDefault
+            }
+            DeviceType.SAMSUNG_FIND_MY_MOBILE -> {
+                val deviceName = deviceNameMap[uid]
+                val samsungFMMDefault = ATTrackingDetectionApplication.getAppContext()
+                    .resources.getString(R.string.samsung_find_my_mobile_name)
+                deviceName.isNullOrEmpty() || deviceName == samsungFMMDefault
+            }
+            else -> false
+        }
+    }
+
+    // Perform the actual GATT-based subtype detection
+    // TODO: Check if it is possible to reduce code duplication between here and ScanDistanceFragment
+    private suspend fun processDetection(wrapper: ScanResultWrapper) {
+        val uid = wrapper.uniqueIdentifier
+        val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository ?: return
+
+        when (wrapper.deviceType) {
+
+            DeviceType.SAMSUNG_TRACKER -> {
+                val subType = SamsungTracker.getSubType(wrapper)
+                samsungSubDeviceTypeMap[uid] = subType
+                if (subType != SamsungTrackerType.UNKNOWN) {
+                    deviceRepository.getDevice(uid)?.let { device ->
+                        device.subDeviceType = SamsungTrackerType.subTypeToString(subType)
+                        deviceRepository.update(device)
+                    }
+                }
+                refreshAdapterItem(uid)
+            }
+
+            DeviceType.GOOGLE_FIND_MY_NETWORK -> {
+                val subType = GoogleFindMyNetwork.getSubType(wrapper)
+                googleSubDeviceTypeMap[uid] = subType
+                val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
+
+                if (wrapper.connectionState in DeviceManager.unsafeConnectionState) {
+                    val deviceName = GoogleFindMyNetwork.getDeviceName(wrapper)
+                    deviceRepository.getDevice(uid)?.let { device ->
+                        if (deviceName != errorCaseName && deviceName.isNotEmpty()) {
+                            device.name = deviceName
+                        }
+                        device.subDeviceType = subTypeToString(subType)
+                        deviceRepository.update(device)
+
+                        if (subType == GoogleFindMyNetworkType.TAG
+                            && deviceName != errorCaseName
+                            && deviceName.isNotEmpty()
+                        ) {
+                            googleExactTagDeterminedMap[uid] = true
+                        }
+                    }
+                }
+                refreshAdapterItem(uid)
+            }
+
+            in DeviceManager.appleDevicesWithInfoService -> {
+                val findMyDefault = ATTrackingDetectionApplication.getAppContext()
+                    .resources.getString(R.string.apple_find_my_default_name)
+                val deviceName = AppleFindMy.getSubTypeName(wrapper)
+
+                if (deviceName != findMyDefault && deviceName.isNotEmpty()) {
+                    deviceNameMap[uid] = deviceName
+                    deviceRepository.getDevice(uid)?.let { device ->
+                        device.name = deviceName
+                        // 2nd-gen AirTags advertise as FIND_MY –-> upgrade the device type
+                        if (deviceName.take(6) == "AirTag" && wrapper.deviceType == DeviceType.FIND_MY) {
+                            val upgraded = device.copy(deviceType = DeviceType.AIRTAG)
+                            deviceRepository.update(upgraded)
+                            DeviceManager.overrideDeviceType(uid, DeviceType.AIRTAG)
+                            Timber.d("ScanFragment: Upgraded FIND_MY → AIRTAG for %s", uid)
+                        } else {
+                            deviceRepository.update(device)
+                        }
+                    }
+                }
+                refreshAdapterItem(uid)
+            }
+
+            DeviceType.PEBBLEBEE -> {
+                val pebblebeeDefault = ATTrackingDetectionApplication.getAppContext()
+                    .resources.getString(R.string.pebblebee_default_name)
+                val deviceName = PebbleBee.getSubTypeName(wrapper)
+
+                if (deviceName != pebblebeeDefault && deviceName.isNotEmpty()) {
+                    deviceNameMap[uid] = deviceName
+                    deviceRepository.getDevice(uid)?.let { device ->
+                        device.name = deviceName
+                        deviceRepository.update(device)
+                    }
+                }
+                refreshAdapterItem(uid)
+            }
+
+            DeviceType.SAMSUNG_FIND_MY_MOBILE -> {
+                val deviceName = SamsungFindMyMobile.getSubTypeName(wrapper)
+                deviceNameMap[uid] = deviceName
+                deviceRepository.getDevice(uid)?.let { device ->
+                    device.name = deviceName
+                    deviceRepository.update(device)
+                }
+                refreshAdapterItem(uid)
+            }
+
+            else -> {
+                // All other types which do not support GATT connection
+            }
+        }
+    }
+
+    // Post update on main thread if device has new values due to GATT connection
+    private fun refreshAdapterItem(uid: String) {
+        Handler(Looper.getMainLooper()).post {
+            try {
+                val highPos = bluetoothDeviceAdapterHighRisk.currentList
+                    .indexOfFirst { it.uniqueIdentifier == uid }
+                if (highPos >= 0) bluetoothDeviceAdapterHighRisk.notifyItemChanged(highPos)
+
+                val lowPos = bluetoothDeviceAdapterLowRisk.currentList
+                    .indexOfFirst { it.uniqueIdentifier == uid }
+                if (lowPos >= 0) bluetoothDeviceAdapterLowRisk.notifyItemChanged(lowPos)
+            } catch (_: Exception) { /* ignore */ }
+        }
+    }
+
     companion object {
         private const val SCAN_DURATION = 60_000L
+
         val samsungSubDeviceTypeMap: MutableMap<String, SamsungTrackerType> = ConcurrentHashMap()
         val googleSubDeviceTypeMap: MutableMap<String, GoogleFindMyNetworkType> = ConcurrentHashMap()
         val googleExactTagDeterminedMap: MutableMap<String, Boolean> = ConcurrentHashMap()

@@ -518,6 +518,9 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="settings_use_dynamic_colors_title">Material Youを使用</string>
     <string name="settings_use_dynamic_colors_summary">アプリの色を壁紙に合わせて動的に変更します</string>
 
+    <string name="settings_auto_detect_device_types_title">トラッカータイプの自動検出</string>
+    <string name="settings_auto_detect_device_types_summary">手動スキャン中に、潜在的なトラッカーに自動的に接続して正確なタイプを特定します。この設定がオフの場合、AirGuardはユーザーの要求なしにトラッカーに接続することはありません。オンにするとバッテリーの消費が増えます。</string>
+
     <string name="load_all_occurrences">すべての発生を読み込む</string>
     <string name="scroll_button">このビューの先頭または末尾にスクロールします</string>
     <string name="empty_list_others">選択されたフィルターに該当するデバイスは見つかりませんでした。左上のボタンをクリックしてフィルターを変更するか、すべてのデバイスを表示してください。</string>
