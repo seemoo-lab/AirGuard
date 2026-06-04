@@ -20,10 +20,10 @@ import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -575,7 +575,7 @@ open class AppleFindMy(val id: Int) : Device(), Connectable {
                         .getString(if (deviceNameTrimmed == "left") R.string.left else R.string.right)
                     return "$airpodsString - $sideString"
                 }
-                ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
+                DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
                 return deviceName
             }
             return ATTrackingDetectionApplication.getAppContext().resources

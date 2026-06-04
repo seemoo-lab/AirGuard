@@ -40,19 +40,16 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
-import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.databinding.FragmentScanDistanceBinding
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -127,9 +124,9 @@ class ScanDistanceFragment : Fragment() {
                     if (viewModel.isFirstScanCallback.value as Boolean) {
                         viewModel.isFirstScanCallback.value = false
 
-                        val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
-                        val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
-                        val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: DeviceSubTypeDetector.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: DeviceSubTypeDetector.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
 
                         val deviceNameFromDB = device?.name
 
@@ -220,44 +217,44 @@ class ScanDistanceFragment : Fragment() {
         }
 
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
-            val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: DeviceSubTypeDetector.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (samsungSubType == null || samsungSubType == SamsungTrackerType.UNKNOWN) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
         } else if (deviceType in DeviceManager.appleDevicesWithInfoService) {
-            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
         } else if (deviceType == DeviceType.PEBBLEBEE) {
-            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
         } else if (deviceType == DeviceType.SAMSUNG_FIND_MY_MOBILE) {
-            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (deviceName == null || deviceName == "" || deviceName == ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.samsung_find_my_mobile_name)) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
         } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-            val deviceName = ScanFragment.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
+            val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
             val subType = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
-            ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType
+            DeviceSubTypeDetector.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] = subType
 
             if (subType == GoogleFindMyNetworkType.TAG) {
                 // Check if this is a safe Google tracker (PREMATURE_OFFLINE connection state)
                 val connectionState = latestWrappedScanResult!!.connectionState
                 val isSafeGoogleTracker = connectionState == ConnectionState.PREMATURE_OFFLINE
 
-                val savedGoogleExactTag = ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier]
+                val savedGoogleExactTag = DeviceSubTypeDetector.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier]
                 val deviceNameEmpty = deviceName == null || deviceName == ""
 
                 // For safe Google trackers (PREMATURE_OFFLINE), hide both buttons
@@ -644,203 +641,36 @@ class ScanDistanceFragment : Fragment() {
     }
 
     private fun determineSubType() {
-        val onLoadingStart = {
-            binding.performActionButton.isEnabled = false
-            binding.buttonActionLoading.visibility = View.VISIBLE
-        }
+        if (latestWrappedScanResult == null) return
 
-        val onLoadingEnd = {
+        binding.performActionButton.isEnabled = false
+        binding.buttonActionLoading.visibility = View.VISIBLE
+
+        lifecycleScope.launch {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                ?: error("ATTrackingDetectionApplication not initialized")
+            val result = DeviceSubTypeDetector.processDetection(latestWrappedScanResult!!, deviceRepository)
+
+            if (result.deviceName == null || result.deviceName == "") {
+                Snackbar.make(
+                    binding.root,
+                    R.string.device_determine_failed,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            } else {
+                viewModel.displayName.postValue(result.deviceName)
+                if (result.subDeviceType == GoogleFindMyNetworkType.subTypeToString(GoogleFindMyNetworkType.TAG)) {
+                    defineRetrieveOwnerOnClickBehaviour()
+                }
+                if (result.isUpgradeToAirTag) {
+                    deviceType = DeviceType.AIRTAG
+                }
+            }
+
+            updateDeviceIcon()
             binding.buttonActionLoading.visibility = View.GONE
             binding.performActionButton.isEnabled = true
-        }
-
-        when (deviceType) {
-            DeviceType.SAMSUNG_TRACKER if latestWrappedScanResult != null -> {
-                onLoadingStart()
-                lifecycleScope.launch {
-                    subTypeSamsung = SamsungTracker.getSubType(latestWrappedScanResult!!)
-                    ScanFragment.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] =
-                        subTypeSamsung!!
-                    subTypeSamsung?.let { samsungDeviceType ->
-                        val deviceRepository =
-                            ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                                ?: error("ATTrackingDetectionApplication not initialized")
-                        val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-
-                        if (device != null) {
-                            device.subDeviceType = SamsungTrackerType.subTypeToString(samsungDeviceType)
-                            deviceRepository.update(device)
-                        }
-
-                        if (samsungDeviceType == SamsungTrackerType.UNKNOWN) {
-                            Snackbar.make(
-                                binding.root,
-                                R.string.device_determine_failed,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            // Button stays visible
-                        } else {
-                            viewModel.displayName.postValue(
-                                SamsungTrackerType.visibleStringFromSubtype(
-                                    samsungDeviceType
-                                )
-                            )
-                        }
-                        updateDeviceIcon()
-                        onLoadingEnd()
-                        // Re-evaluate which button should be shown
-                        determineDeviceTypeButtonVisible()
-                    }
-                }
-            }
-            DeviceType.GOOGLE_FIND_MY_NETWORK if latestWrappedScanResult != null -> {
-                onLoadingStart()
-
-                lifecycleScope.launch {
-                    // Detect Subtype
-                    subTypeGoogle = GoogleFindMyNetwork.getSubType(latestWrappedScanResult!!)
-                    val errorCaseName = GoogleFindMyNetworkType.visibleStringFromSubtype(subTypeGoogle!!)
-                    ScanFragment.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier] =
-                        subTypeGoogle!!
-
-                    if (latestWrappedScanResult!!.connectionState in DeviceManager.unsafeConnectionState) {
-                        val deviceRepository =
-                            ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                                ?: error("ATTrackingDetectionApplication not initialized")
-                        val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-                        val deviceName = GoogleFindMyNetwork.getDeviceName(latestWrappedScanResult!!)
-
-                        if (device != null && deviceName != errorCaseName) {
-                            if (deviceName != "") {
-                                device.name = deviceName
-                            }
-                            device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subTypeGoogle!!)
-                            deviceRepository.update(device)
-                        }
-
-                        if (deviceName == errorCaseName || deviceName == "") {
-                            Snackbar.make(
-                                binding.root,
-                                R.string.device_determine_failed,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            // Button stays visible
-                        } else {
-                            viewModel.displayName.postValue(deviceName)
-                            if (subTypeGoogle == GoogleFindMyNetworkType.TAG) {
-                                ScanFragment.googleExactTagDeterminedMap[latestWrappedScanResult!!.uniqueIdentifier] =
-                                    true
-                                defineRetrieveOwnerOnClickBehaviour()
-                                // Determine button visibility will handle swapping
-                            }
-                        }
-                    }
-
-                    updateDeviceIcon()
-                    onLoadingEnd()
-                    determineDeviceTypeButtonVisible()
-                }
-            }
-            in DeviceManager.appleDevicesWithInfoService if latestWrappedScanResult != null -> {
-                onLoadingStart()
-                lifecycleScope.launch {
-                    val findMyDefaultString =
-                        ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_find_my_default_name)
-                    val deviceName = AppleFindMy.getSubTypeName(latestWrappedScanResult!!)
-
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                        ?: error("ATTrackingDetectionApplication not initialized")
-                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-
-                    if (device != null && deviceName != findMyDefaultString) {
-                        device.name = deviceName
-
-                        // AirTag 2nd Gen advertise exactly as Apple Find My
-                        // Allows to upgrade Find My Device to AirTag
-                        if (deviceName.take(6) == "AirTag" && deviceType == DeviceType.FIND_MY) {
-                            val upgradedDevice = device.copy(deviceType = DeviceType.AIRTAG)
-                            deviceRepository.update(upgradedDevice)
-                            DeviceManager.overrideDeviceType(
-                                latestWrappedScanResult!!.uniqueIdentifier,
-                                DeviceType.AIRTAG
-                            )
-                            deviceType = DeviceType.AIRTAG
-                            Timber.d("Upgrade Apple Find My Device to AirTag for %s", latestWrappedScanResult!!.uniqueIdentifier)
-                        } else {
-                            deviceRepository.update(device)
-                        }
-                    }
-
-                    if (deviceName == findMyDefaultString || deviceName == "") {
-                        Snackbar.make(
-                            binding.root,
-                            R.string.device_determine_failed,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    } else {
-                        viewModel.displayName.postValue(deviceName)
-                    }
-
-                    updateDeviceIcon()
-                    onLoadingEnd()
-                    determineDeviceTypeButtonVisible()
-                }
-            }
-            DeviceType.PEBBLEBEE if latestWrappedScanResult != null -> {
-                onLoadingStart()
-                lifecycleScope.launch {
-                    val pebblebeeDefaultString =
-                        ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)
-                    val deviceName = PebbleBee.getSubTypeName(latestWrappedScanResult!!)
-
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                        ?: error("ATTrackingDetectionApplication not initialized")
-                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-
-                    if (device != null && deviceName != pebblebeeDefaultString) {
-                        device.name = deviceName
-                        deviceRepository.update(device)
-                    }
-
-                    if (deviceName == pebblebeeDefaultString || deviceName == "") {
-                        Snackbar.make(
-                            binding.root,
-                            R.string.device_determine_failed,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    } else {
-                        viewModel.displayName.postValue(deviceName)
-                    }
-
-                    updateDeviceIcon()
-                    onLoadingEnd()
-                    determineDeviceTypeButtonVisible()
-                }
-            }
-            DeviceType.SAMSUNG_FIND_MY_MOBILE if latestWrappedScanResult != null -> {
-                onLoadingStart()
-                lifecycleScope.launch {
-                    val deviceName = SamsungFindMyMobile.getSubTypeName(latestWrappedScanResult!!)
-
-                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                        ?: error("ATTrackingDetectionApplication not initialized")
-                    val device = deviceRepository.getDevice(latestWrappedScanResult!!.uniqueIdentifier)
-
-                    if (device != null) {
-                        device.name = deviceName
-                        deviceRepository.update(device)
-                    }
-
-                    viewModel.displayName.postValue(deviceName)
-
-                    updateDeviceIcon()
-                    onLoadingEnd()
-                    determineDeviceTypeButtonVisible()
-                }
-            }
-            else -> {
-                // Do nothing
-            }
+            determineDeviceTypeButtonVisible()
         }
     }
 
