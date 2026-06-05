@@ -145,83 +145,92 @@ class ScanViewModel @Inject constructor(
         bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
     }
 
-    fun addScanResult(scanResult: ScanResult) = viewModelScope.launch(Dispatchers.IO) {
+    fun addScanResult(scanResult: ScanResult): ScanResultWrapper {
         val wrappedScanResult = ScanResultWrapper(scanResult)
 
-        val validDeviceTypes = getAllowedDeviceTypesFromSettings()
+        viewModelScope.launch(Dispatchers.IO) {
+            val validDeviceTypes = getAllowedDeviceTypesFromSettings()
 
-        if (wrappedScanResult.deviceType !in validDeviceTypes) {
-            // If device not selected in settings then do not add ScanResult to list or database
-            return@launch
-        } else if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-            // If a Google Tracker is a phone or a tracker can be determined while the scan is happening without the need to connect to said tracker
-            val googleSubType = GoogleFindMyNetwork.getSubType(wrappedScanResult)
-            DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = googleSubType
-        } else if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.advertisedName == "Smart Tag2") {
-            // The SmartTag 2 sometimes advertises its Name, so we can set the subtype directly here
-            DeviceSubTypeDetector.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = SamsungTrackerType.SMART_TAG_2
-        }
-
-        val currentDate = LocalDateTime.now()
-        val beaconCountBefore = beaconRepository.getNumberOfBeaconsAddress(
-            deviceAddress = wrappedScanResult.uniqueIdentifier,
-            since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
-        )
-
-        if (beaconCountBefore == 0) {
-            val skipDevice = Utility.getSkipDevice(wrappedScanResult.deviceType)
-            if (skipDevice) return@launch
-
-            // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes
-            LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
-            val location = locationProvider.getLastLocation()
-
-            if (location == null) {
-                LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
-            } else {
-                LocationLogger.log("ScanViewModel: Got Location: ${location.privacyPrint()}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
+            if (wrappedScanResult.deviceType !in validDeviceTypes) {
+                // If device not selected in settings then do not add ScanResult to list or database
+                return@launch
+            } else if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
+                // If a Google Tracker is a phone or a tracker can be determined while the scan is happening without the need to connect to said tracker
+                val googleSubType = GoogleFindMyNetwork.getSubType(wrappedScanResult)
+                DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = googleSubType
+            } else if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.advertisedName == "Smart Tag2") {
+                // The SmartTag 2 sometimes advertises its Name, so we can set the subtype directly here
+                DeviceSubTypeDetector.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = SamsungTrackerType.SMART_TAG_2
             }
 
-            BackgroundBluetoothScanner.insertScanResult(
-                wrappedScanResult = wrappedScanResult,
-                latitude = location?.latitude,
-                longitude = location?.longitude,
-                altitude = location?.altitude,
-                accuracy = location?.accuracy,
-                discoveryDate = currentDate,
+            val currentDate = LocalDateTime.now()
+            val beaconCountBefore = beaconRepository.getNumberOfBeaconsAddress(
+                deviceAddress = wrappedScanResult.uniqueIdentifier,
+                since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
             )
-        }
 
-        val device: BaseDevice? = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
-        val isElementHighRisk = isElementHighRisk(device, wrappedScanResult)
+            if (beaconCountBefore == 0) {
+                val skipDevice = Utility.getSkipDevice(wrappedScanResult.deviceType)
+                if (skipDevice) return@launch
 
-        withContext(Dispatchers.Main) {
-            if (scanFinished.value == true) return@withContext
+                // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes
+                LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
+                val location = locationProvider.getLastLocation()
 
-            if (isElementHighRisk) {
-                val existing = _highRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
-                if (existing != null) {
-                    existing.rssi.set(wrappedScanResult.rssi.get())
-                    existing.rssiValue = wrappedScanResult.rssiValue
-                    existing.txPower = wrappedScanResult.txPower
-                    existing.isConnectable = wrappedScanResult.isConnectable
+                if (location == null) {
+                    LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
                 } else {
-                    _highRiskBase.add(wrappedScanResult)
+                    LocationLogger.log("ScanViewModel: Got Location: ${location.privacyPrint()}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
                 }
-            } else {
-                val existing = _lowRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
-                if (existing != null) {
-                    existing.rssi.set(wrappedScanResult.rssi.get())
-                    existing.rssiValue = wrappedScanResult.rssiValue
-                    existing.txPower = wrappedScanResult.txPower
-                    existing.isConnectable = wrappedScanResult.isConnectable
-                } else {
-                    _lowRiskBase.add(wrappedScanResult)
-                }
+
+                BackgroundBluetoothScanner.insertScanResult(
+                    wrappedScanResult = wrappedScanResult,
+                    latitude = location?.latitude,
+                    longitude = location?.longitude,
+                    altitude = location?.altitude,
+                    accuracy = location?.accuracy,
+                    discoveryDate = currentDate,
+                )
             }
 
-            bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
-            bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
+            val device: BaseDevice? = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+            val isElementHighRisk = isElementHighRisk(device, wrappedScanResult)
+
+            withContext(Dispatchers.Main) {
+                if (scanFinished.value == true) return@withContext
+
+                if (isElementHighRisk) {
+                    val existing = _highRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                    if (existing != null) {
+                        existing.rssi.set(wrappedScanResult.rssi.get())
+                        existing.rssiValue = wrappedScanResult.rssiValue
+                        existing.txPower = wrappedScanResult.txPower
+                        existing.isConnectable = wrappedScanResult.isConnectable
+                        // If the new wrapper had its status set (e.g. by ScanFragment), update the existing one
+                        if (wrappedScanResult.detectionStatus != ScanResultWrapper.DetectionStatus.IDLE) {
+                            existing.detectionStatus = wrappedScanResult.detectionStatus
+                        }
+                    } else {
+                        _highRiskBase.add(wrappedScanResult)
+                    }
+                } else {
+                    val existing = _lowRiskBase.find { it.uniqueIdentifier == wrappedScanResult.uniqueIdentifier }
+                    if (existing != null) {
+                        existing.rssi.set(wrappedScanResult.rssi.get())
+                        existing.rssiValue = wrappedScanResult.rssiValue
+                        existing.txPower = wrappedScanResult.txPower
+                        existing.isConnectable = wrappedScanResult.isConnectable
+                        if (wrappedScanResult.detectionStatus != ScanResultWrapper.DetectionStatus.IDLE) {
+                            existing.detectionStatus = wrappedScanResult.detectionStatus
+                        }
+                    } else {
+                        _lowRiskBase.add(wrappedScanResult)
+                    }
+                }
+
+                bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
+                bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
+            }
         }
 
         Timber.d("Adding scan result ${scanResult.device.address} with unique identifier ${wrappedScanResult.uniqueIdentifier}")
@@ -230,6 +239,7 @@ class ScanViewModel @Inject constructor(
                 scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
             }"
         )
+        return wrappedScanResult
     }
 
     val isListEmpty: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {

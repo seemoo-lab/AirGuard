@@ -205,11 +205,11 @@ class ScanFragment : Fragment() {
                 SharedPrefs.showSamsungAndroid15BugNotification = false
             }
             result?.let { scanResult ->
-                scanViewModel.addScanResult(scanResult)
+                val wrapper = scanViewModel.addScanResult(scanResult)
                 // Enqueue for GATT subtype detection (when enabled)
                 if (SharedPrefs.autoDetectDeviceTypes) {
-                    val wrapper = ScanResultWrapper(scanResult)
                     if (DeviceSubTypeDetector.needsDetection(wrapper) && detectionAttempted.add(wrapper.uniqueIdentifier)) {
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.QUEUED
                         detectionQueue.trySend(wrapper)
                     }
                 }
@@ -321,13 +321,18 @@ class ScanFragment : Fragment() {
                 try {
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
                     if (deviceRepository != null) {
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.CONNECTING
+                        refreshAdapterItem(wrapper.uniqueIdentifier)
                         DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
                         refreshAdapterItem(wrapper.uniqueIdentifier)
                     }
                 } catch (e: CancellationException) {
                     throw e
                 } catch (_: Exception) {
-                    // Drop all other errors
+                    // In case of error: simply set to Idle (aka no shimmering animation)
+                    wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
+                    refreshAdapterItem(wrapper.uniqueIdentifier)
                 }
             }
         }

@@ -1,5 +1,8 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -21,6 +24,36 @@ fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     this.run {
         this.setHasFixedSize(false)
         this.adapter = adapter
+    }
+}
+
+@BindingAdapter("setDetectionStatus")
+fun setDetectionStatus(view: View, status: ScanResultWrapper.DetectionStatus) {
+    view.clearAnimation()
+    view.alpha = 1.0f
+
+    when (status) {
+        ScanResultWrapper.DetectionStatus.QUEUED -> {
+            // Slow shimmering effect: Is in Queue to connect
+            val anim = AlphaAnimation(1.0f, 0.5f).apply {
+                duration = 1000
+                repeatMode = Animation.REVERSE
+                repeatCount = Animation.INFINITE
+            }
+            view.startAnimation(anim)
+        }
+        ScanResultWrapper.DetectionStatus.CONNECTING -> {
+            // Fast shimmering effect: Is currently connecting / reading property
+            val anim = AlphaAnimation(1.0f, 0.2f).apply {
+                duration = 400
+                repeatMode = Animation.REVERSE
+                repeatCount = Animation.INFINITE
+            }
+            view.startAnimation(anim)
+        }
+        ScanResultWrapper.DetectionStatus.IDLE -> {
+            // No animation / Animation cleared
+        }
     }
 }
 

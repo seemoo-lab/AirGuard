@@ -24,7 +24,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="16dp"
+            app:setDetectionStatus="@{wrappedScanResult.detectionStatus}">
 
             <ImageView
                 android:id="@+id/scan_device_logo"
