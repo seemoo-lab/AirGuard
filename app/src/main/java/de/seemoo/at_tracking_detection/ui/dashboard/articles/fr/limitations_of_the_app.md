@@ -16,6 +16,8 @@ Cela inclut les AirTags, AirPods et les traceurs tiers (comme Chipolo ou Pebbleb
 * **Émettre un son :** ✅ (La disponibilité dépend du mode spécifique de l'appareil)
 * **Identifier le propriétaire :** ✅ (Via NFC pour les AirTags et les appareils Localiser pris en charge)
 
+**Note sur les AirTags (2e génération) :** Ces appareils sont indiscernables des autres appareils Apple Localiser par simple observation. Pour les identifier comme des AirTags, AirGuard doit se connecter à l'appareil.
+
 **Samsung SmartTags**
 Ce sont des traceurs fabriqués par Samsung.
 * **Est connecté au propriétaire :** ✅ (Détermine si le propriétaire est à proximité)

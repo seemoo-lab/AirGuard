@@ -16,6 +16,8 @@ This includes AirTags, AirPods, and third-party trackers (like Chipolo or Pebble
 * **Play Sound:** ✅ (Availability depends on the specific device mode)
 * **Identify Owner:** ✅ (Via NFC for AirTags and supported Find My devices)
 
+**Note on AirTags (2nd Generation):** These devices are indistinguishable from other Apple Find My devices by simple observation. To identify them as AirTags, AirGuard must connect to the device.
+
 **Samsung SmartTags**
 These are trackers manufactured by Samsung.
 * **Is Connected with Owner:** ✅ (Determines if the owner is nearby)

@@ -16,6 +16,8 @@ Dazu gehören AirTags, AirPods und Tracker von Drittanbietern (wie Chipolo oder 
 * **Ton abspielen:** ✅ (Verfügbarkeit hängt vom spezifischen Gerätemodus ab)
 * **Besitzer:in identifizieren:** ✅ (Via NFC für AirTags und unterstützte „Wo ist?“-Geräte)
 
+**Hinweis zu AirTags (2. Generation):** Diese Geräte lassen sich durch einfache Beobachtung nicht von anderen Apple „Wo ist?“-Geräten unterscheiden. Um sie als AirTags zu identifizieren, muss AirGuard eine Verbindung zum Gerät herstellen.
+
 **Samsung SmartTags**
 Diese Tracker werden von Samsung hergestellt.
 * **Ist mit Besitzer:in verbunden:** ✅ (Bestimmt, ob der:die Besitzer:in in der Nähe ist)
