@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -259,6 +260,32 @@ object BackgroundBluetoothScanner {
                     accuracy = location?.accuracy,
                     discoveryDate = discoveredDevice.discoveryDate,
                 )
+            }
+        }
+
+        // Identify if a GATT connection should happen
+        // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
+        if (SharedPrefs.autoDetectDeviceTypes) {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+            if (deviceRepository != null && beaconRepository != null) {
+                // Determine which devices would trigger a notification
+                scanResultDictionary.values
+                    .map { it.wrappedScanResult }
+                    .filter { wrapper ->
+                        val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
+                        device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                    }
+                    .forEach { wrapper ->
+                        if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                            Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
+                            try {
+                                DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                            } catch (e: Exception) {
+                                Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
+                            }
+                        }
+                    }
             }
         }
 
