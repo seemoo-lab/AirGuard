@@ -45,6 +45,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -132,19 +133,23 @@ object BackgroundBluetoothScanner {
         try {
             val bluetoothManager =
                 applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            bluetoothAdapter = bluetoothManager.adapter
-            if (bluetoothAdapter == null) {
+            val adapter = bluetoothManager.adapter
+            bluetoothAdapter = adapter
+            if (adapter == null) {
                 Timber.e("BluetoothAdapter is null, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (!bluetoothAdapter!!.isEnabled) {
+            } else if (!adapter.isEnabled) {
                 Timber.e("Bluetooth is disabled, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (bluetoothAdapter!!.bluetoothLeScanner == null) {
-                Timber.e("BLE is not supported on this device.")
-                return BackgroundScanResults(0, 0, 0, true)
+            } else {
+                val scanner = try { adapter.bluetoothLeScanner } catch (_: Throwable) { null }
+                if (scanner == null) {
+                    Timber.e("BLE is not supported on this device.")
+                    return BackgroundScanResults(0, 0, 0, true)
+                }
             }
-        } catch (e: Throwable) {
-            Timber.e("BluetoothAdapter not found or BLE not supported!")
+        } catch (t: Throwable) {
+            Timber.e(t, "BluetoothAdapter not found or BLE not supported!")
             return BackgroundScanResults(0, 0, 0, true)
         }
 
@@ -203,7 +208,7 @@ object BackgroundBluetoothScanner {
         }
 
         val scanDuration: Long = getScanDuration()
-        delay(scanDuration)
+        delay(scanDuration.milliseconds)
 
         // Stop scan via orchestrator
         ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
