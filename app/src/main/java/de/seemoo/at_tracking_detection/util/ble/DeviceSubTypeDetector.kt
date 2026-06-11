@@ -117,19 +117,28 @@ object DeviceSubTypeDetector {
                     deviceNameMap[uid] = deviceName
                     deviceRepository.getDevice(uid)?.let { device ->
                         device.name = deviceName
-                        var isUpgrade = false
+                        var isUpgradeAirTag = false
+                        var isUpgradeAirPods = false
                         if (deviceName.take(6) == "AirTag" && wrapper.deviceType == DeviceType.FIND_MY) {
                             val upgraded = device.copy(deviceType = DeviceType.AIRTAG)
                             deviceRepository.update(upgraded)
                             DeviceManager.overrideDeviceType(uid, DeviceType.AIRTAG)
-                            isUpgrade = true
+                            isUpgradeAirTag = true
                             Timber.d("DeviceSubTypeDetector: Upgraded FIND_MY → AIRTAG for %s", uid)
+                        } else if (deviceName.startsWith("AirPods") && wrapper.deviceType == DeviceType.FIND_MY) {
+                            val upgraded = device.copy(deviceType = DeviceType.AIRPODS)
+                            deviceRepository.update(upgraded)
+                            DeviceManager.overrideDeviceType(uid, DeviceType.AIRPODS)
+                            isUpgradeAirTag = true
+                            isUpgradeAirPods = true
+                            Timber.d("DeviceSubTypeDetector: Upgraded FIND_MY → AIRPODS for %s", uid)
                         } else {
                             deviceRepository.update(device)
                         }
                         result = DetectionResult(
                             deviceName = deviceName,
-                            isUpgradeToAirTag = isUpgrade
+                            isUpgradeToAirTag = isUpgradeAirTag,
+                            isUpgradeToAirPods = isUpgradeAirPods
                         )
                     }
                 }
@@ -168,6 +177,7 @@ object DeviceSubTypeDetector {
     data class DetectionResult(
         val deviceName: String? = null,
         val subDeviceType: String? = null,
-        val isUpgradeToAirTag: Boolean = false
+        val isUpgradeToAirTag: Boolean = false,
+        val isUpgradeToAirPods: Boolean = false
     )
 }

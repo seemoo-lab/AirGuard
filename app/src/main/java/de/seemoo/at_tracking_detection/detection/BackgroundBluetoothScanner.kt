@@ -787,6 +787,17 @@ object BackgroundBluetoothScanner {
                             "(DB=AIRTAG, advertisement=FIND_MY) – DeviceManager cache updated"
                         )
                     }
+
+                    // Upgrade identified Find My Device to AirPods if already determined in the past
+                    if (device.deviceType == DeviceType.AIRPODS &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRPODS)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirPods " +
+                            "(DB=AIRPODS, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
                 }
 
                 if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {

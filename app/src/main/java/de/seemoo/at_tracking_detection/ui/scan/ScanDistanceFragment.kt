@@ -102,6 +102,14 @@ class ScanDistanceFragment : Fragment() {
                             DeviceManager.overrideDeviceType(filteredIdentifier, DeviceType.AIRTAG)
                             Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRTAG from DB (2nd gen AirTag)")
                         }
+
+                        // AirPods advertise with the same status byte as FIND_MY devices.
+                        // Check if device has already been upgraded
+                        if (deviceType == DeviceType.FIND_MY && device?.deviceType == DeviceType.AIRPODS) {
+                            deviceType = DeviceType.AIRPODS
+                            DeviceManager.overrideDeviceType(filteredIdentifier, DeviceType.AIRPODS)
+                            Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRPODS from DB")
+                        }
                         determineDeviceTypeButtonVisible()
                     }
 
@@ -664,6 +672,9 @@ class ScanDistanceFragment : Fragment() {
                 }
                 if (result.isUpgradeToAirTag) {
                     deviceType = DeviceType.AIRTAG
+                }
+                if (result.isUpgradeToAirPods) {
+                    deviceType = DeviceType.AIRPODS
                 }
             }
 
