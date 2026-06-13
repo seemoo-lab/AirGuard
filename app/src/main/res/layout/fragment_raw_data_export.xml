@@ -15,8 +15,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="16dp"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
             android:paddingBottom="88dp">
 
             <ImageView
@@ -26,7 +26,7 @@
                 android:layout_marginTop="8dp"
                 android:src="@drawable/ic_baseline_attach_file_24"
                 app:tint="?attr/colorPrimary"
-                android:contentDescription="@string/raw_data_export_icon_description"
+                android:contentDescription="@null"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -50,6 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:gravity="center"
                 android:text="@string/raw_data_export_explanation"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant"
