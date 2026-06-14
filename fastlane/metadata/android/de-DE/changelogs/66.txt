@@ -1,0 +1,9 @@
+NEU: Android 17 Support
+NEU: Dauerhafter Android 15+ Hintergrund-Scan (Beta, nur Expertenmodus)
+NEU: Auto-Erkennung von Gerätedetails im manuellen Scan
+NEU: Sound abspielen auf mehr Apple Geräten
+NEU: Manueller Scan sortierbar & Tracker mehrfach löschen/markieren (Experte)
+NEU: Export von allen Rohdaten (Experte)
+VERBESSERT: Effizientere Datenspeicherung & einheitlicheres Farbschema
+VERBESSERT: Weniger doppelte Tracker-Benachrichtigungen
+VERBESSERT: Fehlerbehebungen und Performance-Optimierungen
