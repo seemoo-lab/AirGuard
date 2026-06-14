@@ -19,9 +19,9 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.Device
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.UUID
@@ -308,7 +308,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 if (advName != null && advName.startsWith("PB - ") && advName.length == 9) {
                     deviceName += advName.takeLast(7)
                 }
-                ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
+                DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier] = deviceName
                 return deviceName
             } else {
                 return ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.pebblebee_default_name)

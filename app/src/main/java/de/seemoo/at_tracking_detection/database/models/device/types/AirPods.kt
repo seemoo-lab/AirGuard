@@ -1,12 +1,12 @@
 package de.seemoo.at_tracking_detection.database.models.device.types
 
 import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
 import androidx.annotation.DrawableRes
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceContext
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
-import java.util.UUID
 
 class AirPods(id: Int) : AppleFindMy(id) {
 
@@ -14,34 +14,17 @@ class AirPods(id: Int) : AppleFindMy(id) {
         @DrawableRes
         get() = R.drawable.ic_airpods
 
+    override val soundProtocolPriority: List<SoundProtocol>
+        get() = listOf(SoundProtocol.FINDMY, SoundProtocol.DULT, SoundProtocol.AIRTAG)
+
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_airpods)
-            .format(id)
+        get() = ATTrackingDetectionApplication.getAppContext().resources
+            .getString(R.string.device_name_airpods).format(id)
 
     override val deviceContext: DeviceContext
         get() = AirPods
 
-    override val soundService: String
-        get() = AIRPODS_SOUND_SERVICE
-
-    override val soundCharacteristic: UUID
-        get() = AIRPODS_SOUND_CHARACTERISTIC
-
-    override val startSoundOpcode: ByteArray
-        get() = AIRPODS_START_SOUND_OPCODE
-
-    override val stopSoundOpcode: ByteArray
-        get() = AIRPODS_STOP_SOUND_OPCODE
-
-
     companion object : DeviceContext {
-        internal const val AIRPODS_SOUND_SERVICE = "fd44"
-        internal val AIRPODS_SOUND_CHARACTERISTIC =
-            UUID.fromString("4F860003-943B-49EF-BED4-2F730304427A")
-        internal val AIRPODS_START_SOUND_OPCODE = byteArrayOf(0x01, 0x00, 0x03)
-        internal val AIRPODS_STOP_SOUND_OPCODE = byteArrayOf(0x01, 0x01, 0x03)
-
-        // What does this scan filter do?
         override val bluetoothFilter: ScanFilter
             get() = ScanFilter.Builder()
                 .setManufacturerData(
@@ -62,9 +45,16 @@ class AirPods(id: Int) : AppleFindMy(id) {
             get() = "https://www.apple.com/airpods/"
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.airpods_default_name)
+            get() = ATTrackingDetectionApplication.getAppContext().resources
+                .getString(R.string.airpods_default_name)
 
         override val statusByteDeviceType: UInt
             get() = 3u
+
+        override fun getBatteryState(scanResult: ScanResult) =
+            AppleFindMy.getBatteryState(scanResult)
+
+        override fun getConnectionState(scanResult: ScanResult) =
+            AppleFindMy.getConnectionState(scanResult)
     }
 }

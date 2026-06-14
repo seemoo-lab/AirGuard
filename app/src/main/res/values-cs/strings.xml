@@ -559,6 +559,9 @@
     <string name="settings_use_dynamic_colors_title">Použít Material You</string>
     <string name="settings_use_dynamic_colors_summary">Dynamicky přizpůsobí barvy aplikace vaší tapetě</string>
 
+    <string name="settings_auto_detect_device_types_title">Automatická detekce typu trackeru</string>
+    <string name="settings_auto_detect_device_types_summary">Automaticky se připojit k potenciálním trackerům pro určení jejich přesného typu během ručního skenování. Pokud je tato možnost vypnuta, AirGuard se nikdy nepřipojí k trackeru bez vašeho požadavku. Zapnutí této funkce zvýší spotřebu baterie.</string>
+
     <string name="load_all_occurrences">Načíst všechny výskyty</string>
     <string name="scroll_button">Posune na začátek nebo konec tohoto zobrazení</string>
     <string name="empty_list_others">Pro vybrané filtry nebyla nalezena žádná zařízení. Filtry můžete změnit kliknutím na tlačítko v levém horním rohu nebo zobrazením všech zařízení.</string>
@@ -566,4 +569,32 @@
     <string name="safe_tracker_map_warning">Toto je bezpečný tracker. Je aktuálně nebo byl nedávno připojen k zařízení svého majitele. Bezpečné trackery pro vás nepředstavují hrozbu.</string>
     <string name="no_locations_yet_hint">Toto zařízení bylo detekováno, ale zatím nebyla zaznamenána žádná data o poloze. Údaje o poloze se zde zobrazí, pokud bude tracker zpozorován na platném místě.</string>
     <string name="safe_tracker_monitored_warning">Toto je bezpečný tracker. Je aktuálně nebo byl nedávno připojen k zařízení svého majitele. Je dočasně sledován, ale nepředstavuje pro vás hrozbu.</string>
+    <string name="settings_raw_data_export_title">Exportovat nezpracovaná data</string>
+    <string name="settings_raw_data_export_summary">Exportovat všechna shromážděná nezpracovaná data jako soubory CSV v archivu ZIP</string>
+    <string name="raw_data_export_label">Export nezpracovaných dat</string>
+    <string name="raw_data_export_title">Exportovat nezpracovaná data</string>
+    <string name="raw_data_export_explanation">Pomocí tlačítka pro stažení níže můžete exportovat všechna nezpracovaná data, která AirGuard shromáždil a uložil lokálně ve vašem zařízení. Export obsahuje čtyři soubory CSV zabalené v archivu ZIP. Tato data jsou určena pro odbornou analýzu.</string>
+    <string name="raw_data_export_files_title">Exportované soubory</string>
+    <string name="raw_data_export_file_devices">devices.csv – objevená zařízení Bluetooth</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – přijaté reklamní pakety BLE</string>
+    <string name="raw_data_export_file_locations">locations.csv – GPS polohy, na kterých byly nalezeny beacony</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – upozornění, která vygenerovala varování před sledováním</string>
+    <string name="raw_data_export_button">Stáhnout ZIP export</string>
+    <string name="raw_data_export_success">Data byla úspěšně exportována</string>
+    <string name="raw_data_export_error">Chyba při generování exportu: %s</string>
+    <string name="raw_data_export_save_error">Chyba při ukládání exportu: %s</string>
+    <string name="raw_data_export_icon_description">Ikona exportu nezpracovaných dat</string>
+    <string name="raw_data_export_time_range_title">Časový rozsah</string>
+    <string name="raw_data_export_preset_3_days">Poslední 3 dny</string>
+    <string name="raw_data_export_preset_7_days">Posledních 7 dní</string>
+    <string name="raw_data_export_preset_14_days">Posledních 14 dní</string>
+    <string name="raw_data_export_preset_month">Poslední měsíc</string>
+    <string name="raw_data_export_preset_all_time">Za celou dobu</string>
+    <string name="raw_data_export_from_hint">Od</string>
+    <string name="raw_data_export_to_hint">Do</string>
+    <string name="raw_data_export_select_start_date">Vyberte počáteční datum</string>
+    <string name="raw_data_export_select_end_date">Vyberte koncové datum</string>
+    <string name="raw_data_export_select_start_time">Vyberte počáteční čas</string>
+    <string name="raw_data_export_select_end_time">Vyberte koncový čas</string>
+    <string name="raw_data_export_range_error">Začátek musí být před koncem</string>
 </resources>

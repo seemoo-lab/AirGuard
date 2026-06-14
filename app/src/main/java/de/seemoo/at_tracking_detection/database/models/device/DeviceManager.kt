@@ -65,6 +65,13 @@ object DeviceManager {
         return null
     }
 
+    // This allows to override the device type in the cache
+    // This is used e.g. if an Apple Find My Device is upgraded to be an AirTag (necessary for AirTag 2nd Gen)
+    fun overrideDeviceType(deviceAddress: String, deviceType: DeviceType) {
+        Timber.d("DeviceManager: overriding device type for $deviceAddress → $deviceType")
+        deviceTypeCache[deviceAddress] = deviceType
+    }
+
     private fun calculateDeviceType(scanResult: ScanResult): DeviceType {
         Timber.d("Retrieving device type for ${scanResult.device.address}")
 

@@ -67,5 +67,8 @@ Ohne Standortzugriff verlässt sich die App allein auf Bluetooth-Scans. Dies kan
 **Kann ich meine eigenen Tracker ignorieren oder markieren?**
 Aus technischen Gründen kannst du derzeit nur Tracker der Marke Tile ignorieren. Du kannst Tracker markieren, aber beachte, dass derselbe Tracker seine ID ändern kann und als neuer Tracker angesehen wird. Wir empfehlen, sie nur zu benennen, um sie später zu identifizieren.
 
+**Wie werden AirTags (2. Generation) erkannt?**
+AirTags der 2. Generation lassen sich durch einfache Beobachtung nicht von anderen Apple „Wo ist?“-Geräten unterscheiden. Um sie als AirTags zu identifizieren, muss AirGuard eine Verbindung zum Tracker herstellen. Für eine automatische Erkennung stelle sicher, dass die Einstellung **Automatische Tracker-Erkennung** aktiviert ist und dass **FindMy Geräte** in den Einstellungen **Gerätetypen herausfiltern** nicht deaktiviert sind. Wenn die automatische Erkennung deaktiviert ist, benachrichtigt dich AirGuard trotzdem, wenn dir ein AirTag der 2. Generation folgt, dieser wird jedoch als „FindMy Gerät“ angezeigt.
+
 **Warum kann ich manche Geräte nicht ignorieren?**
 Geräte, die häufig ihren Identifikator ändern, können nicht ignoriert werden. Wenn sie ihren Schlüssel ändern, behandelt unser System sie als neue Geräte, was neue Warnungen auslöst. Einige Geräte (wie Samsung SmartTags) ändern ihre Schlüssel oft, aber du kannst nicht wechselnde (wie Chipolos und Tiles) ignorieren.

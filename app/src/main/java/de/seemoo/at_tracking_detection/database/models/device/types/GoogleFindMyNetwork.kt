@@ -27,10 +27,10 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.SMARTPHONE
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.TAG
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType.UNKNOWN
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import timber.log.Timber
 import java.net.URL
 import java.util.UUID
@@ -248,7 +248,7 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                 receivedValue?.let {
                     val nameBytes = it.drop(2).toByteArray() // Drop the first two bytes
                     val decodedBytes = String(nameBytes, Charsets.UTF_8)
-                    ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier] = decodedBytes
+                    DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier] = decodedBytes
                     nameReplacementLayer(decodedBytes)
                 } ?: errorCaseName
             } catch (e: Exception) {

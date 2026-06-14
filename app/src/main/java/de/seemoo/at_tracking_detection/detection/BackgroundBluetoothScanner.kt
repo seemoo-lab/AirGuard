@@ -29,6 +29,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -44,6 +45,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -131,19 +133,23 @@ object BackgroundBluetoothScanner {
         try {
             val bluetoothManager =
                 applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            bluetoothAdapter = bluetoothManager.adapter
-            if (bluetoothAdapter == null) {
+            val adapter = bluetoothManager.adapter
+            bluetoothAdapter = adapter
+            if (adapter == null) {
                 Timber.e("BluetoothAdapter is null, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (!bluetoothAdapter!!.isEnabled) {
+            } else if (!adapter.isEnabled) {
                 Timber.e("Bluetooth is disabled, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (bluetoothAdapter!!.bluetoothLeScanner == null) {
-                Timber.e("BLE is not supported on this device.")
-                return BackgroundScanResults(0, 0, 0, true)
+            } else {
+                val scanner = try { adapter.bluetoothLeScanner } catch (_: Throwable) { null }
+                if (scanner == null) {
+                    Timber.e("BLE is not supported on this device.")
+                    return BackgroundScanResults(0, 0, 0, true)
+                }
             }
-        } catch (e: Throwable) {
-            Timber.e("BluetoothAdapter not found or BLE not supported!")
+        } catch (t: Throwable) {
+            Timber.e(t, "BluetoothAdapter not found or BLE not supported!")
             return BackgroundScanResults(0, 0, 0, true)
         }
 
@@ -202,7 +208,7 @@ object BackgroundBluetoothScanner {
         }
 
         val scanDuration: Long = getScanDuration()
-        delay(scanDuration)
+        delay(scanDuration.milliseconds)
 
         // Stop scan via orchestrator
         ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
@@ -259,6 +265,32 @@ object BackgroundBluetoothScanner {
                     accuracy = location?.accuracy,
                     discoveryDate = discoveredDevice.discoveryDate,
                 )
+            }
+        }
+
+        // Identify if a GATT connection should happen
+        // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
+        if (SharedPrefs.autoDetectDeviceTypes) {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+            if (deviceRepository != null && beaconRepository != null) {
+                // Determine which devices would trigger a notification
+                scanResultDictionary.values
+                    .map { it.wrappedScanResult }
+                    .filter { wrapper ->
+                        val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
+                        device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                    }
+                    .forEach { wrapper ->
+                        if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                            Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
+                            try {
+                                DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                            } catch (e: Exception) {
+                                Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
+                            }
+                        }
+                    }
             }
         }
 
@@ -744,6 +776,28 @@ object BackgroundBluetoothScanner {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
                     deviceRepository.update(device)
+
+                    // Upgrade identified Find My Device to AirTag if already determined in the past
+                    if (device.deviceType == DeviceType.AIRTAG &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRTAG)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirTag " +
+                            "(DB=AIRTAG, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
+
+                    // Upgrade identified Find My Device to AirPods if already determined in the past
+                    if (device.deviceType == DeviceType.AIRPODS &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRPODS)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirPods " +
+                            "(DB=AIRPODS, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
                 }
 
                 if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {

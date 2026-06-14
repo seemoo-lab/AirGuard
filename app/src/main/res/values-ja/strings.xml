@@ -518,6 +518,9 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="settings_use_dynamic_colors_title">Material Youを使用</string>
     <string name="settings_use_dynamic_colors_summary">アプリの色を壁紙に合わせて動的に変更します</string>
 
+    <string name="settings_auto_detect_device_types_title">トラッカータイプの自動検出</string>
+    <string name="settings_auto_detect_device_types_summary">手動スキャン中に、潜在的なトラッカーに自動的に接続して正確なタイプを特定します。この設定がオフの場合、AirGuardはユーザーの要求なしにトラッカーに接続することはありません。オンにするとバッテリーの消費が増えます。</string>
+
     <string name="load_all_occurrences">すべての発生を読み込む</string>
     <string name="scroll_button">このビューの先頭または末尾にスクロールします</string>
     <string name="empty_list_others">選択されたフィルターに該当するデバイスは見つかりませんでした。左上のボタンをクリックしてフィルターを変更するか、すべてのデバイスを表示してください。</string>
@@ -525,4 +528,32 @@ Tile / Life360デバイスは識別子を変更しません。
     <string name="safe_tracker_map_warning">これは安全なトラッカーです。現在、または最近、所有者のデバイスに接続されていました。安全なトラッカーはあなたにとって脅威ではありません。</string>
     <string name="no_locations_yet_hint">このデバイスは検出されましたが、位置データはまだ記録されていません。トラッカーが有効な場所で観測されると、ここに位置データが表示されます。</string>
     <string name="safe_tracker_monitored_warning">これは安全なトラッカーです。現在、または最近、所有者のデバイスに接続されていました。一時的に監視されていますが、あなたにとって脅威ではありません。</string>
+    <string name="settings_raw_data_export_title">生データをエクスポート</string>
+    <string name="settings_raw_data_export_summary">収集したすべての生データを、ZIP アーカイブ内の CSV ファイルとしてエクスポートします</string>
+    <string name="raw_data_export_label">生データのエクスポート</string>
+    <string name="raw_data_export_title">生データをエクスポート</string>
+    <string name="raw_data_export_explanation">下のダウンロードボタンを使うと、AirGuard が端末にローカル保存したすべての生データをエクスポートできます。エクスポートには 4 つの CSV ファイルが含まれ、それらは ZIP アーカイブにまとめられています。このデータは専門家による分析を目的としています。</string>
+    <string name="raw_data_export_files_title">エクスポートされたファイル</string>
+    <string name="raw_data_export_file_devices">devices.csv – 検出された Bluetooth デバイス</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – 受信した BLE 広告パケット</string>
+    <string name="raw_data_export_file_locations">locations.csv – ビーコンが見つかった GPS 位置</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – 追跡アラートを生成した通知</string>
+    <string name="raw_data_export_button">ZIP エクスポートをダウンロード</string>
+    <string name="raw_data_export_success">データを正常にエクスポートしました</string>
+    <string name="raw_data_export_error">エクスポートの生成中にエラーが発生しました: %s</string>
+    <string name="raw_data_export_save_error">エクスポートの保存中にエラーが発生しました: %s</string>
+    <string name="raw_data_export_icon_description">生データエクスポートのアイコン</string>
+    <string name="raw_data_export_time_range_title">期間</string>
+    <string name="raw_data_export_preset_3_days">過去 3 日間</string>
+    <string name="raw_data_export_preset_7_days">過去 7 日間</string>
+    <string name="raw_data_export_preset_14_days">過去 14 日間</string>
+    <string name="raw_data_export_preset_month">過去 1 か月</string>
+    <string name="raw_data_export_preset_all_time">全期間</string>
+    <string name="raw_data_export_from_hint">開始</string>
+    <string name="raw_data_export_to_hint">終了</string>
+    <string name="raw_data_export_select_start_date">開始日を選択</string>
+    <string name="raw_data_export_select_end_date">終了日を選択</string>
+    <string name="raw_data_export_select_start_time">開始時刻を選択</string>
+    <string name="raw_data_export_select_end_time">終了時刻を選択</string>
+    <string name="raw_data_export_range_error">開始は終了より前でなければなりません</string>
 </resources>

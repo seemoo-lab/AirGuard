@@ -16,6 +16,8 @@ Questo include AirTag, AirPods e tracker di terze parti (come Chipolo o Pebblebe
 * **Riproduci suono:** ✅ (La disponibilità dipende dalla modalità specifica del dispositivo)
 * **Identifica proprietario:** ✅ (Via NFC per AirTag e dispositivi Dov'è supportati)
 
+**Nota sugli AirTag (2ª generazione):** Questi dispositivi non sono distinguibili dagli altri dispositivi Apple Dov'è tramite la semplice osservazione. Per identificarli come AirTag, AirGuard deve connettersi al dispositivo.
+
 **Samsung SmartTag**
 Questi sono tracker prodotti da Samsung.
 * **È connesso al proprietario:** ✅ (Determina se il proprietario è nelle vicinanze)

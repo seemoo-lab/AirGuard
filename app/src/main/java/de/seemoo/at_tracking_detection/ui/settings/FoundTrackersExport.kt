@@ -14,7 +14,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import com.google.android.material.button.MaterialButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -42,7 +42,7 @@ class FoundTrackersExport : Fragment() {
     @Inject lateinit var locationRepository: LocationRepository
     @Inject lateinit var notificationRepository: NotificationRepository
 
-    private lateinit var exportDocumentButton: Button
+    private lateinit var exportDocumentButton: MaterialButton
     private lateinit var progressBar: ProgressBar
 
     data class PageContext(

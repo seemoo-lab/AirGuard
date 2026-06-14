@@ -23,6 +23,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.BLELogger
 import de.seemoo.at_tracking_detection.util.ble.BluetoothStateMonitor
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
@@ -459,6 +460,25 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     val savedBeacon = pair.second
                     if (savedDevice != null && savedBeacon != null) {
                         BLELogger.d("Inserted device ${savedDevice.address} (${savedDevice.deviceType}) at ${savedBeacon.locationId} to the DB")
+
+                        // Identify if a GATT connection should happen
+                        // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
+                        if (SharedPrefs.autoDetectDeviceTypes) {
+                            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+                            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                            if (beaconRepository != null && deviceRepository != null) {
+                                if (TrackingDetectorWorker.shouldThrowNotification(savedDevice, beaconRepository)) {
+                                    if (DeviceSubTypeDetector.needsDetection(device.wrappedScanResult)) {
+                                        BLELogger.d("PermanentBluetoothScanner: Device ${savedDevice.address} would trigger notification. Attempting GATT detection...")
+                                        try {
+                                            DeviceSubTypeDetector.processDetection(device.wrappedScanResult, deviceRepository)
+                                        } catch (e: Exception) {
+                                            BLELogger.e("PermanentBluetoothScanner: GATT detection failed for ${savedDevice.address}: ${e.message}")
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
                         // Only count this device in the scan window if its beacon is actually new
                         // (discoveryDate matches what we passed in). saveBeacon may return an

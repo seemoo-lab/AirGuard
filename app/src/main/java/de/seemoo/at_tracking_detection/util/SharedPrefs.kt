@@ -336,6 +336,14 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
         }
 
+    var autoDetectDeviceTypes: Boolean
+        get() {
+            return sharedPreferences.getBoolean("auto_detect_device_types", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("auto_detect_device_types", value) }
+        }
+
     var deleteOldDevices: Boolean
         get() {
             return sharedPreferences.getBoolean("delete_old_devices", true)

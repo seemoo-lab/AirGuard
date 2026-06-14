@@ -535,6 +535,9 @@
     <string name="settings_use_dynamic_colors_title">使用 Material You</string>
     <string name="settings_use_dynamic_colors_summary">將應用程式顏色動態匹配您的桌布</string>
 
+    <string name="settings_auto_detect_device_types_title">自動偵測追蹤器類型</string>
+    <string name="settings_auto_detect_device_types_summary">在手動掃描期間自動連接到潛在的追蹤器，以確定其確切類型。如果關閉此選項，AirGuard 將永遠不會在未經您要求的情況下連接到追蹤器。開啟此選項會增加電池消耗。</string>
+
     <string name="load_all_occurrences">載入所有出現記錄</string>
     <string name="scroll_button">捲動到此視圖的頂部或底部</string>
     <string name="empty_list_others">沒有符合所選篩選條件的裝置。您可以點擊左上角的按鈕更改篩選條件，或顯示所有裝置。</string>
@@ -542,4 +545,32 @@
     <string name="safe_tracker_map_warning">這是一個安全的追蹤器。它目前或最近已連接到其所有者的設備集。安全追蹤器不會對您構成威脅。</string>
     <string name="no_locations_yet_hint">已檢測到此設備，但尚未記錄位置數據。如果追蹤器在有效位置被觀察到，位置數據將顯示在這裡。</string>
     <string name="safe_tracker_monitored_warning">這是一個安全的追蹤器。它目前或最近已連接到其所有者的設備。它正受到臨時觀察，但不會對您構成威脅。</string>
+    <string name="settings_raw_data_export_title">匯出原始資料</string>
+    <string name="settings_raw_data_export_summary">將所有已收集的原始資料匯出為 ZIP 壓縮檔中的 CSV 檔案</string>
+    <string name="raw_data_export_label">原始資料匯出</string>
+    <string name="raw_data_export_title">匯出原始資料</string>
+    <string name="raw_data_export_explanation">使用下方的下載按鈕，您可以匯出 AirGuard 在您的裝置上本機儲存的所有原始資料。匯出內容包含四個 CSV 檔案，並打包成 ZIP 壓縮檔。這些資料僅供專家分析使用。</string>
+    <string name="raw_data_export_files_title">已匯出的檔案</string>
+    <string name="raw_data_export_file_devices">devices.csv – 已偵測到的藍牙裝置</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – 已接收的 BLE 廣播封包</string>
+    <string name="raw_data_export_file_locations">locations.csv – 發現 beacon 時的 GPS 位置</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – 產生追蹤警示的通知</string>
+    <string name="raw_data_export_button">下載 ZIP 匯出</string>
+    <string name="raw_data_export_success">資料已成功匯出</string>
+    <string name="raw_data_export_error">產生匯出時發生錯誤：%s</string>
+    <string name="raw_data_export_save_error">儲存匯出時發生錯誤：%s</string>
+    <string name="raw_data_export_icon_description">原始資料匯出圖示</string>
+    <string name="raw_data_export_time_range_title">時間範圍</string>
+    <string name="raw_data_export_preset_3_days">最近 3 天</string>
+    <string name="raw_data_export_preset_7_days">最近 7 天</string>
+    <string name="raw_data_export_preset_14_days">最近 14 天</string>
+    <string name="raw_data_export_preset_month">最近 1 個月</string>
+    <string name="raw_data_export_preset_all_time">全部時間</string>
+    <string name="raw_data_export_from_hint">從</string>
+    <string name="raw_data_export_to_hint">到</string>
+    <string name="raw_data_export_select_start_date">選擇開始日期</string>
+    <string name="raw_data_export_select_end_date">選擇結束日期</string>
+    <string name="raw_data_export_select_start_time">選擇開始時間</string>
+    <string name="raw_data_export_select_end_time">選擇結束時間</string>
+    <string name="raw_data_export_range_error">開始必須早於結束</string>
 </resources>

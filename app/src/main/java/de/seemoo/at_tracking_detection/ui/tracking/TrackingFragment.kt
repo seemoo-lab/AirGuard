@@ -61,6 +61,9 @@ class TrackingFragment : Fragment() {
 
     private var notificationId: Int = -1
 
+    private var bluetoothService: BluetoothLeService? = null
+    private var serviceBound = false
+
     private val safeArgs: TrackingFragmentArgs by navArgs()
 
     lateinit var mapView: MapView
@@ -110,6 +113,14 @@ class TrackingFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mapView.onPause()
+        // Stop sound if playing or connecting when fragment is paused
+        if (trackingViewModel.soundPlaying.value == true || trackingViewModel.connecting.value == true) {
+            Timber.d("TrackingFragment.onPause: stopping active sound/connection")
+            bluetoothService?.stopSound()
+            unbindBleService()
+            trackingViewModel.soundPlaying.postValue(false)
+            trackingViewModel.connecting.postValue(false)
+        }
     }
 
     private fun shouldShowMap(): Boolean {
@@ -243,15 +254,10 @@ class TrackingFragment : Fragment() {
             }
         }
 
+        // When sound finishes naturally (EventCompleted/EventFailed), unbind the service
         trackingViewModel.soundPlaying.observe(viewLifecycleOwner) { isPlaying ->
             if (!isPlaying) {
-                try {
-                    requireContext().unbindService(serviceConnection)
-                } catch (e: IllegalArgumentException) {
-                    Timber.e("Tried to unbind an unbound service!")
-                } finally {
-                    Timber.d("Service connection unregistered")
-                }
+                unbindBleService()
             }
         }
 
@@ -392,9 +398,22 @@ class TrackingFragment : Fragment() {
         }
     }
 
+    private fun unbindBleService() {
+        if (serviceBound) {
+            try {
+                requireContext().unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                Timber.w("TrackingFragment: tried to unbind an already-unbound service")
+            }
+            serviceBound = false
+            bluetoothService = null
+        }
+    }
+
     private fun toggleSound() {
         trackingViewModel.error.postValue(false)
-        if (trackingViewModel.soundPlaying.value == false) {
+        if (trackingViewModel.soundPlaying.value == false && trackingViewModel.connecting.value == false) {
+            Timber.d("TrackingFragment: starting sound playback — binding BluetoothLeService")
             trackingViewModel.connecting.postValue(true)
             val gattServiceIntent = Intent(context, BluetoothLeService::class.java)
             requireContext().bindService(
@@ -403,24 +422,34 @@ class TrackingFragment : Fragment() {
                 Context.BIND_AUTO_CREATE
             )
         } else {
-            Timber.d("Sound already playing! Stopping sound...")
+            Timber.d("TrackingFragment: stopping sound — calling stopSound() and unbinding service")
+            bluetoothService?.stopSound()
+            unbindBleService()
             trackingViewModel.soundPlaying.postValue(false)
+            trackingViewModel.connecting.postValue(false)
         }
     }
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Timber.d("Trying to connect to ble device!")
-            val bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
-            bluetoothService.let {
-                if (!it.init()) {
-                    Timber.e("Unable to init bluetooth")
-                    trackingViewModel.error.postValue(true)
+            Timber.d("TrackingFragment: BluetoothLeService connected")
+            bluetoothService = (service as BluetoothLeService.LocalBinder).getService()
+            serviceBound = true
+            val it = bluetoothService ?: return
+            if (!it.init()) {
+                Timber.e("TrackingFragment: unable to init Bluetooth")
+                trackingViewModel.error.postValue(true)
+            } else {
+                val baseDevice = trackingViewModel.device.value
+                if (baseDevice != null) {
+                    Timber.d("TrackingFragment: connecting to device ${baseDevice.address} (${baseDevice.deviceType})")
+                    it.connect(baseDevice)
                 } else {
-                    Timber.d("Device is ready to connect!")
-                    trackingViewModel.device.observe(viewLifecycleOwner) { baseDevice ->
-                        if (baseDevice != null) {
-                            it.connect(baseDevice)
+                    // Observe in case device hasn't loaded yet
+                    trackingViewModel.device.observe(viewLifecycleOwner) { device ->
+                        if (device != null) {
+                            Timber.d("TrackingFragment: device loaded, connecting to ${device.address}")
+                            it.connect(device)
                         }
                     }
                 }
@@ -428,6 +457,9 @@ class TrackingFragment : Fragment() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            Timber.d("TrackingFragment: BluetoothLeService disconnected unexpectedly")
+            serviceBound = false
+            bluetoothService = null
             trackingViewModel.soundPlaying.postValue(false)
             trackingViewModel.connecting.postValue(false)
         }

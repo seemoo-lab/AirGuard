@@ -440,6 +440,36 @@
     <string name="right">Right</string>
 
     <string name="export_trackers_label">Export Trackers</string>
+
+    <!-- Raw Data Export -->
+    <string name="settings_raw_data_export_title">Export Raw Data</string>
+    <string name="settings_raw_data_export_summary">Export all collected raw data as CSV files in a ZIP archive</string>
+    <string name="raw_data_export_label">Raw Data Export</string>
+    <string name="raw_data_export_title">Export Raw Data</string>
+    <string name="raw_data_export_explanation">Using the download button below, you can export all the raw data AirGuard has collected and stored locally on your device. The export contains four CSV files bundled in a ZIP archive. This data is intended for expert analysis.</string>
+    <string name="raw_data_export_files_title">Exported files</string>
+    <string name="raw_data_export_file_devices">devices.csv – discovered Bluetooth devices</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – received BLE advertisement packets</string>
+    <string name="raw_data_export_file_locations">locations.csv – GPS locations at which beacons were found</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – notifications which generated tracking alerts</string>
+    <string name="raw_data_export_button">Download ZIP Export</string>
+    <string name="raw_data_export_success">Data exported successfully</string>
+    <string name="raw_data_export_error">Error generating export: %s</string>
+    <string name="raw_data_export_save_error">Error saving export: %s</string>
+    <string name="raw_data_export_icon_description">Raw data export icon</string>
+    <string name="raw_data_export_time_range_title">Time Range</string>
+    <string name="raw_data_export_preset_3_days">Last 3 days</string>
+    <string name="raw_data_export_preset_7_days">Last 7 days</string>
+    <string name="raw_data_export_preset_14_days">Last 14 days</string>
+    <string name="raw_data_export_preset_month">Last month</string>
+    <string name="raw_data_export_preset_all_time">All time</string>
+    <string name="raw_data_export_from_hint">From</string>
+    <string name="raw_data_export_to_hint">To</string>
+    <string name="raw_data_export_select_start_date">Select start date</string>
+    <string name="raw_data_export_select_end_date">Select end date</string>
+    <string name="raw_data_export_select_start_time">Select start time</string>
+    <string name="raw_data_export_select_end_time">Select end time</string>
+    <string name="raw_data_export_range_error">Start must be before end</string>
     <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
     <string name="export_trackers_create_document">Create document</string>
     <string name="export_trackers_not_following">The tracker has not been following you</string>
@@ -580,6 +610,9 @@
 
     <string name="settings_use_dynamic_colors_title">Use Material You</string>
     <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
+
+    <string name="settings_auto_detect_device_types_title">Automatic tracker detection</string>
+    <string name="settings_auto_detect_device_types_summary">Automatically connect to potential trackers to determine their exact type during manual scan. If this is turned off then AirGuard will never connect to a tracker without your request. Turning this on will increase battery usage.</string>
 
     <string name="load_all_occurrences">Load all occurrences</string>
     <string name="scroll_button">Scrolls to the top or bottom of this view</string>

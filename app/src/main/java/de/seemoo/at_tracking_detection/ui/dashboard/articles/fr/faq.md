@@ -67,5 +67,8 @@ Sans accès à la localisation, l'application repose uniquement sur les analyses
 **Puis-je ignorer ou étiqueter mes propres traceurs ?**
 Actuellement, vous ne pouvez ignorer que les traceurs de marque Tile en raison de limitations techniques. Vous pouvez étiqueter les traceurs mais sachez que le même traceur peut changer son identifiant et sera vu comme un nouveau traceur. Nous recommandons de les nommer juste pour les identifier plus tard.
 
+**Comment les AirTags (2e génération) sont-ils détectés ?**
+Les AirTags de la 2e génération sont indiscernables des autres appareils Apple Localiser par simple observation. Pour les identifier comme des AirTags, AirGuard doit se connecter au traceur. Pour une détection automatique, assurez-vous que le paramètre **Détection automatique des types de trackers** est activé et que les **Appareils Apple FindMy** ne sont pas désactivés dans les paramètres **Enlever des types d’appareils**. Si la détection automatique est désactivée, AirGuard vous avertira toujours si un AirTag de 2e génération vous suit, mais il apparaîtra comme un « Appareil Apple FindMy ».
+
 **Pourquoi ne puis-je pas ignorer certains appareils ?**
 Les appareils qui changent fréquemment leur identifiant ne peuvent pas être ignorés. Lorsqu'ils changent leur clé, notre système les traite comme de nouveaux appareils, déclenchant de nouvelles alertes. Certains appareils (comme les Samsung SmartTags) changent souvent de clé, mais vous pouvez ignorer ceux qui ne changent pas (comme les Chipolos et Tiles).

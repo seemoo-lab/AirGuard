@@ -1,5 +1,8 @@
 package de.seemoo.at_tracking_detection.util
 
+import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -13,14 +16,44 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 
 @BindingAdapter("setAdapter")
 fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
     this.run {
         this.setHasFixedSize(false)
         this.adapter = adapter
+    }
+}
+
+@BindingAdapter("setDetectionStatus")
+fun setDetectionStatus(view: View, status: ScanResultWrapper.DetectionStatus) {
+    view.clearAnimation()
+    view.alpha = 1.0f
+
+    when (status) {
+        ScanResultWrapper.DetectionStatus.QUEUED -> {
+            // Slow shimmering effect: Is in Queue to connect
+            val anim = AlphaAnimation(1.0f, 0.5f).apply {
+                duration = 1000
+                repeatMode = Animation.REVERSE
+                repeatCount = Animation.INFINITE
+            }
+            view.startAnimation(anim)
+        }
+        ScanResultWrapper.DetectionStatus.CONNECTING -> {
+            // Fast shimmering effect: Is currently connecting / reading property
+            val anim = AlphaAnimation(1.0f, 0.2f).apply {
+                duration = 400
+                repeatMode = Animation.REVERSE
+                repeatCount = Animation.INFINITE
+            }
+            view.startAnimation(anim)
+        }
+        ScanResultWrapper.DetectionStatus.IDLE -> {
+            // No animation / Animation cleared
+        }
     }
 }
 
@@ -75,12 +108,12 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
         } else if (deviceFromDb.deviceType == DeviceType.SAMSUNG_TRACKER && deviceFromDb.subDeviceType != "UNKNOWN") {
             val subTypeString = deviceFromDb.subDeviceType
             val subType = SamsungTrackerType.stringToSubType(subTypeString)
-            ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
+            DeviceSubTypeDetector.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
             SamsungTrackerType.visibleStringFromSubtype(subType)
         } else if (deviceFromDb.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
             val subTypeString = deviceFromDb.subDeviceType
             val subType = GoogleFindMyNetworkType.stringToSubType(subTypeString)
-            ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
+            DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
             GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
         } else {
             // Fallback
@@ -90,14 +123,14 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
         // Case: device ist not in DB
         // There is a possibility that the device has been determined. In that case this is only saved in the temporary map
 
-        if (ScanFragment.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-            val subType = ScanFragment.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+        if (DeviceSubTypeDetector.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+            val subType = DeviceSubTypeDetector.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
             SamsungTrackerType.visibleStringFromSubtype(subType)
-        } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-            val subType = ScanFragment.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
+        } else if (DeviceSubTypeDetector.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+            val subType = DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
             GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
-        } else if (ScanFragment.deviceNameMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-            ScanFragment.deviceNameMap[wrappedScanResult.uniqueIdentifier]
+        } else if (DeviceSubTypeDetector.deviceNameMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
+            DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier]
         } else {
             // Fallback
             DeviceType.userReadableNameDefault(wrappedScanResult.deviceType)

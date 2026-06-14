@@ -62,7 +62,7 @@ class BluetoothDeviceDiffCallback: DiffUtil.ItemCallback<ScanResultWrapper>() {
 
     override fun areContentsTheSame(oldItem: ScanResultWrapper, newItem: ScanResultWrapper): Boolean {
         // return oldItem == newItem
-        return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)
+        return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue) && (oldItem.detectionStatus == newItem.detectionStatus)
         // return (oldItem.uniqueIdentifier == newItem.uniqueIdentifier) && (oldItem.rssiValue == newItem.rssiValue)  && (oldItem.deviceName == newItem.deviceName) && (oldItem.advertisedName == newItem.advertisedName) && (oldItem.appearance == newItem.appearance) && (oldItem.manufacturer == newItem.manufacturer)
     }
 }

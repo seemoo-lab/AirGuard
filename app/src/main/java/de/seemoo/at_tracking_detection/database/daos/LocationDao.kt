@@ -15,6 +15,12 @@ interface LocationDao {
     @Query("SELECT * FROM location ORDER BY firstDiscovery DESC")
     fun getAll(): Flow<List<LocationModel>>
 
+    @Query("SELECT DISTINCT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.receivedAt >= :from AND b.receivedAt <= :to")
+    fun getLocationsForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<LocationModel>
+
+    @Query("SELECT MIN(firstDiscovery) FROM location")
+    fun getEarliestLocationDate(): String?
+
     @Query("SELECT * FROM location WHERE lastSeen >= :since ORDER BY lastSeen DESC")
     fun getLocationsSince(since: LocalDateTime): List<LocationModel>
 

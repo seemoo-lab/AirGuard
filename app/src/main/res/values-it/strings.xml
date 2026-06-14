@@ -649,6 +649,9 @@
     <string name="settings_use_dynamic_colors_title">Usa Material You</string>
     <string name="settings_use_dynamic_colors_summary">Adatta dinamicamente i colori dell\'app allo sfondo</string>
 
+    <string name="settings_auto_detect_device_types_title">Rilevamento automatico del tipo di tracker</string>
+    <string name="settings_auto_detect_device_types_summary">Connettiti automaticamente ai potenziali tracker per determinare il loro tipo esatto durante la scansione manuale. Se questa opzione è disattivata, AirGuard non si connetterà mai a un tracker senza la tua richiesta. L\'attivazione aumenterà il consumo della batteria.</string>
+
     <string name="load_all_occurrences">Carica tutte le occorrenze</string>
     <string name="scroll_button">Scorre fino all\'inizio o alla fine di questa vista</string>
     <string name="empty_list_others">Non ci sono dispositivi identificati per i filtri selezionati. Puoi cambiare i filtri cliccando sul pulsante nell\'angolo in alto a sinistra o visualizzando tutti i dispositivi.</string>
@@ -657,4 +660,32 @@
     <string name="safe_tracker_map_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. I tracker sicuri non rappresentano una minaccia per te.</string>
     <string name="no_locations_yet_hint">Questo dispositivo è stato rilevato, ma non sono ancora stati registrati dati sulla sua posizione. I dati sulla posizione appariranno qui se il tracker viene osservato in una posizione valida.</string>
     <string name="safe_tracker_monitored_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. È temporaneamente monitorato, ma non rappresenta una minaccia per te.</string>
+    <string name="settings_raw_data_export_title">Esporta dati grezzi</string>
+    <string name="settings_raw_data_export_summary">Esporta tutti i dati grezzi raccolti come file CSV in un archivio ZIP</string>
+    <string name="raw_data_export_label">Esportazione dati grezzi</string>
+    <string name="raw_data_export_title">Esporta dati grezzi</string>
+    <string name="raw_data_export_explanation">Usando il pulsante di download qui sotto, puoi esportare tutti i dati grezzi che AirGuard ha raccolto e salvato localmente sul tuo dispositivo. L’esportazione contiene quattro file CSV raggruppati in un archivio ZIP. Questi dati sono destinati all’analisi da parte di esperti.</string>
+    <string name="raw_data_export_files_title">File esportati</string>
+    <string name="raw_data_export_file_devices">devices.csv – dispositivi Bluetooth rilevati</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – pacchetti pubblicitari BLE ricevuti</string>
+    <string name="raw_data_export_file_locations">locations.csv – posizioni GPS in cui sono stati trovati i beacon</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – notifiche che hanno generato avvisi di tracciamento</string>
+    <string name="raw_data_export_button">Scarica esportazione ZIP</string>
+    <string name="raw_data_export_success">Dati esportati con successo</string>
+    <string name="raw_data_export_error">Errore durante la generazione dell’esportazione: %s</string>
+    <string name="raw_data_export_save_error">Errore durante il salvataggio dell’esportazione: %s</string>
+    <string name="raw_data_export_icon_description">Icona di esportazione dei dati grezzi</string>
+    <string name="raw_data_export_time_range_title">Intervallo di tempo</string>
+    <string name="raw_data_export_preset_3_days">Ultimi 3 giorni</string>
+    <string name="raw_data_export_preset_7_days">Ultimi 7 giorni</string>
+    <string name="raw_data_export_preset_14_days">Ultimi 14 giorni</string>
+    <string name="raw_data_export_preset_month">Ultimo mese</string>
+    <string name="raw_data_export_preset_all_time">Sempre</string>
+    <string name="raw_data_export_from_hint">Da</string>
+    <string name="raw_data_export_to_hint">A</string>
+    <string name="raw_data_export_select_start_date">Seleziona data di inizio</string>
+    <string name="raw_data_export_select_end_date">Seleziona data di fine</string>
+    <string name="raw_data_export_select_start_time">Seleziona ora di inizio</string>
+    <string name="raw_data_export_select_end_time">Seleziona ora di fine</string>
+    <string name="raw_data_export_range_error">L’inizio deve essere precedente alla fine</string>
 </resources>

@@ -15,6 +15,8 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrack
 
 @SuppressLint("MissingPermission")
 data class ScanResultWrapper(val scanResult: ScanResult) {
+    enum class DetectionStatus { IDLE, QUEUED, CONNECTING }
+
     val deviceAddress: String = scanResult.device.address
     val rssi: ObservableField<Int> = ObservableField(scanResult.rssi) // This is so the image can update itself live
     var rssiValue: Int = scanResult.rssi
@@ -27,6 +29,9 @@ data class ScanResultWrapper(val scanResult: ScanResult) {
     val serviceUuids = scanResult.scanRecord?.serviceUuids?.map { it.toString() }?.toList()
     val mfg = scanResult.scanRecord?.bytes
     val advertisementFlags = scanResult.scanRecord?.advertiseFlags
+
+    // This value holds the current state for the manual scan if GATT-connection is enabled (only used by trackers who support GATT connections)
+    var detectionStatus: DetectionStatus = DetectionStatus.IDLE
 
     // Information for Sub categorization
     val advertisedName: String? = scanResult.device.name
