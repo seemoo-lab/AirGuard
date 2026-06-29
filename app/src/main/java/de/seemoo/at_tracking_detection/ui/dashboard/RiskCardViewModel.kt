@@ -6,12 +6,15 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.risk.RiskLevel
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -74,75 +77,77 @@ class RiskCardViewModel @Inject constructor(
     }
 
     fun updateRiskLevel() {
-        lastScan = SharedPrefs.lastScanDate
-        val context = ATTrackingDetectionApplication.getAppContext()
-        val dateFormat = DateFormat.getDateTimeInstance()
-        val lastDiscoveryDate = riskLevelEvaluator.getLastTrackerDiscoveryDate()
-        val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
-        val earliestTrackingDate = getEarliestTrackingDate()
-        val earliestTrackingDateString = dateFormat.format(earliestTrackingDate)
-        val totalAlerts = riskLevelEvaluator.getNumberRelevantTrackers()
+        viewModelScope.launch(Dispatchers.IO) {
+            lastScan = SharedPrefs.lastScanDate
+            val context = ATTrackingDetectionApplication.getAppContext()
+            val dateFormat = DateFormat.getDateTimeInstance()
+            val lastDiscoveryDate = riskLevelEvaluator.getLastTrackerDiscoveryDate()
+            val lastDiscoveryDateString = dateFormat.format(lastDiscoveryDate)
+            val earliestTrackingDate = getEarliestTrackingDate()
+            val earliestTrackingDateString = dateFormat.format(earliestTrackingDate)
+            val totalAlerts = riskLevelEvaluator.getNumberRelevantTrackers()
 
-        updateLastUpdateModel()
+            updateLastUpdateModel()
 
-        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
+            sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
 
-        when (riskLevelEvaluator.evaluateRiskLevel()) {
-            RiskLevel.LOW -> {
-                riskLevel.postValue(context.getString(R.string.risk_level_low))
-                riskColor.postValue(R.color.risk_low)
+            when (riskLevelEvaluator.evaluateRiskLevel()) {
+                RiskLevel.LOW -> {
+                    riskLevel.postValue(context.getString(R.string.risk_level_low))
+                    riskColor.postValue(R.color.risk_low)
 
-                trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.no_trackers_found, earliestTrackingDateString),
-                    ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                ))
-                lastDiscoveryModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.last_discovery),
-                    ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                ))
+                    trackersFoundModel.postValue(RiskRowViewModel(
+                        context.getString(R.string.no_trackers_found, earliestTrackingDateString),
+                        ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
+                    ))
+                    lastDiscoveryModel.postValue(RiskRowViewModel(
+                        context.getString(R.string.last_discovery),
+                        ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
+                    ))
 
-                showLastDetection.postValue(false)
-            }
-            RiskLevel.MEDIUM -> {
-                riskLevel.postValue(context.getString(R.string.risk_level_medium))
-                riskColor.postValue(R.color.risk_medium)
+                    showLastDetection.postValue(false)
+                }
+                RiskLevel.MEDIUM -> {
+                    riskLevel.postValue(context.getString(R.string.risk_level_medium))
+                    riskColor.postValue(R.color.risk_medium)
 
-                trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(
-                        R.string.found_x_trackers,
-                        totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
-                    ),
-                    ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                ))
+                    trackersFoundModel.postValue(RiskRowViewModel(
+                        context.getString(
+                            R.string.found_x_trackers,
+                            totalAlerts,
+                            RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
+                        ),
+                        ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
+                    ))
 
-                lastDiscoveryModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.last_discovery, lastDiscoveryDateString),
-                    ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                ))
+                    lastDiscoveryModel.postValue(RiskRowViewModel(
+                        context.getString(R.string.last_discovery, lastDiscoveryDateString),
+                        ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
+                    ))
 
-                showLastDetection.postValue(true)
-            }
-            else -> {
-                // High risk
-                riskLevel.postValue(context.getString(R.string.risk_level_high))
-                riskColor.postValue(R.color.risk_high)
+                    showLastDetection.postValue(true)
+                }
+                else -> {
+                    // High risk
+                    riskLevel.postValue(context.getString(R.string.risk_level_high))
+                    riskColor.postValue(R.color.risk_high)
 
-                trackersFoundModel.postValue(RiskRowViewModel(
-                    context.getString(
-                        R.string.found_x_trackers,
-                        totalAlerts,
-                        RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
-                    ),
-                    ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
-                ))
+                    trackersFoundModel.postValue(RiskRowViewModel(
+                        context.getString(
+                            R.string.found_x_trackers,
+                            totalAlerts,
+                            RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL
+                        ),
+                        ContextCompat.getDrawable(context, R.drawable.ic_baseline_location_on_24)!!
+                    ))
 
-                lastDiscoveryModel.postValue(RiskRowViewModel(
-                    context.getString(R.string.last_discovery, lastDiscoveryDateString),
-                    ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
-                ))
+                    lastDiscoveryModel.postValue(RiskRowViewModel(
+                        context.getString(R.string.last_discovery, lastDiscoveryDateString),
+                        ContextCompat.getDrawable(context, R.drawable.ic_clock)!!
+                    ))
 
-                showLastDetection.postValue(true)
+                    showLastDetection.postValue(true)
+                }
             }
         }
     }
