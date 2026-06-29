@@ -16,6 +16,8 @@ Zahrnuje AirTags, AirPods a sledovací zařízení třetích stran (např. Chipo
 * **Přehrát zvuk:** ✅ (Dostupnost závisí na konkrétním režimu zařízení)
 * **Identifikovat vlastníka:** ✅ (Přes NFC pro AirTags a podporovaná zařízení Find My)
 
+**Poznámka k AirTags (2. generace):** Tato zařízení jsou pouhým pozorováním nerozeznatelná od ostatních zařízení Apple Find My. Aby je AirGuard identifikoval jako AirTags, musí se k zařízení připojit.
+
 **Samsung SmartTags**
 Jedná se o sledovací zařízení vyrobená společností Samsung.
 * **Je připojeno k vlastníkovi:** ✅ (Určuje, zda je vlastník nablízku)

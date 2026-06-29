@@ -67,5 +67,8 @@ Bez přístupu k poloze se aplikace spoléhá pouze na skenování Bluetooth. To
 **Mohu ignorovat nebo pojmenovat svá vlastní sledovací zařízení?**
 V současné době můžete kvůli technickým omezením ignorovat pouze sledovací zařízení značky Tile. Sledovací zařízení můžete pojmenovat, ale mějte na paměti, že stejné zařízení může změnit své ID a bude vnímáno jako nové zařízení. Doporučujeme je pojmenovat pouze pro pozdější identifikaci.
 
+**Jak jsou detekovány AirTags (2. generace)?**
+AirTags 2. generace jsou pouhým pozorováním nerozeznatelné od ostatních zařízení Apple Find My. Aby je AirGuard identifikoval jako AirTags, musí se ke sledovacímu zařízení připojit. Pro automatickou detekci se ujistěte, že je zapnuto nastavení **Automatická detekce typu trackeru** a že **Zařízení Apple FindMy** nejsou zakázána v nastavení **Filtrovat typy zařízení**. Pokud je automatická detekce zakázána, AirGuard vás stále upozorní, pokud vás AirTag 2. generace sleduje, ale zobrazí se jako „Zařízení Apple FindMy“.
+
 **Proč nemohu ignorovat některá zařízení?**
 Zařízení, která často mění svůj identifikátor, nelze ignorovat. Když změní svůj klíč, náš systém s nimi zachází jako s novými zařízeními, což spouští nová upozornění. Některá zařízení (jako Samsung SmartTags) mění klíče často, ale ta, která je nemění (jako Chipolo a Tile), můžete ignorovat.

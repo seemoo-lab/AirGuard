@@ -16,8 +16,8 @@ class AppleDevice(val id: Int) : Device() {
         get() = R.drawable.ic_baseline_device_unknown_24
 
     override val defaultDeviceNameWithId: String
-        get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.device_name_apple_device)
-            .format(id)
+        get() = ATTrackingDetectionApplication.getAppContext().resources
+            .getString(R.string.device_name_apple_device).format(id)
 
     override val deviceContext: DeviceContext
         get() = AppleDevice
@@ -40,7 +40,8 @@ class AppleDevice(val id: Int) : Device() {
             get() = DeviceType.APPLE
 
         override val defaultDeviceName: String
-            get() = ATTrackingDetectionApplication.getAppContext().resources.getString(R.string.apple_device_default_name)
+            get() = ATTrackingDetectionApplication.getAppContext().resources
+                .getString(R.string.apple_device_default_name)
 
         override val minTrackingTime: Int
             get() = 150 * 60
@@ -51,18 +52,7 @@ class AppleDevice(val id: Int) : Device() {
         override val websiteManufacturer: String
             get() = "https://www.apple.com/"
 
-        override fun getConnectionState(scanResult: ScanResult): ConnectionState {
-            val mfg: ByteArray? = scanResult.scanRecord?.getManufacturerSpecificData(0x4C)
-
-            if (mfg != null && mfg.size > 2) {
-                return if (mfg[1] == (0x19).toByte()) {
-                    ConnectionState.OVERMATURE_OFFLINE
-                } else {
-                    ConnectionState.CONNECTED
-                }
-            }
-
-            return ConnectionState.UNKNOWN
-        }
+        override fun getConnectionState(scanResult: ScanResult): ConnectionState =
+            AppleFindMy.getConnectionState(scanResult)
     }
 }

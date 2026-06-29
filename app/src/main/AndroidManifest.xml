@@ -59,7 +59,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ATTrackingDetection"
         android:localeConfig="@xml/locales_config"
-        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:hardwareAccelerated="true"
@@ -110,6 +110,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".detection.PermanentScanReceiver"
+            android:exported="false"/>
 
         <receiver
             android:name=".notifications.ScheduledNotificationReceiver"

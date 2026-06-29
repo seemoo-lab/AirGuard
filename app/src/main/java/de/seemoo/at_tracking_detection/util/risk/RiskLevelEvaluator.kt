@@ -2,17 +2,17 @@ package de.seemoo.at_tracking_detection.util.risk
 
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.database.models.Beacon
-import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
-import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
+import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Date
 
 class RiskLevelEvaluator(
     private val deviceRepository: DeviceRepository,
@@ -115,6 +115,11 @@ class RiskLevelEvaluator(
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM: Long = 60
         private const val MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_LOW: Long = 120
 
+        // Minimum hours to wait before a new notification can be thrown for the same tracker
+        private const val HOURS_BETWEEN_NOTIFICATIONS_HIGH: Long = 2
+        private const val HOURS_BETWEEN_NOTIFICATIONS_MEDIUM: Long = 4
+        private const val HOURS_BETWEEN_NOTIFICATIONS_LOW: Long = 8
+
         // Default Values:
         const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_HIGH: Int = 2
         const val NUMBER_OF_LOCATIONS_BEFORE_ALARM_MEDIUM: Int = 3
@@ -132,6 +137,15 @@ class RiskLevelEvaluator(
                 "medium" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
                 "high" -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_HIGH
                 else -> MINUTES_AT_LEAST_TRACKED_BEFORE_ALARM_MEDIUM
+            }
+        }
+
+        fun getHoursBetweenNotifications(): Long {
+            return when (SharedPrefs.riskSensitivity) {
+                "low" -> HOURS_BETWEEN_NOTIFICATIONS_LOW
+                "medium" -> HOURS_BETWEEN_NOTIFICATIONS_MEDIUM
+                "high" -> HOURS_BETWEEN_NOTIFICATIONS_HIGH
+                else -> HOURS_BETWEEN_NOTIFICATIONS_MEDIUM
             }
         }
 

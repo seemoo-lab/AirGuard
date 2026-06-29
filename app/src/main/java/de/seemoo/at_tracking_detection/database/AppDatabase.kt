@@ -1,9 +1,22 @@
 package de.seemoo.at_tracking_detection.database
 
-import androidx.room.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.RenameColumn
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
-import de.seemoo.at_tracking_detection.database.daos.*
-import de.seemoo.at_tracking_detection.database.models.*
+import de.seemoo.at_tracking_detection.database.daos.BeaconDao
+import de.seemoo.at_tracking_detection.database.daos.DeviceDao
+import de.seemoo.at_tracking_detection.database.daos.FeedbackDao
+import de.seemoo.at_tracking_detection.database.daos.LocationDao
+import de.seemoo.at_tracking_detection.database.daos.NotificationDao
+import de.seemoo.at_tracking_detection.database.daos.ScanDao
+import de.seemoo.at_tracking_detection.database.models.Beacon
+import de.seemoo.at_tracking_detection.database.models.Feedback
+import de.seemoo.at_tracking_detection.database.models.Location
+import de.seemoo.at_tracking_detection.database.models.Notification
+import de.seemoo.at_tracking_detection.database.models.Scan
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 

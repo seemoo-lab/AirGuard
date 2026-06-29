@@ -1,6 +1,9 @@
 package de.seemoo.at_tracking_detection.database.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 @Entity(tableName = "location", indices = [Index(value = ["latitude", "longitude"], unique = true)])

@@ -13,8 +13,8 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.AirPods
 import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
-import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
@@ -23,9 +23,9 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrack
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
 import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
-import de.seemoo.at_tracking_detection.ui.scan.ScanFragment
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import de.seemoo.at_tracking_detection.util.converter.DateTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -134,12 +134,12 @@ data class BaseDevice(
     } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && subDeviceType != "UNKNOWN") {
         val subType = GoogleFindMyNetworkType.stringToSubType(subDeviceType)
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, name))
-    } else if (ScanFragment.samsungSubDeviceTypeMap.containsKey(uniqueId)) {
-        val subType = ScanFragment.samsungSubDeviceTypeMap[uniqueId]!!
+    } else if (DeviceSubTypeDetector.samsungSubDeviceTypeMap.containsKey(uniqueId)) {
+        val subType = DeviceSubTypeDetector.samsungSubDeviceTypeMap[uniqueId]!!
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
-    } else if (ScanFragment.googleSubDeviceTypeMap.containsKey(uniqueId)) {
-        val subType = ScanFragment.googleSubDeviceTypeMap[uniqueId]!!
-        val deviceNameFromCache = ScanFragment.deviceNameMap[uniqueId]
+    } else if (DeviceSubTypeDetector.googleSubDeviceTypeMap.containsKey(uniqueId)) {
+        val subType = DeviceSubTypeDetector.googleSubDeviceTypeMap[uniqueId]!!
+        val deviceNameFromCache = DeviceSubTypeDetector.deviceNameMap[uniqueId]
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache))
     } else {
         device.getDrawable()
@@ -216,7 +216,7 @@ data class BaseDevice(
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
-                DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
+                DeviceType.APPLE -> AppleFindMy.getConnectionState(scanResult)
                 DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.getConnectionState(scanResult)
                 else -> ConnectionState.UNKNOWN
             }
@@ -227,7 +227,7 @@ data class BaseDevice(
                 DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getBatteryState(scanResult)
                 DeviceType.FIND_MY,
                 DeviceType.AIRTAG,
-                DeviceType.AIRPODS -> AirTag.getBatteryState(scanResult)
+                DeviceType.AIRPODS -> AppleFindMy.getBatteryState(scanResult)
                 else -> BatteryState.UNKNOWN
             }
         }

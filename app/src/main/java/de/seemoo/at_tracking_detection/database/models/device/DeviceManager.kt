@@ -4,7 +4,17 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.content.IntentFilter
 import de.seemoo.at_tracking_detection.BuildConfig
-import de.seemoo.at_tracking_detection.database.models.device.types.*
+import de.seemoo.at_tracking_detection.database.models.device.types.AirPods
+import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
+import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
+import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
+import de.seemoo.at_tracking_detection.database.models.device.types.PebbleBee
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
+import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
+import de.seemoo.at_tracking_detection.database.models.device.types.Tile
+import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import kotlin.experimental.and
@@ -53,6 +63,13 @@ object DeviceManager {
             return cachedDeviceType
         }
         return null
+    }
+
+    // This allows to override the device type in the cache
+    // This is used e.g. if an Apple Find My Device is upgraded to be an AirTag (necessary for AirTag 2nd Gen)
+    fun overrideDeviceType(deviceAddress: String, deviceType: DeviceType) {
+        Timber.d("DeviceManager: overriding device type for $deviceAddress → $deviceType")
+        deviceTypeCache[deviceAddress] = deviceType
     }
 
     private fun calculateDeviceType(scanResult: ScanResult): DeviceType {

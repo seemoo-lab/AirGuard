@@ -1,13 +1,13 @@
 package de.seemoo.at_tracking_detection.util
 
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
-import androidx.core.content.edit
+import java.util.Locale
 
 object SharedPrefs {
 
@@ -334,6 +334,14 @@ object SharedPrefs {
         }
         set(value) {
             sharedPreferences.edit { putBoolean("use_permanent_bluetooth_scanner", value) }
+        }
+
+    var autoDetectDeviceTypes: Boolean
+        get() {
+            return sharedPreferences.getBoolean("auto_detect_device_types", true)
+        }
+        set(value) {
+            sharedPreferences.edit { putBoolean("auto_detect_device_types", value) }
         }
 
     var deleteOldDevices: Boolean

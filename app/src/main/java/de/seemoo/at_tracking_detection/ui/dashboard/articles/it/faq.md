@@ -67,5 +67,8 @@ Senza l'accesso alla posizione, l'app si basa solo sulle scansioni Bluetooth. Ci
 **Posso ignorare o etichettare i miei tracker?**
 Attualmente, puoi ignorare solo i tracker a marchio Tile a causa di limitazioni tecniche. Puoi etichettare i tracker, ma tieni presente che lo stesso tracker può cambiare il suo ID e sarà visto come un nuovo tracker. Raccomandiamo di nominarli solo per identificarli in seguito.
 
+**Come vengono rilevati gli AirTag (2ª generazione)?**
+Gli AirTag di 2ª generazione non sono distinguibili dagli altri dispositivi Apple Dov'è tramite la semplice osservazione. Per identificarli come AirTag, AirGuard deve connettersi al tracker. Per il rilevamento automatico, assicurati che l'impostazione **Rilevamento automatico del tipo di tracker** sia attiva e che i **Dispositivi Apple Dov'è** non siano disattivati nelle impostazioni **Filtra tipi di dispositivo**. Se il rilevamento automatico è disabilitato, AirGuard ti avviserà comunque se un AirTag di 2ª generazione ti segue, ma apparirà come un "Dispositivo Apple Dov'è".
+
 **Perché non posso ignorare alcuni dispositivi?**
 I dispositivi che cambiano frequentemente il loro identificatore non possono essere ignorati. Quando cambiano la loro chiave, il nostro sistema li tratta come nuovi dispositivi, attivando nuovi avvisi. Alcuni dispositivi (come i Samsung SmartTag) cambiano spesso le chiavi, ma puoi ignorare quelli che non cambiano (come Chipolo e Tile).

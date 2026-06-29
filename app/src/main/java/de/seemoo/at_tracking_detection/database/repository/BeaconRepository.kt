@@ -11,7 +11,11 @@ import javax.inject.Inject
 class BeaconRepository @Inject constructor(
     private val beaconDao: BeaconDao
 ) {
-    val allBeacons: List<Beacon> = beaconDao.getAllBeacons()
+    fun getBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<Beacon> =
+        beaconDao.getBeaconsInRange(from, to)
+
+    fun getEarliestAnyDate(): LocalDateTime? =
+        beaconDao.getEarliestAnyDate()?.let { LocalDateTime.parse(it) }
 
     val totalCount: Flow<Int> = beaconDao.getTotalCount()
 

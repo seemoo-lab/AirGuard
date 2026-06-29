@@ -1,6 +1,13 @@
 package de.seemoo.at_tracking_detection.database.daos
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
+import androidx.room.Transaction
+import androidx.room.Update
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.relations.DeviceBeaconNotification
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +30,7 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 ORDER BY hearted DESC, lastSeen DESC")
     fun getAllTrackingDevicesNotIgnoredSince(since: LocalDateTime): List<BaseDevice>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1 AND `ignore` == 0 AND safeTracker == 0")
     fun getAllTrackingDevicesNotIgnoredSinceCount(since: LocalDateTime): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 1")
@@ -34,6 +41,15 @@ interface DeviceDao {
 
     @Query("SELECT * FROM device WHERE `ignore` == 1 ORDER BY hearted DESC, lastSeen DESC")
     fun getIgnoredSync(): List<BaseDevice>
+
+    @Query("SELECT * FROM device ORDER BY hearted DESC, lastSeen DESC")
+    fun getAllSync(): List<BaseDevice>
+
+    @Query("SELECT DISTINCT d.* FROM device d INNER JOIN beacon b ON d.address = b.deviceAddress WHERE b.receivedAt >= :from AND b.receivedAt <= :to ORDER BY d.lastSeen DESC")
+    fun getDevicesForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<BaseDevice>
+
+    @Query("SELECT MIN(firstDiscovery) FROM device")
+    fun getEarliestDeviceDate(): String?
 
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")
     fun getByAddress(address: String): BaseDevice?
@@ -47,10 +63,10 @@ interface DeviceDao {
     @Query("SELECT COUNT(*) FROM device WHERE safeTracker == 0")
     fun getTotalCount(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND notificationSent == 0 AND safeTracker == 0")
+    @Query("SELECT COUNT(*) FROM device WHERE lastSeen >= :since AND safeTracker == 0")
     fun getCountNotTracking(since: LocalDateTime): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1")
+    @Query("SELECT COUNT(*) FROM device WHERE `ignore` == 1 AND safeTracker == 0")
     fun getCountIgnored(): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM device WHERE firstDiscovery >= :since AND safeTracker == 0")
@@ -139,6 +155,7 @@ interface DeviceDao {
     @Query("SELECT COUNT(DISTINCT device.address) FROM device INNER JOIN beacon ON device.address = beacon.deviceAddress WHERE beacon.locationId = :locationId AND beacon.receivedAt >= :since")
     fun getDeviceCountAtLocation(locationId: Int, since: LocalDateTime): Int
 
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM device INNER JOIN beacon ON device.address = beacon.deviceAddress WHERE beacon.locationId = :locationId AND beacon.receivedAt >= :since GROUP BY device.address ORDER BY MAX(beacon.receivedAt) DESC")
     fun getDevicesAtLocation(locationId: Int, since: LocalDateTime): List<BaseDevice>
 }

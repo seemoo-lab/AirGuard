@@ -124,7 +124,7 @@
     <string name="risk_level_medium">Средний риск</string>
     <string name="risk_level_high">Высокий риск</string>
     <string name="no_trackers_found">Слежки не было с: %s</string>
-    <string name="found_x_trackers">Обнаружено меток %d за последние %d дней(-я)</string>
+    <string name="found_x_trackers">Обнаружено меток %1$d за последние %2$d дней(-я)</string>
     <string name="last_scan_info">Последняя проверка: %s</string>
     <string name="last_discovery">В последний раз метка обнаружена %s</string>
     <string name="i_got_a_notification_what_should_i_do">Я получил уведомление. Что нужно предпринять?</string>
@@ -142,7 +142,7 @@
     <string name="filter_notified">распознанные метки</string>
     <string name="filter_title_device_attributes">Свойства устройства</string>
     <string name="filter_apply">Применить</string>
-    <string name="filter_from_until_text">с %s по %s</string>
+    <string name="filter_from_until_text">с %1$s по %2$s</string>
     <string name="filter_date_range_picker_title">Последнее обнаружение</string>
     <string name="dates_detected">Даты обнаружения</string>
     <string name="app_theme_dark">Тёмная</string>
@@ -272,6 +272,8 @@
     <string name="connection_state_content_description">Информация о статус подключения устройства</string>
     <string name="connection_state_unknown_explanation">Не получилось определить статус подключения устройства слежки</string>
     <string name="scan_accessibility">Запускает или останавливает сканирование</string>
+    <string name="scan_sort_accessibility">Сортировать результаты сканирования</string>
+    <string name="scan_sort_dialog_title">Сортировать по</string>
     <string name="scan_sorting_by_rssi">по уровню сигнала</string>
     <string name="scan_sorting_by_recently">по времени обнаружения</string>
     <string name="scan_sorting_by_address">по MAC адресам</string>
@@ -391,7 +393,7 @@
     <string name="export_trackers_detections">Обнаружений: %d</string>
     <string name="export_trackers_unique_locations">Уникальных местоположений: %d</string>
     <string name="export_trackers_time">Время: %s</string>
-    <string name="export_trackers_location">Местоположение: широта: %s, долгота: %s</string>
+    <string name="export_trackers_location">Местоположение: широта: %1$s, долгота: %2$s</string>
     <string name="export_trackers_map">Карта: %s</string>
     <string name="export_trackers_map_still_loading">Карта всё ещё загружается…</string>
     <string name="export_trackers_signal_strength">Уровень сигнала: %d</string>
@@ -400,7 +402,7 @@
     <string name="export_trackers_map_title">Карта:</string>
     <string name="export_trackers_detections_title">Эти метки были найдены в:</string>
     <string name="export_trackers_detections_title_continued">Эти метки были найдены в (продолжение):</string>
-    <string name="export_page_number">Страница %d/%d</string>
+    <string name="export_page_number">Страница %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Предупреждение: это срабатывание произошло на основе вероястностей. Оно может быть ложноположительным</string>
     <string name="export_trackers_no_internet">Не удалось загрузить карту. Пожалуйста, убедитесь, что с Интернетом всё в порядке</string>
     <string name="export_trackers_algo_warning_text">Это устройство было обнаружено алгоритмом, который может изредка ошибаться. Используйте этот документ с осторожностью</string>
@@ -456,8 +458,8 @@
         <item quantity="other">Откройте уведомление для подробностей. Трекер мог следовать за вами не менее %d минут.</item>
     </plurals>
     <string name="notification_title_base">Трекер может следить за вами</string>
-    <string name="notification_text_single">Откройте уведомление для подробностей. %s мог следовать за вами не менее %d минут.</string>
-    <string name="notification_text_multiple">Откройте уведомление для подробностей. %s могли следовать за вами не менее %d минут.</string>
+    <string name="notification_text_single">Откройте уведомление для подробностей. %1$s мог следовать за вами не менее %2$d минут.</string>
+    <string name="notification_text_multiple">Откройте уведомление для подробностей. %1$s могли следовать за вами не менее %2$d минут.</string>
     <string name="notification_title_vocal">%s может следить за вами</string>
     <string name="notification_title_consonant">%s может следить за вами</string>
     <string name="notification_title_multiple">%s могут следить за вами</string>
@@ -499,7 +501,10 @@
     <string name="forget_tracker_dialog_title">Забыть трекер?</string>
     <string name="forget_tracker_dialog_message">Эта операция удалит всю информацию об этом трекере. Вы уверены, что хотите продолжить?</string>
     <string name="forget_tracker_success">Трекер удален</string>
-
+    <string name="forget_trackers_dialog_title">Забыть трекеры?</string>
+    <string name="forget_trackers_dialog_message">Эта операция удалит всю информацию о %d выбранных трекерах. Это действие нельзя отменить. Вы уверены, что хотите продолжить?</string>
+    <string name="forget_trackers_success">Трекеры удалены</string>
+    <string name="selected_devices_count">%d выбрано</string>
     <string name="open_map_description">Открыть карту на весь экран</string>
     <string name="error_connection">Ошибка соединения</string>
     <string name="active">Активен</string>
@@ -511,6 +516,9 @@
     <string name="settings_use_dynamic_colors_title">Использовать Material You</string>
     <string name="settings_use_dynamic_colors_summary">Динамически подстраивает цвета приложения под ваши обои</string>
 
+    <string name="settings_auto_detect_device_types_title">Автоматическое определение типа трекера</string>
+    <string name="settings_auto_detect_device_types_summary">Автоматически подключаться к потенциальным трекерам для определения их точного типа во время ручного сканирования. Если эта функция отключена, AirGuard никогда не будет подключаться к трекеру без вашего запроса. Включение этой функции увеличит расход заряда батареи.</string>
+
     <string name="load_all_occurrences">Загрузить все совпадения</string>
     <string name="scroll_button">Прокручивает в начало или конец этого вида</string>
     <string name="empty_list_others">Устройства для выбранных фильтров не найдены. Вы можете изменить фильтры, нажав кнопку в левом верхнем углу, или показать все устройства.</string>
@@ -518,4 +526,32 @@
     <string name="safe_tracker_map_warning">Это безопасный трекер. Он в данный момент или недавно был подключен к устройству владельца. Безопасные трекеры не представляют для вас угрозы.</string>
     <string name="no_locations_yet_hint">Это устройство было обнаружено, но данные о местоположении еще не записаны. Данные о местоположении появятся здесь, если трекер будет замечен в допустимом месте.</string>
     <string name="safe_tracker_monitored_warning">Это безопасный трекер. Он в данный момент или недавно был подключен к устройству владельца. За ним временно ведется наблюдение, но он не представляет для вас угрозы.</string>
+    <string name="settings_raw_data_export_title">Экспорт необработанных данных</string>
+    <string name="settings_raw_data_export_summary">Экспортировать все собранные необработанные данные в виде CSV-файлов в ZIP-архиве</string>
+    <string name="raw_data_export_label">Экспорт необработанных данных</string>
+    <string name="raw_data_export_title">Экспорт необработанных данных</string>
+    <string name="raw_data_export_explanation">С помощью кнопки загрузки ниже вы можете экспортировать все необработанные данные, которые AirGuard собрал и сохранил локально на вашем устройстве. Экспорт содержит четыре CSV-файла, объединенные в ZIP-архив. Эти данные предназначены для экспертного анализа.</string>
+    <string name="raw_data_export_files_title">Экспортированные файлы</string>
+    <string name="raw_data_export_file_devices">devices.csv – обнаруженные Bluetooth-устройства</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – полученные BLE-рекламные пакеты</string>
+    <string name="raw_data_export_file_locations">locations.csv – GPS-местоположения, в которых были найдены маяки</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – уведомления, сгенерировавшие предупреждения о слежении</string>
+    <string name="raw_data_export_button">Скачать ZIP-экспорт</string>
+    <string name="raw_data_export_success">Данные успешно экспортированы</string>
+    <string name="raw_data_export_error">Ошибка при создании экспорта: %s</string>
+    <string name="raw_data_export_save_error">Ошибка при сохранении экспорта: %s</string>
+    <string name="raw_data_export_icon_description">Значок экспорта необработанных данных</string>
+    <string name="raw_data_export_time_range_title">Период времени</string>
+    <string name="raw_data_export_preset_3_days">Последние 3 дня</string>
+    <string name="raw_data_export_preset_7_days">Последние 7 дней</string>
+    <string name="raw_data_export_preset_14_days">Последние 14 дней</string>
+    <string name="raw_data_export_preset_month">Последний месяц</string>
+    <string name="raw_data_export_preset_all_time">За все время</string>
+    <string name="raw_data_export_from_hint">С</string>
+    <string name="raw_data_export_to_hint">По</string>
+    <string name="raw_data_export_select_start_date">Выберите дату начала</string>
+    <string name="raw_data_export_select_end_date">Выберите дату окончания</string>
+    <string name="raw_data_export_select_start_time">Выберите время начала</string>
+    <string name="raw_data_export_select_end_time">Выберите время окончания</string>
+    <string name="raw_data_export_range_error">Начало должно быть раньше конца</string>
 </resources>

@@ -213,7 +213,7 @@
     <string name="risk_level_high">Rischio alto</string>
 
     <string name="no_trackers_found">Nessun tracker trovato da: %s</string>
-    <string name="found_x_trackers">Rilevati %d tracker negli ultimi %d giorni</string>
+    <string name="found_x_trackers">Rilevati %1$d tracker negli ultimi %2$d giorni</string>
     <string name="last_scan_info">Ultima scansione: %s</string>
     <string name="last_discovery">Ultimo tracker scoperto alle %s</string>
 
@@ -242,7 +242,7 @@
     <string name="filter_notified">tracker identificati</string>
     <string name="filter_title_device_attributes">Attributi dispositivo</string>
     <string name="filter_apply">Applica</string>
-    <string name="filter_from_until_text">%s fino a %s</string>
+    <string name="filter_from_until_text">%1$s fino a %2$s</string>
     <string name="filter_date_range_picker_title">Ultimo avvistamento</string>
 
     <string name="app_theme_dark">Scuro</string>
@@ -359,6 +359,8 @@
     <string name="connection_state_unknown_explanation">Impossibile determinare lo stato di connessione del tracker</string>
 
     <string name="scan_accessibility">Avvia o arresta la scansione</string>
+    <string name="scan_sort_accessibility">Ordina i risultati della scansione</string>
+    <string name="scan_sort_dialog_title">Ordina per</string>
     <string name="scan_sorting_by_rssi">per intensità segnale</string>
     <string name="scan_sorting_by_recently">per rilevati di recente</string>
     <string name="scan_sorting_by_address">per indirizzo MAC</string>
@@ -503,7 +505,7 @@
     <string name="export_trackers_detections">Rilevamenti: %d</string>
     <string name="export_trackers_unique_locations">Posizioni uniche: %d</string>
     <string name="export_trackers_time">Ora: %s</string>
-    <string name="export_trackers_location">Posizione: Latitudine: %s, Longitudine: %s</string>
+    <string name="export_trackers_location">Posizione: Latitudine: %1$s, Longitudine: %2$s</string>
     <string name="export_trackers_map">Mappa: %s</string>
     <string name="export_trackers_map_still_loading">Mappa ancora in caricamento…</string>
     <string name="export_trackers_signal_strength">Intensità segnale: %d</string>
@@ -513,7 +515,7 @@
     <string name="export_trackers_detections_title">Questo tracker è stato trovato presso:</string>
     <string name="export_trackers_detections_title_continued">Questo tracker è stato trovato presso (continuazione):</string>
 
-    <string name="export_page_number">Pagina %d/%d</string>
+    <string name="export_page_number">Pagina %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Attenzione: questa voce è stata associata in base alle probabilità. Potrebbe trattarsi di un falso positivo.</string>
     <string name="export_trackers_no_internet">Impossibile caricare la mappa. Assicurati di avere una connessione Internet attiva.</string>
 
@@ -590,8 +592,8 @@
         <item quantity="many">Apri la notifica per maggiori informazioni. Un tracker potrebbe averti seguito per almeno %d minuti.</item>
     </plurals>
     <string name="notification_title_base">Un tracker potrebbe seguirti</string>
-    <string name="notification_text_single">Apri la notifica per maggiori informazioni. Il %s potrebbe averti seguito per almeno %d minuti.</string>
-    <string name="notification_text_multiple">Apri la notifica per maggiori informazioni. I %s potrebbero averti seguito per almeno %d minuti.</string>
+    <string name="notification_text_single">Apri la notifica per maggiori informazioni. Il %1$s potrebbe averti seguito per almeno %2$d minuti.</string>
+    <string name="notification_text_multiple">Apri la notifica per maggiori informazioni. I %1$s potrebbero averti seguito per almeno %2$d minuti.</string>
     <string name="notification_title_vocal">%s potrebbe seguirti</string>
     <string name="notification_title_consonant">Un %s potrebbe seguirti</string>
     <string name="notification_title_multiple">%s potrebbero seguirti</string>
@@ -630,7 +632,11 @@
     <string name="forget_tracker">Dimentica tracker</string>
     <string name="forget_tracker_dialog_title">Dimenticare tracker?</string>
     <string name="forget_tracker_dialog_message">Questa operazione eliminerà tutte le informazioni su questo tracker. Sei sicuro di voler continuare?</string>
-    <string name="forget_tracker_success">Tracker eliminato</string>
+    <string name="forget_tracker_success">Tracker rimosso</string>
+    <string name="forget_trackers_dialog_title">Dimenticare i tracker?</string>
+    <string name="forget_trackers_dialog_message">Questa operazione eliminerà tutte le informazioni sui %d tracker selezionati. L\'azione è irreversibile. Sei sicuro di voler continuare?</string>
+    <string name="forget_trackers_success">Tracker rimossi</string>
+    <string name="selected_devices_count">%d selezionati</string>
 
     <string name="open_map_description">Apri mappa a schermo intero</string>
     <string name="error_connection">Errore di connessione</string>
@@ -643,6 +649,9 @@
     <string name="settings_use_dynamic_colors_title">Usa Material You</string>
     <string name="settings_use_dynamic_colors_summary">Adatta dinamicamente i colori dell\'app allo sfondo</string>
 
+    <string name="settings_auto_detect_device_types_title">Rilevamento automatico del tipo di tracker</string>
+    <string name="settings_auto_detect_device_types_summary">Connettiti automaticamente ai potenziali tracker per determinare il loro tipo esatto durante la scansione manuale. Se questa opzione è disattivata, AirGuard non si connetterà mai a un tracker senza la tua richiesta. L\'attivazione aumenterà il consumo della batteria.</string>
+
     <string name="load_all_occurrences">Carica tutte le occorrenze</string>
     <string name="scroll_button">Scorre fino all\'inizio o alla fine di questa vista</string>
     <string name="empty_list_others">Non ci sono dispositivi identificati per i filtri selezionati. Puoi cambiare i filtri cliccando sul pulsante nell\'angolo in alto a sinistra o visualizzando tutti i dispositivi.</string>
@@ -651,4 +660,32 @@
     <string name="safe_tracker_map_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. I tracker sicuri non rappresentano una minaccia per te.</string>
     <string name="no_locations_yet_hint">Questo dispositivo è stato rilevato, ma non sono ancora stati registrati dati sulla sua posizione. I dati sulla posizione appariranno qui se il tracker viene osservato in una posizione valida.</string>
     <string name="safe_tracker_monitored_warning">Questo è un tracker sicuro. È attualmente o è stato recentemente collegato al dispositivo del suo proprietario. È temporaneamente monitorato, ma non rappresenta una minaccia per te.</string>
+    <string name="settings_raw_data_export_title">Esporta dati grezzi</string>
+    <string name="settings_raw_data_export_summary">Esporta tutti i dati grezzi raccolti come file CSV in un archivio ZIP</string>
+    <string name="raw_data_export_label">Esportazione dati grezzi</string>
+    <string name="raw_data_export_title">Esporta dati grezzi</string>
+    <string name="raw_data_export_explanation">Usando il pulsante di download qui sotto, puoi esportare tutti i dati grezzi che AirGuard ha raccolto e salvato localmente sul tuo dispositivo. L’esportazione contiene quattro file CSV raggruppati in un archivio ZIP. Questi dati sono destinati all’analisi da parte di esperti.</string>
+    <string name="raw_data_export_files_title">File esportati</string>
+    <string name="raw_data_export_file_devices">devices.csv – dispositivi Bluetooth rilevati</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – pacchetti pubblicitari BLE ricevuti</string>
+    <string name="raw_data_export_file_locations">locations.csv – posizioni GPS in cui sono stati trovati i beacon</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – notifiche che hanno generato avvisi di tracciamento</string>
+    <string name="raw_data_export_button">Scarica esportazione ZIP</string>
+    <string name="raw_data_export_success">Dati esportati con successo</string>
+    <string name="raw_data_export_error">Errore durante la generazione dell’esportazione: %s</string>
+    <string name="raw_data_export_save_error">Errore durante il salvataggio dell’esportazione: %s</string>
+    <string name="raw_data_export_icon_description">Icona di esportazione dei dati grezzi</string>
+    <string name="raw_data_export_time_range_title">Intervallo di tempo</string>
+    <string name="raw_data_export_preset_3_days">Ultimi 3 giorni</string>
+    <string name="raw_data_export_preset_7_days">Ultimi 7 giorni</string>
+    <string name="raw_data_export_preset_14_days">Ultimi 14 giorni</string>
+    <string name="raw_data_export_preset_month">Ultimo mese</string>
+    <string name="raw_data_export_preset_all_time">Sempre</string>
+    <string name="raw_data_export_from_hint">Da</string>
+    <string name="raw_data_export_to_hint">A</string>
+    <string name="raw_data_export_select_start_date">Seleziona data di inizio</string>
+    <string name="raw_data_export_select_end_date">Seleziona data di fine</string>
+    <string name="raw_data_export_select_start_time">Seleziona ora di inizio</string>
+    <string name="raw_data_export_select_end_time">Seleziona ora di fine</string>
+    <string name="raw_data_export_range_error">L’inizio deve essere precedente alla fine</string>
 </resources>

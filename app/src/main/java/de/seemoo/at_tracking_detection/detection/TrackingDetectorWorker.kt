@@ -38,7 +38,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
         val ignoredDevices = deviceRepository.ignoredDevicesSync
 
         // All beacons in the last 14 days for devices detected during the last scan
-        val latestBeaconsPerDevice = getLatestBeaconsPerDevice()
+        val latestBeaconsPerDevice = getLatestBeaconsPerDevice(beaconRepository)
         // remove devices which are ignored
         val cleanedBeaconsPerDevice = latestBeaconsPerDevice.filterKeys { address ->
             !ignoredDevices.map { it.address }.contains(address)
@@ -50,7 +50,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
             val device = deviceRepository.getDevice(mapEntry.key) ?: return@forEach
             val useLocation = SharedPrefs.useLocationInTrackingDetection
 
-            if (throwNotification(device, useLocation)) {
+            if (throwNotification(device, useLocation, beaconRepository)) {
                 // Send Notification
                 Timber.d("Conditions for device ${device.address} being a tracking device are true... Sending Notification!")
                 notificationService.sendTrackingNotification(device)
@@ -66,7 +66,7 @@ class TrackingDetectorWorker @AssistedInject constructor(
         Timber.d("Tracking detector worker finished. Sent $notificationsSent notifications")
 
         try {
-            checkTooManyNotificationsHint()
+            checkTooManyNotificationsHint(notificationRepository)
         } catch (e: Exception) {
             Timber.e("Checking too many notifications hint failed: $e")
         }
@@ -78,86 +78,97 @@ class TrackingDetectorWorker @AssistedInject constructor(
         )
     }
 
-    /**
-     * Retrieves the devices detected during the last scan (last 15min)
-     * @return a HashMap with the device address as key and the list of beacons as value (all beacons in the relevant interval)
-     */
-    private fun getLatestBeaconsPerDevice(): ConcurrentHashMap<String, List<Beacon>> {
-        val beaconsPerDevice: ConcurrentHashMap<String, List<Beacon>> = ConcurrentHashMap()
-        val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
-        //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
-        beaconRepository.getLatestBeacons(since).forEach {
-            // Only retrieve the last two weeks since they are only relevant for tracking
-            val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
-            beaconsPerDevice[it.deviceAddress] = beacons
-        }
-        return beaconsPerDevice
-    }
-
-    private fun throwNotification(device: BaseDevice, useLocation: Boolean): Boolean {
-        val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)
-        val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
-
-        val deviceIdentifier: String = device.address
-        val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
-        var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(relevantHours)
-
-        val lastNotificationSent = device.lastNotificationSent
-        if (lastNotificationSent != null && lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
-            considerDetectionEventSince = lastNotificationSent
+    companion object {
+        /**
+         * Retrieves the devices detected during the last scan (last 15min)
+         * @return a HashMap with the device address as key and the list of beacons as value (all beacons in the relevant interval)
+         */
+        private fun getLatestBeaconsPerDevice(beaconRepository: BeaconRepository): ConcurrentHashMap<String, List<Beacon>> {
+            val beaconsPerDevice: ConcurrentHashMap<String, List<Beacon>> = ConcurrentHashMap()
+            val since = SharedPrefs.lastScanDate?.minusMinutes(15) ?: LocalDateTime.now().minusMinutes(30)
+            //Gets all beacons found in the last scan. Then we get all beacons for the device that emitted one of those
+            beaconRepository.getLatestBeacons(since).forEach {
+                // Only retrieve the last two weeks since they are only relevant for tracking
+                val beacons = beaconRepository.getDeviceBeaconsSince(it.deviceAddress, RiskLevelEvaluator.relevantTrackingDateForRiskCalculation)
+                beaconsPerDevice[it.deviceAddress] = beacons
+            }
+            return beaconsPerDevice
         }
 
-        val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)
+        private fun throwNotification(device: BaseDevice, useLocation: Boolean, beaconRepository: BeaconRepository): Boolean {
+            val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)
+            val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
 
-        val detectionEventsSorted: List<Beacon> = detectionEvents.sortedBy { it.receivedAt }
-        val earliestDetectionEvent: Beacon = detectionEventsSorted.firstOrNull() ?: return false
-        val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, LocalDateTime.now()).toMinutes()
+            val deviceIdentifier: String = device.address
+            val relevantHours: Long = device.deviceType?.getNumberOfHoursToBeConsideredForTrackingDetection() ?: RiskLevelEvaluator.RELEVANT_HOURS_TRACKING
+            var considerDetectionEventSince: LocalDateTime = RiskLevelEvaluator.getRelevantTrackingDateForTrackingDetection(relevantHours)
 
-        val filteredDetectionEvents = detectionEvents.filter { it.locationId != null && it.locationId != 0 }
-        val distinctDetectionEvent = filteredDetectionEvents.map { it.locationId }.distinct()
-        val locations = distinctDetectionEvent.size
+            val lastNotificationSent = device.lastNotificationSent
+            if (lastNotificationSent != null) {
+                // For subsequent notifications, enforce a minimum wait time between notifications (for the same tracker)
+                val minHoursBetweenNotifications: Long = RiskLevelEvaluator.getHoursBetweenNotifications()
+                if (Duration.between(lastNotificationSent, LocalDateTime.now()).toHours() < minHoursBetweenNotifications) {
+                    return false
+                }
+                if (lastNotificationSent > considerDetectionEventSince && lastNotificationSent < LocalDateTime.now()) {
+                    considerDetectionEventSince = lastNotificationSent
+                }
+            }
 
-        if (timeFollowing >= minTrackedTime) {
-            if (locations >= minNumberOfLocations || !useLocation) {
-                return true
+            val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)
+
+            val detectionEventsSorted: List<Beacon> = detectionEvents.sortedBy { it.receivedAt }
+            val earliestDetectionEvent: Beacon = detectionEventsSorted.firstOrNull() ?: return false
+            val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, LocalDateTime.now()).toMinutes()
+
+            val filteredDetectionEvents = detectionEvents.filter { it.locationId != null && it.locationId != 0 }
+            val distinctDetectionEvent = filteredDetectionEvents.map { it.locationId }.distinct()
+            val locations = distinctDetectionEvent.size
+
+            if (timeFollowing >= minTrackedTime) {
+                if (locations >= minNumberOfLocations || !useLocation) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun shouldThrowNotification(device: BaseDevice, beaconRepository: BeaconRepository): Boolean {
+            return throwNotification(device, SharedPrefs.useLocationInTrackingDetection, beaconRepository)
+        }
+
+        /**
+         * Checks if there are too many notifications in the last 24 hours and sets a hint in SharedPrefs.
+         * Conditions:
+         * - At least x notifications in the last 24 hours OR
+         * - At least y notifications for the same device in the last 24 hours
+         */
+        private fun checkTooManyNotificationsHint(
+            notificationRepository: NotificationRepository,
+            notificationsLastDay: Int = 5,
+            notificationsPerDeviceLastDay: Int = 3
+        ) {
+            val since = LocalDateTime.now().minusHours(24)
+            val recentNotifications = notificationRepository.notificationsSince(since)
+
+            // Check if there are at least x notifications in total
+            val totalNotifications = recentNotifications.size
+            if (totalNotifications == notificationsLastDay) {
+                SharedPrefs.showTooManyNotificationsHint = true
+                // TODO: Throw Notification
+                return
+            }
+
+            // Check if there are at least y notifications for the same device
+            val notificationsByDevice = recentNotifications.groupBy { it.deviceAddress }
+            val maxNotificationsForDevice = notificationsByDevice.values.maxOfOrNull { it.size } ?: 0
+            if (maxNotificationsForDevice == notificationsPerDeviceLastDay) {
+                SharedPrefs.showTooManyNotificationsHint = true
+                // TODO: Throw Notification
+                return
             }
         }
-        return false
-    }
 
-
-    /**
-     * Checks if there are too many notifications in the last 24 hours and sets a hint in SharedPrefs.
-     * Conditions:
-     * - At least x notifications in the last 24 hours OR
-     * - At least y notifications for the same device in the last 24 hours
-     */
-    private fun checkTooManyNotificationsHint(
-        notificationsLastDay: Int = 5,
-        notificationsPerDeviceLastDay: Int = 3
-    ) {
-        val since = LocalDateTime.now().minusHours(24)
-        val recentNotifications = notificationRepository.notificationsSince(since)
-
-        // Check if there are at least x notifications in total
-        val totalNotifications = recentNotifications.size
-        if (totalNotifications == notificationsLastDay) {
-            SharedPrefs.showTooManyNotificationsHint = true
-            // TODO: Throw Notification
-            return
-        }
-
-        // Check if there are at least y notifications for the same device
-        val notificationsByDevice = recentNotifications.groupBy { it.deviceAddress }
-        val maxNotificationsForDevice = notificationsByDevice.values.maxOfOrNull { it.size } ?: 0
-        if (maxNotificationsForDevice == notificationsPerDeviceLastDay) {
-            SharedPrefs.showTooManyNotificationsHint = true
-            // TODO: Throw Notification
-            return
-        }
-    }
-
-    companion object {
         fun getLocation(latitude: Double, longitude: Double): Location {
             val location = Location(LocationManager.GPS_PROVIDER)
             location.latitude = latitude
@@ -165,5 +176,4 @@ class TrackingDetectorWorker @AssistedInject constructor(
             return location
         }
     }
-
 }

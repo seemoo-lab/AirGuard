@@ -174,7 +174,7 @@
     <string name="risk_level_medium">Medium risk</string>
     <string name="risk_level_high">High risk</string>
     <string name="no_trackers_found">No trackers found since: %s</string>
-    <string name="found_x_trackers">Detected %d tracker during the last %d days</string>
+    <string name="found_x_trackers">Detected %1$d tracker during the last %2$d days</string>
     <string name="last_scan_info">Last scan: %s</string>
     <string name="last_discovery">Last tracker discovered at %s</string>
     <string name="how_does_airguard_work">How does AirGuard work?</string>
@@ -205,7 +205,7 @@
     <string name="filter_notified">identified trackers</string>
     <string name="filter_title_device_attributes">Device Attributes</string>
     <string name="filter_apply">Apply</string>
-    <string name="filter_from_until_text">%s until %s</string>
+    <string name="filter_from_until_text">%1$s until %2$s</string>
     <string name="filter_date_range_picker_title">Last Seen</string>
     <string name="app_theme_dark">Dark</string>
     <string name="app_theme_light">Light</string>
@@ -300,6 +300,8 @@
     <string name="connection_state_unknown_explanation">Connection state of the tracker cannot be determined</string>
 
     <string name="scan_accessibility">Starts or Stops the Scan</string>
+    <string name="scan_sort_accessibility">Sort scan results</string>
+    <string name="scan_sort_dialog_title">Sort by</string>
     <string name="scan_sorting_by_rssi">by Signal Strength</string>
     <string name="scan_sorting_by_recently">by recently detected</string>
     <string name="scan_sorting_by_address">by MAC-Address</string>
@@ -438,6 +440,36 @@
     <string name="right">Right</string>
 
     <string name="export_trackers_label">Export Trackers</string>
+
+    <!-- Raw Data Export -->
+    <string name="settings_raw_data_export_title">Export Raw Data</string>
+    <string name="settings_raw_data_export_summary">Export all collected raw data as CSV files in a ZIP archive</string>
+    <string name="raw_data_export_label">Raw Data Export</string>
+    <string name="raw_data_export_title">Export Raw Data</string>
+    <string name="raw_data_export_explanation">Using the download button below, you can export all the raw data AirGuard has collected and stored locally on your device. The export contains four CSV files bundled in a ZIP archive. This data is intended for expert analysis.</string>
+    <string name="raw_data_export_files_title">Exported files</string>
+    <string name="raw_data_export_file_devices">devices.csv – discovered Bluetooth devices</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – received BLE advertisement packets</string>
+    <string name="raw_data_export_file_locations">locations.csv – GPS locations at which beacons were found</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – notifications which generated tracking alerts</string>
+    <string name="raw_data_export_button">Download ZIP Export</string>
+    <string name="raw_data_export_success">Data exported successfully</string>
+    <string name="raw_data_export_error">Error generating export: %s</string>
+    <string name="raw_data_export_save_error">Error saving export: %s</string>
+    <string name="raw_data_export_icon_description">Raw data export icon</string>
+    <string name="raw_data_export_time_range_title">Time Range</string>
+    <string name="raw_data_export_preset_3_days">Last 3 days</string>
+    <string name="raw_data_export_preset_7_days">Last 7 days</string>
+    <string name="raw_data_export_preset_14_days">Last 14 days</string>
+    <string name="raw_data_export_preset_month">Last month</string>
+    <string name="raw_data_export_preset_all_time">All time</string>
+    <string name="raw_data_export_from_hint">From</string>
+    <string name="raw_data_export_to_hint">To</string>
+    <string name="raw_data_export_select_start_date">Select start date</string>
+    <string name="raw_data_export_select_end_date">Select end date</string>
+    <string name="raw_data_export_select_start_time">Select start time</string>
+    <string name="raw_data_export_select_end_time">Select end time</string>
+    <string name="raw_data_export_range_error">Start must be before end</string>
     <string name="export_trackers_explanation">By clicking the button below, you will be able to create a pdf document that contains all trackers that have been identified as following you for a longer time.</string>
     <string name="export_trackers_create_document">Create document</string>
     <string name="export_trackers_not_following">The tracker has not been following you</string>
@@ -450,7 +482,7 @@
     <string name="export_trackers_detections">Detections: %d</string>
     <string name="export_trackers_unique_locations">Unique Locations: %d</string>
     <string name="export_trackers_time">Time: %s"</string>
-    <string name="export_trackers_location">Location: Latitude: %s, Longitude: %s"</string>
+    <string name="export_trackers_location">Location: Latitude: %1$s, Longitude: %2$s"</string>
     <string name="export_trackers_map">Map: %s</string>
     <string name="export_trackers_map_still_loading">Map still loading…</string>
     <string name="export_trackers_signal_strength">Signal Strength: %d"</string>
@@ -459,7 +491,7 @@
     <string name="export_trackers_map_title">Map:</string>
     <string name="export_trackers_detections_title">This tracker was found at:</string>
     <string name="export_trackers_detections_title_continued">This tracker was found at (continuation):</string>
-    <string name="export_page_number">Page %d/%d</string>
+    <string name="export_page_number">Page %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Warning: This Entry was matched based on likelihoods. This might be false positive.</string>
     <string name="export_trackers_no_internet">The map could not load. Please make sure you have an active internet connection.</string>
 
@@ -521,8 +553,8 @@
         <item quantity="other">Open the notification to get more info. A tracker could have followed you for at least %d minutes.</item>
     </plurals>
     <string name="notification_title_base">A tracker could be following you</string>
-    <string name="notification_text_single">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
-    <string name="notification_text_multiple">Open the notification to get more info. The %s could have followed you for at least %d minutes.</string>
+    <string name="notification_text_single">Open the notification to get more info. The %1$s could have followed you for at least %2$d minutes.</string>
+    <string name="notification_text_multiple">Open the notification to get more info. The %1$s could have followed you for at least %2$d minutes.</string>
     <string name="notification_title_vocal">%s might follow you</string>
     <string name="notification_title_consonant">A %s might follow you</string>
     <string name="notification_title_multiple">%s might follow you</string>
@@ -563,6 +595,10 @@
     <string name="forget_tracker_dialog_title">Forget tracker?</string>
     <string name="forget_tracker_dialog_message">This operation will delete all information about this tracker. Are you sure you want to continue?</string>
     <string name="forget_tracker_success">Tracker deleted</string>
+    <string name="forget_trackers_dialog_title">Forget trackers?</string>
+    <string name="forget_trackers_dialog_message">This operation will delete all information about the %d selected trackers. This cannot be undone. Are you sure you want to continue?</string>
+    <string name="forget_trackers_success">Trackers deleted</string>
+    <string name="selected_devices_count">%d selected</string>
 
     <string name="open_map_description">Open full screen map</string>
     <string name="error_connection">Connection error</string>
@@ -574,6 +610,9 @@
 
     <string name="settings_use_dynamic_colors_title">Use Material You</string>
     <string name="settings_use_dynamic_colors_summary">Matches the app colors dynamically to your wallpaper</string>
+
+    <string name="settings_auto_detect_device_types_title">Automatic tracker detection</string>
+    <string name="settings_auto_detect_device_types_summary">Automatically connect to potential trackers to determine their exact type during manual scan. If this is turned off then AirGuard will never connect to a tracker without your request. Turning this on will increase battery usage.</string>
 
     <string name="load_all_occurrences">Load all occurrences</string>
     <string name="scroll_button">Scrolls to the top or bottom of this view</string>

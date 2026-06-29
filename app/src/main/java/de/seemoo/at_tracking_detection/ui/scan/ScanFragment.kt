@@ -21,19 +21,21 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Scan
-import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.getScanMode
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -51,6 +53,12 @@ class ScanFragment : Fragment() {
             ?: error("ATTrackingDetectionApplication not initialized")
     private var scanId: Long = 0
     private var hasActiveScan = false
+
+    // Automatic Detection of Devices / Subdevices through connection
+    // Tracks addresses already enqueued
+    private val detectionAttempted: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    // Detection Queue
+    private val detectionQueue = Channel<ScanResultWrapper>(Channel.UNLIMITED)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,6 +106,9 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Start the sequential detection queue processor
+        startDetectionQueueProcessor()
+
         // Handle Edge-to-Edge padding for include views
         val emptyScanExplanation = view.findViewById<View>(R.id.include_scan_empty_explanation)
         val bluetoothDisabled = view.findViewById<View>(R.id.include_bluetooth_disabled)
@@ -138,6 +149,37 @@ class ScanFragment : Fragment() {
                 stopBluetoothScan()
             }
         }
+
+        view.findViewById<FloatingActionButton>(R.id.button_sort_scan).setOnClickListener {
+            showSortDialog()
+        }
+    }
+
+    private fun showSortDialog() {
+        val options = arrayOf(
+            getString(R.string.scan_sorting_by_recently),
+            getString(R.string.scan_sorting_by_name),
+            getString(R.string.scan_sorting_by_rssi)
+        )
+        val currentIndex = when (scanViewModel.sortOrder.value) {
+            ScanSortOrder.BY_APPEARANCE -> 0
+            ScanSortOrder.BY_NAME -> 1
+            ScanSortOrder.BY_SIGNAL_STRENGTH -> 2
+            null -> 0
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.scan_sort_dialog_title)
+            .setSingleChoiceItems(options, currentIndex) { dialog, which ->
+                val order = when (which) {
+                    0 -> ScanSortOrder.BY_APPEARANCE
+                    1 -> ScanSortOrder.BY_NAME
+                    2 -> ScanSortOrder.BY_SIGNAL_STRENGTH
+                    else -> ScanSortOrder.BY_APPEARANCE
+                }
+                scanViewModel.setSortOrder(order)
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onStart() {
@@ -162,7 +204,16 @@ class ScanFragment : Fragment() {
             if (SharedPrefs.showSamsungAndroid15BugNotification) {
                 SharedPrefs.showSamsungAndroid15BugNotification = false
             }
-            result?.let { scanViewModel.addScanResult(it) }
+            result?.let { scanResult ->
+                val wrapper = scanViewModel.addScanResult(scanResult)
+                // Enqueue for GATT subtype detection (when enabled)
+                if (SharedPrefs.autoDetectDeviceTypes) {
+                    if (DeviceSubTypeDetector.needsDetection(wrapper) && detectionAttempted.add(wrapper.uniqueIdentifier)) {
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.QUEUED
+                        detectionQueue.trySend(wrapper)
+                    }
+                }
+            }
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -181,6 +232,9 @@ class ScanFragment : Fragment() {
         if (!hasActiveScan) {
             createNewScanRecord()
             hasActiveScan = true
+
+            // For connection to device Reset detection state so every new scan session starts fresh
+            detectionAttempted.clear()
         }
 
         if (!BLEScanner.isScanning) {
@@ -260,11 +314,46 @@ class ScanFragment : Fragment() {
         }
     }
 
+    private fun startDetectionQueueProcessor() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (wrapper in detectionQueue) {
+                if (!SharedPrefs.autoDetectDeviceTypes) continue
+                try {
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                    if (deviceRepository != null) {
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.CONNECTING
+                        refreshAdapterItem(wrapper.uniqueIdentifier)
+                        DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
+                        refreshAdapterItem(wrapper.uniqueIdentifier)
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    // In case of error: simply set to Idle (aka no shimmering animation)
+                    wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
+                    refreshAdapterItem(wrapper.uniqueIdentifier)
+                }
+            }
+        }
+    }
+
+    // Post update on main thread if device has new values due to GATT connection
+    private fun refreshAdapterItem(uid: String) {
+        Handler(Looper.getMainLooper()).post {
+            try {
+                val highPos = bluetoothDeviceAdapterHighRisk.currentList
+                    .indexOfFirst { it.uniqueIdentifier == uid }
+                if (highPos >= 0) bluetoothDeviceAdapterHighRisk.notifyItemChanged(highPos)
+
+                val lowPos = bluetoothDeviceAdapterLowRisk.currentList
+                    .indexOfFirst { it.uniqueIdentifier == uid }
+                if (lowPos >= 0) bluetoothDeviceAdapterLowRisk.notifyItemChanged(lowPos)
+            } catch (_: Exception) { /* ignore */ }
+        }
+    }
+
     companion object {
         private const val SCAN_DURATION = 60_000L
-        val samsungSubDeviceTypeMap: MutableMap<String, SamsungTrackerType> = ConcurrentHashMap()
-        val googleSubDeviceTypeMap: MutableMap<String, GoogleFindMyNetworkType> = ConcurrentHashMap()
-        val googleExactTagDeterminedMap: MutableMap<String, Boolean> = ConcurrentHashMap()
-        val deviceNameMap: MutableMap<String, String> = ConcurrentHashMap()
     }
 }

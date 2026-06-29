@@ -67,5 +67,8 @@ Without location access, the app relies on Bluetooth scans alone. This can lead 
 **Can I ignore or label my own trackers?**
 Currently, you can only ignore Tile brand trackers due to technical limitations. You can label trackers but be aware that the same tracker can change its id and will be seen as a new tracker. We recommend naming them just for identifying them later.
 
+**How are AirTags (2nd Generation) detected?**
+AirTags of the 2nd Generation are indistinguishable from other Apple Find My devices through simple observation. To identify them as AirTags, AirGuard must connect to the tracker. For automatic detection, ensure that the **Automatic tracker detection** setting is on and that **Apple FindMy Devices** are not disabled in the **Filter out device types** settings. If automatic detection is disabled, AirGuard will still notify you if an AirTag 2nd Gen follows you, but it will appear as an "Apple FindMy Device".
+
 **Why can't I ignore some devices?**
 Devices that frequently change their identifier can't be ignored. When they change their key, our system treats them as new devices, triggering new alerts. Some devices (like Samsung SmartTags) change keys often, but you can ignore non-changing ones (like Chipolos and Tiles).

@@ -21,7 +21,6 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
-import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindMyMobile
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
@@ -30,6 +29,7 @@ import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.Utility.LocationLogger
+import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import de.seemoo.at_tracking_detection.util.ble.ScanOrchestrator
 import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.util.risk.RiskLevelEvaluator
@@ -42,8 +42,10 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
 
 object BackgroundBluetoothScanner {
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -131,19 +133,23 @@ object BackgroundBluetoothScanner {
         try {
             val bluetoothManager =
                 applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            bluetoothAdapter = bluetoothManager.adapter
-            if (bluetoothAdapter == null) {
+            val adapter = bluetoothManager.adapter
+            bluetoothAdapter = adapter
+            if (adapter == null) {
                 Timber.e("BluetoothAdapter is null, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (!bluetoothAdapter!!.isEnabled) {
+            } else if (!adapter.isEnabled) {
                 Timber.e("Bluetooth is disabled, cannot perform scan.")
                 return BackgroundScanResults(0, 0, 0, true)
-            } else if (bluetoothAdapter!!.bluetoothLeScanner == null) {
-                Timber.e("BLE is not supported on this device.")
-                return BackgroundScanResults(0, 0, 0, true)
+            } else {
+                val scanner = try { adapter.bluetoothLeScanner } catch (_: Throwable) { null }
+                if (scanner == null) {
+                    Timber.e("BLE is not supported on this device.")
+                    return BackgroundScanResults(0, 0, 0, true)
+                }
             }
-        } catch (e: Throwable) {
-            Timber.e("BluetoothAdapter not found or BLE not supported!")
+        } catch (t: Throwable) {
+            Timber.e(t, "BluetoothAdapter not found or BLE not supported!")
             return BackgroundScanResults(0, 0, 0, true)
         }
 
@@ -202,7 +208,7 @@ object BackgroundBluetoothScanner {
         }
 
         val scanDuration: Long = getScanDuration()
-        delay(scanDuration)
+        delay(scanDuration.milliseconds)
 
         // Stop scan via orchestrator
         ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
@@ -231,10 +237,24 @@ object BackgroundBluetoothScanner {
 
         val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
 
+        // Capture strings before insertion
+        // they are still needed after the dictionary is cleared to free memory
+        val deviceCount = scanResultDictionary.size
+        val debugAddresses = if (BuildConfig.DEBUG) {
+            scanResultDictionary.keys.joinToString(separator = ",")
+        } else {
+            ""
+        }
+        val debugTypes = if (BuildConfig.DEBUG) {
+            scanResultDictionary.values.map { it.wrappedScanResult.deviceType }.toSet().joinToString(separator = ",")
+        } else {
+            ""
+        }
+
         //Adding all scan results to the database after the scan has finished
         scanResultDictionary.forEach { (_, discoveredDevice) ->
             val deviceType = discoveredDevice.wrappedScanResult.deviceType
-            val skipDevice = Utility.getSkipDevice(wrappedScanResult = discoveredDevice.wrappedScanResult)
+            val skipDevice = Utility.getSkipDevice(deviceType)
 
             if (deviceType in validDeviceTypes && !skipDevice) {
                 insertScanResult(
@@ -248,13 +268,42 @@ object BackgroundBluetoothScanner {
             }
         }
 
+        // Identify if a GATT connection should happen
+        // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
+        if (SharedPrefs.autoDetectDeviceTypes) {
+            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+            if (deviceRepository != null && beaconRepository != null) {
+                // Determine which devices would trigger a notification
+                scanResultDictionary.values
+                    .map { it.wrappedScanResult }
+                    .filter { wrapper ->
+                        val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
+                        device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                    }
+                    .forEach { wrapper ->
+                        if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                            Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
+                            try {
+                                DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                            } catch (e: Exception) {
+                                Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
+                            }
+                        }
+                    }
+            }
+        }
+
+        // Optimization: Release all ScanResultWrapper objects after insertion to free memory
+        scanResultDictionary.clear()
+
         SharedPrefs.lastScanDate = LocalDateTime.now()
         SharedPrefs.isScanningInBackground = false
         val scan = scanRepository.scanWithId(scanId.toInt())
         if (scan != null) {
             scan.endDate = LocalDateTime.now()
             scan.duration = scanDuration.toInt() / 1000
-            scan.noDevicesFound = scanResultDictionary.size
+            scan.noDevicesFound = deviceCount
 
             if (BuildConfig.DEBUG) {
                 val (dbLocation, dbLocationWasNew) = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
@@ -263,8 +312,8 @@ object BackgroundBluetoothScanner {
                     scan.locationId = dbLocation?.locationId
                 }
                 scan.locationDeg = "${location?.longitude},${location?.latitude}"
-                scan.devicesAddressesFound = scanResultDictionary.keys.joinToString(separator = ",")
-                scan.devicesTypesFound = scanResultDictionary.values.map{it.wrappedScanResult.deviceType}.toSet().joinToString(separator = ",")
+                scan.devicesAddressesFound = debugAddresses
+                scan.devicesTypesFound = debugTypes
             }
             scanRepository.update(scan)
         }
@@ -280,7 +329,7 @@ object BackgroundBluetoothScanner {
         return BackgroundScanResults(
             duration = scanDuration,
             scanMode = scanMode,
-            numberDevicesFound = scanResultDictionary.size,
+            numberDevicesFound = deviceCount,
             failed = false
         )
     }
@@ -288,9 +337,11 @@ object BackgroundBluetoothScanner {
     private val leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, scanResult: ScanResult) {
             super.onScanResult(callbackType, scanResult)
+            // ScanResultWrapper pre-computes all fields (delete raw ScanResult to free memory asap)
             val wrappedScanResult = ScanResultWrapper(scanResult)
             SharedPrefs.showSamsungAndroid15BugNotification = false
             SharedPrefs.showGenericBluetoothBugNotification = false
+
             //Checks if the device has been found already
             if (!scanResultDictionary.containsKey(wrappedScanResult.uniqueIdentifier)) {
                 Timber.d("Found ${wrappedScanResult.uniqueIdentifier} at ${LocalDateTime.now()}")
@@ -419,7 +470,11 @@ object BackgroundBluetoothScanner {
 
                 // For 15 minute algorithm
                 var overrideIdentifier: String? = null
-                if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm){
+                if (
+                    wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState &&
+                    wrappedScanResult.deviceType in DeviceManager.savedDeviceTypesWith15MinuteAlgorithm &&
+                    wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm)
+                {
                     Timber.d("Device ${wrappedScanResult.uniqueIdentifier} ${wrappedScanResult.deviceType} ${wrappedScanResult.connectionState} is in a saved connection state for the 15 Minute Algorithm!")
                     overrideIdentifier = deviceSaved.address
                 }
@@ -471,27 +526,25 @@ object BackgroundBluetoothScanner {
                 val connectionState: ConnectionState = wrappedScanResult.connectionState
                 val connectionStateString = Utility.connectionStateToString(connectionState)
 
-                // We get the beacons of the last 15 min.
-                // The DB gets too slow if we add too many beacons, so we should only add one every 15min.
+                // Get the beacons of the last 15 min
+                // Only add one every 15min
                 var beacon: Beacon?
                 val beacons = beaconRepository.getDeviceBeaconsSince(
                     deviceAddress = uniqueIdentifier,
                     since = discoveryDate.minusMinutes(TIME_BETWEEN_BEACONS)
                 ) // sorted by newest first
 
-                // adding the beacons[0].locationId != locId check results in more than 1 beacon per 15 minutes if location is different
-                // if (beacons.isEmpty()) {
                 if (beacons.isEmpty() || beacons[0].locationId != locId) {
                     Timber.d("Add new Beacon to the database!")
 
                     beacon = if (wrappedScanResult.deviceType == DeviceType.SAMSUNG_TRACKER && wrappedScanResult.connectionState in DeviceManager.savedConnectionStatesWith15MinuteAlgorithm) {
-                        // Samsung Tracker have Aging Counter, we use this to further optimize the 15 Minute Algorithm
+                        // Samsung Tracker have Aging Counter, we use this for the 15-Minute Algorithm
                         Beacon(
                             discoveryDate,
                             wrappedScanResult.rssiValue,
                             uniqueIdentifier,
                             locId,
-                            SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult),
+                            wrappedScanResult.agingCounter,
                             uuids,
                             connectionStateString
                         )
@@ -526,7 +579,7 @@ object BackgroundBluetoothScanner {
                         beacon.connectionState = connectionStateString
                     }
                     beaconRepository.update(beacon)
-                }else {
+                } else {
                     Timber.d("Beacon already added to DB in last 15 min")
                     beacon = beacons.firstOrNull()
                 }
@@ -551,10 +604,32 @@ object BackgroundBluetoothScanner {
                 // Checks if Device already exists in device database
                 var device = deviceRepository.getDevice(deviceAddress)
                 if (device == null) {
-                    device = BaseDevice(wrappedScanResult.scanResult)
+                    device = BaseDevice(
+                        deviceId = 0,
+                        uniqueId = UUID.randomUUID().toString(),
+                        address = wrappedScanResult.uniqueIdentifier,
+                        name = wrappedScanResult.deviceName,
+                        ignore = false,
+                        hearted = false,
+                        connectable = wrappedScanResult.isConnectable,
+                        payloadData = wrappedScanResult.payloadData,
+                        firstDiscovery = discoveryDate,
+                        lastSeen = discoveryDate,
+                        notificationSent = false,
+                        lastNotificationSent = null,
+                        deviceType = wrappedScanResult.deviceType,
+                        subDeviceType = "UNKNOWN",
+                        riskLevel = 0,
+                        lastCalculatedRiskDate = discoveryDate,
+                        nextObservationNotification = null,
+                        currentObservationDuration = null,
+                        additionalData = if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK)
+                            Utility.connectionStateToString(wrappedScanResult.connectionState) else null,
+                        alternativeIdentifier = wrappedScanResult.alternativeIdentifier,
+                    )
 
-                    // Check if ConnectionState qualifies Device to be saved
-                    // Only Save when Device is in Overmature Offline Mode or qualifies for the 15 Minute Algorithm
+                    // Check if ConnectionState qualifies device to be saved
+                    // Only save when device is in Overmature Offline Mode or qualifies for the 15-Minute Algorithm
                     if (wrappedScanResult.connectionState in DeviceManager.savedConnectionStates || Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) in DeviceManager.additionalSavedConnectionStates) {
                         if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState && Pair(wrappedScanResult.deviceType, wrappedScanResult.connectionState) !in DeviceManager.additionalSavedConnectionStates) {
                             // Timber.d("Device is safe and will be hidden to the user!")
@@ -562,7 +637,7 @@ object BackgroundBluetoothScanner {
                         }
 
                         if (wrappedScanResult.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
-                            val alternativeIdentifier = GoogleFindMyNetwork.getAlternativeIdentifier(wrappedScanResult.scanResult)
+                            val alternativeIdentifier = wrappedScanResult.alternativeIdentifier
                             if (alternativeIdentifier != null) {
                                 deviceRepository.getDeviceWithAlternativeIdentifier(alternativeIdentifier)?.let {
                                     Timber.d("Google Device already in the database with alternative identifier... Updating the last seen date!")
@@ -576,7 +651,7 @@ object BackgroundBluetoothScanner {
                             if (!wrappedScanResult.isConnectable) {
                                 // Note:
                                 // Google Find My Network Devices which can be bought are connectable
-                                // If a Device is not connectable, it means that is has been designed by someone else
+                                // If a Device is not connectable, it means that is has been designed by someone else (Malicious actor)
                                 // This means there is a likelihood that it is targeting the user
                                 // Therefore this serves as yet another identifier (additionally to the normal and alternative identifier)
                                 Timber.d("Google Find My Network Device is not connectable... Device is most likely that it is a custom tracker!")
@@ -601,11 +676,7 @@ object BackgroundBluetoothScanner {
                         var timeTolerance: Long = 5 // in minutes
                         val deviceType = wrappedScanResult.deviceType
                         val connectionState = wrappedScanResult.connectionState
-                        val trackerProperties: Byte? = when (deviceType) {
-                            DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getPropertiesByte(wrappedScanResult.scanResult)
-                            DeviceType.SAMSUNG_FIND_MY_MOBILE -> SamsungFindMyMobile.getPropertiesByte(wrappedScanResult.scanResult)
-                            else -> null
-                        }
+                        val trackerProperties: Byte? = wrappedScanResult.trackerProperties
 
                         if (trackerProperties == null) {
                             Timber.d("Device does not have Hardware Properties Byte in Advertisement... Skipping!")
@@ -617,14 +688,14 @@ object BackgroundBluetoothScanner {
                         val correspondingDevice: BaseDevice? = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
                             Timber.d("Device is in strict 15 Minute Algorithm! Checking aging Counter")
                             // Additional Check: Aging Counter for Samsung Tracker (e.g. SmartTags) has to be exactly 1 smaller in the previous Beacon
-                            val currentAgingCounter: ByteArray? = SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)
+                            val currentAgingCounter: ByteArray? = wrappedScanResult.agingCounter
                             Timber.d("Current Aging Counter: ${currentAgingCounter?.toHexString(format = HexFormat.UpperCase)}")
                             if (currentAgingCounter == null) {
                                 Timber.d("Current Aging Counter is null... Skipping!")
                                 return@withLock null
                             }
 
-                            timeTolerance = timeTolerance + 15
+                            timeTolerance += 15
 
                             val since = discoveryDate.minusMinutes(baseInterval + 15 + timeTolerance)
                             val until = discoveryDate.minusMinutes(baseInterval - timeTolerance)
@@ -678,7 +749,7 @@ object BackgroundBluetoothScanner {
                         val additionalDataString = SamsungTracker.calculateAdditionalDataString(
                             connectionState = connectionState,
                             agingCounter = if (deviceType in DeviceManager.strict15MinuteAlgorithm) {
-                                SamsungTracker.getInternalAgingCounter(wrappedScanResult.scanResult)!!
+                                wrappedScanResult.agingCounter!!
                             } else {
                                 byteArrayOf(0x00, 0x00, 0x00)
                             },
@@ -705,11 +776,33 @@ object BackgroundBluetoothScanner {
                     Timber.d("Device already in the database... Updating the last seen date!")
                     device.lastSeen = discoveryDate
                     deviceRepository.update(device)
+
+                    // Upgrade identified Find My Device to AirTag if already determined in the past
+                    if (device.deviceType == DeviceType.AIRTAG &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRTAG)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirTag " +
+                            "(DB=AIRTAG, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
+
+                    // Upgrade identified Find My Device to AirPods if already determined in the past
+                    if (device.deviceType == DeviceType.AIRPODS &&
+                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                    ) {
+                        DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRPODS)
+                        Timber.d(
+                            "saveDevice: device $deviceAddress is an AirPods " +
+                            "(DB=AIRPODS, advertisement=FIND_MY) – DeviceManager cache updated"
+                        )
+                    }
                 }
 
                 if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK) {
                     Timber.d("Google Find My Network Device found! Detecting Subtype...")
-                    val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult)
+                    val subtype = GoogleFindMyNetwork.getSubType(wrappedScanResult.advertisementFlags)
                     device.subDeviceType = GoogleFindMyNetworkType.subTypeToString(subtype)
                     deviceRepository.update(device)
                 }

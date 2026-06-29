@@ -26,6 +26,14 @@
         app:iconTint="?attr/colorPrimary" />
 
     <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_bluetooth_searching"
+        android:key="auto_detect_device_types"
+        android:summary="@string/settings_auto_detect_device_types_summary"
+        android:title="@string/settings_auto_detect_device_types_title"
+        app:iconTint="?attr/colorPrimary" />
+
+    <SwitchPreferenceCompat
         android:icon="@drawable/ic_scan_icon"
         android:key="use_permanent_bluetooth_scanner"
         android:summary="@string/settings_permanent_scanning_summary"
@@ -79,7 +87,7 @@
         app:iconTint="?attr/colorPrimary" />
 
     <Preference
-        android:icon="@drawable/ic_delete"
+        android:icon="@drawable/ic_baseline_delete_sweep_24"
         android:key="old_device_cleanup"
         android:summary="@string/settings_old_device_cleanup_summary"
         android:title="@string/settings_old_device_cleanup_title"
@@ -113,6 +121,14 @@
         android:key="notification_priority_high"
         android:summary="@string/settings_notification_priority_high"
         android:title="@string/settings_notification_priority_high_title"
+        app:iconTint="?attr/colorPrimary" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_attach_file_24"
+        android:key="raw_data_export"
+        android:summary="@string/settings_raw_data_export_summary"
+        android:title="@string/settings_raw_data_export_title"
+        android:visible="false"
         app:iconTint="?attr/colorPrimary" />
 
     <!--

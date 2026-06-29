@@ -174,7 +174,7 @@
     <string name="risk_level_medium">Stredné riziko</string>
     <string name="risk_level_high">Vysoké riziko</string>
     <string name="no_trackers_found">Nenašli sa žiadne trackery od: %s</string>
-    <string name="found_x_trackers">Zistených %d trackerov počas posledných %d dní</string>
+    <string name="found_x_trackers">Zistených %1$d trackerov počas posledných %2$d dní</string>
     <string name="last_scan_info">Posledné skenovanie: %s</string>
     <string name="last_discovery">Posledný tracker objavený o %s</string>
     <string name="how_does_airguard_work">Ako funguje AirGuard?</string>
@@ -205,7 +205,7 @@
     <string name="filter_notified">identifikované trackery</string>
     <string name="filter_title_device_attributes">Atribúty zariadenia</string>
     <string name="filter_apply">Použiť</string>
-    <string name="filter_from_until_text">%s do %s</string>
+    <string name="filter_from_until_text">%1$s do %2$s</string>
     <string name="filter_date_range_picker_title">Naposledy videné</string>
     <string name="app_theme_dark">Tmavá</string>
     <string name="app_theme_light">Svetlá</string>
@@ -295,6 +295,8 @@
     <string name="connection_state_unknown_explanation">Stav pripojenia trackera sa nedá určiť</string>
 
     <string name="scan_accessibility">Spustí alebo zastaví skenovanie</string>
+    <string name="scan_sort_accessibility">Zoradiť výsledky skenovania</string>
+    <string name="scan_sort_dialog_title">Zoradiť podľa</string>
     <string name="scan_sorting_by_rssi">podľa Sily signálu</string>
     <string name="scan_sorting_by_recently">podľa naposledy zistených</string>
     <string name="scan_sorting_by_address">podľa MAC-Adresy</string>
@@ -432,7 +434,7 @@
     <string name="export_trackers_detections">Detekcie: %d</string>
     <string name="export_trackers_unique_locations">Unikátne polohy: %d</string>
     <string name="export_trackers_time">Čas: %s"</string>
-    <string name="export_trackers_location">Poloha: Šírka: %s, Dĺžka: %s"</string>
+    <string name="export_trackers_location">Poloha: Šírka: %1$s, Dĺžka: %2$s"</string>
     <string name="export_trackers_map">Mapa: %s</string>
     <string name="export_trackers_map_still_loading">Mapa sa stále načítava…</string>
     <string name="export_trackers_signal_strength">Sila signálu: %d"</string>
@@ -441,7 +443,7 @@
     <string name="export_trackers_map_title">Mapa:</string>
     <string name="export_trackers_detections_title">Tento tracker bol nájdený na:</string>
     <string name="export_trackers_detections_title_continued">Tento tracker bol nájdený na (pokračovanie):</string>
-    <string name="export_page_number">Strana %d/%d</string>
+    <string name="export_page_number">Strana %1$d/%2$d</string>
     <string name="export_trackers_15_minute_warning">Varovanie: Táto položka bola priradená na základe pravdepodobnosti. Môže ísť o falošne pozitívny výsledok.</string>
     <string name="export_trackers_no_internet">Mapu sa nepodarilo načítať. Uistite sa, že máte aktívne pripojenie k internetu.</string>
 
@@ -502,8 +504,8 @@
         <item quantity="other">Otvorte oznámenie pre viac informácií. Tracker vás mohol sledovať aspoň %d minút.</item>
     </plurals>
     <string name="notification_title_base">Tracker by vás mohol sledovať</string>
-    <string name="notification_text_single">Otvorte oznámenie pre viac informácií. %s vás mohol sledovať aspoň %d minút.</string>
-    <string name="notification_text_multiple">Otvorte oznámenie pre viac informácií. %s vás mohli sledovať aspoň %d minút.</string>
+    <string name="notification_text_single">Otvorte oznámenie pre viac informácií. %1$s vás mohol sledovať aspoň %2$d minút.</string>
+    <string name="notification_text_multiple">Otvorte oznámenie pre viac informácií. %1$s vás mohli sledovať aspoň %2$d minút.</string>
     <string name="notification_title_vocal">%s vás môže sledovať</string>
     <string name="notification_title_consonant">%s vás môže sledovať</string>
     <string name="notification_title_multiple">%s vás môžu sledovať</string>
@@ -544,8 +546,11 @@
     <string name="forget_tracker">Zabudnúť tracker</string>
     <string name="forget_tracker_dialog_title">Zabudnúť tracker?</string>
     <string name="forget_tracker_dialog_message">Táto operácia vymaže všetky informácie o tomto trackeri. Naozaj chcete pokračovať?</string>
-    <string name="forget_tracker_success">Tracker zmazaný</string>
-
+    <string name="forget_tracker_success">Tracker bol odstránený</string>
+    <string name="forget_trackers_dialog_title">Zabudnúť trackery?</string>
+    <string name="forget_trackers_dialog_message">Táto operácia vymaže všetky informácie o %d vybraných trackeroch. Túto akciu nie je možné vrátiť späť. Naozaj chcete pokračovať?</string>
+    <string name="forget_trackers_success">Trackery boli odstránené</string>
+    <string name="selected_devices_count">%d vybratých</string>
     <string name="open_map_description">Otvoriť mapu na celú obrazovku</string>
     <string name="error_connection">Chyba pripojenia</string>
     <string name="active">Aktívne</string>
@@ -557,10 +562,41 @@
     <string name="settings_use_dynamic_colors_title">Použiť Material You</string>
     <string name="settings_use_dynamic_colors_summary">Dynamicky prispôsobí farby aplikácie vašej tapete</string>
 
+    <string name="settings_auto_detect_device_types_title">Automatická detekcia typu trackera</string>
+    <string name="settings_auto_detect_device_types_summary">Automaticky sa pripojiť k potenciálnym trackerom na určenie ich presného typu počas manuálneho skenovania. Ak je táto možnosť vypnutá, AirGuard sa nikdy nepripojí k trackeru bez vašej požiadavky. Zapnutie tejto funkcie zvýši spotrebu batérie.</string>
+
     <string name="load_all_occurrences">Načítať všetky výskyty</string>
     <string name="scroll_button">Posunie na začiatok alebo koniec tohto zobrazenia</string>
     <string name="retrieve_owner_information_explanation_hama">Ak chcete získať informácie o majiteľovi, musíte Tracker fyzicky nájsť. Otvorte príslušenstvo zdvihnutím zadného krytu. Vyberte batériu a jednoducho ju znova vložte. Nakoniec nasaďte zadný kryt späť. Potom stlačte „ďalej“.</string>
     <string name="safe_tracker_map_warning">Toto je bezpečný tracker. Je aktuálne alebo bol nedávno pripojený k zariadeniu majiteľa. Bezpečné trackery pre vás nepredstavujú hrozbu.</string>
     <string name="no_locations_yet_hint">Toto zariadenie bolo detegované, ale zatiaľ neboli zaznamenané žiadne údaje o polohe. Údaje o polohe sa tu zobrazia, ak bude tracker spozorovaný na platnom mieste.</string>
     <string name="safe_tracker_monitored_warning">Toto je bezpečný tracker. Je aktuálne alebo bol nedávno pripojený k zariadeniu majiteľa. Je dočasne monitorovaný, ale nepredstavuje pre vás hrozbu.</string>
+    <string name="settings_raw_data_export_title">Exportovať surové údaje</string>
+    <string name="settings_raw_data_export_summary">Exportovať všetky zhromaždené surové údaje ako súbory CSV v archíve ZIP</string>
+    <string name="raw_data_export_label">Export surových údajov</string>
+    <string name="raw_data_export_title">Exportovať surové údaje</string>
+    <string name="raw_data_export_explanation">Pomocou tlačidla na stiahnutie nižšie môžete exportovať všetky surové údaje, ktoré AirGuard zhromaždil a uložil lokálne vo vašom zariadení. Export obsahuje štyri súbory CSV zabalené v archíve ZIP. Tieto údaje sú určené na odbornú analýzu.</string>
+    <string name="raw_data_export_files_title">Exportované súbory</string>
+    <string name="raw_data_export_file_devices">devices.csv – objavené zariadenia Bluetooth</string>
+    <string name="raw_data_export_file_beacons">beacons.csv – prijaté reklamné pakety BLE</string>
+    <string name="raw_data_export_file_locations">locations.csv – GPS polohy, na ktorých boli nájdené beacony</string>
+    <string name="raw_data_export_file_notifications">notifications.csv – upozornenia, ktoré vygenerovali varovania pred sledovaním</string>
+    <string name="raw_data_export_button">Stiahnuť ZIP export</string>
+    <string name="raw_data_export_success">Údaje boli úspešne exportované</string>
+    <string name="raw_data_export_error">Chyba pri generovaní exportu: %s</string>
+    <string name="raw_data_export_save_error">Chyba pri ukladaní exportu: %s</string>
+    <string name="raw_data_export_icon_description">Ikona exportu surových údajov</string>
+    <string name="raw_data_export_time_range_title">Časový rozsah</string>
+    <string name="raw_data_export_preset_3_days">Posledné 3 dni</string>
+    <string name="raw_data_export_preset_7_days">Posledných 7 dní</string>
+    <string name="raw_data_export_preset_14_days">Posledných 14 dní</string>
+    <string name="raw_data_export_preset_month">Posledný mesiac</string>
+    <string name="raw_data_export_preset_all_time">Za celý čas</string>
+    <string name="raw_data_export_from_hint">Od</string>
+    <string name="raw_data_export_to_hint">Do</string>
+    <string name="raw_data_export_select_start_date">Vyberte počiatočný dátum</string>
+    <string name="raw_data_export_select_end_date">Vyberte koncový dátum</string>
+    <string name="raw_data_export_select_start_time">Vyberte počiatočný čas</string>
+    <string name="raw_data_export_select_end_time">Vyberte koncový čas</string>
+    <string name="raw_data_export_range_error">Začiatok musí byť pred koncom</string>
 </resources>

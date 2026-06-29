@@ -1,14 +1,25 @@
 package de.seemoo.at_tracking_detection.database.daos
 
-import androidx.room.*
-import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 
 @Dao
 interface LocationDao {
     @Query("SELECT * FROM location ORDER BY firstDiscovery DESC")
     fun getAll(): Flow<List<LocationModel>>
+
+    @Query("SELECT DISTINCT l.* FROM location l INNER JOIN beacon b ON l.locationId = b.locationId WHERE b.receivedAt >= :from AND b.receivedAt <= :to")
+    fun getLocationsForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<LocationModel>
+
+    @Query("SELECT MIN(firstDiscovery) FROM location")
+    fun getEarliestLocationDate(): String?
 
     @Query("SELECT * FROM location WHERE lastSeen >= :since ORDER BY lastSeen DESC")
     fun getLocationsSince(since: LocalDateTime): List<LocationModel>

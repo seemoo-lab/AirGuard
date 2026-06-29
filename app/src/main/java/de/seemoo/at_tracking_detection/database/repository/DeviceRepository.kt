@@ -51,6 +51,9 @@ class DeviceRepository @Inject constructor(private val deviceDao: DeviceDao) {
 
     val ignoredDevicesSync: List<BaseDevice> = deviceDao.getIgnoredSync()
 
+    fun getDevicesForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<BaseDevice> =
+        deviceDao.getDevicesForBeaconsInRange(from, to)
+
     fun getDevice(deviceAddress: String): BaseDevice? = deviceDao.getByAddress(deviceAddress)
 
     fun observeDevice(deviceAddress: String): Flow<BaseDevice?> = deviceDao.observeByAddress(deviceAddress)

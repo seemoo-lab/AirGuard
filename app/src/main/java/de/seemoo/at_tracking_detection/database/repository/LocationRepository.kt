@@ -2,17 +2,18 @@ package de.seemoo.at_tracking_detection.database.repository
 
 import androidx.annotation.WorkerThread
 import de.seemoo.at_tracking_detection.database.daos.LocationDao
-import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
-import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
+import java.time.LocalDateTime
 import javax.inject.Inject
+import de.seemoo.at_tracking_detection.database.models.Location as LocationModel
 
 class LocationRepository @Inject constructor(
     private val locationDao: LocationDao
 ){
-    val totalCount: Int = locationDao.getTotalLocationCount()
-
     val locations: Flow<List<LocationModel>> = locationDao.getAll()
+
+    fun getLocationsForBeaconsInRange(from: LocalDateTime, to: LocalDateTime): List<LocationModel> =
+        locationDao.getLocationsForBeaconsInRange(from, to)
 
     fun locationsSince(since: LocalDateTime): List<LocationModel> = locationDao.getLocationsSince(since)
 
