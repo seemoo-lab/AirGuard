@@ -101,6 +101,7 @@ interface DeviceDao {
     WHERE device.deviceType = :deviceType
     AND additionalData = :additionalData
     AND device.lastSeen BETWEEN :since AND :until
+    ORDER BY lastSeen DESC
     LIMIT 1 
     """)
     fun getDeviceWithRecentBeacon(deviceType: String, additionalData: String, since: LocalDateTime, until: LocalDateTime): BaseDevice?
@@ -146,7 +147,7 @@ interface DeviceDao {
     @Query("SELECT * FROM device WHERE alternativeIdentifier = :alternativeIdentifier LIMIT 1")
     fun getDeviceWithAlternativeIdentifier(alternativeIdentifier: String): BaseDevice?
 
-    @Query("SELECT * FROM device WHERE deviceType = :deviceType AND lastSeen >= :since AND connectable = :connectableState LIMIT 1")
+    @Query("SELECT * FROM device WHERE deviceType = :deviceType AND lastSeen >= :since AND connectable = :connectableState ORDER BY lastSeen DESC LIMIT 1")
     fun getDeviceWithConnectableStateSince(deviceType: String, since: LocalDateTime, connectableState: Boolean): BaseDevice?
 
     @Query("SELECT * FROM device WHERE address LIKE :address LIMIT 1")

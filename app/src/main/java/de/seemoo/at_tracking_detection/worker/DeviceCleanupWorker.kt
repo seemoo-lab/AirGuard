@@ -31,12 +31,30 @@ class DeviceCleanupWorker @AssistedInject constructor(
         try {
             deleteSafeGoogleTrackers()
             deleteOldAndSafeTrackers()
+            cleanupOrphanedBeacons()
         } catch (e: Exception) {
             Timber.e("DeviceCleanupWorker failed: $e")
         }
 
         Timber.d("DeviceCleanupWorker finished")
         return Result.success()
+    }
+
+    private suspend fun cleanupOrphanedBeacons() {
+        Timber.d("Start cleaning up orphaned beacons")
+        val deleteBefore = RiskLevelEvaluator.deleteBeforeDate
+        try {
+            val orphanedBeacons = beaconRepository.getBeaconsOlderThanWithoutNotifications(deleteBefore)
+            if (orphanedBeacons.isNotEmpty()) {
+                Timber.d("Deleting ${orphanedBeacons.size} orphaned beacons")
+                beaconRepository.deleteBeacons(orphanedBeacons)
+                Timber.d("Deleting orphaned beacons successful")
+            } else {
+                Timber.d("No orphaned beacons to delete")
+            }
+        } catch (e: Exception) {
+            Timber.e("Cleaning up orphaned beacons failed $e")
+        }
     }
 
     private suspend fun deleteSafeGoogleTrackers() {

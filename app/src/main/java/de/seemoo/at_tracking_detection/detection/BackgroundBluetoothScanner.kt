@@ -662,7 +662,7 @@ object BackgroundBluetoothScanner {
                                 )?.let {
                                     Timber.d("Found a Google Find My Network Device which is not connectable... Updating the last seen date!")
                                     device = it
-                                    device.lastSeen
+                                    device.lastSeen = discoveryDate
                                     deviceRepository.update(device)
                                     return@withLock device
                                 }
