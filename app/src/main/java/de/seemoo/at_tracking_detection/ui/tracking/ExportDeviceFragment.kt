@@ -24,6 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -277,10 +278,27 @@ class ExportDeviceFragment: Fragment() {
             // Add markers
             val iconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_location_on_45_black)
             iconDrawable?.setTint(Color.BLACK)
+
+            // Resize marker icon to be smaller
+            val scaledIconDrawable = iconDrawable?.let {
+                val scalingFactor = 0.6
+                val width = (it.intrinsicWidth * scalingFactor).toInt()
+                val height = (it.intrinsicHeight * scalingFactor).toInt()
+                if (width > 0 && height > 0) {
+                    val bitmap = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    it.setBounds(0, 0, width, height)
+                    it.draw(canvas)
+                    bitmap.toDrawable(resources)
+                } else {
+                    null
+                }
+            }
+
             geoPoints.forEach { point ->
                 Marker(mapView).apply {
                     position = point
-                    icon = iconDrawable
+                    icon = scaledIconDrawable ?: iconDrawable
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     setInfoWindow(null)
                     mapView.overlays.add(this)

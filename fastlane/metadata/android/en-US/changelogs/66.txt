@@ -1,0 +1,9 @@
+NEW: Android 17 support
+NEW: Permanent Android 15+ background scanning (Expert mode only)
+NEW: Auto-detect device details already in manual scan
+NEW: Play sound on more Apple Find My devices
+NEW: Manual scan sorting & multi-delete/marking trackers (Expert mode)
+NEW: Export raw backend data (Expert mode)
+IMPROVED: More efficient data storage & consistent color scheme
+IMPROVED: Fewer duplicate tracker notifications
+IMPROVED: Bugfixes and performance improvements
