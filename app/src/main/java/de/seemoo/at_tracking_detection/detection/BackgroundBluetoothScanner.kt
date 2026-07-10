@@ -40,6 +40,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.UUID
@@ -285,7 +286,10 @@ object BackgroundBluetoothScanner {
                         if (DeviceSubTypeDetector.needsDetection(wrapper)) {
                             Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
                             try {
-                                DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                                // Wait max. 10 seconds for each Bluetooth device to process
+                                withTimeoutOrNull(10_000L.milliseconds) {
+                                    DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                                }
                             } catch (e: Exception) {
                                 Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
                             }

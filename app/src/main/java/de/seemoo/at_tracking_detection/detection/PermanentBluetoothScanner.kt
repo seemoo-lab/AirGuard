@@ -29,9 +29,11 @@ import de.seemoo.at_tracking_detection.util.privacyPrint
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -39,6 +41,7 @@ import java.util.Date
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 @RequiresApi(Build.VERSION_CODES.S)
 object PermanentBluetoothScanner: LocationHistoryListener {
@@ -94,6 +97,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
     private val beaconMutex = Mutex()
     private val deviceMutex = Mutex()
     private val locationMutex = Mutex()
+
+    private val currentlyProcessingGatt = java.util.Collections.synchronizedSet(mutableSetOf<String>())
 
     var location: android.location.Location? = null
         set(value) {
@@ -414,6 +419,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             BLELogger.d("Starting to match devices and locations")
 
             val savedDevices = ArrayList<BackgroundBluetoothScanner.DiscoveredDevice>()
+            val devicesToProcessGatt = mutableListOf<BackgroundBluetoothScanner.DiscoveredDevice>()
 
             pendingFoundDevices.forEach { device ->
                 // Find the closest location
@@ -465,16 +471,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                         // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
                         if (SharedPrefs.autoDetectDeviceTypes) {
                             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
-                            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                            if (beaconRepository != null && deviceRepository != null) {
+                            if (beaconRepository != null) {
                                 if (TrackingDetectorWorker.shouldThrowNotification(savedDevice, beaconRepository)) {
                                     if (DeviceSubTypeDetector.needsDetection(device.wrappedScanResult)) {
-                                        BLELogger.d("PermanentBluetoothScanner: Device ${savedDevice.address} would trigger notification. Attempting GATT detection...")
-                                        try {
-                                            DeviceSubTypeDetector.processDetection(device.wrappedScanResult, deviceRepository)
-                                        } catch (e: Exception) {
-                                            BLELogger.e("PermanentBluetoothScanner: GATT detection failed for ${savedDevice.address}: ${e.message}")
-                                        }
+                                        devicesToProcessGatt.add(device)
                                     }
                                 }
                             }
@@ -557,6 +557,24 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     })
             }
 
+            devicesToProcessGatt.forEach { device ->
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                if (deviceRepository != null && currentlyProcessingGatt.add(device.wrappedScanResult.uniqueIdentifier)) {
+                    BLELogger.d("PermanentBluetoothScanner: Device ${device.wrappedScanResult.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            withTimeoutOrNull(15_000L.milliseconds) {
+                                DeviceSubTypeDetector.processDetection(device.wrappedScanResult, deviceRepository)
+                            }
+                        } catch (e: Exception) {
+                            BLELogger.e("PermanentBluetoothScanner: GATT detection failed for ${device.wrappedScanResult.uniqueIdentifier}: ${e.message}")
+                        } finally {
+                            currentlyProcessingGatt.remove(device.wrappedScanResult.uniqueIdentifier)
+                        }
+                    }
+                }
+            }
+
 
             // Remove old recent devices
             recentlySeenDevices = ArrayList(recentlySeenDevices.filter {
@@ -599,7 +617,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                 notificationService.sendBLEErrorNotification()
             }
             CoroutineScope(Dispatchers.IO).launch {
-                Thread.sleep(2_000)
+                delay(2_000.milliseconds)
                 scan()
             }
         }
