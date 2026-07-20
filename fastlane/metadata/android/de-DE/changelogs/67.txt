@@ -1,0 +1,3 @@
+VERBESSERT: Leistungsoptimierungen
+VERBESSERT: Größe der Standortmarker im PDF-Export reduziert
+VERBESSERT: Einige seltene Fehler im Zusammenhang mit Trackern im Google-Netzwerk behoben

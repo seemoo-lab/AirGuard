@@ -1,0 +1,3 @@
+IMPROVED: Performance improvements
+IMPROVED: Size of location markers in pdf export reduced
+IMPROVED: Fixed some rare bugs regarding trackers in the Google network
