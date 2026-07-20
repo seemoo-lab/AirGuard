@@ -3,6 +3,7 @@ package de.seemoo.at_tracking_detection.hilt
 import android.content.Context
 import android.database.sqlite.SQLiteException
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
@@ -182,6 +183,12 @@ object DatabaseModule {
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "attd_db")
             .addMigrations(MIGRATION_5_7, MIGRATION_6_7, MIGRATION_9_10, MIGRATION_16_17)
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
+                    db.execSQL("PRAGMA foreign_keys=ON")
+                }
+            })
             .allowMainThreadQueries().build()
     }
 
