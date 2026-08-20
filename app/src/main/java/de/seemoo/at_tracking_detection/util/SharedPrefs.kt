@@ -213,8 +213,10 @@ object SharedPrefs {
         get() {
             return sharedPreferences.getBoolean("samsung_bug_notification", false)
         } set(value) {
-        sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
-    }
+            if (showSamsungAndroid15BugNotification != value) {
+                sharedPreferences.edit { putBoolean("samsung_bug_notification", value) }
+            }
+        }
 
     var showMissingNotificationPermissionWarning: Boolean
         get() {
@@ -234,8 +236,10 @@ object SharedPrefs {
         get() {
             return sharedPreferences.getBoolean("generic_bluetooth_bug_notification", false)
         } set(value) {
-        sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
-    }
+            if (showGenericBluetoothBugNotification != value) {
+                sharedPreferences.edit { putBoolean("generic_bluetooth_bug_notification", value) }
+            }
+        }
 
     var surveyNotificationDate: LocalDateTime?
         get() {
