@@ -220,8 +220,17 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                 val bluetoothAdapter = bluetoothManager.adapter
                 val bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress)
 
+                var gatt: BluetoothGatt? = null
+
                 val gattCallback = object : BluetoothGattCallback() {
                     var deviceName: String? = null
+
+                    @SuppressLint("MissingPermission")
+                    private fun closeGatt() {
+                        gatt?.disconnect()
+                        gatt?.close()
+                        gatt = null
+                    }
 
                     @SuppressLint("MissingPermission")
                     override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -230,6 +239,7 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                             gatt?.discoverServices()
                         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                             Timber.d("Disconnected from GATT server.")
+                            closeGatt()
                             if (continuation.isActive) {
                                 continuation.resume(deviceName)
                             }
@@ -245,6 +255,8 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                             }
                         } else {
                             Timber.w("onServicesDiscovered received: $status")
+                            gatt?.disconnect()
+                            closeGatt()
                             if (continuation.isActive) {
                                 continuation.resumeWithException(Exception("Failed to discover services: $status"))
                             }
@@ -285,16 +297,24 @@ class PebbleBee (val id: Int) : Device(), Connectable {
                                 }
                             }
                             else -> {
+                                gatt.disconnect()
+                                closeGatt()
                                 if (continuation.isActive) {
                                     continuation.resume(deviceName)
                                 }
-                                gatt.disconnect()
                             }
                         }
                     }
                 }
 
-                bluetoothDevice.connectGatt(context, false, gattCallback)
+                gatt = bluetoothDevice.connectGatt(context, false, gattCallback)
+
+                continuation.invokeOnCancellation {
+                    Timber.d("PebbleBee connectAndRetrieveCharacteristics: Cancellation received")
+                    gatt?.disconnect()
+                    gatt?.close()
+                    gatt = null
+                }
             }
 
         suspend fun getSubTypeName(wrappedScanResult: ScanResultWrapper): String {

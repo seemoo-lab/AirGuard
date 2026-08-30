@@ -49,7 +49,7 @@ class BackgroundWorkScheduler @Inject constructor(
     fun scheduleImmediateBackgroundScan() {
         Timber.d("Scheduling Immediate Background Scan Worker ")
         workManager.enqueueUniqueWork(WorkerConstants.SCAN_IMMEDIATELY,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            ExistingWorkPolicy.REPLACE,
             backgroundWorkBuilder.buildImmediateScanWorker())
     }
 
