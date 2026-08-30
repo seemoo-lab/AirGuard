@@ -36,8 +36,8 @@ android {
         applicationId "de.seemoo.at_tracking_detection"
         minSdk = 28
         targetSdk = 37
-        versionCode 67
-        versionName "3.1.1"
+        versionCode 68
+        versionName "3.1.2"
         buildConfigField "String", "API_KEY", apiProperties["API_KEY"]
         buildConfigField "String", "API_BASE_ADDRESS", apiProperties["API_BASE_ADDRESS"]
 
@@ -142,7 +142,7 @@ dependencies {
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
-    implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
+        implementation "com.mikepenz:aboutlibraries:$about_libraries_version"
 
     implementation 'io.noties.markwon:core:4.6.2'
 
@@ -197,7 +197,7 @@ dependencies {
     // Google Review Handling (only active in Google Play Builds done from the googlePlyStore Branch)
     // implementation("com.google.android.play:review:2.0.2")
     // implementation("com.google.android.play:review-ktx:2.0.2")
-    // implementation("com.google.android.gms:play-services-base:18.9.0")
+    // implementation("com.google.android.gms:play-services-base:18.10.1")
 }
 
 ksp {
