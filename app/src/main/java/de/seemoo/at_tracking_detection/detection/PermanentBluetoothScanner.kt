@@ -95,6 +95,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     private val currentlyProcessingGatt = java.util.Collections.synchronizedSet(mutableSetOf<String>())
 
+    private val currentlyProcessingGatt = java.util.Collections.synchronizedSet(mutableSetOf<String>())
+
     var location: android.location.Location? = null
         set(value) {
             field = value
