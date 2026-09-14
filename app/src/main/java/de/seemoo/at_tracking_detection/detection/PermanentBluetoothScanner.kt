@@ -2,7 +2,6 @@ package de.seemoo.at_tracking_detection.detection
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -38,6 +37,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import kotlin.math.abs
@@ -45,8 +45,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @RequiresApi(Build.VERSION_CODES.S)
 object PermanentBluetoothScanner: LocationHistoryListener {
-    private var bluetoothAdapter: BluetoothAdapter? = null
-
     /**
      * Daemon thread factory so the executor thread won't block JVM shutdown
      */
@@ -62,9 +60,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     /**
      * Devices that have been recently seen. So we don't need to add them to the database again
+     * Key: uniqueIdentifier, Value: discoveryDate
      */
-    private var recentlySeenDevices: ArrayList<BackgroundBluetoothScanner.DiscoveredDevice> =
-        ArrayList()
+    private var recentlySeenDevices: ConcurrentHashMap<String, LocalDateTime> =
+        ConcurrentHashMap()
 
     /**
      * The duration how long a device remains in the recently seen. 15 min.
@@ -92,11 +91,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             return ATTrackingDetectionApplication.getAppContext()
         }
 
-    // Mutexes for scheduling when adding to the database to avoid double entries
-    private val insertScanResultMutex = Mutex()
-    private val beaconMutex = Mutex()
     private val deviceMutex = Mutex()
-    private val locationMutex = Mutex()
 
     private val currentlyProcessingGatt = java.util.Collections.synchronizedSet(mutableSetOf<String>())
 
@@ -109,8 +104,6 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         }
 
     private var locationRetrievedCallback: (() -> Unit)? = null
-
-    private var locationFetchStarted: Long? = null
 
     private var isWaitingForLocationUpdate = false
 
@@ -139,8 +132,6 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             return ATTrackingDetectionApplication.getCurrentApp()?.scanRepository
                 ?: error("ATTrackingDetectionApplication not initialized")
         }
-
-    private var isScanning = false
 
     // ── PendingIntent-based scanning for Android 15+ ──────────────────────
 
@@ -375,8 +366,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
         deviceMutex.withLock {
             // Check when the device was last seen
-            val lastSeen =
-                recentlySeenDevices.firstOrNull { it.wrappedScanResult.uniqueIdentifier == device.wrappedScanResult.uniqueIdentifier }?.discoveryDate
+            val lastSeen = recentlySeenDevices[device.wrappedScanResult.uniqueIdentifier]
             if (lastSeen != null && lastSeen.until(
                     LocalDateTime.now(),
                     ChronoUnit.MILLIS
@@ -394,9 +384,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             pendingFoundDevices.add(device)
 
             // Mark as recently seen immediately to prevent race conditions with concurrent calls
-            recentlySeenDevices =
-                ArrayList(recentlySeenDevices.filter { it.wrappedScanResult.uniqueIdentifier != device.wrappedScanResult.uniqueIdentifier })
-            recentlySeenDevices.add(device)
+            recentlySeenDevices[device.wrappedScanResult.uniqueIdentifier] = device.discoveryDate
 
             BLELogger.d("${pendingFoundDevices.size} pending devices")
         }
@@ -460,7 +448,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                         discoveryDate = device.discoveryDate
                     )
                     savedDevices.add(device)
-                    recentlySeenDevices.add(device)
+                    recentlySeenDevices[device.wrappedScanResult.uniqueIdentifier] = device.discoveryDate
 
                     val savedDevice = pair.first
                     val savedBeacon = pair.second
@@ -577,10 +565,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
 
             // Remove old recent devices
-            recentlySeenDevices = ArrayList(recentlySeenDevices.filter {
-                it.discoveryDate.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS
+            val now = LocalDateTime.now()
+            recentlySeenDevices.values.removeIf {
+                it.until(now, ChronoUnit.MILLIS) >= COOL_DOWN_TIME_MS
             }
-            )
 
             //Clean up old locations
             LocationHistoryController.cleanUpHistory()
@@ -595,6 +583,15 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             SharedPrefs.showGenericBluetoothBugNotification = false
 
             val wrappedScanResult = ScanResultWrapper(scanResult)
+
+            // Optimization: Filter out non-tracking devices or recently seen devices before spawning coroutine
+            if (!wrappedScanResult.deviceIsTracking()) return
+
+            val lastSeen = recentlySeenDevices[wrappedScanResult.uniqueIdentifier]
+            if (lastSeen != null && lastSeen.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS) {
+                return
+            }
+
             //Checks if the device has been found already
             val device = BackgroundBluetoothScanner.DiscoveredDevice(wrappedScanResult, LocalDateTime.now())
             CoroutineScope(Dispatchers.IO).launch {

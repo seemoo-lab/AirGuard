@@ -68,6 +68,8 @@ class PermanentScanReceiver : BroadcastReceiver() {
                 for (scanResult in results) {
                     try {
                         val wrappedScanResult = ScanResultWrapper(scanResult)
+                        if (!wrappedScanResult.deviceIsTracking()) continue
+
                         val device = BackgroundBluetoothScanner.DiscoveredDevice(
                             wrappedScanResult, LocalDateTime.now()
                         )

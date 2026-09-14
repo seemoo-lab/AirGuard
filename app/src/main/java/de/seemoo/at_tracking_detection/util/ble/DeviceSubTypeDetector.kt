@@ -119,17 +119,16 @@ object DeviceSubTypeDetector {
                         device.name = deviceName
                         var isUpgradeAirTag = false
                         var isUpgradeAirPods = false
-                        if (deviceName.take(6) == "AirTag" && wrapper.deviceType == DeviceType.FIND_MY) {
+                        if (deviceName.startsWith("airtag", ignoreCase = true) && wrapper.deviceType == DeviceType.FIND_MY) {
                             val upgraded = device.copy(deviceType = DeviceType.AIRTAG)
                             deviceRepository.update(upgraded)
                             DeviceManager.overrideDeviceType(uid, DeviceType.AIRTAG)
                             isUpgradeAirTag = true
                             Timber.d("DeviceSubTypeDetector: Upgraded FIND_MY → AIRTAG for %s", uid)
-                        } else if (deviceName.startsWith("AirPods") && wrapper.deviceType == DeviceType.FIND_MY) {
+                        } else if (deviceName.startsWith("airpod", ignoreCase = true) && wrapper.deviceType == DeviceType.FIND_MY) {
                             val upgraded = device.copy(deviceType = DeviceType.AIRPODS)
                             deviceRepository.update(upgraded)
                             DeviceManager.overrideDeviceType(uid, DeviceType.AIRPODS)
-                            isUpgradeAirTag = true
                             isUpgradeAirPods = true
                             Timber.d("DeviceSubTypeDetector: Upgraded FIND_MY → AIRPODS for %s", uid)
                         } else {

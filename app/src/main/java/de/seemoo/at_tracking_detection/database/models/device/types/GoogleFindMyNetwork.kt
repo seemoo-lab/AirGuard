@@ -35,7 +35,7 @@ import timber.log.Timber
 import java.net.URL
 import java.util.UUID
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
 
@@ -311,15 +311,25 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
             context: Context,
             device: BluetoothDevice,
             dataToSend: ByteArray
-        ): ByteArray? = suspendCoroutine { continuation ->
-            device.connectGatt(context, false, object : BluetoothGattCallback() {
+        ): ByteArray? = suspendCancellableCoroutine { continuation ->
+            var gatt: BluetoothGatt? = null
+
+            val gattCallback = object : BluetoothGattCallback() {
+                private fun closeGatt() {
+                    gatt?.disconnect()
+                    gatt?.close()
+                    gatt = null
+                }
+
                 override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         // Discover services after successful connection
                         gatt?.discoverServices()
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                        gatt?.close()
-                        continuation.resume(null)
+                        closeGatt()
+                        if (continuation.isActive) {
+                            continuation.resume(null)
+                        }
                     }
                 }
 
@@ -328,7 +338,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                         val service = gatt?.getService(GOOGLE_SOUND_SERVICE_UUID)
                         val characteristic = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
                         if (characteristic == null) {
-                            continuation.resume(null)
+                            gatt?.disconnect()
+                            closeGatt()
+                            if (continuation.isActive) {
+                                continuation.resume(null)
+                            }
                             return
                         }
 
@@ -336,6 +350,15 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                         Timber.d("Indications set: $indicationsSuccessfullySet")
 
                         val descriptor = characteristic.getDescriptor(GOOGLE_DESCRIPTOR_UUID)
+
+                        if (descriptor == null) {
+                            gatt.disconnect()
+                            closeGatt()
+                            if (continuation.isActive) {
+                                continuation.resume(null)
+                            }
+                            return
+                        }
 
                         // Write data to the descriptor using modern API
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -346,6 +369,12 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                             @Suppress("DEPRECATION")
                             gatt.writeDescriptor(descriptor)
                         }
+                    } else {
+                        gatt?.disconnect()
+                        closeGatt()
+                        if (continuation.isActive) {
+                            continuation.resume(null)
+                        }
                     }
                 }
 
@@ -355,7 +384,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     status: Int
                 ) {
                     if (status != BluetoothGatt.GATT_SUCCESS) {
-                        continuation.resume(null)
+                        gatt?.disconnect()
+                        closeGatt()
+                        if (continuation.isActive) {
+                            continuation.resume(null)
+                        }
                     }
                 }
 
@@ -364,7 +397,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                         val service = gatt?.getService(GOOGLE_SOUND_SERVICE_UUID)
                         val characteristicToWrite = service?.getCharacteristic(GOOGLE_SOUND_CHARACTERISTIC_UUID)
                         if (characteristicToWrite == null) {
-                            continuation.resume(null)
+                            gatt?.disconnect()
+                            closeGatt()
+                            if (continuation.isActive) {
+                                continuation.resume(null)
+                            }
                             return
                         }
 
@@ -378,7 +415,11 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                             gatt.writeCharacteristic(characteristicToWrite)
                         }
                     } else {
-                        continuation.resume(null)
+                        gatt?.disconnect()
+                        closeGatt()
+                        if (continuation.isActive) {
+                            continuation.resume(null)
+                        }
                     }
                 }
 
@@ -388,9 +429,22 @@ class GoogleFindMyNetwork(val id: Int) : Device(), Connectable {
                     value: ByteArray
                 ) {
                     // Resume the coroutine with the received value
-                    continuation.resume(value)
+                    gatt.disconnect()
+                    closeGatt()
+                    if (continuation.isActive) {
+                        continuation.resume(value)
+                    }
                 }
-            })
+            }
+
+            gatt = device.connectGatt(context, false, gattCallback)
+
+            continuation.invokeOnCancellation {
+                Timber.d("connectToDeviceAndWriteToIndication: Cancellation received")
+                gatt?.disconnect()
+                gatt?.close()
+                gatt = null
+            }
         }
 
         override fun getConnectionState(scanResult: ScanResult): ConnectionState {

@@ -172,170 +172,173 @@ object BackgroundBluetoothScanner {
             }
         }
 
-        val useLocation = SharedPrefs.useLocationInTrackingDetection
-        if (useLocation) {
-            // Returns the last known location if this matches our requirements or starts new location updates
-            locationFetchStarted = System.currentTimeMillis()
-            location = locationProvider.lastKnownOrRequestLocationUpdates(
-                locationRequester = locationRequester,
-                timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
-            )
-            if (location == null) {
-                Timber.e("Failed to retrieve location")
-            }
-        }
-
-        // Starting BLE Scan
-        Timber.d("Start Scanning for bluetooth le devices...")
-        val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
-
-        SharedPrefs.isScanningInBackground = true
         try {
-            // Use a process-wide static callback for background
-            val callback = leScanCallback
-            val filters = DeviceManager.scanFilter
-            ScanOrchestrator.startScan(
-                callerTag = "BackgroundBluetoothScanner",
-                filters = filters,
-                settings = scanSettings,
-                callback = callback,
-                allowReplaceExisting = true,
-                priority = ScanOrchestrator.Priority.MEDIUM
-            )
-        } catch (t: Throwable) {
-            Timber.e(t, "Failed to request scan start")
-            isScanning = false
-            return BackgroundScanResults(0, 0, 0, true)
-        }
-
-        val scanDuration: Long = getScanDuration()
-        delay(scanDuration.milliseconds)
-
-        // Stop scan via orchestrator
-        ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
-        isScanning = false
-
-        Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
-
-        //Waiting for updated location to come in
-        Timber.d("Waiting for location update")
-        LocationLogger.log("BackgroundBluetoothScanner: Request fetched Location")
-        val fetchedLocation = waitForRequestedLocation()
-        Timber.d("Fetched location? $fetchedLocation")
-        LocationLogger.log("BackgroundBluetoothScanner: Could location be Fetched?: $fetchedLocation")
-        if (location == null) {
-            LocationLogger.log("BackgroundBluetoothScanner: Failed to fetch location, get last known location and ignore requirements")
-            // Get the last location no matter if the requirements match or not
-            location = locationProvider.getLastLocation(checkRequirements = false)
-            if (location == null) {
-                LocationLogger.log("BackgroundBluetoothScanner: Failed to retrieve location again, location is null")
-            } else {
-                LocationLogger.log("BackgroundBluetoothScanner: Got Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
-            }
-        } else {
-            LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
-        }
-
-        val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
-
-        // Capture strings before insertion
-        // they are still needed after the dictionary is cleared to free memory
-        val deviceCount = scanResultDictionary.size
-        val debugAddresses = if (BuildConfig.DEBUG) {
-            scanResultDictionary.keys.joinToString(separator = ",")
-        } else {
-            ""
-        }
-        val debugTypes = if (BuildConfig.DEBUG) {
-            scanResultDictionary.values.map { it.wrappedScanResult.deviceType }.toSet().joinToString(separator = ",")
-        } else {
-            ""
-        }
-
-        //Adding all scan results to the database after the scan has finished
-        scanResultDictionary.forEach { (_, discoveredDevice) ->
-            val deviceType = discoveredDevice.wrappedScanResult.deviceType
-            val skipDevice = Utility.getSkipDevice(deviceType)
-
-            if (deviceType in validDeviceTypes && !skipDevice) {
-                insertScanResult(
-                    wrappedScanResult = discoveredDevice.wrappedScanResult,
-                    latitude = location?.latitude,
-                    longitude = location?.longitude,
-                    altitude = location?.altitude,
-                    accuracy = location?.accuracy,
-                    discoveryDate = discoveredDevice.discoveryDate,
+            val useLocation = SharedPrefs.useLocationInTrackingDetection
+            if (useLocation) {
+                // Returns the last known location if this matches our requirements or starts new location updates
+                locationFetchStarted = System.currentTimeMillis()
+                location = locationProvider.lastKnownOrRequestLocationUpdates(
+                    locationRequester = locationRequester,
+                    timeoutMillis = LOCATION_UPDATE_MAX_TIME_MS - 2000L
                 )
+                if (location == null) {
+                    Timber.e("Failed to retrieve location")
+                }
             }
-        }
 
-        // Identify if a GATT connection should happen
-        // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
-        if (SharedPrefs.autoDetectDeviceTypes) {
-            val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-            val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
-            if (deviceRepository != null && beaconRepository != null) {
-                // Determine which devices would trigger a notification
-                scanResultDictionary.values
-                    .map { it.wrappedScanResult }
-                    .filter { wrapper ->
-                        val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
-                        device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
-                    }
-                    .forEach { wrapper ->
-                        if (DeviceSubTypeDetector.needsDetection(wrapper)) {
-                            Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
-                            try {
-                                // Wait max. 10 seconds for each Bluetooth device to process
-                                withTimeoutOrNull(10_000L.milliseconds) {
-                                    DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+            // Starting BLE Scan
+            Timber.d("Start Scanning for bluetooth le devices...")
+            val scanSettings = ScanSettings.Builder().setScanMode(scanMode).build()
+
+            SharedPrefs.isScanningInBackground = true
+            try {
+                // Use a process-wide static callback for background
+                val callback = leScanCallback
+                val filters = DeviceManager.scanFilter
+                ScanOrchestrator.startScan(
+                    callerTag = "BackgroundBluetoothScanner",
+                    filters = filters,
+                    settings = scanSettings,
+                    callback = callback,
+                    allowReplaceExisting = true,
+                    priority = ScanOrchestrator.Priority.MEDIUM
+                )
+            } catch (t: Throwable) {
+                Timber.e(t, "Failed to request scan start")
+                return BackgroundScanResults(0, 0, 0, true)
+            }
+
+            val scanDuration: Long = getScanDuration()
+            delay(scanDuration.milliseconds)
+
+            // Stop scan via orchestrator
+            ScanOrchestrator.stopScan("BackgroundBluetoothScanner", leScanCallback)
+
+            Timber.d("Scanning for bluetooth le devices stopped!. Discovered ${scanResultDictionary.size} devices")
+
+            //Waiting for updated location to come in
+            Timber.d("Waiting for location update")
+            LocationLogger.log("BackgroundBluetoothScanner: Request fetched Location")
+            val fetchedLocation = waitForRequestedLocation()
+            Timber.d("Fetched location? $fetchedLocation")
+            LocationLogger.log("BackgroundBluetoothScanner: Could location be Fetched?: $fetchedLocation")
+            if (location == null) {
+                LocationLogger.log("BackgroundBluetoothScanner: Failed to fetch location, get last known location and ignore requirements")
+                // Get the last location no matter if the requirements match or not
+                location = locationProvider.getLastLocation(checkRequirements = false)
+                if (location == null) {
+                    LocationLogger.log("BackgroundBluetoothScanner: Failed to retrieve location again, location is null")
+                } else {
+                    LocationLogger.log("BackgroundBluetoothScanner: Got Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+                }
+            } else {
+                LocationLogger.log("BackgroundBluetoothScanner: Fetched Location: ${location?.privacyPrint()}, Altitude: ${location!!.altitude}, Accuracy: ${location!!.accuracy}")
+            }
+
+            val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
+
+            // Capture strings before insertion
+            // they are still needed after the dictionary is cleared to free memory
+            val deviceCount = scanResultDictionary.size
+            val debugAddresses = if (BuildConfig.DEBUG) {
+                scanResultDictionary.keys.joinToString(separator = ",")
+            } else {
+                ""
+            }
+            val debugTypes = if (BuildConfig.DEBUG) {
+                scanResultDictionary.values.map { it.wrappedScanResult.deviceType }.toSet().joinToString(separator = ",")
+            } else {
+                ""
+            }
+
+            //Adding all scan results to the database after the scan has finished
+            scanResultDictionary.forEach { (_, discoveredDevice) ->
+                val deviceType = discoveredDevice.wrappedScanResult.deviceType
+                val skipDevice = Utility.getSkipDevice(deviceType)
+
+                if (deviceType in validDeviceTypes && !skipDevice) {
+                    insertScanResult(
+                        wrappedScanResult = discoveredDevice.wrappedScanResult,
+                        latitude = location?.latitude,
+                        longitude = location?.longitude,
+                        altitude = location?.altitude,
+                        accuracy = location?.accuracy,
+                        discoveryDate = discoveredDevice.discoveryDate,
+                    )
+                }
+            }
+
+            // Identify if a GATT connection should happen
+            // A GATT connection ONLY happens in the background if afterwards the tracker would immediately trigger a notification
+            if (SharedPrefs.autoDetectDeviceTypes) {
+                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
+                if (deviceRepository != null && beaconRepository != null) {
+                    // Determine which devices would trigger a notification
+                    scanResultDictionary.values
+                        .map { it.wrappedScanResult }
+                        .filter { wrapper ->
+                            val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
+                            device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                        }
+                        .forEach { wrapper ->
+                            if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                                Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
+                                try {
+                                    // Wait max. 10 seconds for each Bluetooth device to process
+                                    withTimeoutOrNull(10_000L.milliseconds) {
+                                        DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                                    }
+                                } catch (e: Exception) {
+                                    Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
                                 }
-                            } catch (e: Exception) {
-                                Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
                             }
                         }
-                    }
-            }
-        }
-
-        // Optimization: Release all ScanResultWrapper objects after insertion to free memory
-        scanResultDictionary.clear()
-
-        SharedPrefs.lastScanDate = LocalDateTime.now()
-        SharedPrefs.isScanningInBackground = false
-        val scan = scanRepository.scanWithId(scanId.toInt())
-        if (scan != null) {
-            scan.endDate = LocalDateTime.now()
-            scan.duration = scanDuration.toInt() / 1000
-            scan.noDevicesFound = deviceCount
-
-            if (BuildConfig.DEBUG) {
-                val (dbLocation, dbLocationWasNew) = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
-                // Only attach an existing location to the scan record.
-                if (!dbLocationWasNew) {
-                    scan.locationId = dbLocation?.locationId
                 }
-                scan.locationDeg = "${location?.longitude},${location?.latitude}"
-                scan.devicesAddressesFound = debugAddresses
-                scan.devicesTypesFound = debugTypes
             }
-            scanRepository.update(scan)
+
+            // Optimization: Release all ScanResultWrapper objects after insertion to free memory
+            scanResultDictionary.clear()
+
+            SharedPrefs.lastScanDate = LocalDateTime.now()
+            SharedPrefs.isScanningInBackground = false
+            val scan = scanRepository.scanWithId(scanId.toInt())
+            if (scan != null) {
+                scan.endDate = LocalDateTime.now()
+                scan.duration = scanDuration.toInt() / 1000
+                scan.noDevicesFound = deviceCount
+
+                if (BuildConfig.DEBUG) {
+                    val (dbLocation, dbLocationWasNew) = saveLocation(latitude = location?.latitude, longitude = location?.longitude, accuracy = location?.accuracy, altitude = location?.altitude, discoveryDate = LocalDateTime.now())
+                    // Only attach an existing location to the scan record.
+                    if (!dbLocationWasNew) {
+                        scan.locationId = dbLocation?.locationId
+                    }
+                    scan.locationDeg = "${location?.longitude},${location?.latitude}"
+                    scan.devicesAddressesFound = debugAddresses
+                    scan.devicesTypesFound = debugTypes
+                }
+                scanRepository.update(scan)
+            }
+
+            Timber.d("Scheduling tracking detector worker")
+            backgroundWorkScheduler.scheduleTrackingDetector()
+            BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
+
+            Timber.d("Finished Background Scan")
+            return BackgroundScanResults(
+                duration = scanDuration,
+                scanMode = scanMode,
+                numberDevicesFound = deviceCount,
+                failed = false
+            )
+        } finally {
+            // Release the wake lock when we are done
+            if (wakeLock?.isHeld == true) {
+                wakeLock.release()
+            }
+            isScanning = false
         }
-
-        Timber.d("Scheduling tracking detector worker")
-        backgroundWorkScheduler.scheduleTrackingDetector()
-        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
-
-        // Release the wake lock when we are done
-        wakeLock?.release()
-
-        Timber.d("Finished Background Scan")
-        return BackgroundScanResults(
-            duration = scanDuration,
-            scanMode = scanMode,
-            numberDevicesFound = deviceCount,
-            failed = false
-        )
     }
 
     private val leScanCallback: ScanCallback = object : ScanCallback() {

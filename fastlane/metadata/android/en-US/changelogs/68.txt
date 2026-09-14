@@ -1,0 +1,3 @@
+IMPROVED: Fixed a bug showing the wrong icon for AirPods Pro
+IMPROVED: Performance and Background Battery Usage Improvements
+IMPROVED: General Bugfixes
