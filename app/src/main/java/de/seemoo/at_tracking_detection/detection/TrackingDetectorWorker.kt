@@ -117,9 +117,14 @@ class TrackingDetectorWorker @AssistedInject constructor(
 
             val detectionEvents: List<Beacon> = beaconRepository.getDeviceBeaconsSince(deviceIdentifier, considerDetectionEventSince)
 
+            if (detectionEvents.size < RiskLevelEvaluator.NUMBER_OF_BEACONS_BEFORE_ALARM) {
+                return false
+            }
+
             val detectionEventsSorted: List<Beacon> = detectionEvents.sortedBy { it.receivedAt }
             val earliestDetectionEvent: Beacon = detectionEventsSorted.firstOrNull() ?: return false
-            val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, LocalDateTime.now()).toMinutes()
+            val latestDetectionEvent: Beacon = detectionEventsSorted.lastOrNull() ?: return false
+            val timeFollowing: Long = Duration.between(earliestDetectionEvent.receivedAt, latestDetectionEvent.receivedAt).toMinutes()
 
             val filteredDetectionEvents = detectionEvents.filter { it.locationId != null && it.locationId != 0 }
             val distinctDetectionEvent = filteredDetectionEvents.map { it.locationId }.distinct()

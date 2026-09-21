@@ -356,7 +356,7 @@
     <string name="no_browser">Nenašiel sa žiadny prehliadač</string>
 
     <string name="delete_data_button">Požiadať o vymazanie údajov</string>
-    <string name="delete_data_explanation">Ak by ste chceli, aby sme vymazali všetky údaje, ktoré sme o vás zhromaždili v rámci našej štúdie, kliknite na tlačidlo nižšie. Týmto sa tiež odhlásite z ďalšej účasti na štúdii. Ak by ste chceli kedykoľvek pokračovať v podpore nášho výskumu, môžete jednoducho reaktivovať proces úvodného nastavenia a kliknúť na áno pre účasť v štúdii.</string>
+    <string name="delete_data_explanation">Ak by ste chceli, aby sme vymazali všetky údaje, ktoré sme o vás zhromaždili v rámci našej štúdie, kliknite na tlačidlo nižšie. Týmto sa tiež odhlásite z ďalšej účasti na štúdii a nebudú sa od vás zhromažďovať žiadne ďalšie údaje. Ak by ste chceli v budúcnosti znova podporiť náš výskum, môžete jednoducho znova aktivovať možnosť \"Zúčastniť sa štúdie\" alebo znova prejsť onboardingovým dialógom a kliknúť na \"Áno\" pri účasti v štúdii.</string>
     <string name="delete_data_success">Vymazanie údajov bolo úspešné</string>
     <string name="delete_data_error">Niečo sa pokazilo</string>
     <string name="delete_data_server_error">Server nie je dostupný. Skúste znova neskôr.</string>

@@ -300,7 +300,7 @@
 
     <string name="no_browser">ブラウザが見つかりません</string>
     <string name="delete_data_button">データ削除をリクエストする</string>
-    <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止されます。再度参加したい場合は、オンボーディングを再度有効化し「はい」を選択してください。</string>
+    <string name="delete_data_explanation">研究の一環として収集したすべてのデータを削除したい場合は、下のボタンをクリックしてください。これにより研究への参加も停止され、これ以上データが収集されることはありません。今後再び私たちの研究をサポートしていただける場合は、「研究に参加する」のオプションを再度有効にするか、オンボーディングダイアログを再度実行して研究参加で「はい」をクリックしてください。</string>
     <string name="delete_data_success">データ削除に成功しました</string>
     <string name="delete_data_error">エラーが発生しました</string>
     <string name="delete_data_server_error">サーバーに接続できません。後でもう一度お試しください。</string>

@@ -1,0 +1,3 @@
+VERBESSERT: Ein Fehler wurde behoben, der zu Fehlalarm-Benachrichtigungen führen konnte
+VERBESSERT: Erklärungen zu Studiendaten wurden präzisiert
+VERBESSERT: Allgemeine Fehlerbehebungen

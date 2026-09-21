@@ -333,7 +333,7 @@
     <string name="no_browser">Pas de navigateur trouvé</string>
 
     <string name="delete_data_button">Demander la suppression des données</string>
-    <string name="delete_data_explanation">Si vous souhaitez que nous supprimions toutes les données que nous avons collectées sur vous dans le cadre de notre étude, merci de cliquer sur le bouton ci-dessous. Cela vous exclura également de toute participation future à cette étude. Si vous voulez continuer à soutenir nos recherches, vous pouvez simplement relancer les procédures d\u02bcaccueil et cliquer sur oui à la participation à l\u02bcétude.</string>
+    <string name="delete_data_explanation">Si vous souhaitez que nous supprimions toutes les données que nous avons collectées sur vous dans le cadre de notre étude, merci de cliquer sur le bouton ci-dessous. Cela vous exclura également de toute participation future à cette étude et aucune autre donnée ne sera collectée auprès de vous. Si vous souhaitez à nouveau soutenir nos recherches à l\u02bcavenir, vous pouvez simplement réactiver l\u02bcoption \"Participer à l\u02bcétude\" ou relancer le dialogue d\u02bcaccueil et cliquer sur \"Oui\" pour la participation à l\u02bcétude.</string>
     <string name="delete_data_success">Données supprimées avec succès</string>
     <string name="delete_data_error">Une erreur s\u02bcest produite</string>
     <string name="delete_data_server_error">Le serveur n\u02bcest pas accessible, veuillez réessayer dans un moment.</string>
