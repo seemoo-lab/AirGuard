@@ -1,0 +1,3 @@
+IMPROVED: Fixed a bug that could cause false positive notifications
+IMPROVED: Clarified study data explanations
+IMPROVED: General Bugfixes
