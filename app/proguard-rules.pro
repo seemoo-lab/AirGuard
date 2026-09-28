@@ -190,3 +190,19 @@
 
 # --- kotlin-reflect ---
 -dontwarn kotlin.reflect.jvm.internal.**
+
+# --- AboutLibraries ---
+-keep class com.mikepenz.aboutlibraries.** { *; }
+-keepclassmembers class com.mikepenz.aboutlibraries.** { *; }
+
+# Keep kotlinx.serialization classes & members for AboutLibraries model deserialization
+-keepclassmembers class * {
+    @kotlinx.serialization.SerialName <fields>;
+}
+-keepclasseswithmembers class * {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keepclassmembers class com.mikepenz.aboutlibraries.**$$serializer {
+    public static final com.mikepenz.aboutlibraries.**$$serializer INSTANCE;
+}
+

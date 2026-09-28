@@ -56,14 +56,14 @@ class InformationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val developerText = view.findViewById<TextView>(R.id.developer_text)
-        val maintainerText = view.findViewById<TextView>(R.id.maintainer_text)
+        // val maintainerText = view.findViewById<TextView>(R.id.maintainer_text)
 
         developerText.text = getString(R.string.developer, "Dennis Arndt")
-        maintainerText.text = getString(R.string.maintainer, "Alexander Matern")
+        // maintainerText.text = getString(R.string.maintainer, "Alexander Matern")
 
         val contact = view.findViewById<MaterialCardView>(R.id.contact_mail)
         val developer = view.findViewById<MaterialCardView>(R.id.developer_mail)
-        val maintainer = view.findViewById<MaterialCardView>(R.id.maintainer_mail)
+        // val maintainer = view.findViewById<MaterialCardView>(R.id.maintainer_mail)
         val libraries = view.findViewById<MaterialCardView>(R.id.libraries)
         val website = view.findViewById<MaterialCardView>(R.id.airguard_website)
 
@@ -75,10 +75,10 @@ class InformationFragment : Fragment() {
             val emailAddress = "darndt@seemoo.tu-darmstadt.de"
             composeEmail(emailAddress)
         }
-        maintainer.setOnClickListener {
-            val emailAddress = "amatern@seemoo.tu-darmstadt.de"
-            composeEmail(emailAddress)
-        }
+//        maintainer.setOnClickListener {
+//            val emailAddress = "amatern@seemoo.tu-darmstadt.de"
+//            composeEmail(emailAddress)
+//        }
         website.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,

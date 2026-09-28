@@ -300,7 +300,7 @@
     <string name="credits">致謝</string>
 
     <string name="delete_data_button">請求刪除資料</string>
-    <string name="delete_data_explanation">Placeholder：解釋發生的事情等。</string>
+    <string name="delete_data_explanation">如果您希望我們刪除在研究期間向您收集的所有資料，請按一下下方的按鈕。這也將使您退出進一步參與研究，且不會再向您收集任何資料。如果您未來想再次支持我們的研究，只需重新啟用「參與研究」選項，或重新進行引導流程並在參與研究時按一下「是」。</string>
     <string name="copyright">版權</string>
     <string name="developer">開發者：%s</string>
     <string name="maintainer">維護者：%s</string>

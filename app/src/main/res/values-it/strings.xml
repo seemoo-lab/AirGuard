@@ -421,7 +421,7 @@
     <string name="no_browser">Nessun browser trovato</string>
 
     <string name="delete_data_button">Richiedi eliminazione dati</string>
-    <string name="delete_data_explanation">Se desideri che tutti i dati che abbiamo raccolto da te come parte del nostro studio vengano eliminati, fai clic sul pulsante qui sotto. Ciò ti escluderà anche da un\'ulteriore partecipazione allo studio. Se in qualsiasi momento volessi tornare a sostenere la nostra ricerca, puoi semplicemente riattivare il processo di onboarding e cliccare sì alla partecipazione allo studio.</string>
+    <string name="delete_data_explanation">Se desideri che tutti i dati che abbiamo raccolto da te come parte del nostro studio vengano eliminati, fai clic sul pulsante qui sotto. Ciò ti escluderà anche da un\'ulteriore partecipazione allo studio e non verranno raccolti ulteriori dati da te. Se in futuro volessi tornare a sostenere la nostra ricerca, puoi semplicemente riattivare l\'opzione \"Partecipa allo studio\" o ripetere la procedura di onboarding e fare clic su \"Si\" per la partecipazione allo studio.</string>
     <string name="delete_data_success">Eliminazione dati riuscita</string>
     <string name="delete_data_error">Qualcosa è andato storto</string>
     <string name="delete_data_server_error">Server non raggiungibile. Riprova più tardi.</string>

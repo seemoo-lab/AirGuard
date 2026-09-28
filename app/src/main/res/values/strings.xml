@@ -370,7 +370,7 @@
     <string name="no_browser">No Browser found</string>
 
     <string name="delete_data_button">Request deletion of Data</string>
-    <string name="delete_data_explanation">If you would like us to delete all the data we have collected from you as part of our study, please click the button below. This will also opt you out of further participation in the study. If you would like to continue supporting our research at any point, you can simply reactivate the onboarding process and click yes to study participation.</string>
+    <string name="delete_data_explanation">If you would like us to delete all the data we have collected from you as part of our study, please click the button below. This will also opt you out of further participation in the study and no further data will be collected from you. If you would like to support our research again in the future, you can simply reactivate the \"Participate in study\" option or go through the onboarding dialog again and click \"Yes\" for study participation.</string>
     <string name="delete_data_success">Data deletion successful</string>
     <string name="delete_data_error">Something went wrong</string>
     <string name="delete_data_server_error">Server is not reachable. Try again later.</string>
