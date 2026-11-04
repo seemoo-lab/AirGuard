@@ -109,7 +109,7 @@ object BackgroundBluetoothScanner {
     suspend fun scanInBackground(startedFrom: String, ignoreDeactivatedSetting: Boolean = false): BackgroundScanResults {
         if (SharedPrefs.deactivateBackgroundScanning && !ignoreDeactivatedSetting) {
             Timber.d("Background scanning is deactivated")
-            return BackgroundScanResults(0, 0, 0, true)
+            return BackgroundScanResults(0, 0, 0, false)
         }
 
         if (isScanning) {

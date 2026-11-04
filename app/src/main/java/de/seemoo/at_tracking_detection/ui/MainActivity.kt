@@ -266,7 +266,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         } catch (e: Exception) {
             Timber.e(e, "Error starting Bluetooth scan")
         }
-        backgroundWorkScheduler.scheduleImmediateBackgroundScan()
+        if (!SharedPrefs.deactivateBackgroundScanning) {
+            backgroundWorkScheduler.scheduleImmediateBackgroundScan()
+        }
     }
 
     override fun onPause() {

@@ -170,6 +170,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
     fun scan() {
         if (SharedPrefs.deactivateBackgroundScanning) {
             BLELogger.d("Background scanning is deactivated")
+            stopPermanentScan()
             return
         } else if (!Utility.checkBluetoothPermission()) {
             BLELogger.d("Permission to perform bluetooth scan missing")
@@ -197,7 +198,10 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
     @SuppressLint("MissingPermission")
     fun startPendingIntentScan() {
-        if (SharedPrefs.deactivateBackgroundScanning) return
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            stopPendingIntentScan()
+            return
+        }
         if (!Utility.checkBluetoothPermission()) return
 
         // Prevent re-entrant calls

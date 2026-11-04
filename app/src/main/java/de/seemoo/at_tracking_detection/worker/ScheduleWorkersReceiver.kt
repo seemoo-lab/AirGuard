@@ -33,6 +33,12 @@ class ScheduleWorkersReceiver: BroadcastReceiver() {
         }
         val backgroundWorkScheduler = app.backgroundWorkScheduler
 
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            Timber.d("Background scanning is deactivated, skipping broadcast handling for action: $action")
+            backgroundWorkScheduler.cancelAllScanWork()
+            return
+        }
+
         // Keep the broadcast short: schedule alarms inline; offload WorkManager to a separate thread and finish quickly.
         goAsync(Dispatchers.Default) {
             when (action) {

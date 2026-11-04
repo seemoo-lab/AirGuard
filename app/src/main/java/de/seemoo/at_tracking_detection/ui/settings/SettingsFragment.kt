@@ -22,6 +22,7 @@ import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -216,8 +217,26 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         ATTrackingDetectionApplication.getCurrentActivity()?.recreate()
                     }
                 }
+                "deactivate_background_scanning" -> {
+                    if (SharedPrefs.deactivateBackgroundScanning) {
+                        Timber.d("Deactivating background scanning!")
+                        backgroundWorkScheduler.cancelAllScanWork()
+                    } else {
+                        Timber.d("Re-enabling background scanning!")
+                        backgroundWorkScheduler.launch()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
+                            try {
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    PermanentBluetoothScanner.scan()
+                                }
+                            } catch (t: Throwable) {
+                                Timber.e(t, "Failed to start PermanentBluetoothScanner from Settings")
+                            }
+                        }
+                    }
+                }
                 "use_permanent_bluetooth_scanner" -> {
-                    if (SharedPrefs.usePermanentBluetoothScanner) {
+                    if (SharedPrefs.usePermanentBluetoothScanner && !SharedPrefs.deactivateBackgroundScanning) {
                         Timber.d("Enabled permanent bluetooth scanner!")
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             try {

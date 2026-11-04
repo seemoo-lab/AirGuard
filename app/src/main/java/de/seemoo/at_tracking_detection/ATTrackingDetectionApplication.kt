@@ -154,7 +154,9 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
 
         notificationService.setup()
         notificationService.scheduleSurveyNotification(false)
-        BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
+        if (!SharedPrefs.deactivateBackgroundScanning) {
+            BackgroundWorkScheduler.scheduleAlarmWakeupIfScansFail()
+        }
 
         registerBroadcastReceiver()
 
@@ -163,7 +165,7 @@ class ATTrackingDetectionApplication : Application(), Configuration.Provider {
         }
 
         // Initiate the permanent background scan
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner && !SharedPrefs.deactivateBackgroundScanning) {
             PermanentBluetoothScanner.scan()
         }
 

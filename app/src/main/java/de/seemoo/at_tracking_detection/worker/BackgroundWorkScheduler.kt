@@ -14,6 +14,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.BuildConfig
+import de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -28,13 +29,24 @@ class BackgroundWorkScheduler @Inject constructor(
 ) {
 
     fun launch() {
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            Timber.d("Background scanning is deactivated, canceling all scan work.")
+            cancelAllScanWork()
+            return
+        }
         // We now scan with Alarms instead of periodic workers, since they have proven to be unreliable
         scheduleScanWithAlarm()
+        scheduleAlarmWakeupIfScansFail()
         // We cancel all periodic scans
         workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SCAN_WORKER)
     }
 
     fun legacyLaunch() {
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            Timber.d("Background scanning is deactivated, skipping legacy launch.")
+            cancelAllScanWork()
+            return
+        }
         Timber.d("Work scheduler started!")
         workManager.enqueueUniquePeriodicWork(
             WorkerConstants.PERIODIC_SCAN_WORKER,
@@ -47,6 +59,10 @@ class BackgroundWorkScheduler @Inject constructor(
     }
 
     fun scheduleImmediateBackgroundScan() {
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            Timber.d("Background scanning is deactivated, skipping immediate scan worker.")
+            return
+        }
         Timber.d("Scheduling Immediate Background Scan Worker ")
         workManager.enqueueUniqueWork(WorkerConstants.SCAN_IMMEDIATELY,
             ExistingWorkPolicy.REPLACE,
@@ -107,6 +123,18 @@ class BackgroundWorkScheduler @Inject constructor(
         backgroundWorkBuilder.buildDeviceCleanupWorkerNow()
     ).also { it.logOperationSchedule(WorkerConstants.DEVICE_CLEANUP_WORKER_NOW) }
 
+    fun cancelAllScanWork() {
+        cancelScanWithAlarm()
+        cancelAlarmWakeupIfScansFail()
+        workManager.cancelUniqueWork(WorkerConstants.SCAN_IMMEDIATELY)
+        workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SCAN_WORKER)
+        workManager.cancelUniqueWork(WorkerConstants.TRACKING_DETECTION_WORKER)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermanentBluetoothScanner.stopPermanentScan()
+        }
+        Timber.d("All background scan work and alarms canceled")
+    }
+
     private fun Operation.logOperationSchedule(uniqueWorker: String) =
         this.result.addListener({ Timber.d("$uniqueWorker completed!") }, { it.run() })
             .also { Timber.d("$uniqueWorker scheduled!") }
@@ -117,6 +145,12 @@ class BackgroundWorkScheduler @Inject constructor(
          */
         // @SuppressLint("UnspecifiedImmutableFlag")
         fun scheduleAlarmWakeupIfScansFail() {
+            if (SharedPrefs.deactivateBackgroundScanning) {
+                Timber.d("Background scanning is deactivated, canceling wakeup alarm.")
+                cancelAlarmWakeupIfScansFail()
+                return
+            }
+
             //Run in 2 hours
 //            val timeInMillisUntilNotification: Long = 2 * 60 * 60 * 1000
             // Run in 60minBack
@@ -135,14 +169,14 @@ class BackgroundWorkScheduler @Inject constructor(
             val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
                 PendingIntent.getBroadcast(
                     ATTrackingDetectionApplication.getAppContext(),
-                    -103,
+                    -104,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 )
             } else {
                 PendingIntent.getBroadcast(
                     ATTrackingDetectionApplication.getAppContext(),
-                    -103,
+                    -104,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
@@ -157,6 +191,12 @@ class BackgroundWorkScheduler @Inject constructor(
         }
 
         fun scheduleScanWithAlarm() {
+            if (SharedPrefs.deactivateBackgroundScanning) {
+                Timber.d("Background scanning is deactivated, canceling scan alarm.")
+                cancelScanWithAlarm()
+                return
+            }
+
             //Run in 15 min
             val timeInMillisUntilNotification: Long = if (BuildConfig.DEBUG) {
                 15 * 60 * 1000
@@ -202,6 +242,74 @@ class BackgroundWorkScheduler @Inject constructor(
             }
 
             SharedPrefs.nextScanDate = alarmDate
+        }
+
+        fun cancelScanWithAlarm() {
+            val intent = Intent(
+                ATTrackingDetectionApplication.getAppContext(),
+                ScheduleWorkersReceiver::class.java
+            ).apply {
+                action = "AlarmManagerWakeUp_Perform_BackgroundScan"
+            }
+
+            val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+                )
+            } else {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -103,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+                )
+            }
+
+            if (pendingIntent != null) {
+                val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
+                    Context.ALARM_SERVICE
+                ) as AlarmManager
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
+                Timber.d("Canceled AlarmManagerWakeUp_Perform_BackgroundScan alarm")
+            }
+        }
+
+        fun cancelAlarmWakeupIfScansFail() {
+            val intent = Intent(
+                ATTrackingDetectionApplication.getAppContext(),
+                ScheduleWorkersReceiver::class.java
+            ).apply {
+                action = "AlarmManagerWakeUp_Schedule_BackgroundScan"
+            }
+
+            val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -104,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+                )
+            } else {
+                PendingIntent.getBroadcast(
+                    ATTrackingDetectionApplication.getAppContext(),
+                    -104,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+                )
+            }
+
+            if (pendingIntent != null) {
+                val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
+                    Context.ALARM_SERVICE
+                ) as AlarmManager
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
+                Timber.d("Canceled AlarmManagerWakeUp_Schedule_BackgroundScan alarm")
+            }
         }
 
 

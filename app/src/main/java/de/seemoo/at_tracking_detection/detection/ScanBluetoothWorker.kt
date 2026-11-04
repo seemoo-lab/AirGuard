@@ -7,7 +7,9 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
+import timber.log.Timber
 
 @HiltWorker
 class ScanBluetoothWorker @AssistedInject constructor(
@@ -20,6 +22,11 @@ class ScanBluetoothWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val ignoreDeactivatedSetting = inputData.getBoolean(IGNORE_DEACTIVATED_SETTING_PARAM, false)
+
+        if (SharedPrefs.deactivateBackgroundScanning && !ignoreDeactivatedSetting) {
+            Timber.d("ScanBluetoothWorker: Background scanning is deactivated, skipping work")
+            return Result.success()
+        }
 
         val results = BackgroundBluetoothScanner.scanInBackground(
             startedFrom = "ScanBluetoothWorker",

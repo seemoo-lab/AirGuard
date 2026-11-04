@@ -32,6 +32,10 @@ class PermanentScanReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        if (SharedPrefs.deactivateBackgroundScanning) {
+            BLELogger.d("PermanentScanReceiver: Background scanning is deactivated, ignoring scan results")
+            return
+        }
 
         // Check for scan error
         val errorCode = intent.getIntExtra(BluetoothLeScanner.EXTRA_ERROR_CODE, 0)
