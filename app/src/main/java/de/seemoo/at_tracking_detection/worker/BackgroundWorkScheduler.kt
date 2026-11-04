@@ -126,9 +126,9 @@ class BackgroundWorkScheduler @Inject constructor(
     fun cancelAllScanWork() {
         cancelScanWithAlarm()
         cancelAlarmWakeupIfScansFail()
-        workManager.cancelUniqueWork(WorkerConstants.SCAN_IMMEDIATELY)
-        workManager.cancelUniqueWork(WorkerConstants.PERIODIC_SCAN_WORKER)
-        workManager.cancelUniqueWork(WorkerConstants.TRACKING_DETECTION_WORKER)
+        listOf(WorkerConstants.SCAN_IMMEDIATELY, WorkerConstants.PERIODIC_SCAN_WORKER, WorkerConstants.TRACKING_DETECTION_WORKER).forEach {
+            workManager.cancelUniqueWork(it)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PermanentBluetoothScanner.stopPermanentScan()
         }
@@ -244,72 +244,25 @@ class BackgroundWorkScheduler @Inject constructor(
             SharedPrefs.nextScanDate = alarmDate
         }
 
-        fun cancelScanWithAlarm() {
-            val intent = Intent(
+        fun cancelScanWithAlarm() = cancelAlarm("AlarmManagerWakeUp_Perform_BackgroundScan", -103)
+
+        fun cancelAlarmWakeupIfScansFail() = cancelAlarm("AlarmManagerWakeUp_Schedule_BackgroundScan", -104)
+
+        private fun cancelAlarm(action: String, requestCode: Int) {
+            val intent = Intent(ATTrackingDetectionApplication.getAppContext(), ScheduleWorkersReceiver::class.java).apply {
+                this.action = action
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
                 ATTrackingDetectionApplication.getAppContext(),
-                ScheduleWorkersReceiver::class.java
-            ).apply {
-                action = "AlarmManagerWakeUp_Perform_BackgroundScan"
-            }
+                requestCode,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+            ) ?: return
 
-            val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
-                PendingIntent.getBroadcast(
-                    ATTrackingDetectionApplication.getAppContext(),
-                    -103,
-                    intent,
-                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
-                )
-            } else {
-                PendingIntent.getBroadcast(
-                    ATTrackingDetectionApplication.getAppContext(),
-                    -103,
-                    intent,
-                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
-                )
-            }
-
-            if (pendingIntent != null) {
-                val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
-                    Context.ALARM_SERVICE
-                ) as AlarmManager
-                alarmManager.cancel(pendingIntent)
-                pendingIntent.cancel()
-                Timber.d("Canceled AlarmManagerWakeUp_Perform_BackgroundScan alarm")
-            }
-        }
-
-        fun cancelAlarmWakeupIfScansFail() {
-            val intent = Intent(
-                ATTrackingDetectionApplication.getAppContext(),
-                ScheduleWorkersReceiver::class.java
-            ).apply {
-                action = "AlarmManagerWakeUp_Schedule_BackgroundScan"
-            }
-
-            val pendingIntent = if (Build.VERSION.SDK_INT >= 31) {
-                PendingIntent.getBroadcast(
-                    ATTrackingDetectionApplication.getAppContext(),
-                    -104,
-                    intent,
-                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
-                )
-            } else {
-                PendingIntent.getBroadcast(
-                    ATTrackingDetectionApplication.getAppContext(),
-                    -104,
-                    intent,
-                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
-                )
-            }
-
-            if (pendingIntent != null) {
-                val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(
-                    Context.ALARM_SERVICE
-                ) as AlarmManager
-                alarmManager.cancel(pendingIntent)
-                pendingIntent.cancel()
-                Timber.d("Canceled AlarmManagerWakeUp_Schedule_BackgroundScan alarm")
-            }
+            val alarmManager = ATTrackingDetectionApplication.getAppContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+            Timber.d("Canceled $action alarm")
         }
 
 

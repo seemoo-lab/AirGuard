@@ -21,10 +21,6 @@ import de.seemoo.at_tracking_detection.detection.PermanentBluetoothScanner
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.worker.BackgroundWorkScheduler
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -184,7 +180,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private val sharedPreferenceListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, preferenceKey ->
             when (preferenceKey) {
@@ -225,36 +220,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         Timber.d("Re-enabling background scanning!")
                         backgroundWorkScheduler.launch()
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedPrefs.usePermanentBluetoothScanner) {
-                            try {
-                                GlobalScope.launch(Dispatchers.IO) {
-                                    PermanentBluetoothScanner.scan()
-                                }
-                            } catch (t: Throwable) {
-                                Timber.e(t, "Failed to start PermanentBluetoothScanner from Settings")
-                            }
+                            PermanentBluetoothScanner.scan()
                         }
                     }
                 }
                 "use_permanent_bluetooth_scanner" -> {
-                    if (SharedPrefs.usePermanentBluetoothScanner && !SharedPrefs.deactivateBackgroundScanning) {
-                        Timber.d("Enabled permanent bluetooth scanner!")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            try {
-                                GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                                    PermanentBluetoothScanner.scan()
-                                }
-                            } catch (t: Throwable) {
-                                Timber.e(t, "Failed to start PermanentBluetoothScanner from Settings")
-                            }
-                        }
-                    } else {
-                        Timber.d("Disabled permanent bluetooth scanner!")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            try {
-                                PermanentBluetoothScanner.stopPermanentScan()
-                            } catch (t: Throwable) {
-                                Timber.e(t, "Failed to stop PermanentBluetoothScanner from Settings")
-                            }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (SharedPrefs.usePermanentBluetoothScanner && !SharedPrefs.deactivateBackgroundScanning) {
+                            Timber.d("Enabled permanent bluetooth scanner!")
+                            PermanentBluetoothScanner.scan()
+                        } else {
+                            Timber.d("Disabled permanent bluetooth scanner!")
+                            PermanentBluetoothScanner.stopPermanentScan()
                         }
                     }
                 }
