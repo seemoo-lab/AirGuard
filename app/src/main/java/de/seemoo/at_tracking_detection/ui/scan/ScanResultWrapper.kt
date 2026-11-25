@@ -43,7 +43,7 @@ data class ScanResultWrapper(val scanResult: ScanResult) {
 
     // Fields previously only available on ScannedDevice — pre-computed here so the raw
     // ScanResult can be freed as soon as this wrapper is created.
-    val payloadData: Byte? = scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2)
+    val payloadData: Byte? = scanResult.scanRecord?.getManufacturerSpecificData(76)?.getOrNull(2)
 
     // Name to persist in the database. Samsung Trackers use null
     val deviceName: String? = if (deviceType == DeviceType.SAMSUNG_TRACKER) {

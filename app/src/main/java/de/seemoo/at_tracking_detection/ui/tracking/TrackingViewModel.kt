@@ -21,6 +21,7 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.detection.ImmediateNotificationEvaluator
 import de.seemoo.at_tracking_detection.notifications.NotificationService
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BluetoothEvent
@@ -135,13 +136,15 @@ class TrackingViewModel @Inject constructor(
         }
     }
 
+    private var hasMapLocations = false
+
     fun updateUIStates() {
         // Read directly from the LiveData values synchronously to prevent race conditions
         val isSafe = isSafeTracker.value ?: false
         val isIgnored = deviceIgnored.value ?: false
         val effectiveSafe = isSafe && !isIgnored
 
-        val noLocs = noLocationsYet.value ?: true
+        val noLocs = (noLocationsYet.value ?: true) || !hasMapLocations
         val internet = isInternetAvailable.value ?: false
 
         showMap.value = !noLocs && internet
@@ -175,6 +178,7 @@ class TrackingViewModel @Inject constructor(
 
                     // Fetch latest beacons and extract the most recent connection state
                     val beacons = beaconRepository.getDeviceBeacons(dev.address)
+                    val hasValidLocations = beacons.any { it.locationId != null && it.locationId != 0 }
                     val latestBeacon = beacons.maxByOrNull { it.receivedAt }
                     val latestConnectionState = latestBeacon?.connectionState?.let {
                         try {
@@ -199,6 +203,7 @@ class TrackingViewModel @Inject constructor(
                         trackerObserved.value = deviceObserved
                         deviceIgnored.value = ignore
                         noLocationsYet.value = false
+                        hasMapLocations = hasValidLocations
                         connectable.value = dev.device is Connectable
                         canBeIgnored.value = dType.canBeIgnored(ConnectionState.OVERMATURE_OFFLINE)
                         if (notifId != -1) notificationId.value = notifId
@@ -217,6 +222,7 @@ class TrackingViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         device.value = null
                         noLocationsYet.value = true
+                        hasMapLocations = false
 
                         // not in  DB --> safe
                         isSafeTracker.value = true
@@ -241,19 +247,13 @@ class TrackingViewModel @Inject constructor(
             RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)) == true
         val riskLevelExistent = (dev?.riskLevel ?: 0) > 0
 
-        return if (deviceIsIgnored) {
-            false
-        } else if (deviceIsSafeTracker) {
-            false
-        } else if (isUnsafeConnectionState) {
-            true
-        } else if (notificationSent && notificationRecent) {
-            true
-        } else if (riskLevelExistent) {
-            true
-        } else {
-            false
+        if (deviceIsIgnored || deviceIsSafeTracker) return false
+
+        if (ImmediateNotificationEvaluator.isHighRiskImmediateThreat(dev)) {
+            return true
         }
+
+        return isUnsafeConnectionState || (notificationSent && notificationRecent) || riskLevelExistent
     }
 
     fun toggleIgnoreDevice() {

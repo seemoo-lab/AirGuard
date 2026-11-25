@@ -40,7 +40,7 @@ class BluetoothDeviceAdapter:
             .setOnClickListener {
                 try {
                     val deviceAddress: String = wrappedScanResult.uniqueIdentifier
-                    val deviceType: DeviceType = wrappedScanResult.deviceType
+                    val deviceType: DeviceType = DeviceManager.getDeviceType(wrappedScanResult.scanResult)
                     val deviceTypeString = DeviceManager.deviceTypeToString(deviceType)
 
                     val directions = ScanFragmentDirections.actionScanToTrackingFragment(

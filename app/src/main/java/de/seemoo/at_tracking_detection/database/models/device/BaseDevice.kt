@@ -13,6 +13,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.AirPods
 import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
@@ -111,7 +112,7 @@ data class BaseDevice(
         scanResult.let {
             scanResult.isConnectable
         },
-        scanResult.scanRecord?.getManufacturerSpecificData(76)?.get(2),
+        scanResult.scanRecord?.getManufacturerSpecificData(76)?.getOrNull(2),
         LocalDateTime.now(),
         LocalDateTime.now(),
         false,
@@ -126,7 +127,15 @@ data class BaseDevice(
         alternativeIdentifier = getAlternativeIdentifier(scanResult)
     )
 
-    fun getDeviceNameWithID(): String = name ?: device.defaultDeviceNameWithId
+    fun getDeviceNameWithID(): String {
+        name?.takeIf { it.isNotEmpty() }?.let { return it }
+        if (deviceType == DeviceType.APPLE && subDeviceType != "UNKNOWN") {
+            AppleDeviceType.stringToSubType(subDeviceType)
+                .takeIf { it != AppleDeviceType.UNKNOWN }
+                ?.let { return "${AppleDeviceType.visibleStringFromSubtype(it)} $deviceId" }
+        }
+        return device.defaultDeviceNameWithId
+    }
 
     fun getDrawable() = if (deviceType == DeviceType.SAMSUNG_TRACKER && subDeviceType != "UNKNOWN") {
         val subType = SamsungTrackerType.stringToSubType(subDeviceType)
@@ -134,16 +143,23 @@ data class BaseDevice(
     } else if (deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && subDeviceType != "UNKNOWN") {
         val subType = GoogleFindMyNetworkType.stringToSubType(subDeviceType)
         AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, name))
-    } else if (DeviceSubTypeDetector.samsungSubDeviceTypeMap.containsKey(uniqueId)) {
-        val subType = DeviceSubTypeDetector.samsungSubDeviceTypeMap[uniqueId]!!
-        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), SamsungTrackerType.drawableForSubType(subType))
-    } else if (DeviceSubTypeDetector.googleSubDeviceTypeMap.containsKey(uniqueId)) {
-        val subType = DeviceSubTypeDetector.googleSubDeviceTypeMap[uniqueId]!!
-        val deviceNameFromCache = DeviceSubTypeDetector.deviceNameMap[uniqueId]
-        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), GoogleFindMyNetworkType.drawableForSubType(subType, deviceNameFromCache))
+    } else if (deviceType == DeviceType.APPLE && subDeviceType != "UNKNOWN") {
+        val subType = AppleDeviceType.stringToSubType(subDeviceType)
+        AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), AppleDeviceType.drawableForSubType(subType))
     } else {
-        device.getDrawable()
+        getCachedSubTypeDrawableRes()?.let {
+            AppCompatResources.getDrawable(ATTrackingDetectionApplication.getAppContext(), it)
+        } ?: device.getDrawable()
     }
+
+    private fun getCachedSubTypeDrawableRes(): Int? =
+        listOfNotNull(address, uniqueId).firstNotNullOfOrNull { key ->
+            DeviceSubTypeDetector.samsungSubDeviceTypeMap[key]?.let { SamsungTrackerType.drawableForSubType(it) }
+                ?: DeviceSubTypeDetector.googleSubDeviceTypeMap[key]?.let {
+                    GoogleFindMyNetworkType.drawableForSubType(it, DeviceSubTypeDetector.deviceNameMap[key])
+                }
+                ?: DeviceSubTypeDetector.appleSubDeviceTypeMap[key]?.let { AppleDeviceType.drawableForSubType(it) }
+        }
 
     @Ignore
     private val dateTimeFormatter: DateTimeFormatter =
@@ -215,8 +231,8 @@ data class BaseDevice(
                 DeviceType.SAMSUNG_TRACKER -> SamsungTracker.getConnectionState(scanResult)
                 DeviceType.AIRPODS,
                 DeviceType.FIND_MY,
-                DeviceType.AIRTAG,
-                DeviceType.APPLE -> AppleFindMy.getConnectionState(scanResult)
+                DeviceType.AIRTAG -> AppleFindMy.getConnectionState(scanResult)
+                DeviceType.APPLE -> AppleDevice.getConnectionState(scanResult)
                 DeviceType.GOOGLE_FIND_MY_NETWORK -> GoogleFindMyNetwork.getConnectionState(scanResult)
                 else -> ConnectionState.UNKNOWN
             }

@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
+import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.scan.ScanResultWrapper
@@ -99,11 +101,12 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
         ?: error("ATTrackingDetectionApplication not initialized")
     val deviceFromDb = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+    val effectiveDeviceType = deviceFromDb?.deviceType ?: DeviceManager.getDeviceType(wrappedScanResult.scanResult)
 
     textView.text = if (deviceFromDb != null) {
         // Case: device is in DB
 
-        if (deviceFromDb.name != null) {
+        if (!deviceFromDb.name.isNullOrEmpty()) {
             deviceFromDb.getDeviceNameWithID()
         } else if (deviceFromDb.deviceType == DeviceType.SAMSUNG_TRACKER && deviceFromDb.subDeviceType != "UNKNOWN") {
             val subTypeString = deviceFromDb.subDeviceType
@@ -115,12 +118,17 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
             val subType = GoogleFindMyNetworkType.stringToSubType(subTypeString)
             DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
             GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
+        } else if (deviceFromDb.deviceType == DeviceType.APPLE && deviceFromDb.subDeviceType != "UNKNOWN") {
+            val subType = AppleDeviceType.stringToSubType(deviceFromDb.subDeviceType)
+            DeviceSubTypeDetector.appleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = subType
+            AppleDeviceType.visibleStringFromSubtype(subType)
         } else {
-            // Fallback
-            DeviceType.userReadableNameDefault(wrappedScanResult.deviceType)
+            DeviceSubTypeDetector.appleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]
+                ?.let { AppleDeviceType.visibleStringFromSubtype(it) }
+                ?: DeviceType.userReadableNameDefault(effectiveDeviceType)
         }
     } else {
-        // Case: device ist not in DB
+        // Case: device is not in DB
         // There is a possibility that the device has been determined. In that case this is only saved in the temporary map
 
         if (DeviceSubTypeDetector.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
@@ -129,11 +137,11 @@ fun setDeviceName(textView: TextView, wrappedScanResult: ScanResultWrapper) {
         } else if (DeviceSubTypeDetector.googleSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
             val subType = DeviceSubTypeDetector.googleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]!!
             GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
-        } else if (DeviceSubTypeDetector.deviceNameMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
-            DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier]
         } else {
-            // Fallback
-            DeviceType.userReadableNameDefault(wrappedScanResult.deviceType)
+            DeviceSubTypeDetector.appleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]
+                ?.let { AppleDeviceType.visibleStringFromSubtype(it) }
+                ?: DeviceSubTypeDetector.deviceNameMap[wrappedScanResult.uniqueIdentifier]
+                ?: DeviceType.userReadableNameDefault(effectiveDeviceType)
         }
     }
 }

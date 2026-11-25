@@ -17,6 +17,7 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.ui.TrackingNotificationActivity
@@ -110,6 +111,32 @@ class NotificationBuilder @Inject constructor(
         )
     }
 
+    fun buildAppleWatchNotification(
+        baseDevice: BaseDevice,
+        notificationId: Int
+    ): Notification {
+        val deviceAddress = baseDevice.address
+        val deviceTypeString: String = baseDevice.deviceType?.let {
+            DeviceManager.deviceTypeToString(it)
+        } ?: "APPLE"
+        val bundle: Bundle = packBundle(deviceAddress, deviceTypeString, notificationId).apply {
+            putString("notificationTag", NotificationService.APPLE_WATCH_NOTIFICATION_TAG)
+        }
+        val notificationTitle = context.getString(R.string.notification_title_apple_watch)
+        val notificationText = context.getString(R.string.notification_text_apple_watch)
+
+        return NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
+            .setContentTitle(notificationTitle)
+            .setContentText(notificationText)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setContentIntent(pendingNotificationIntent(bundle, notificationId))
+            .setCategory(Notification.CATEGORY_ALARM)
+            .setSmallIcon(R.drawable.ic_warning)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
+            .setAutoCancel(true)
+            .build()
+    }
+
     fun buildTrackingNotification(
         baseDevice: BaseDevice,
         notificationId: Int
@@ -132,13 +159,23 @@ class NotificationBuilder @Inject constructor(
         val notificationText: String
         val notificationTitle: String
         when (baseDevice.deviceType ?: DeviceType.UNKNOWN) {
-            DeviceType.AIRTAG, DeviceType.APPLE, DeviceType.AIRPODS, DeviceType.UNKNOWN -> {
+            DeviceType.AIRTAG, DeviceType.AIRPODS, DeviceType.UNKNOWN -> {
                 notificationTitle = context.getString(R.string.notification_title_vocal, device.deviceContext.defaultDeviceName )
                 notificationText = if (baseDevice.deviceType == DeviceType.AIRPODS) {
                     context.getString(R.string.notification_text_multiple, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
                 }else {
                     context.getString(R.string.notification_text_single, device.deviceContext.defaultDeviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
                 }
+            }
+            DeviceType.APPLE -> {
+                val subType = AppleDeviceType.stringToSubType(baseDevice.subDeviceType)
+                val deviceName = if (subType != AppleDeviceType.UNKNOWN) {
+                    AppleDeviceType.visibleStringFromSubtype(subType)
+                } else {
+                    device.deviceContext.defaultDeviceName
+                }
+                notificationTitle = context.getString(R.string.notification_title_vocal, deviceName)
+                notificationText = context.getString(R.string.notification_text_single, deviceName, RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm())
             }
             DeviceType.SAMSUNG_TRACKER -> {
                 val subType = SamsungTrackerType.stringToSubType(baseDevice.subDeviceType)

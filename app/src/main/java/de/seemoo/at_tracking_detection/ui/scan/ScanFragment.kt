@@ -28,15 +28,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.Scan
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.ScanRepository
 import de.seemoo.at_tracking_detection.databinding.FragmentScanBinding
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.getScanMode
+import de.seemoo.at_tracking_detection.detection.ImmediateNotificationEvaluator
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BLEScanner
 import de.seemoo.at_tracking_detection.util.ble.DeviceSubTypeDetector
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -207,9 +211,17 @@ class ScanFragment : Fragment() {
             result?.let { scanResult ->
                 val wrapper = scanViewModel.addScanResult(scanResult)
                 // Enqueue for GATT subtype detection (when enabled)
-                if (SharedPrefs.autoDetectDeviceTypes) {
-                    if (DeviceSubTypeDetector.needsDetection(wrapper) && detectionAttempted.add(wrapper.uniqueIdentifier)) {
+                if (SharedPrefs.autoDetectDeviceTypes && wrapper.isConnectable) {
+                    val shouldDetect = if (wrapper.deviceType == DeviceType.APPLE) {
+                        ImmediateNotificationEvaluator.hasEnabledCandidateRule(wrapper)
+                    } else {
+                        wrapper.deviceType in DeviceType.getAllowedDeviceTypesFromSettings() ||
+                            ImmediateNotificationEvaluator.hasEnabledCandidateRule(wrapper)
+                    }
+                    if (shouldDetect && DeviceSubTypeDetector.needsDetection(wrapper) && detectionAttempted.add(wrapper.uniqueIdentifier)) {
                         wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.QUEUED
+                        scanViewModel.updateDetectionStatus(wrapper.uniqueIdentifier, ScanResultWrapper.DetectionStatus.QUEUED)
+                        refreshAdapterItem(wrapper.uniqueIdentifier)
                         detectionQueue.trySend(wrapper)
                     }
                 }
@@ -316,22 +328,44 @@ class ScanFragment : Fragment() {
 
     private fun startDetectionQueueProcessor() {
         viewLifecycleOwner.lifecycleScope.launch {
-            for (wrapper in detectionQueue) {
+            val pendingBatch = mutableListOf<ScanResultWrapper>()
+            while (true) {
+                if (pendingBatch.isEmpty()) {
+                    val first = detectionQueue.receiveCatching().getOrNull() ?: break
+                    pendingBatch.add(first)
+                }
+                while (true) {
+                    val next = detectionQueue.tryReceive().getOrNull() ?: break
+                    if (pendingBatch.none { it.uniqueIdentifier == next.uniqueIdentifier }) {
+                        pendingBatch.add(next)
+                    }
+                }
+                // Pick the device with the strongest signal (highest RSSI) first so nearby devices resolve immediately
+                val wrapper = pendingBatch.maxByOrNull { it.rssiValue }!!.also { pendingBatch.remove(it) }
+
                 if (!SharedPrefs.autoDetectDeviceTypes) continue
                 try {
                     val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
                     if (deviceRepository != null) {
                         wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.CONNECTING
+                        scanViewModel.updateDetectionStatus(wrapper.uniqueIdentifier, ScanResultWrapper.DetectionStatus.CONNECTING)
                         refreshAdapterItem(wrapper.uniqueIdentifier)
-                        DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
-                        wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
-                        refreshAdapterItem(wrapper.uniqueIdentifier)
+                        withContext(Dispatchers.IO) {
+                            DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                        }
                     }
                 } catch (e: CancellationException) {
                     throw e
                 } catch (_: Exception) {
-                    // In case of error: simply set to Idle (aka no shimmering animation)
+                    // Ignore GATT errors; finally resets UI state
+                } finally {
                     wrapper.detectionStatus = ScanResultWrapper.DetectionStatus.IDLE
+                    scanViewModel.updateDetectionStatus(wrapper.uniqueIdentifier, ScanResultWrapper.DetectionStatus.IDLE)
+                    // Do not re-queue failed Apple devices to avoid starving nearby Apple Watches and wasting battery.
+                    if (wrapper.deviceType != DeviceType.APPLE && DeviceSubTypeDetector.needsDetection(wrapper)) {
+                        detectionAttempted.remove(wrapper.uniqueIdentifier)
+                    }
+                    scanViewModel.reevaluateDevice(wrapper)
                     refreshAdapterItem(wrapper.uniqueIdentifier)
                 }
             }

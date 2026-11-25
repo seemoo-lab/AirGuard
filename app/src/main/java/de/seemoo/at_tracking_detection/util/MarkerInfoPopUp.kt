@@ -6,6 +6,7 @@ import android.widget.TextView
 import de.seemoo.at_tracking_detection.ATTrackingDetectionApplication
 import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import org.osmdroid.views.MapView
@@ -55,7 +56,7 @@ class MarkerInfoPopUp(
 
         // Set device name
         val deviceName = mView.findViewById<TextView>(R.id.marker_device_name)
-        val displayName = if (device.name != null) {
+        val displayName = if (!device.name.isNullOrEmpty()) {
             device.getDeviceNameWithID()
         } else if (device.deviceType == DeviceType.SAMSUNG_TRACKER && device.subDeviceType != "UNKNOWN") {
             val subType = SamsungTrackerType.stringToSubType(device.subDeviceType)
@@ -63,6 +64,9 @@ class MarkerInfoPopUp(
         } else if (device.deviceType == DeviceType.GOOGLE_FIND_MY_NETWORK && device.subDeviceType != "UNKNOWN") {
             val subType = GoogleFindMyNetworkType.stringToSubType(device.subDeviceType)
             GoogleFindMyNetworkType.visibleStringFromSubtype(subType)
+        } else if (device.deviceType == DeviceType.APPLE && device.subDeviceType != "UNKNOWN") {
+            val subType = AppleDeviceType.stringToSubType(device.subDeviceType)
+            AppleDeviceType.visibleStringFromSubtype(subType)
         } else {
             device.deviceType?.let { DeviceType.userReadableNameDefault(it) } ?: "Unknown Device"
         }

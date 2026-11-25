@@ -86,6 +86,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val detectAppleWatchesPref = findPreference<SwitchPreferenceCompat>("detect_apple_watches")
+        detectAppleWatchesPref?.isVisible = SharedPrefs.autoDetectDeviceTypes
+        findPreference<SwitchPreferenceCompat>("auto_detect_device_types")?.setOnPreferenceChangeListener { _, newValue ->
+            detectAppleWatchesPref?.isVisible = newValue as Boolean
+            true
+        }
+
         if (SharedPrefs.token == null && !SharedPrefs.shareData) {
             findPreference<Preference>("delete_study_data")?.isVisible = false
         }
@@ -236,6 +243,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             } catch (t: Throwable) {
                                 Timber.e(t, "Failed to stop PermanentBluetoothScanner from Settings")
                             }
+                        }
+                    }
+                }
+                "detect_apple_watches", "auto_detect_device_types" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                        SharedPrefs.usePermanentBluetoothScanner &&
+                        !SharedPrefs.deactivateBackgroundScanning
+                    ) {
+                        Timber.d("Restarting PermanentBluetoothScanner to update scan filters for $preferenceKey")
+                        try {
+                            PermanentBluetoothScanner.stopPermanentScan()
+                            GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                PermanentBluetoothScanner.scan()
+                            }
+                        } catch (t: Throwable) {
+                            Timber.e(t, "Failed to restart PermanentBluetoothScanner from Settings")
+                        }
+                    }
+                }
+                "deactivate_background_scanning" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        try {
+                            if (SharedPrefs.deactivateBackgroundScanning) {
+                                Timber.d("Background scanning deactivated; stopping PermanentBluetoothScanner")
+                                PermanentBluetoothScanner.stopPermanentScan()
+                            } else if (SharedPrefs.usePermanentBluetoothScanner) {
+                                Timber.d("Background scanning re-enabled; starting PermanentBluetoothScanner")
+                                GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                    PermanentBluetoothScanner.scan()
+                                }
+                            }
+                        } catch (t: Throwable) {
+                            Timber.e(t, "Failed to update PermanentBluetoothScanner for deactivate_background_scanning")
                         }
                     }
                 }

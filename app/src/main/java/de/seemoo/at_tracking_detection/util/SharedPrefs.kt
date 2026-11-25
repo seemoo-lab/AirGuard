@@ -348,6 +348,15 @@ object SharedPrefs {
             sharedPreferences.edit { putBoolean("auto_detect_device_types", value) }
         }
 
+    var detectAppleWatches: Boolean
+        get() = sharedPreferences.getBoolean("detect_apple_watches", false)
+        set(value) {
+            sharedPreferences.edit { putBoolean("detect_apple_watches", value) }
+        }
+
+    val isAppleWatchDetectionEnabled: Boolean
+        get() = autoDetectDeviceTypes && detectAppleWatches
+
     var deleteOldDevices: Boolean
         get() {
             return sharedPreferences.getBoolean("delete_old_devices", true)

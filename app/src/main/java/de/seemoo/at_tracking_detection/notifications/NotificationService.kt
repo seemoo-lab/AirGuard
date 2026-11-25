@@ -42,6 +42,20 @@ class NotificationService @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
+    suspend fun sendAppleWatchNotification(baseDevice: BaseDevice): Boolean {
+        if (!notificationManagerCompat.areNotificationsEnabled() || SharedPrefs.deactivateBackgroundScanning) {
+            return false
+        }
+        val notificationId = notificationViewModel.insertToDb(deviceAddress = baseDevice.address)
+        notificationManagerCompat.notify(
+            APPLE_WATCH_NOTIFICATION_TAG,
+            notificationId,
+            notificationBuilder.buildAppleWatchNotification(baseDevice, notificationId)
+        )
+        return true
+    }
+
+    @SuppressLint("MissingPermission")
     fun sendObserveTrackerNotification(deviceAddress: String, deviceTypeString: String, observationDuration: Long, observationPositive: Boolean) {
         val notificationId = generateUniqueNotificationId()
         with(notificationManagerCompat) {
@@ -170,6 +184,8 @@ class NotificationService @Inject constructor(
     companion object {
         const val TRACKING_NOTIFICATION_TAG =
             "de.seemoo.at_tracking_detection.tracking_notification"
+        const val APPLE_WATCH_NOTIFICATION_TAG =
+            "de.seemoo.at_tracking_detection.apple_watch_notification"
         const val BLE_SCAN_ERROR_TAG =
             "de.seemoo.at_tracking_detection.ble_scan_error_notification"
         const val OBSERVE_TRACKER_NOTIFICATION_TAG =

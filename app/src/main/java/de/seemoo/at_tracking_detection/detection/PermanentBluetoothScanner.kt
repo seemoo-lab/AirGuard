@@ -92,6 +92,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
         }
 
     private val deviceMutex = Mutex()
+    private val gattMutex = Mutex()
 
     private val currentlyProcessingGatt = java.util.Collections.synchronizedSet(mutableSetOf<String>())
 
@@ -125,7 +126,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                 ?: error("ATTrackingDetectionApplication not initialized")
         }
 
-    private val validDeviceTypes = DeviceType.getAllowedDeviceTypesFromSettings()
+    private val validDeviceTypes: List<DeviceType>
+        get() = DeviceType.getAllowedDeviceTypesFromSettings()
 
     private val scanRepository: ScanRepository
         get() {
@@ -362,7 +364,9 @@ object PermanentBluetoothScanner: LocationHistoryListener {
      * location.
      */
     suspend fun foundTracker(device: BackgroundBluetoothScanner.DiscoveredDevice) {
-        if (!device.wrappedScanResult.deviceIsTracking()) return
+        if (SharedPrefs.deactivateBackgroundScanning) return
+        val isImmediateCandidate = ImmediateNotificationEvaluator.shouldConnectInBackground(device.wrappedScanResult)
+        if (!device.wrappedScanResult.deviceIsTracking() && !isImmediateCandidate) return
 
         deviceMutex.withLock {
             // Check when the device was last seen
@@ -389,7 +393,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             BLELogger.d("${pendingFoundDevices.size} pending devices")
         }
 
-        if (!isWaitingForLocationUpdate || (Date().time - (LocationHistoryController.lastLocationUpdate?.time
+        if (isImmediateCandidate || !isWaitingForLocationUpdate || (Date().time - (LocationHistoryController.lastLocationUpdate?.time
                 ?: 0)) < MAX_LOCATION_AGE_S * 1000
         ) {
             insertPendingDevices()
@@ -407,40 +411,64 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             BLELogger.d("Starting to match devices and locations")
 
             val savedDevices = ArrayList<BackgroundBluetoothScanner.DiscoveredDevice>()
-            val devicesToProcessGatt = mutableListOf<BackgroundBluetoothScanner.DiscoveredDevice>()
+            val devicesToProcessGatt =
+                mutableListOf<Pair<BackgroundBluetoothScanner.DiscoveredDevice, android.location.Location?>>()
 
             pendingFoundDevices.forEach { device ->
+                val wrapper = device.wrappedScanResult
+                val isImmediateCandidate = SharedPrefs.autoDetectDeviceTypes &&
+                    ImmediateNotificationEvaluator.shouldConnectInBackground(wrapper)
+
                 // Find the closest location
                 val deviceTimestamp =
                     device.discoveryDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-//                    device.discoveryDate.toInstant(ZoneOffset.UTC)
-//                        .toEpochMilli()
                 var location = LocationHistoryController.history.minByOrNull { abs(it.time - deviceTimestamp) }
-                if (location == null) {
-                    location = locationProvider.getLastLocation(false)
-                }
-                if (location == null) {
+                    ?: locationProvider.getLastLocation(false)
+
+                val locationMissingOrStale = if (location == null) {
                     BLELogger.d("No location found")
-                    return@forEach
+                    true
+                } else {
+                    val timeDiff = (location.time - deviceTimestamp) / 1000
+                    if (abs(timeDiff) > 300) {
+                        BLELogger.d("Time difference too large. Location: ${Date(location.time)}, Tracker found: ${device.discoveryDate}")
+                        if (location.time < deviceTimestamp) {
+                            BLELogger.d("Waiting for the next location update. The current one is too old")
+                            true
+                        } else {
+                            BLELogger.d("Inserting without a location.")
+                            location = null
+                            false
+                        }
+                    } else {
+                        false
+                    }
                 }
-                val timeDiff = (location.time - deviceTimestamp) / 1000
 
-
-                if (abs(timeDiff) > 300) {
-                    BLELogger.d("Time difference too large. Location: ${Date(location.time)}, Tracker found: ${device.discoveryDate}")
-                    if (location.time < deviceTimestamp) {
-                        BLELogger.d("Waiting for the next location update. The current one is too old")
+                // Immediate-notification candidates are evaluated regardless of location availability.
+                if (isImmediateCandidate) {
+                    val usableLocation = if (locationMissingOrStale) null else location
+                    if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                        devicesToProcessGatt.add(device to usableLocation)
+                    }
+                    val isRegularTracker = wrapper.deviceIsTracking() &&
+                        !Utility.getSkipDevice(wrapper.deviceType) &&
+                        wrapper.deviceType in validDeviceTypes
+                    if (!isRegularTracker) {
+                        savedDevices.add(device)
                         return@forEach
                     }
-                    BLELogger.d("Inserting without a location.")
-                    location = null
                 }
 
-                // BLELogger.d("${device.wrappedScanResult.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
-                if (!Utility.getSkipDevice(device.wrappedScanResult.deviceType) && device.wrappedScanResult.deviceType in validDeviceTypes) {
-                    BLELogger.d("Inserting ${device.wrappedScanResult.uniqueIdentifier} ${device.wrappedScanResult.deviceType} at ${location?.privacyPrint()}")
+                if (locationMissingOrStale) {
+                    return@forEach
+                }
+
+                // BLELogger.d("${wrapper.uniqueIdentifier}: Found a location with ${timeDiff}s difference ${location?.privacyPrint()})")
+                if (!Utility.getSkipDevice(wrapper.deviceType) && wrapper.deviceType in validDeviceTypes) {
+                    BLELogger.d("Inserting ${wrapper.uniqueIdentifier} ${wrapper.deviceType} at ${location?.privacyPrint()}")
                     val pair = BackgroundBluetoothScanner.insertScanResult(
-                        device.wrappedScanResult,
+                        wrapper,
                         latitude = location?.latitude,
                         longitude = location?.longitude,
                         altitude = location?.altitude,
@@ -448,7 +476,7 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                         discoveryDate = device.discoveryDate
                     )
                     savedDevices.add(device)
-                    recentlySeenDevices[device.wrappedScanResult.uniqueIdentifier] = device.discoveryDate
+                    recentlySeenDevices[wrapper.uniqueIdentifier] = device.discoveryDate
 
                     val savedDevice = pair.first
                     val savedBeacon = pair.second
@@ -461,8 +489,8 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                             val beaconRepository = ATTrackingDetectionApplication.getCurrentApp()?.beaconRepository
                             if (beaconRepository != null) {
                                 if (TrackingDetectorWorker.shouldThrowNotification(savedDevice, beaconRepository)) {
-                                    if (DeviceSubTypeDetector.needsDetection(device.wrappedScanResult)) {
-                                        devicesToProcessGatt.add(device)
+                                    if (DeviceSubTypeDetector.needsDetection(wrapper)) {
+                                        devicesToProcessGatt.add(device to location)
                                     }
                                 }
                             }
@@ -525,11 +553,12 @@ object PermanentBluetoothScanner: LocationHistoryListener {
 
                             SharedPrefs.lastScanDate = device.discoveryDate
                         }
-                    }else {
-                        BLELogger.d("Device ${device.wrappedScanResult.deviceAddress} not added to DB (already exists or skipped)")
+                    } else {
+                        BLELogger.d("Device ${wrapper.deviceAddress} not added to DB (already exists or skipped)")
                     }
                 } else {
-                    BLELogger.d("Skipping device ${device.wrappedScanResult.uniqueIdentifier} because it should not be saved in the current configuration")
+                    BLELogger.d("Skipping device ${wrapper.uniqueIdentifier} because it should not be saved in the current configuration")
+                    savedDevices.add(device)
                 }
             }
 
@@ -545,23 +574,32 @@ object PermanentBluetoothScanner: LocationHistoryListener {
                     })
             }
 
-            devicesToProcessGatt.forEach { device ->
-                val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
-                if (deviceRepository != null && currentlyProcessingGatt.add(device.wrappedScanResult.uniqueIdentifier)) {
-                    BLELogger.d("PermanentBluetoothScanner: Device ${device.wrappedScanResult.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            withTimeoutOrNull(15_000L.milliseconds) {
-                                DeviceSubTypeDetector.processDetection(device.wrappedScanResult, deviceRepository)
+            devicesToProcessGatt
+                .sortedByDescending { it.first.wrappedScanResult.rssiValue }
+                .forEach { (device, deviceLocation) ->
+                    val deviceRepository = ATTrackingDetectionApplication.getCurrentApp()?.deviceRepository
+                    val uid = device.wrappedScanResult.uniqueIdentifier
+                    if (deviceRepository != null && currentlyProcessingGatt.add(uid)) {
+                        BLELogger.d("PermanentBluetoothScanner: Queueing GATT detection for $uid...")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                gattMutex.withLock {
+                                    withTimeoutOrNull(15_000L.milliseconds) {
+                                        DeviceSubTypeDetector.processDetection(
+                                            device.wrappedScanResult,
+                                            deviceRepository,
+                                            deviceLocation
+                                        )
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                BLELogger.e("PermanentBluetoothScanner: GATT detection failed for $uid: ${e.message}")
+                            } finally {
+                                currentlyProcessingGatt.remove(uid)
                             }
-                        } catch (e: Exception) {
-                            BLELogger.e("PermanentBluetoothScanner: GATT detection failed for ${device.wrappedScanResult.uniqueIdentifier}: ${e.message}")
-                        } finally {
-                            currentlyProcessingGatt.remove(device.wrappedScanResult.uniqueIdentifier)
                         }
                     }
                 }
-            }
 
 
             // Remove old recent devices
@@ -585,7 +623,9 @@ object PermanentBluetoothScanner: LocationHistoryListener {
             val wrappedScanResult = ScanResultWrapper(scanResult)
 
             // Optimization: Filter out non-tracking devices or recently seen devices before spawning coroutine
-            if (!wrappedScanResult.deviceIsTracking()) return
+            if (!wrappedScanResult.deviceIsTracking() &&
+                !ImmediateNotificationEvaluator.shouldConnectInBackground(wrappedScanResult)
+            ) return
 
             val lastSeen = recentlySeenDevices[wrappedScanResult.uniqueIdentifier]
             if (lastSeen != null && lastSeen.until(LocalDateTime.now(), ChronoUnit.MILLIS) < COOL_DOWN_TIME_MS) {

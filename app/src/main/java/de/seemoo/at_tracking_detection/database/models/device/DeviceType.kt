@@ -4,6 +4,7 @@ import de.seemoo.at_tracking_detection.R
 import de.seemoo.at_tracking_detection.database.models.device.types.AirPods
 import de.seemoo.at_tracking_detection.database.models.device.types.AirTag
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleDevice
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.AppleFindMy
 import de.seemoo.at_tracking_detection.database.models.device.types.Chipolo
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
@@ -49,12 +50,12 @@ enum class DeviceType {
         }
 
         fun getImageDrawable(wrappedScanResult: ScanResultWrapper): Int {
-            val deviceType: DeviceType = wrappedScanResult.deviceType
+            val deviceType: DeviceType = DeviceManager.getDeviceType(wrappedScanResult.scanResult)
             return when (deviceType) {
                 UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
                 AIRPODS -> R.drawable.ic_airpods
                 AIRTAG -> R.drawable.ic_airtag
-                APPLE -> R.drawable.ic_baseline_device_unknown_24
+                APPLE -> getAppleDrawable(wrappedScanResult)
                 FIND_MY -> R.drawable.ic_chipolo
                 TILE -> R.drawable.ic_tile
                 CHIPOLO -> R.drawable.ic_chipolo
@@ -64,6 +65,11 @@ enum class DeviceType {
                 GOOGLE_FIND_MY_NETWORK -> getGoogleDrawable(wrappedScanResult)
             }
         }
+
+        private fun getAppleDrawable(wrappedScanResult: ScanResultWrapper): Int =
+            DeviceSubTypeDetector.appleSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier]
+                ?.let(AppleDeviceType::drawableForSubType)
+                ?: R.drawable.ic_baseline_device_unknown_24
 
         private fun getSamsungDrawable(wrappedScanResult: ScanResultWrapper): Int {
             return if (DeviceSubTypeDetector.samsungSubDeviceTypeMap.containsKey(wrappedScanResult.uniqueIdentifier)) {
@@ -101,6 +107,11 @@ enum class DeviceType {
                     "pebblebees" -> allowedDeviceTypes.add(PEBBLEBEE)
                     "google_find_my_network" -> allowedDeviceTypes.add(GOOGLE_FIND_MY_NETWORK)
                 }
+            }
+
+            // Apple devices need to be scanned if Apple Watch detection (and auto-detection) is enabled
+            if (SharedPrefs.isAppleWatchDetectionEnabled && APPLE !in allowedDeviceTypes) {
+                allowedDeviceTypes.add(APPLE)
             }
 
             return allowedDeviceTypes

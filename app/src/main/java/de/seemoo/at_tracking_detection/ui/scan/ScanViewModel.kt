@@ -11,12 +11,14 @@ import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType.Companion.getAllowedDeviceTypesFromSettings
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTrackerType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner
 import de.seemoo.at_tracking_detection.detection.BackgroundBluetoothScanner.TIME_BETWEEN_BEACONS
+import de.seemoo.at_tracking_detection.detection.ImmediateNotificationEvaluator
 import de.seemoo.at_tracking_detection.detection.LocationProvider
 import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.Utility
@@ -163,37 +165,49 @@ class ScanViewModel @Inject constructor(
                 DeviceSubTypeDetector.samsungSubDeviceTypeMap[wrappedScanResult.uniqueIdentifier] = SamsungTrackerType.SMART_TAG_2
             }
 
+            val isAppleType = wrappedScanResult.deviceType == DeviceType.APPLE
+            val existingDeviceBeforeInsert = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+            val isElementHighRiskBeforeInsert = isElementHighRisk(existingDeviceBeforeInsert, wrappedScanResult)
+
+            // Do not store non-High-Risk Apple Devices in the database
+            val shouldSaveToDb = !isAppleType || isElementHighRiskBeforeInsert
+
             val currentDate = LocalDateTime.now()
-            val beaconCountBefore = beaconRepository.getNumberOfBeaconsAddress(
-                deviceAddress = wrappedScanResult.uniqueIdentifier,
-                since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
-            )
-
-            if (beaconCountBefore == 0) {
-                val skipDevice = Utility.getSkipDevice(wrappedScanResult.deviceType)
-                if (skipDevice) return@launch
-
-                // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes
-                LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
-                val location = locationProvider.getLastLocation()
-
-                if (location == null) {
-                    LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
-                } else {
-                    LocationLogger.log("ScanViewModel: Got Location: ${location.privacyPrint()}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
-                }
-
-                BackgroundBluetoothScanner.insertScanResult(
-                    wrappedScanResult = wrappedScanResult,
-                    latitude = location?.latitude,
-                    longitude = location?.longitude,
-                    altitude = location?.altitude,
-                    accuracy = location?.accuracy,
-                    discoveryDate = currentDate,
+            if (shouldSaveToDb) {
+                val beaconCountBefore = beaconRepository.getNumberOfBeaconsAddress(
+                    deviceAddress = wrappedScanResult.uniqueIdentifier,
+                    since = currentDate.minusMinutes(TIME_BETWEEN_BEACONS)
                 )
+
+                if (beaconCountBefore == 0) {
+                    val skipDevice = Utility.getSkipDevice(wrappedScanResult.deviceType)
+                    if (!skipDevice) {
+                        // There was no beacon with the address saved in the last TIME_BETWEEN_BEACONS minutes
+                        LocationLogger.log("ScanViewModel: Request Location from Manual Scan")
+                        val location = locationProvider.getLastLocation()
+
+                        if (location == null) {
+                            LocationLogger.log("ScanViewModel: Location could not be retrieved, Location is null")
+                        } else {
+                            LocationLogger.log("ScanViewModel: Got Location: ${location.privacyPrint()}, Altitude: ${location.altitude}, Accuracy: ${location.accuracy}")
+                        }
+
+                        BackgroundBluetoothScanner.insertScanResult(
+                            wrappedScanResult = wrappedScanResult,
+                            latitude = location?.latitude,
+                            longitude = location?.longitude,
+                            altitude = location?.altitude,
+                            accuracy = location?.accuracy,
+                            discoveryDate = currentDate,
+                        )
+                    }
+                }
             }
 
             val device: BaseDevice? = deviceRepository.getDevice(wrappedScanResult.uniqueIdentifier)
+            if (!shouldShowDeviceInUi(device, wrappedScanResult)) {
+                return@launch
+            }
             val isElementHighRisk = isElementHighRisk(device, wrappedScanResult)
 
             withContext(Dispatchers.Main) {
@@ -233,10 +247,11 @@ class ScanViewModel @Inject constructor(
             }
         }
 
-        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier ${wrappedScanResult.uniqueIdentifier}")
+        val mfgHex = scanResult.scanRecord?.getManufacturerSpecificData(76)?.joinToString(" ") { "%02X".format(it) }
+        Timber.d("Adding scan result ${scanResult.device.address} with unique identifier ${wrappedScanResult.uniqueIdentifier} (type=${wrappedScanResult.deviceType}, connectable=${scanResult.isConnectable}, rssi=${scanResult.rssi}, mfg4c=$mfgHex)")
         Timber.d(
             "status bytes: ${
-                scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.get(2)?.toString(2)
+                scanResult.scanRecord?.manufacturerSpecificData?.get(76)?.getOrNull(2)?.toString(2)
             }"
         )
         return wrappedScanResult
@@ -264,7 +279,67 @@ class ScanViewModel @Inject constructor(
         addSource(bluetoothDeviceListLowRisk) { update() }
     }
 
-    fun isElementHighRisk (device: BaseDevice?, wrappedScanResult: ScanResultWrapper): Boolean {
+    private fun isResolvedAppleWatch(device: BaseDevice?, wrapper: ScanResultWrapper): Boolean {
+        val uid = wrapper.uniqueIdentifier
+        val modelId = DeviceSubTypeDetector.appleModelIdentifierMap[uid]
+            ?: device?.additionalData
+            ?: device?.alternativeIdentifier
+        return DeviceSubTypeDetector.appleSubDeviceTypeMap[uid] == AppleDeviceType.APPLE_WATCH ||
+            AppleDeviceType.stringToSubType(device?.subDeviceType) == AppleDeviceType.APPLE_WATCH ||
+            AppleDeviceType.fromModelIdentifier(modelId) == AppleDeviceType.APPLE_WATCH
+    }
+
+    private fun shouldShowDeviceInUi(device: BaseDevice?, wrapper: ScanResultWrapper): Boolean =
+        when (device?.deviceType ?: DeviceManager.getDeviceType(wrapper.scanResult)) {
+            DeviceType.AIRPODS -> SharedPrefs.devicesFilter.contains("airpods")
+            DeviceType.AIRTAG -> SharedPrefs.devicesFilter.contains("airtags")
+            DeviceType.APPLE -> {
+                if (SharedPrefs.isAppleWatchDetectionEnabled && isResolvedAppleWatch(device, wrapper)) {
+                    true
+                } else {
+                    val isUserAllowedApple = SharedPrefs.devicesFilter.contains("apple_devices") &&
+                        !Utility.getSkipDevice(DeviceType.APPLE)
+                    isUserAllowedApple && !wrapper.isConnectable
+                }
+            }
+            else -> true
+        }
+
+    fun updateDetectionStatus(uid: String, status: ScanResultWrapper.DetectionStatus) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _highRiskBase.find { it.uniqueIdentifier == uid }?.detectionStatus = status
+            _lowRiskBase.find { it.uniqueIdentifier == uid }?.detectionStatus = status
+            bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
+            bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
+        }
+    }
+
+    fun reevaluateDevice(wrapper: ScanResultWrapper) {
+        val uid = wrapper.uniqueIdentifier
+        viewModelScope.launch(Dispatchers.IO) {
+            val device = deviceRepository.getDevice(uid)
+            val shouldShow = shouldShowDeviceInUi(device, wrapper)
+            val highRisk = shouldShow && isElementHighRisk(device, wrapper)
+
+            withContext(Dispatchers.Main) {
+                if (!shouldShow) {
+                    _highRiskBase.removeAll { it.uniqueIdentifier == uid }
+                    _lowRiskBase.removeAll { it.uniqueIdentifier == uid }
+                } else {
+                    val (target, other) = if (highRisk) _highRiskBase to _lowRiskBase else _lowRiskBase to _highRiskBase
+                    other.removeAll { it.uniqueIdentifier == uid }
+                    if (target.none { it.uniqueIdentifier == uid }) {
+                        target.add(wrapper)
+                    }
+                }
+
+                bluetoothDeviceListHighRisk.value = applySort(_highRiskBase)
+                bluetoothDeviceListLowRisk.value = applySort(_lowRiskBase)
+            }
+        }
+    }
+
+    fun isElementHighRisk(device: BaseDevice?, wrappedScanResult: ScanResultWrapper): Boolean {
         val isUnsafeConnectionState = wrappedScanResult.connectionState in DeviceManager.unsafeConnectionState
         val deviceIsIgnored = device?.ignore == true
         val deviceIsSafeTracker = device?.safeTracker == true
@@ -272,13 +347,13 @@ class ScanViewModel @Inject constructor(
         val notificationRecent = device?.lastNotificationSent?.isAfter(LocalDateTime.now().minusDays(RiskLevelEvaluator.RELEVANT_DAYS_RISK_LEVEL)) == true
         val riskLevelExistent = (device?.riskLevel ?: 0) > 0
 
-        return if (deviceIsIgnored) {
-            // Highest Priority: If user ignores device it is automatically low risk
-            false
-        } else if (deviceIsSafeTracker) {
-            // If device is a safe tracker it is automatically low risk
-            false
-        } else if (isUnsafeConnectionState) {
+        if (deviceIsIgnored || deviceIsSafeTracker) return false
+
+        if (ImmediateNotificationEvaluator.isHighRiskImmediateThreat(device, wrappedScanResult)) {
+            return true
+        }
+
+        return if (isUnsafeConnectionState) {
             // Every unsafeConnectionState is potentially high risk
             true
         } else if (notificationSent && notificationRecent) {

@@ -11,6 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
+import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
@@ -96,6 +97,8 @@ class TrackingDetectorWorker @AssistedInject constructor(
         }
 
         private fun throwNotification(device: BaseDevice, useLocation: Boolean, beaconRepository: BeaconRepository): Boolean {
+            if (ImmediateNotificationEvaluator.isHighRiskImmediateThreat(device)) return false
+
             val minNumberOfLocations: Int = RiskLevelEvaluator.getNumberOfLocationsToBeConsideredForTrackingDetection(device.deviceType)
             val minTrackedTime: Long = RiskLevelEvaluator.getMinutesAtLeastTrackedBeforeAlarm() // in minutes
 

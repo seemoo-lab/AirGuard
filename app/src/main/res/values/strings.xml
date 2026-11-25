@@ -338,6 +338,8 @@
     <string name="google_find_my_phone_name">Android Smartphone</string>
     <string name="apple_find_my_default_name">Apple "FindMy"</string>
     <string name="apple_device_default_name">Apple Device</string>
+    <string name="detect_apple_watch">Detect Apple Watches</string>
+    <string name="detect_apple_watch_summary">Connects to Apple devices in the background to check if they are an Apple Watch that might record audio.</string>
     <string name="airtag_default_name" translatable="false">AirTag</string>
     <string name="airpods_default_name" translatable="false">AirPods</string>
     <string name="chipolo_default_name" translatable="false">Chipolo</string>
@@ -616,4 +618,7 @@
 
     <string name="load_all_occurrences">Load all occurrences</string>
     <string name="scroll_button">Scrolls to the top or bottom of this view</string>
+
+    <string name="notification_title_apple_watch">Apple Watch detected</string>
+    <string name="notification_text_apple_watch">A nearby Apple Watch with recording capabilities was detected. Please be aware.</string>
 </resources>

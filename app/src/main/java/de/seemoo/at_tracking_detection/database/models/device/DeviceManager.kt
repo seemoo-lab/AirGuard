@@ -15,6 +15,7 @@ import de.seemoo.at_tracking_detection.database.models.device.types.SamsungFindM
 import de.seemoo.at_tracking_detection.database.models.device.types.SamsungTracker
 import de.seemoo.at_tracking_detection.database.models.device.types.Tile
 import de.seemoo.at_tracking_detection.database.models.device.types.Unknown
+import de.seemoo.at_tracking_detection.util.SharedPrefs
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import timber.log.Timber
 import kotlin.experimental.and
@@ -45,17 +46,18 @@ object DeviceManager {
 
     fun getDeviceType(scanResult: ScanResult): DeviceType {
         val deviceAddress = scanResult.device.address
+        val cachedType = getDeviceTypeFromCache(deviceAddress)
+        val isFindMyAd = scanResult.scanRecord?.getManufacturerSpecificData(0x004c)?.firstOrNull() == (0x12).toByte()
 
-        // Check cache, before calculating again
-        var deviceType: DeviceType? = getDeviceTypeFromCache(deviceAddress)
-        if (deviceType != null) {
-            return deviceType
-        } else {
-            Timber.d("Device type not in cache, calculating...")
-            deviceType = calculateDeviceType(scanResult)
-            deviceTypeCache[deviceAddress] = deviceType
-            return deviceType
+        // If a previous non-FindMy (e.g. 0x10) advertisement cached APPLE, re-evaluate when a 0x12 Find My advertisement arrives
+        if (cachedType != null && !(cachedType == DeviceType.APPLE && isFindMyAd)) {
+            return cachedType
         }
+
+        Timber.d("Device type not in cache, calculating...")
+        val deviceType = calculateDeviceType(scanResult)
+        deviceTypeCache[deviceAddress] = deviceType
+        return deviceType
     }
 
     private fun getDeviceTypeFromCache(deviceAddress: String): DeviceType? {
@@ -77,7 +79,9 @@ object DeviceManager {
 
         scanResult.scanRecord?.let { scanRecord ->
             scanRecord.getManufacturerSpecificData(0x004c)?.let { manufacturerData ->
-                if (manufacturerData.size >= 3) { // Ensure array size is sufficient
+                val hex = manufacturerData.joinToString(" ") { "%02X".format(it) }
+                Timber.d("Apple 0x004C advertisement from ${scanResult.device.address}: connectable=${scanResult.isConnectable}, rssi=${scanResult.rssi}, data=$hex")
+                if (manufacturerData.size >= 3 && manufacturerData[0] == (0x12).toByte()) {
                     val statusByte: Byte = manufacturerData[2]
                     val deviceTypeInt = (statusByte.and(0x30).toInt() shr 4)
 
@@ -86,6 +90,8 @@ object DeviceManager {
                             return device.deviceType
                         }
                     }
+                } else if (manufacturerData.isNotEmpty()) {
+                    return DeviceType.APPLE
                 }
             }
 
@@ -94,13 +100,13 @@ object DeviceManager {
             }
 
             scanRecord.serviceUuids?.let { services ->
-                when {
-                    services.contains(Tile.offlineFindingServiceUUID) -> return Tile.deviceType
-                    services.contains(Chipolo.offlineFindingServiceUUID) -> return Chipolo.deviceType
-                    services.contains(PebbleBee.offlineFindingServiceUUID) -> return PebbleBee.deviceType
-                    services.contains(SamsungTracker.offlineFindingServiceUUID) -> return SamsungTracker.deviceType
-                    services.contains(SamsungFindMyMobile.offlineFindingServiceUUID) -> return SamsungFindMyMobile.deviceType
-                    else -> return Unknown.deviceType
+                return when {
+                    services.contains(Tile.offlineFindingServiceUUID) -> Tile.deviceType
+                    services.contains(Chipolo.offlineFindingServiceUUID) -> Chipolo.deviceType
+                    services.contains(PebbleBee.offlineFindingServiceUUID) -> PebbleBee.deviceType
+                    services.contains(SamsungTracker.offlineFindingServiceUUID) -> SamsungTracker.deviceType
+                    services.contains(SamsungFindMyMobile.offlineFindingServiceUUID) -> SamsungFindMyMobile.deviceType
+                    else -> Unknown.deviceType
                 }
             }
         }
@@ -131,9 +137,13 @@ object DeviceManager {
         return DeviceType.valueOf(deviceTypeString)
     }
 
-    val scanFilter: List<ScanFilter> = devices.map {
-        it.bluetoothFilter
-    }
+    val scanFilter: List<ScanFilter>
+        get() = buildList {
+            devices.mapTo(this) { it.bluetoothFilter }
+            if (SharedPrefs.isAppleWatchDetectionEnabled) {
+                add(AppleDevice.continuityBluetoothFilter)
+            }
+        }
 
     val gattIntentFilter: IntentFilter = IntentFilter().apply {
         addAction(BluetoothConstants.ACTION_EVENT_RUNNING)

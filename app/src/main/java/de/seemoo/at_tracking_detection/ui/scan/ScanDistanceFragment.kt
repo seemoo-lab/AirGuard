@@ -40,6 +40,7 @@ import de.seemoo.at_tracking_detection.database.models.device.Connectable
 import de.seemoo.at_tracking_detection.database.models.device.ConnectionState
 import de.seemoo.at_tracking_detection.database.models.device.DeviceManager
 import de.seemoo.at_tracking_detection.database.models.device.DeviceType
+import de.seemoo.at_tracking_detection.database.models.device.types.AppleDeviceType
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetwork
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkManufacturer
 import de.seemoo.at_tracking_detection.database.models.device.types.GoogleFindMyNetworkType
@@ -63,6 +64,7 @@ class ScanDistanceFragment : Fragment() {
     private var latestWrappedScanResult: ScanResultWrapper? = null
     private var subTypeSamsung: SamsungTrackerType? = null
     private var subTypeGoogle: GoogleFindMyNetworkType? = null
+    private var subTypeApple: AppleDeviceType? = null
 
     private var oldAnimationValue = 0f
     private val animationDuration = 1000L
@@ -97,15 +99,15 @@ class ScanDistanceFragment : Fragment() {
 
                         // 2nd-gen AirTags advertise with the same status byte as FIND_MY devices.
                         // Check if device has already been upgraded
-                        if (deviceType == DeviceType.FIND_MY && device?.deviceType == DeviceType.AIRTAG) {
+                        if ((deviceType == DeviceType.FIND_MY || deviceType == DeviceType.APPLE) && device?.deviceType == DeviceType.AIRTAG) {
                             deviceType = DeviceType.AIRTAG
                             DeviceManager.overrideDeviceType(filteredIdentifier, DeviceType.AIRTAG)
-                            Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRTAG from DB (2nd gen AirTag)")
+                            Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRTAG from DB")
                         }
 
-                        // AirPods advertise with the same status byte as FIND_MY devices.
+                        // AirPods advertise with the same status byte as FIND_MY or APPLE devices.
                         // Check if device has already been upgraded
-                        if (deviceType == DeviceType.FIND_MY && device?.deviceType == DeviceType.AIRPODS) {
+                        if ((deviceType == DeviceType.FIND_MY || deviceType == DeviceType.APPLE) && device?.deviceType == DeviceType.AIRPODS) {
                             deviceType = DeviceType.AIRPODS
                             DeviceManager.overrideDeviceType(filteredIdentifier, DeviceType.AIRPODS)
                             Timber.d("ScanDistanceFragment: device $filteredIdentifier restored as AIRPODS from DB")
@@ -134,6 +136,9 @@ class ScanDistanceFragment : Fragment() {
 
                         val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: DeviceSubTypeDetector.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
                         val googleSubType: GoogleFindMyNetworkType? = subTypeGoogle ?: DeviceSubTypeDetector.googleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                        val appleSubType: AppleDeviceType? = subTypeApple
+                            ?: DeviceSubTypeDetector.appleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+                            ?: device?.subDeviceType?.takeIf { it != "UNKNOWN" && device.deviceType == DeviceType.APPLE }?.let { AppleDeviceType.stringToSubType(it) }
                         val deviceName = DeviceSubTypeDetector.deviceNameMap[latestWrappedScanResult!!.uniqueIdentifier]
 
                         val deviceNameFromDB = device?.name
@@ -145,6 +150,9 @@ class ScanDistanceFragment : Fragment() {
                         if (samsungSubType != null && samsungSubType != SamsungTrackerType.UNKNOWN) {
                             Timber.d("Display Name - Samsung Subtype: $samsungSubType")
                             viewModel.displayName.postValue(SamsungTrackerType.visibleStringFromSubtype(samsungSubType))
+                        } else if (appleSubType != null && appleSubType != AppleDeviceType.UNKNOWN) {
+                            Timber.d("Display Name - Apple Subtype: $appleSubType")
+                            viewModel.displayName.postValue(AppleDeviceType.visibleStringFromSubtype(appleSubType))
                         } else if (deviceName != null && deviceName != "") {
                             Timber.d("Display Name - Device Name: $deviceName")
                             binding.deviceTypeText.text = deviceName
@@ -157,7 +165,7 @@ class ScanDistanceFragment : Fragment() {
                         } else {
                             Timber.d("Display Name - Default")
                             binding.deviceTypeText.text = DeviceType.userReadableNameDefault(
-                                latestWrappedScanResult!!.deviceType
+                                deviceType ?: latestWrappedScanResult!!.deviceType
                             )
                         }
 
@@ -227,6 +235,13 @@ class ScanDistanceFragment : Fragment() {
         binding.performActionButton.visibility = if (deviceType == DeviceType.SAMSUNG_TRACKER) {
             val samsungSubType: SamsungTrackerType? = subTypeSamsung ?: DeviceSubTypeDetector.samsungSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
             if (samsungSubType == null || samsungSubType == SamsungTrackerType.UNKNOWN) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        } else if (deviceType == DeviceType.APPLE && latestWrappedScanResult!!.isConnectable) {
+            val appleSubType: AppleDeviceType? = subTypeApple ?: DeviceSubTypeDetector.appleSubDeviceTypeMap[latestWrappedScanResult!!.uniqueIdentifier]
+            if (appleSubType == null || appleSubType == AppleDeviceType.UNKNOWN) {
                 View.VISIBLE
             } else {
                 View.GONE

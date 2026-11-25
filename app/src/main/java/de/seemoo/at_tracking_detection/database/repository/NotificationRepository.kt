@@ -65,6 +65,11 @@ class NotificationRepository @Inject constructor(
     }
 
     @WorkerThread
+    suspend fun update(notification: Notification) {
+        notificationDao.update(notification)
+    }
+
+    @WorkerThread
     suspend fun setFalseAlarm(notificationId: Int, state: Boolean) {
         notificationDao.setFalseAlarm(notificationId, state)
     }

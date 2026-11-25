@@ -279,15 +279,17 @@ object BackgroundBluetoothScanner {
                         .map { it.wrappedScanResult }
                         .filter { wrapper ->
                             val device = deviceRepository.getDevice(wrapper.uniqueIdentifier)
-                            device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                            val triggersNotification = device != null && TrackingDetectorWorker.shouldThrowNotification(device, beaconRepository)
+                            triggersNotification || ImmediateNotificationEvaluator.shouldConnectInBackground(wrapper)
                         }
+                        .sortedByDescending { it.rssiValue }
                         .forEach { wrapper ->
                             if (DeviceSubTypeDetector.needsDetection(wrapper)) {
                                 Timber.d("BackgroundBluetoothScanner: Device ${wrapper.uniqueIdentifier} would trigger notification. Attempting GATT detection...")
                                 try {
                                     // Wait max. 10 seconds for each Bluetooth device to process
                                     withTimeoutOrNull(10_000L.milliseconds) {
-                                        DeviceSubTypeDetector.processDetection(wrapper, deviceRepository)
+                                        DeviceSubTypeDetector.processDetection(wrapper, deviceRepository, location)
                                     }
                                 } catch (e: Exception) {
                                     Timber.e(e, "BackgroundBluetoothScanner: GATT detection failed for ${wrapper.uniqueIdentifier}")
@@ -514,6 +516,34 @@ object BackgroundBluetoothScanner {
                 return@withLock Pair(deviceSaved, beaconSaved)
             }
         }
+    }
+
+    suspend fun saveBeaconForDevice(
+        wrappedScanResult: ScanResultWrapper,
+        deviceAddress: String,
+        location: android.location.Location?,
+        discoveryDate: LocalDateTime = LocalDateTime.now(),
+    ): Beacon? {
+        val (savedLocation, locationWasNewlyCreated) = saveLocation(
+            latitude = location?.latitude,
+            longitude = location?.longitude,
+            altitude = location?.altitude,
+            discoveryDate = discoveryDate,
+            accuracy = location?.accuracy
+        )
+        val beaconSaved = saveBeacon(
+            wrappedScanResult = wrappedScanResult,
+            discoveryDate = discoveryDate,
+            locId = savedLocation?.locationId,
+            overrideIdentifier = deviceAddress
+        )
+        if (beaconSaved == null && locationWasNewlyCreated && savedLocation != null) {
+            val locationRepository = ATTrackingDetectionApplication.getCurrentApp()?.locationRepository
+            if (locationRepository != null && locationRepository.getNumberOfBeaconsForLocation(savedLocation.locationId) == 0) {
+                locationRepository.delete(savedLocation)
+            }
+        }
+        return beaconSaved
     }
 
     private suspend fun saveBeacon(
@@ -784,25 +814,25 @@ object BackgroundBluetoothScanner {
                     device.lastSeen = discoveryDate
                     deviceRepository.update(device)
 
-                    // Upgrade identified Find My Device to AirTag if already determined in the past
+                    // Upgrade identified Find My / Apple Device to AirTag if already determined in the past
                     if (device.deviceType == DeviceType.AIRTAG &&
-                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                        (wrappedScanResult.deviceType == DeviceType.FIND_MY || wrappedScanResult.deviceType == DeviceType.APPLE)
                     ) {
                         DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRTAG)
                         Timber.d(
                             "saveDevice: device $deviceAddress is an AirTag " +
-                            "(DB=AIRTAG, advertisement=FIND_MY) – DeviceManager cache updated"
+                            "(DB=AIRTAG, advertisement=${wrappedScanResult.deviceType}) – DeviceManager cache updated"
                         )
                     }
 
-                    // Upgrade identified Find My Device to AirPods if already determined in the past
+                    // Upgrade identified Find My / Apple Device to AirPods if already determined in the past
                     if (device.deviceType == DeviceType.AIRPODS &&
-                        wrappedScanResult.deviceType == DeviceType.FIND_MY
+                        (wrappedScanResult.deviceType == DeviceType.FIND_MY || wrappedScanResult.deviceType == DeviceType.APPLE)
                     ) {
                         DeviceManager.overrideDeviceType(deviceAddress, DeviceType.AIRPODS)
                         Timber.d(
                             "saveDevice: device $deviceAddress is an AirPods " +
-                            "(DB=AIRPODS, advertisement=FIND_MY) – DeviceManager cache updated"
+                            "(DB=AIRPODS, advertisement=${wrappedScanResult.deviceType}) – DeviceManager cache updated"
                         )
                     }
                 }
